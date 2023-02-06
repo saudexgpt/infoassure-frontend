@@ -1,0 +1,74 @@
+/*================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+
+
+@media print
+{
+  .main-menu {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .el-col-xs-12 {
+    width: 50% !important;
+  }
+  .el-col-sm-12 {
+    width: 50% !important;
+  }
+  .el-col-md-12 {
+    width: 50% !important;
+  }
+  .el-col-xs-5 {
+    width: 20.83333% !important;
+  }
+  .el-col-sm-5 {
+    width: 20.83333% !important;
+  }
+  .el-col-md-5 {
+    width: 20.83333% !important;
+  }
+  .el-col-xs-9 {
+    width: 37.5% !important;
+  }
+  .el-col-sm-9 {
+    width: 37.5% !important;
+  }
+  .el-col-md-9 {
+    width: 37.5% !important;
+  }
+  .el-card {
+    margin: 0 !important;
+  }
+
+  .nav-item {
+    display: none !important;
+  }
+
+  .customizer-toggle {
+    display: none !important;
+  }
+  .btn-scroll-to-top {
+    display: none !important;
+  }
+  .app-content {
+    padding: 0px !important;
+  }
+
+  .content {
+    padding: 0px !important;
+  }
+  
+  table{
+    font-size: 12px;
+    padding: 3px !important;
+  }
+  body {-webkit-print-color-adjust: exact;}
+}

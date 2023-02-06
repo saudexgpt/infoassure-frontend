@@ -1,0 +1,33 @@
+<template>
+  <div class="dashboard-container">
+
+    <component :is="currentRole" />
+  </div>
+</template>
+
+<script type="text/babel">
+import { mapGetters } from 'vuex'
+import AdminDashboard from './admin/index.vue'
+import OthersDashboard from './others/index.vue'
+
+export default {
+  components: {
+    AdminDashboard, OthersDashboard,
+  },
+  data() {
+    return {
+      currentRole: 'OthersDashboard',
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'userData',
+    ]),
+  },
+  created() {
+    if (this.userData.roles.includes('super') || this.userData.roles.includes('admin')) {
+      this.currentRole = 'AdminDashboard'
+    }
+  },
+}
+</script>
