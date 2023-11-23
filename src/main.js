@@ -18,6 +18,7 @@ import solidGauge from 'highcharts/modules/solid-gauge'
 import stockInit from 'highcharts/modules/stock'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2'
 import CKEditor from '@ckeditor/ckeditor5-vue2'
+import IdleVue from 'idle-vue'
 // import Pusher from 'pusher-js'
 import i18n from '@/libs/i18n'
 import lang from '@/lang'
@@ -49,7 +50,13 @@ import '@/@fake-db/db'
 //   encrypted: true,
 // })
 // Vue.prototype.$pusher = pusher
-
+const eventsHub = new Vue()
+Vue.use(IdleVue, {
+  eventEmitter: eventsHub,
+  store,
+  idleTime: 90000000, // 900000, // 900 seconds i.e 15 mins
+  startAtIdle: false,
+})
 Vue.use(ElementUI, {
   i18n: (key, value) => lang.t(key, value),
 })

@@ -114,13 +114,45 @@
                       </a>
                     </el-alert>
                   </div>
+                  <el-popover
+                    v-if="!isAdmin && props.row.is_exception === 0 && selectedProject.is_completed === 0"
+                    placement="right"
+                    width="400"
+                    trigger="click"
+                  >
+                    <div>
+                      <strong>Kindly justify why it is not applicable, then click on DONE</strong>
+                      <el-input
+                        v-model="exceptionReason"
+                        placeholder="Type justification here..."
+                        type="textarea"
+                      />
+                      <el-button
+                        :loading="loadButton"
+                        size="mini"
+                        type="success"
+                        :disabled="exceptionReason === ''"
+                        @click="createException(clause.id, props.row.id, index, props.index)"
+                      >
+                        Done
+                      </el-button>
+                    </div>
+                    <el-button
+                      slot="reference"
+                      size="mini"
+                      type="danger"
+                      round
+                    >
+                      Click if Not Applicable
+                    </el-button>
+                  </el-popover>
                 </div>
                 <div v-else>
                   <el-alert
                     type="error"
                     :closable="false"
                   >
-                    <strong>Not Applicable</strong>. To undo, click on the <code>EXCEPTIONS</code> tab and reverse it
+                    <strong>Not Applicable</strong>. To undo, click on the <code>EXCLUSIONS</code> tab and reverse it
                   </el-alert>
                 </div>
               </div>
@@ -160,38 +192,7 @@
               slot="exception"
               slot-scope="props"
             >
-              <el-popover
-                v-if="!isAdmin && props.row.is_exception === 0 && selectedProject.is_completed === 0"
-                placement="right"
-                width="400"
-                trigger="click"
-              >
-                <div>
-                  <el-input
-                    v-model="exceptionReason"
-                    placeholder="Kindly give reasons for making this an exception"
-                    type="textarea"
-                  />
-                  <el-button
-                    :loading="loadButton"
-                    size="mini"
-                    type="danger"
-                    :disabled="exceptionReason === ''"
-                    @click="createException(clause.id, props.row.id, index, props.index)"
-                  >
-                    Submit
-                  </el-button>
-                </div>
-                <el-button
-                  slot="reference"
-                  size="mini"
-                  type="danger"
-                  round
-                >
-                  N/A
-                </el-button>
-              </el-popover>
-              <el-popover
+              <!-- <el-popover
                 v-if="isAdmin"
                 placement="right"
                 width="400"
@@ -221,10 +222,28 @@
                 >
                   Give Remark
                 </el-button>
-              </el-popover>
+              </el-popover> -->
+              <el-button
+                size="mini"
+                type="primary"
+                round
+                @click="openRemarkModal(props.row)"
+              >
+                <feather-icon
+                  icon="MessageSquareIcon"
+                />
+                Consultant Remark
+              </el-button>
             </template>
           </v-client-table>
         </div>
+        <give-document-remarks
+          v-if="showRemarkModal"
+          v-model="showRemarkModal"
+          :document="selectedDocumentForRemark"
+          :is-admin="isAdmin"
+          @reload="fetchClausesWithQuestions"
+        />
       </app-collapse-item>
     </template>
     <app-collapse-item title="EVIDENCE">
@@ -240,12 +259,14 @@ import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
 import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import Resource from '@/api/resource'
 import Evidence from './Evidence.vue'
+import GiveDocumentRemarks from './GiveDocumentRemarks.vue'
 
 export default {
   components: {
     AppCollapse,
     AppCollapseItem,
     Evidence,
+    GiveDocumentRemarks,
   },
   props: {
     selectedProject: {
@@ -275,6 +296,8 @@ export default {
       },
       clauses: [],
       uploadableFile: null,
+      selectedDocumentForRemark: null,
+      showRemarkModal: false,
       showRemark: 0,
       loading: false,
       load: false,
@@ -295,6 +318,11 @@ export default {
     this.fetchClausesWithDocuments()
   },
   methods: {
+    openRemarkModal(selectedDocument) {
+      const app = this
+      app.selectedDocumentForRemark = selectedDocument
+      app.showRemarkModal = true
+    },
     setProgress() {
       this.progress = 10
       this.interval = setInterval(() => {

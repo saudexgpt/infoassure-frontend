@@ -21,6 +21,16 @@
         </template>
         <client-registration />
       </b-tab>
+      <b-tab
+        v-if="checkPermission(['create-clients'])"
+        lazy
+      >
+        <template #title>
+          <feather-icon icon="UserPlusIcon" />
+          <span>Client User Registration</span>
+        </template>
+        <client-user-registration />
+      </b-tab>
     </b-tabs>
   </el-card>
 </template>
@@ -31,6 +41,7 @@ import {
 } from 'bootstrap-vue'
 import ClientList from './partials/ClientList.vue'
 import ClientRegistration from './partials/RegisterClient.vue'
+import ClientUserRegistration from './partials/RegisterUserClient.vue'
 import checkPermission from '@/utils/permission'
 
 export default {
@@ -39,6 +50,7 @@ export default {
     BTab,
     ClientList,
     ClientRegistration,
+    ClientUserRegistration,
   },
   methods: {
     checkPermission,

@@ -19,31 +19,31 @@
           class="wizard-vertical mb-3"
           @on-complete="formSubmitted"
         >
-          <!-- personal details tab -->
+          <!-- Admission details tab -->
           <tab-content
-            title="Company Information"
-            :before-change="validationFormInfo"
+            title="User Information"
+            :before-change="validationFormAdministrator"
           >
             <validation-observer
-              ref="infoRules"
+              ref="administratorRules"
               tag="form"
             >
               <b-row>
                 <b-col md="6">
                   <b-form-group
-                    label="Name of Organization"
+                    label="Full Name"
                     label-for="name"
                   >
                     <validation-provider
                       #default="{ errors }"
-                      name="Name of Organization"
+                      name="Full Name"
                       rules="required"
                     >
                       <b-form-input
                         id="name"
                         v-model="form.name"
                         :state="errors.length > 0 ? false:null"
-                        placeholder="Example Company Ltd."
+                        placeholder="Enter Full Name"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -51,19 +51,19 @@
                 </b-col>
                 <b-col md="6">
                   <b-form-group
-                    label="Contact Email"
+                    label="Valid Email"
                     label-for="email"
                   >
                     <validation-provider
                       #default="{ errors }"
-                      name="Contact Email"
-                      rules="required|email"
+                      name="Email"
+                      rules="required"
                     >
                       <b-form-input
                         id="email"
-                        v-model="form.contact_email"
+                        v-model="form.email"
+                        placeholder="Enter Email Address"
                         :state="errors.length > 0 ? false:null"
-                        placeholder="example@domain.com"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -71,19 +71,19 @@
                 </b-col>
                 <b-col md="6">
                   <b-form-group
-                    label="Contact Phone Number"
+                    label="Phone Number"
                     label-for="phone"
                   >
                     <validation-provider
                       #default="{ errors }"
-                      name="Contact Phone Number"
+                      name="Phone Number"
                       rules="required|integer:min:11|integer:max:11"
                     >
                       <b-form-input
                         id="phone"
-                        v-model="form.contact_phone"
+                        v-model="form.phone"
                         :state="errors.length > 0 ? false:null"
-                        placeholder="08012345678"
+                        placeholder="Enter Phone Number"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -91,13 +91,14 @@
                 </b-col>
                 <b-col md="6">
                   <b-form-group
-                    label="Contact Address"
-                    label-for="website"
+                    label="Designation"
+                    label-for="designation"
+                    rules="integer:min:11|integer:max:11"
                   >
                     <b-form-input
-                      id="website"
-                      v-model="form.contact_address"
-                      placeholder="123 Tom Dick and Harry Close, Lagos, Nigeria"
+                      id="phone2"
+                      v-model="form.designation"
+                      placeholder="Your designation at work"
                     />
                   </b-form-group>
                 </b-col>
@@ -149,7 +150,7 @@ export default {
   },
   mixins: [togglePasswordVisibility],
   props: {
-    selectedClient: {
+    selectedClientUser: {
       type: Object,
       default: () => null,
     },
@@ -163,9 +164,9 @@ export default {
       form: {
         id: '',
         name: '',
-        contact_email: '',
-        contact_phone: '',
-        contact_address: '',
+        email: '',
+        phone: '',
+        designation: '',
         required,
       },
       genders: ['Male', 'Female'],
@@ -179,7 +180,7 @@ export default {
   //   },
   // },
   created() {
-    this.setFormProperties(this.selectedClient)
+    this.setFormProperties(this.selectedClientUser)
   },
   methods: {
     setFormProperties(selectedClient) {
@@ -188,7 +189,7 @@ export default {
     },
     formSubmitted() {
       const app = this
-      const registerResource = new Resource('clients/update')
+      const registerResource = new Resource('clients/update-client-user')
       const { form } = app
       app.loader = true
       // const email = form.admin_email

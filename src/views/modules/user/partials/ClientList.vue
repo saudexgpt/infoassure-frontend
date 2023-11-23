@@ -49,13 +49,54 @@
               slot="action"
               slot-scope="{row}"
             >
-              <el-button
-                circle
-                type="primary"
-                @click="sendLoginCredentials(row)"
+              <el-tooltip
+                :content="`Edit ${row.name}'s info`"
+                placement="top"
               >
-                <feather-icon icon="KeyIcon" />
-              </el-button>
+                <el-button
+                  circle
+                  type="primary"
+                  @click="editThisClientUser(row)"
+                >
+                  <feather-icon icon="EditIcon" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip
+                content="Activate Account"
+                placement="top"
+              >
+                <el-button
+                  circle
+                  type="success"
+                  @click="confirmRegistration(row.id, 'admin_confirmation')"
+                >
+                  <feather-icon icon="CheckIcon" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip
+                content="Send login credentials"
+                placement="top"
+              >
+                <el-button
+                  circle
+                  type="warning"
+                  @click="sendLoginCredentials(row)"
+                >
+                  <feather-icon icon="KeyIcon" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip
+                content="Delete User"
+                placement="top"
+              >
+                <el-button
+                  circle
+                  type="danger"
+                  @click="deleteClientUser(row)"
+                >
+                  <feather-icon icon="TrashIcon" />
+                </el-button>
+              </el-tooltip>
             </div>
           </v-client-table>
         </div>
@@ -88,21 +129,19 @@
             >
               <span><feather-icon icon="Edit2Icon" /> Edit</span>
             </b-dropdown-item>
-            <template v-if="checkRole(['super'])">
 
-              <b-dropdown-item
-                v-if="props.row.is_active === 0"
-                @click="toggleClientSuspension(props.row, 1, 'activate')"
-              >
-                <span><feather-icon icon="UnlockIcon" /> Activate</span>
-              </b-dropdown-item>
-              <b-dropdown-item
-                v-if="props.row.is_active === 1"
-                @click="toggleClientSuspension(props.row, 0, 'suspend')"
-              >
-                <span><feather-icon icon="LockIcon" /> Suspend</span>
-              </b-dropdown-item>
-            </template>
+            <b-dropdown-item
+              v-if="checkRole(['super']) && props.row.is_active === 0"
+              @click="toggleClientSuspension(props.row, 1, 'activate')"
+            >
+              <span><feather-icon icon="UnlockIcon" /> Activate</span>
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="checkRole(['super']) && props.row.is_active === 1"
+              @click="toggleClientSuspension(props.row, 0, 'suspend')"
+            >
+              <span><feather-icon icon="LockIcon" /> Suspend</span>
+            </b-dropdown-item>
             <!-- <b-dropdown-item @click="resetPassword(props.row.user)">
               <span><feather-icon icon="UnlockIcon" /> Reset Password</span>
             </b-dropdown-item>
@@ -141,15 +180,21 @@
               style="margin:0 0 20px 20px;"
               type="danger"
               icon="el-icon-back"
-              @click="showEditForm = false"
+              @click="fetchClients(); showEditForm = false"
             >Back</el-button>
           </span>
         </b-col>
       </b-row>
       <hr>
       <edit-client
+        v-if="!editClientUser"
         :selected-client="selectedClient"
-        @update="reloadTable()"
+        @update="fetchClients()"
+      />
+      <edit-client-user
+        v-if="editClientUser"
+        :selected-client-user="selectedClientUser"
+        @update="fetchClients()"
       />
     </div>
   </div>
@@ -164,6 +209,7 @@ import checkPermission from '@/utils/permission'
 import checkRole from '@/utils/role'
 import Pagination from '@/views/components/Pagination-main/index.vue'
 import EditClient from './EditClient.vue'
+import EditClientUser from './EditClientUser.vue'
 import Resource from '@/api/resource'
 
 export default {
@@ -174,6 +220,7 @@ export default {
     BCol,
     Pagination,
     EditClient,
+    EditClientUser,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -182,6 +229,7 @@ export default {
   data() {
     return {
       downloadLoading: false,
+      editClientUser: false,
       isCreateClassSidebarActive: false,
       isEditClassSidebarActive: false,
       pageLength: 10,
@@ -206,7 +254,7 @@ export default {
 
           // id: 'S/N',
         },
-        filterByColumn: true,
+        filterByColumn: false,
         rowAttributesCallback(row) {
           if (row.is_active === 0) {
             return { style: 'background: #d83b3beb; color: #000000' }
@@ -229,6 +277,7 @@ export default {
       clients: [],
       loading: false,
       selectedClient: null,
+      selectedClientUser: null,
       selected_row_index: '',
       query: {
         page: 1,
@@ -248,7 +297,7 @@ export default {
       const { limit, page } = this.query
       app.loading = true
       const fetchStaffResource = new Resource('clients')
-      fetchStaffResource.list()
+      fetchStaffResource.list(this.query)
         .then(response => {
           app.clients = response.clients.data
           app.clients.forEach((element, index) => {
@@ -284,6 +333,24 @@ export default {
         // })
       })
     },
+    confirmRegistration(userId, code) {
+      const app = this
+      const confirmCodeResource = new Resource('auth/confirm-registration')
+      app.loading = true
+      confirmCodeResource.list({ code, user_id: userId })
+        .then(response => {
+          this.$message({
+            type: 'success',
+            message: response,
+          })
+          app.loading = false
+        })
+        .catch(error => {
+          // console.log(error.response)
+          app.$message.error(error.response.data.error)
+          app.loading = false
+        })
+    },
     sendLoginCredentials(user) {
       this.$confirm(`Are you sure you want to send login credentials to ${user.email}
       ?`, 'Confirm Action', {
@@ -308,11 +375,42 @@ export default {
         // })
       })
     },
+    deleteClientUser(user) {
+      this.$confirm(`Are you sure you want to delete ${user.name}
+      ?`, 'Confirm Delete Action', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        type: 'warning',
+      }).then(() => {
+        this.loading = true
+        const deleteStaffResource = new Resource('clients/delete-client-user')
+        deleteStaffResource.destroy(user.id)
+          .then(() => {
+            this.fetchClients()
+            this.$message({
+              type: 'success',
+              message: 'Action Successful',
+            })
+            this.loading = false
+          })
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: 'Delete canceled',
+        // })
+      })
+    },
     editClient(value) {
       // console.log(props)
       const app = this
       app.selectedClient = value
       app.showEditForm = true
+    },
+    editThisClientUser(row) {
+      const app = this
+      app.selectedClientUser = row
+      app.showEditForm = true
+      app.editClientUser = true
     },
     handleDownload(tableTitle, clientsList) {
       this.downloadLoading = true

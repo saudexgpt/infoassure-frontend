@@ -22,7 +22,7 @@
         </b-card-title>
 
         <!-- form -->
-        <validation-observer ref="simpleRules">
+        <validation-observer>
           <b-form
             method="POST"
             class="auth-reset-password-form mt-2"
@@ -38,7 +38,7 @@
                 #default="{ errors }"
                 name="Password"
                 vid="Password"
-                rules="required|password"
+                rules="required|password|min:9"
               >
                 <b-input-group
                   class="input-group-merge"

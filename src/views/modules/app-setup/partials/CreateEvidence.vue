@@ -32,7 +32,7 @@
           <b-row v-loading="loading">
             <b-col cols="12">
               <b-form-group
-                label="Select Consulting Type"
+                label="Select Unit"
                 label-for="v-evidence"
               >
                 <el-select
@@ -103,7 +103,7 @@
               cols="12"
             >
               <b-form-group
-                label="Expected document titles"
+                label="Expected sub-document titles"
                 label-for="v-sub_document_titles"
               >
                 <b-form-input

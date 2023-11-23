@@ -8,42 +8,68 @@
         lg="12"
         class="align-items-center auth-bg px-2 p-lg-2"
       >
+        <div
+          class="mb-1 font-weight-bold"
+          title-tag="h2"
+        >
+          <h4>Kindly fill the form below to register a user</h4>
+        </div>
         <form-wizard
-          color="#7367F0"
+          color="#000000"
           :title="null"
           :subtitle="null"
           shape="circle"
           step-size="xs"
-          finish-button-text="Submit"
+          finish-button-text="Submit User"
           back-button-text="Previous"
           class="wizard-vertical mb-3"
-          @on-complete="formSubmitted"
+          @on-complete="submitClientUser"
         >
-          <!-- personal details tab -->
+          <!-- Admission details tab -->
           <tab-content
-            title="Company Information"
-            :before-change="validationFormInfo"
+            title="User Information"
+            :before-change="validationFormAdministrator"
           >
             <validation-observer
-              ref="infoRules"
+              ref="administratorRules"
               tag="form"
             >
               <b-row>
+                <b-col md="12">
+                  <b-form-group
+                    label="Select Company"
+                    label-for="client_id"
+                  >
+                    <el-select
+                      v-model="clientUserform.client_id"
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="(client, index) in clients"
+                        :key="index"
+                        :value="client.id"
+                        :label="client.name"
+                      />
+                    </el-select>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+              <b-row>
                 <b-col md="6">
                   <b-form-group
-                    label="Name of Organization"
-                    label-for="name"
+                    label="First Name"
+                    label-for="first_name"
                   >
                     <validation-provider
                       #default="{ errors }"
-                      name="Name of Organization"
+                      name="First Name"
                       rules="required"
                     >
                       <b-form-input
-                        id="name"
-                        v-model="form.name"
+                        id="first_name"
+                        v-model="clientUserform.admin_first_name"
                         :state="errors.length > 0 ? false:null"
-                        placeholder="Example Company Ltd."
+                        placeholder="Enter First Name"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -51,39 +77,60 @@
                 </b-col>
                 <b-col md="6">
                   <b-form-group
-                    label="Contact Email"
+                    label="Last Name"
+                    label-for="last_name"
+                  >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Last Name"
+                      rules="required"
+                    >
+                      <b-form-input
+                        id="last_name"
+                        v-model="clientUserform.admin_last_name"
+                        :state="errors.length > 0 ? false:null"
+                        placeholder="Enter Last Name"
+                      />
+                      <small class="text-danger">{{ errors[0] }}</small>
+                    </validation-provider>
+                  </b-form-group>
+                </b-col>
+                <b-col md="6">
+                  <b-form-group
+                    label="Valid Email"
                     label-for="email"
                   >
                     <validation-provider
                       #default="{ errors }"
-                      name="Contact Email"
-                      rules="required|email"
+                      name="Email"
+                      rules="required"
                     >
                       <b-form-input
                         id="email"
-                        v-model="form.contact_email"
+                        v-model="clientUserform.admin_email"
+                        placeholder="Enter Email Address"
                         :state="errors.length > 0 ? false:null"
-                        placeholder="example@domain.com"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
+                      <small class="text-primary"><strong>On successful registration a notification will be sent to this e-mail</strong></small>
                     </validation-provider>
                   </b-form-group>
                 </b-col>
                 <b-col md="6">
                   <b-form-group
-                    label="Contact Phone Number"
+                    label="Phone Number"
                     label-for="phone"
                   >
                     <validation-provider
                       #default="{ errors }"
-                      name="Contact Phone Number"
+                      name="Phone Number"
                       rules="required|integer:min:11|integer:max:11"
                     >
                       <b-form-input
                         id="phone"
-                        v-model="form.contact_phone"
+                        v-model="clientUserform.admin_phone"
                         :state="errors.length > 0 ? false:null"
-                        placeholder="08012345678"
+                        placeholder="Enter Phone Number"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -91,13 +138,14 @@
                 </b-col>
                 <b-col md="6">
                   <b-form-group
-                    label="Contact Address"
-                    label-for="website"
+                    label="Designation"
+                    label-for="designation"
+                    rules="integer:min:11|integer:max:11"
                   >
                     <b-form-input
-                      id="website"
-                      v-model="form.contact_address"
-                      placeholder="123 Tom Dick and Harry Close, Lagos, Nigeria"
+                      id="phone2"
+                      v-model="clientUserform.designation"
+                      placeholder="Your designation at work"
                     />
                   </b-form-group>
                 </b-col>
@@ -148,24 +196,29 @@ export default {
     ToastificationContent,
   },
   mixins: [togglePasswordVisibility],
-  props: {
-    selectedClient: {
-      type: Object,
-      default: () => null,
-    },
-  },
   data() {
     const maxDate = new Date()
     return {
       max: maxDate,
       selectedContry: '',
       selectedLanguage: '',
-      form: {
-        id: '',
-        name: '',
-        contact_email: '',
-        contact_phone: '',
-        contact_address: '',
+      clients: [],
+      clientUserform: {
+        client_id: '',
+        admin_first_name: '',
+        admin_last_name: '',
+        admin_email: '',
+        admin_phone: '',
+        designation: '',
+        required,
+      },
+      empty_clientUserform: {
+        client_id: '',
+        admin_first_name: '',
+        admin_last_name: '',
+        admin_email: '',
+        admin_phone: '',
+        designation: '',
         required,
       },
       genders: ['Male', 'Female'],
@@ -179,37 +232,35 @@ export default {
   //   },
   // },
   created() {
-    this.setFormProperties(this.selectedClient)
+    this.fetchClients()
   },
   methods: {
-    setFormProperties(selectedClient) {
+    fetchClients() {
       const app = this
-      app.form = selectedClient
+      const fetchClientResource = new Resource('clients')
+      fetchClientResource.list({ option: 'all' })
+        .then(response => {
+          app.clients = response.clients
+        })
     },
-    formSubmitted() {
+    submitClientUser() {
       const app = this
-      const registerResource = new Resource('clients/update')
-      const { form } = app
+      const registerResource = new Resource('clients/register-client-user')
+      const { clientUserform } = app
       app.loader = true
       // const email = form.admin_email
-      registerResource.update(form.id, form)
+      registerResource.store(clientUserform)
         .then(() => {
+          app.clientUserform = app.empty_clientUserform
           app.loader = false
           app.$toast({
             component: ToastificationContent,
             props: {
-              title: 'Client\'s information updated',
+              title: 'Client User Registration Successful',
               icon: 'CheckIcon',
               variant: 'success',
             },
           })
-
-          // app.$alert(`A confirmation link has been sent to ${email}. Kindly check your mail and click on the link to complete your registration.`)
-          // app.$alert(`<strong>A confirmation link has been sent to ${email}.</strong><br>Kindly check your mail and click on the link to complete your registration.`, 'Confirmation Link Sent', {
-          //   dangerouslyUseHTMLString: true,
-          // })
-          // this.$router.push({ path: '/login' })
-          // send mail
         }).catch(error => {
           console.log(error)
           app.$toast({
@@ -227,17 +278,6 @@ export default {
     validationFormAdministrator() {
       return new Promise((resolve, reject) => {
         this.$refs.administratorRules.validate().then(success => {
-          if (success) {
-            resolve(true)
-          } else {
-            reject()
-          }
-        })
-      })
-    },
-    validationFormInfo() {
-      return new Promise((resolve, reject) => {
-        this.$refs.infoRules.validate().then(success => {
           if (success) {
             resolve(true)
           } else {

@@ -68,7 +68,7 @@
       </component>
     </transition>
     <!--/ Content -->
-
+    <idle-modal v-if="isIdle" />
     <!-- Footer -->
     <footer
       class="footer footer-light"
@@ -96,9 +96,11 @@ import LayoutContentRendererLeftDetached from '@core/layouts/components/layout-c
 import VerticalNavMenu from './components/vertical-nav-menu/VerticalNavMenu.vue'
 import useVerticalLayout from './useVerticalLayout'
 import mixinVerticalLayout from './mixinVerticalLayout'
+import IdleModal from '@/views/IdleModal.vue'
 
 export default {
   components: {
+    IdleModal,
     // AppBreadcrumb,
     AppNavbarVerticalLayout,
     AppFooter,
@@ -110,6 +112,9 @@ export default {
   },
   mixins: [mixinVerticalLayout],
   computed: {
+    isIdle() {
+      return this.$store.state.idleVue.isIdle
+    },
     layoutContentRenderer() {
       const rendererType = this.$route.meta.contentRenderer
       if (rendererType === 'sidebar-left') return 'layout-content-renderer-left'

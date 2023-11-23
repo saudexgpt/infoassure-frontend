@@ -59,6 +59,7 @@
         />
       </b-tab>
       <b-tab
+        v-if="selectedProject.allow_document_uploads === 1"
         title="DOCUMENTS"
         lazy
       >
@@ -69,7 +70,7 @@
         />
       </b-tab>
       <b-tab
-        title="EXCEPTIONS"
+        title="EXCLUSIONS"
         lazy
       >
         <exceptions
@@ -79,10 +80,22 @@
         />
       </b-tab>
       <b-tab
+        v-if="isAdmin"
         title="CERTIFICATE"
         lazy
       >
         <certificate
+          :selected-project="selectedProject"
+          :is-admin="isAdmin"
+          @reloadAnalytics="fetchAnalystics"
+        />
+      </b-tab>
+      <b-tab
+        v-if="isAdmin"
+        title="REPORTS"
+        lazy
+      >
+        <reports
           :selected-project="selectedProject"
           :is-admin="isAdmin"
           @reloadAnalytics="fetchAnalystics"
@@ -99,6 +112,7 @@ import Documents from './Documents.vue'
 import AuditQuestions from './AuditQuestions.vue'
 import Exceptions from './Exceptions.vue'
 import Certificate from './Certificate.vue'
+import Reports from './Reports.vue'
 import Resource from '@/api/resource'
 
 export default {
@@ -113,6 +127,7 @@ export default {
     AuditQuestions,
     Exceptions,
     Certificate,
+    Reports,
   },
   props: {
     selectedProject: {
@@ -146,7 +161,7 @@ export default {
           color: 'primary', icon: 'UploadIcon', statistic: app.dashboardData.expected_documents, title: 'Expected Documents', title2: 'Uploaded Documents', statistic2: app.dashboardData.uploaded_documents, footer: true,
         },
         {
-          color: 'danger', icon: 'AlertCircleIcon', statistic: app.dashboardData.exceptions, title: 'Exceptions',
+          color: 'danger', icon: 'AlertCircleIcon', statistic: app.dashboardData.exceptions, title: 'EXCLUSIONS',
         },
       ]
       app.statistics = data

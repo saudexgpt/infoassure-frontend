@@ -28,7 +28,49 @@
       </b-row>
     </div>
     <!-- table -->
-
+    <el-row :gutter="10">
+      <el-col :lg="8">
+        <el-select
+          v-model="selectedConsulting"
+          value-key="id"
+          style="width: 100%"
+          placeholder="Select Unit"
+          @input="setStandards()"
+        >
+          <el-option
+            v-for="(consulting, index) in consultings"
+            :key="index"
+            :value="consulting"
+            :label="consulting.name"
+          />
+        </el-select>
+      </el-col>
+      <el-col :lg="8">
+        <el-select
+          v-model="form.standard_id"
+          style="width: 100%"
+          placeholder="Select Standard"
+          filterable
+          @input="fetchEvidence()"
+        >
+          <el-option
+            v-for="(standard, index) in standards"
+            :key="index"
+            :value="standard.id"
+            :label="standard.name"
+          />
+        </el-select>
+      </el-col>
+      <!-- <el-col :lg="6">
+        <el-button
+          type="primary"
+          :disabled="form.standard_id === ''"
+          @click="fetchEvidence()"
+        >
+          Fetch
+        </el-button>
+      </el-col> -->
+    </el-row>
     <v-client-table
       v-model="evidence"
       v-loading="loading"
@@ -172,16 +214,26 @@ export default {
       consultings: [],
       editable_row: '',
       selected_row_index: '',
+      selectedConsulting: '',
+      standards: [],
+      form: {
+        standard_id: '',
+      },
     }
   },
   created() {
-    this.fetchEvidence()
+    // this.fetchEvidence()
     this.fetchConsultings()
   },
   methods: {
     checkPermission,
     splitStringToArray(str) {
       return str.split('|')
+    },
+    setStandards() {
+      const app = this
+      app.form.standard_id = ''
+      app.standards = app.selectedConsulting.standards
     },
     fetchConsultings() {
       const app = this
@@ -197,7 +249,7 @@ export default {
       const app = this
       app.loading = true
       const fetchEvidenceResource = new Resource('evidence')
-      fetchEvidenceResource.list()
+      fetchEvidenceResource.list(app.form)
         .then(response => {
           app.evidence = response.evidence
           app.loading = false

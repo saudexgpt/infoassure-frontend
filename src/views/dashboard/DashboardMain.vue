@@ -25,7 +25,11 @@ export default {
     ]),
   },
   created() {
-    if (this.userData.roles.includes('super') || this.userData.roles.includes('admin')) {
+    // if (this.userData.roles.includes('super') || this.userData.roles.includes('admin') || this.userData.roles.includes('user')) {
+    //   this.currentRole = 'AdminDashboard'
+    // }
+
+    if (!this.userData.roles.includes('client')) {
       this.currentRole = 'AdminDashboard'
     }
   },

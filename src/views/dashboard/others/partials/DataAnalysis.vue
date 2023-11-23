@@ -13,14 +13,23 @@
           <span class="pull-right">
             <b-button
               variant="gradient-danger"
-              size="sm"
+              class="btn-icon rounded-circle"
               @click="showManageProject = false"
             >
               <feather-icon
                 icon="ArrowLeftIcon"
-                class="mr-50"
               />
-              <span class="align-middle">Back</span>
+            </b-button>
+            &nbsp;
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="gradient-primary"
+              class="btn-icon rounded-circle"
+              @click="reload()"
+            >
+              <feather-icon
+                icon="RefreshCwIcon"
+              />
             </b-button>
           </span>
         </b-col>
@@ -28,7 +37,9 @@
       </b-row>
     </div>
 
-    <manage-project :selected-project="selected_project" />
+    <client-project-details
+      :selected-project="selected_project"
+    />
   </div>
   <div v-else>
     <div v-if="statistics.length > 0">
@@ -144,6 +155,10 @@
                   @input="fetchAnalystics()"
                 >
                   <el-option
+                    :value="{id: 'all', name: 'All Projects'}"
+                    label="All Projects"
+                  />
+                  <el-option
                     v-for="(project, index) in projects"
                     :key="index"
                     :value="project"
@@ -151,7 +166,7 @@
                   />
                 </el-select>
               </span>
-              <h4>{{ selectedProject.standard.name }} Progress Overview</h4>
+              <h4>{{ (selectedProject.id !== 'all') ? selectedProject.standard.name : selectedProject.name }} Progress Overview</h4>
               <br>
               <br>
             </div>
@@ -230,7 +245,7 @@
                     </b-media-aside>
                     <b-media-body>
                       <h6 class="transaction-title">
-                        Exceptions
+                        Exclusions
                       </h6>
                       <h3>{{ analyticsData.exceptions }}</h3>
                     </b-media-body>
@@ -240,16 +255,29 @@
               <b-col :lg="6">
                 <b-card class="text-center mx-0">
                   <el-progress
+                    v-if="selectedProject.id !== 'all'"
                     type="dashboard"
-                    :percentage="selectedProject.progress"
+                    :percentage="parseInt(selectedProject.progress)"
                     :stroke-width="20"
                     :width="200"
                     :color="customColorMethod"
-                  /><br>
+                  />
+                  <el-progress
+                    v-else
+                    type="dashboard"
+                    :percentage="parseInt(analyticsData.project_progress)"
+                    :stroke-width="20"
+                    :width="200"
+                    :color="customColorMethod"
+                  />
+                  <br>
                   <div style="margin-top: -70px; margin-bottom: 70px">
-                    <strong>Completed Task</strong>
+                    <strong>Completion</strong>
                   </div>
-                  <b-row class="text-center mx-0">
+                  <b-row
+                    v-if="selectedProject.id !== 'all'"
+                    class="text-center mx-0"
+                  >
                     <b-col
                       cols="6"
                       class="border-top border-right d-flex align-items-between flex-column py-1"
@@ -258,7 +286,7 @@
                         Start Date
                       </b-card-text>
                       <h3 class="font-weight-bolder mb-0">
-                        {{ moment(selectedProject.start_date).format('ll') }}
+                        {{ (selectedProject.start_date !== null) ? moment(selectedProject.start_date).format('ll') : 'Not Set' }}
                       </h3>
                     </b-col>
 
@@ -270,7 +298,7 @@
                         Deadline
                       </b-card-text>
                       <h3 class="font-weight-bolder mb-0">
-                        {{ moment(selectedProject.deadline).format('ll') }}
+                        {{ (selectedProject.deadline !== null) ? moment(selectedProject.deadline).format('ll') : 'Not Set' }}
                       </h3>
                     </b-col>
                   </b-row>
@@ -288,12 +316,12 @@ import moment from 'moment'
 import {
   BCard, BCardHeader, BCardTitle, BCardBody, BAvatar, BRow, BCol, BCardText, BMediaBody, BMedia, BMediaAside, BImg, BButton,
 } from 'bootstrap-vue'
-import ManageProject from '@/views/modules/projects/partials/ManageProject.vue'
+import ClientProjectDetails from '@/views/modules/projects/partials/ClientProjectDetails.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    ManageProject,
+    ClientProjectDetails,
     BCard,
     BCardHeader,
     BCardTitle,
@@ -326,10 +354,10 @@ export default {
         answered_questions: 0,
         all_questions: 0,
         exceptions: 0,
+        project_progress: 0,
       },
       selected_project: '',
       showManageProject: false,
-      load: false,
     }
   },
   computed: {
@@ -342,6 +370,12 @@ export default {
   },
   methods: {
     moment,
+    reload() {
+      this.showManageProject = false
+      setTimeout(() => {
+        this.showManageProject = true
+      }, 1)
+    },
     manageProject(selectedRow) {
       // console.log(props)
       const app = this
@@ -366,7 +400,8 @@ export default {
     },
     calculateProgressPercentage(numerator, denominator) {
       if (denominator > 0) {
-        return (numerator / denominator) * 100
+        // eslint-disable-next-line radix
+        return parseInt((numerator / denominator) * 100)
       }
 
       return 0
@@ -394,7 +429,6 @@ export default {
       const app = this
       const param = {
         project_id: app.selectedProject.id,
-        client_id: app.selectedProject.client_id,
       }
       app.load = true
       const dashboardDataResource = new Resource('reports/client-project-data-analysis')

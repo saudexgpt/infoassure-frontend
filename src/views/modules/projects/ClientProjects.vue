@@ -28,7 +28,7 @@
         <hr>
       </b-row>
     </div>
-    <manage-project
+    <client-project-details
       :selected-project="selected_project"
       :is-admin="true"
     />
@@ -46,7 +46,7 @@
             <b-button
               v-if="checkPermission(['create-client project'])"
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="gradient-primary"
+              variant="gradient-success"
               @click="isCreateProjectSidebarActive = true"
             >
               <feather-icon
@@ -64,8 +64,8 @@
       <el-row :gutter="10">
         <el-col
           :xs="24"
-          :sm="12"
-          :md="12"
+          :sm="10"
+          :md="10"
         >
           <el-select
             v-model="selectedClient"
@@ -82,6 +82,42 @@
             />
           </el-select>
         </el-col>
+        <el-col
+          v-if="clientUsers.length > 0 && projects.length > 0"
+          :xs="24"
+          :sm="6"
+          :md="6"
+        >
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            variant="gradient-danger"
+            @click="showAssignModal = true"
+          >
+            <feather-icon
+              icon="UsersIcon"
+              class="mr-50"
+            />
+            <span class="align-middle">Assign Project To Client</span>
+          </b-button>
+        </el-col>
+        <el-col
+          v-if="projects.length > 0"
+          :xs="24"
+          :sm="8"
+          :md="8"
+        >
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            variant="gradient-dark"
+            @click="showAssignConsultantModal = true"
+          >
+            <feather-icon
+              icon="UsersIcon"
+              class="mr-50"
+            />
+            <span class="align-middle">Assign Projects To Consultant</span>
+          </b-button>
+        </el-col>
       </el-row>
     </aside>
     <v-client-table
@@ -90,24 +126,51 @@
       :columns="columns"
       :options="options"
     >
+
+      <div
+        slot="allow_document_uploads"
+        slot-scope="{row}"
+      >
+        <select
+          v-model="row.allow_document_uploads"
+          @change="changeDocumentUploadRestriction(row, $event, 'allow_document_uploads')"
+        >
+          <option
+            :value="0"
+            label="Disabled"
+          />
+          <option
+            :value="1"
+            label="Enabled"
+          />
+        </select>
+      </div>
+      <div
+        slot="assigned_staff"
+        slot-scope="{row}"
+      >
+        <span
+          v-for="(user, staff_index) in row.users"
+          :key="staff_index"
+        >{{ user.name }}<br></span>
+      </div>
       <div
         slot="is_completed"
         slot-scope="props"
       >
-        <el-select
+        <select
           v-model="props.row.is_completed"
-          style="width: 100%"
-          @input="toggleProjectCompletion(props.row, $event)"
+          @input="toggleProjectCompletion(props.row, $event, 'is_completed')"
         >
-          <el-option
+          <option
             :value="0"
             label="In Progress"
           />
-          <el-option
+          <option
             :value="1"
             label="Completed"
           />
-        </el-select>
+        </select>
       </div>
       <div
         slot="start_date"
@@ -171,6 +234,18 @@
         slot-scope="props"
       >
         <el-tooltip
+          :content="`Setup project plan`"
+          placement="top"
+        >
+          <b-button
+            variant="gradient-success"
+            class="btn-icon rounded-circle"
+            @click="setupProjectPlan(props.row)"
+          >
+            <feather-icon icon="LayersIcon" />
+          </b-button>
+        </el-tooltip>
+        <el-tooltip
           :content="`View details of ${props.row.standard.name}`"
           placement="top"
         >
@@ -192,6 +267,128 @@
         </b-button>
       </div>
     </v-client-table>
+    <b-modal
+      v-model="showAssignModal"
+      hide-footer
+      centered
+      title="Fill the form to assign projects"
+    >
+      <el-row
+        v-loading="loading"
+        :gutter="20"
+      >
+
+        <el-col :xs="24">
+          <el-select
+            v-model="form.projectId"
+            placeholder="Select Project"
+            filterable
+            style="width: 100%;"
+          >
+            <el-option
+              v-for="(project, project_index) in projects"
+              :key="project_index"
+              :value="project.id"
+              :label="project.standard.name"
+            />
+          </el-select>
+          <br>
+          <br>
+        </el-col>
+        <el-col :xs="24">
+          <el-select
+            v-model="form.userIds"
+            placeholder="Select Company Staff"
+            multiple
+            filterable
+            style="width: 100%;"
+          >
+            <el-option
+              v-for="(user, user_index) in clientUsers"
+              :key="user_index"
+              :value="user.id"
+              :label="user.name"
+            />
+          </el-select>
+          <hr>
+        </el-col>
+        <el-col :xs="24">
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            variant="gradient-success"
+            @click="submitProjectAssignment()"
+          >
+            <feather-icon
+              icon="SaveIcon"
+              class="mr-50"
+            />
+            <span class="align-middle">Save</span>
+          </b-button>
+        </el-col>
+      </el-row>
+
+    </b-modal>
+    <b-modal
+      v-model="showAssignConsultantModal"
+      hide-footer
+      centered
+      title="Fill the form to assign projects to consultants"
+    >
+      <el-row
+        v-loading="loading"
+        :gutter="20"
+      >
+
+        <el-col :xs="24">
+          <el-select
+            v-model="consultantForm.projectIds"
+            placeholder="Select Projects"
+            multiple
+            filterable
+            style="width: 100%;"
+          >
+            <el-option
+              v-for="(project, project_index) in projects"
+              :key="project_index"
+              :value="project.id"
+              :label="project.standard.name"
+            />
+          </el-select>
+          <br>
+          <br>
+        </el-col>
+        <el-col :xs="24">
+          <el-select
+            v-model="consultantForm.userId"
+            placeholder="Select Consultant"
+            filterable
+            style="width: 100%;"
+          >
+            <el-option
+              v-for="(user, user_index) in staff"
+              :key="user_index"
+              :value="user.id"
+              :label="user.name"
+            />
+          </el-select>
+          <hr>
+        </el-col>
+        <el-col :xs="24">
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            variant="gradient-success"
+            @click="assignProjectsToConsultant()"
+          >
+            <feather-icon
+              icon="SaveIcon"
+              class="mr-50"
+            />
+            <span class="align-middle">Save</span>
+          </b-button>
+        </el-col>
+      </el-row>
+
+    </b-modal>
     <add-project
       v-if="isCreateProjectSidebarActive"
       v-model="isCreateProjectSidebarActive"
@@ -203,22 +400,23 @@
 
 <script>
 import {
-  BButton, BRow, BCol,
+  BButton, BRow, BCol, BModal,
 } from 'bootstrap-vue'
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
 import AddProject from './partials/AddProject.vue'
-import ManageProject from './partials/ManageProject.vue'
+import ClientProjectDetails from './partials/ClientProjectDetails.vue'
 
 export default {
   components: {
     AddProject,
-    ManageProject,
+    ClientProjectDetails,
     BButton,
     BRow,
     BCol,
+    BModal,
   },
   directives: {
     Ripple,
@@ -241,7 +439,9 @@ export default {
       dir: false,
       columns: [
         'action',
+        'assigned_staff',
         'standard.name',
+        'allow_document_uploads',
         'progress',
         // 'id',
         'start_date',
@@ -249,10 +449,11 @@ export default {
         'date_completed',
         'is_completed',
       ],
-
       options: {
         headings: {
           'standard.name': 'Project',
+          allow_document_uploads: 'Can Upload Documents',
+          assigned_staff: 'Assigned Staff',
           is_completed: 'Completion',
         },
         pagination: {
@@ -274,14 +475,27 @@ export default {
       },
       projects: [],
       clients: [],
+      staff: [],
+      clientUsers: [],
       searchTerm: '',
       selected_project: '',
       showManageProject: false,
       selectedClient: null,
+      showAssignModal: false,
+      showAssignConsultantModal: false,
+      consultantForm: {
+        projectIds: '',
+        userId: [],
+      },
+      form: {
+        projectId: '',
+        userIds: [],
+      },
     }
   },
   created() {
     this.fetchClients()
+    this.fetchStaff()
   },
   methods: {
     checkPermission,
@@ -308,15 +522,78 @@ export default {
           app.clients = response.clients
         })
     },
+    fetchStaff() {
+      const app = this
+      const fetchUsersResource = new Resource('users/fetch-staff')
+      fetchUsersResource.list()
+        .then(response => {
+          app.staff = response.staff
+        })
+    },
     fetchProjects() {
       const app = this
+      app.form.projectId = ''
       app.loading = true
       const fetchProjectsResource = new Resource('projects/client-projects')
       fetchProjectsResource.list({ client_id: app.selectedClient.id })
         .then(response => {
-          app.projects = response.projects // .data
+          app.projects = response.projects
+          app.clientUsers = response.users// .data
           app.loading = false
-        })
+        }).catch(() => { app.loading = false })
+    },
+    setupProjectPlan(project) {
+      const app = this
+      const params = {
+        client_id: project.client_id,
+        project_id: project.id,
+        standard_id: project.standard_id,
+      }
+      // eslint-disable-next-line no-alert
+      if (window.confirm(`Click OK to confirm plan setup for ${project.standard.name}`)) {
+        app.loading = true
+        const assignProjectsResource = new Resource('project-plans/store-client-project-plan')
+        assignProjectsResource.store(params)
+          .then(() => {
+            app.fetchProjects()
+            app.loading = false
+          }).catch(() => { app.loading = false })
+      }
+    },
+    submitProjectAssignment() {
+      const app = this
+      // app.showAssignModal = false
+      app.loading = true
+      const assignProjectsResource = new Resource('projects/assign-to-user')
+      assignProjectsResource.update(app.form.projectId, { user_ids: app.form.userIds })
+        .then(() => {
+          app.fetchProjects()
+          app.loading = false
+        }).catch(() => { app.loading = false })
+    },
+    assignProjectsToConsultant() {
+      const app = this
+      // app.showAssignModal = false
+      app.loading = true
+      const assignProjectsResource = new Resource('projects/assign-projects-to-consultant')
+      assignProjectsResource.store({ project_ids: app.consultantForm.projectIds, user_id: app.consultantForm.userId })
+        .then(() => {
+          app.$message('Action Successful')
+          app.fetchProjects()
+          app.loading = false
+        }).catch(() => { app.loading = false })
+    },
+    unassignProjectFromConsultants(projectId, userId) {
+      const app = this
+      // app.showAssignModal = false
+      app.loading = true
+      const unassignProjectsResource = new Resource('projects/unassign-project-from-consultant')
+      unassignProjectsResource.store({ project_id: projectId, user_id: userId })
+        .then(() => {
+          app.$message('Action Successful')
+          app.fetchProjects()
+          app.loading = false
+        }).catch(() => { app.loading = false })
     },
     updateTable() {
       const app = this
@@ -333,31 +610,47 @@ export default {
       const app = this
       const param = { field, date: event }
       // eslint-disable-next-line no-alert
-      if (window.confirm(`The ${field} will be set to ${event}. Click OK to continue`)) {
-        app.loading = true
-        const setDatesResource = new Resource('projects/set-dates')
+      // if (window.confirm(`The ${field} will be set to ${event}. Click OK to continue`)) {
+      // app.loading = true
+      const setDatesResource = new Resource('projects/set-dates')
+      setDatesResource.update(project.id, param)
+        .then(() => {
+          app.$message('Action Successful')
+          // app.fetchProjects()
+          // app.loading = false
+        }).catch(() => { app.loading = false })
+      // }
+    },
+    changeDocumentUploadRestriction(project, event, field) {
+      const app = this
+      const { value } = event.target
+      const param = { value, field }
+      // eslint-disable-next-line no-alert
+      if (window.confirm('Click OK to confirm')) {
+        // app.loading = true
+        const setDatesResource = new Resource('projects/update-random-fields')
         setDatesResource.update(project.id, param)
           .then(() => {
-            app.$message('Action Successfull')
+            app.$message('Action Successful')
             app.fetchProjects()
-            app.loading = false
-          })
+            // app.loading = false
+          }).catch(() => { app.loading = false })
       }
     },
-    toggleProjectCompletion(project, value) {
+    toggleProjectCompletion(project, event, field) {
       const app = this
-      const param = { value }
-      const completedVal = (value === 1) ? 'Completed' : 'In Progress'
+      const { value } = event.target
+      const param = { value, field }
       // eslint-disable-next-line no-alert
-      if (window.confirm(`The ${project.standard.name} will be marked as ${completedVal}. Click OK to continue`)) {
-        app.loading = true
-        const setDatesResource = new Resource('projects/toggle-completion')
+      if (window.confirm('Click OK to confirm')) {
+        // app.loading = true
+        const setDatesResource = new Resource('projects/update-random-fields')
         setDatesResource.update(project.id, param)
           .then(() => {
-            app.$message('Action Successfull')
+            app.$message('Action Successful')
             app.fetchProjects()
-            app.loading = false
-          })
+            // app.loading = false
+          }).catch(() => { app.loading = false })
       }
     },
     destroyRow(row) {

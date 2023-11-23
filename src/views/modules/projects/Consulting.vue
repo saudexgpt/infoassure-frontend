@@ -30,7 +30,9 @@
           <hr>
         </b-row>
       </div>
-      <manage-project :selected-project="selected_project" />
+      <client-project-details
+        :selected-project="selected_project"
+      />
     </div>
     <div v-else>
       <div slot="header">
@@ -112,12 +114,12 @@ import {
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import AddProject from './partials/AddProject.vue'
-import ManageProject from './partials/ManageProject.vue'
+import ClientProjectDetails from './partials/ClientProjectDetails.vue'
 
 export default {
   components: {
     AddProject,
-    ManageProject,
+    ClientProjectDetails,
     BButton,
     BRow,
     BCol,

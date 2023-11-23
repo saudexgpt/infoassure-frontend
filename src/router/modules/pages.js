@@ -12,12 +12,20 @@ export default [
       roles: ['client'],
     },
   },
+  // {
+  //   path: '/client-projects',
+  //   name: 'client-projects',
+  //   component: () => import('@/views/modules/projects/ClientProjects.vue'),
+  //   meta: {
+  //     permissions: ['read-client project'],
+  //   },
+  // },
   {
-    path: '/client-projects',
-    name: 'client-projects',
-    component: () => import('@/views/modules/projects/ClientProjects.vue'),
+    path: '/manage-projects',
+    name: 'manage-projects',
+    component: () => import('@/views/modules/projects/ManageProjects.vue'),
     meta: {
-      permissions: ['read-client project'],
+      permissions: ['manage-projects'],
     },
   },
   {
@@ -62,11 +70,11 @@ export default [
     },
   },
   {
-    path: '/consultings',
-    name: 'consultings',
+    path: '/units',
+    name: 'units',
     component: () => import('@/views/modules/app-setup/Consultings.vue'),
     meta: {
-      permissions: ['read-consulting'],
+      permissions: ['read-unit'],
     },
   },
   // {

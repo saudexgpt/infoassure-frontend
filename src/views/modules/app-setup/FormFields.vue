@@ -29,7 +29,7 @@
       </el-row>
     </div>
     <v-client-table
-      v-if="form_fields.length > 0 && !add_form_field"
+      v-if="!add_form_field"
       v-model="form_fields"
       :columns="columns"
       :options="options"

@@ -93,41 +93,120 @@
       :visible.sync="dialogVisible"
       width="30%"
     >
-      <el-row
+      <div
         v-loading="load"
-        :gutter="10"
       >
-        <el-col :xs="24">
-          <el-input
-            v-model="form.email"
-            disabled
-          />
-          <br><br>
-        </el-col>
-        <el-col :xs="24">
-          <el-input
-            v-model="form.password"
-            placeholder="Enter Old Password"
-            type="password"
-          />
-          <br><br>
-        </el-col>
-        <el-col :xs="24">
-          <el-input
-            v-model="form.new_password"
-            placeholder="Enter New Password"
-            type="password"
-          />
-          <br><br>
-        </el-col>
-        <el-col :xs="24">
-          <el-input
-            v-model="form.confirm_password"
-            placeholder="Confirm New Password"
-            type="password"
-          />
-        </el-col>
-      </el-row>
+        <validation-observer>
+          <b-form
+            v-loading="load"
+            method="POST"
+            class="auth-login-form mt-2"
+            @submit.prevent="updatePassword"
+          >
+            <!-- email -->
+            <b-form-group
+              label-for="login-email"
+            >
+              <b-form-input
+                id="login-email"
+                v-model="form.email"
+                class="round"
+                name="login-email"
+                placeholder="Email"
+                disabled
+              />
+            </b-form-group>
+            <b-form-group
+              label-for="old-password"
+            >
+              <validation-provider
+                #default="{ errors }"
+                name="Old Password"
+                rules="required"
+              >
+                <b-form-input
+                  id="old-password"
+                  v-model="form.password"
+                  class="round"
+                  name="old-password"
+                  placeholder="Enter old password"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+
+            <!-- forgot password -->
+            <b-form-group>
+              <validation-provider
+                #default="{ errors }"
+                name="Password"
+                vid="Password"
+                rules="required|password|min:9"
+              >
+                <b-input-group
+                  class="input-group-merge round"
+                >
+                  <b-form-input
+                    v-model="form.new_password"
+                    class="form-control-merge"
+                    :type="passwordFieldType"
+                    name="login-password"
+                    placeholder="New Password"
+                  />
+                  <b-input-group-append is-text>
+                    <feather-icon
+                      class="cursor-pointer"
+                      :icon="passwordToggleIcon"
+                      @click="togglePasswordVisibility"
+                    />
+                  </b-input-group-append>
+                </b-input-group>
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+
+            <b-form-group>
+              <validation-provider
+                #default="{ errors }"
+                name="Confirm Password"
+                rules="required|confirmed:Password"
+              >
+                <b-input-group
+                  class="input-group-merge round"
+                >
+                  <b-form-input
+                    v-model="form.confirm_password"
+                    class="form-control-merge"
+                    :type="passwordFieldType"
+                    name="login-password"
+                    placeholder="Confirm Password"
+                  />
+                  <b-input-group-append is-text>
+                    <feather-icon
+                      class="cursor-pointer"
+                      :icon="passwordToggleIcon"
+                      @click="togglePasswordVisibility"
+                    />
+                  </b-input-group-append>
+                </b-input-group>
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+            <b-button
+              pill
+              variant="gradient-warning"
+              block
+              @click="updatePassword"
+            >
+              Update Password
+            </b-button>
+            <br>
+            <!-- <a href="/dashboard">
+                I will do that later from my profile
+              </a> -->
+          </b-form>
+        </validation-observer>
+      </div>
       <span
         slot="footer"
         class="dialog-footer"
@@ -136,10 +215,10 @@
           type="danger"
           @click="dialogVisible = false"
         >Cancel</el-button>
-        <el-button
+        <!-- <el-button
           type="success"
           @click="updatePassword()"
-        >Submit</el-button>
+        >Submit</el-button> -->
       </span>
     </el-dialog>
     <upload-photo
@@ -152,8 +231,9 @@
 </template>
 
 <script>
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BButton, BCard,
+  BButton, BCard, BForm, BFormGroup, BInputGroup, BInputGroupAppend, BFormInput,
 } from 'bootstrap-vue'
 import { mapGetters } from 'vuex'
 // import { avatarText } from '@core/utils/filter'
@@ -164,8 +244,15 @@ export default {
   components: {
     BCard,
     BButton,
+    BForm,
+    BFormGroup,
+    BInputGroup,
+    BInputGroupAppend,
+    BFormInput,
     // BAvatar,
     UploadPhoto,
+    ValidationProvider,
+    ValidationObserver,
   },
   props: {
     user: {

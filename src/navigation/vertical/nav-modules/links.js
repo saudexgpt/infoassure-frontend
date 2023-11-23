@@ -15,11 +15,11 @@ export default [
   //   },
   // },
   {
-    title: 'Client Projects',
+    title: 'Manage Projects',
     icon: 'BriefcaseIcon',
-    route: 'client-projects',
+    route: 'manage-projects',
     acl: {
-      permissions: ['read-client project'],
+      permissions: ['manage-projects'],
     },
   },
   {

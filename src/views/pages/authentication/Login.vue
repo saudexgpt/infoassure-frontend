@@ -127,84 +127,102 @@
             </b-form>
             <el-alert
               v-if="reset_password"
-              title="You need to change your password from the default"
+              :title="title"
               type="error"
             />
-            <b-form
-              v-if="reset_password"
-              v-loading="loading"
-              class="auth-login-form mt-2"
-              @submit.prevent="updatePassword"
-            >
-              <!-- email -->
-              <b-form-group
-                label-for="login-email"
+            <validation-observer>
+              <b-form
+                v-if="reset_password"
+                v-loading="loading"
+                method="POST"
+                class="auth-login-form mt-2"
+                @submit.prevent="updatePassword"
               >
-                <b-form-input
-                  id="login-email"
-                  v-model="form.email"
-                  class="round"
-                  name="login-email"
-                  placeholder="Enter username"
-                  disabled
-                />
-              </b-form-group>
-
-              <!-- forgot password -->
-              <b-form-group>
-                <b-input-group
-                  class="input-group-merge round"
+                <!-- email -->
+                <b-form-group
+                  label-for="login-email"
                 >
                   <b-form-input
-                    v-model="form.new_password"
-                    class="form-control-merge"
-                    :type="passwordFieldType"
-                    name="login-password"
-                    placeholder="New Password"
+                    id="login-email"
+                    v-model="form.email"
+                    class="round"
+                    name="login-email"
+                    placeholder="Enter username"
+                    disabled
                   />
-                  <b-input-group-append is-text>
-                    <feather-icon
-                      class="cursor-pointer"
-                      :icon="passwordToggleIcon"
-                      @click="togglePasswordVisibility"
-                    />
-                  </b-input-group-append>
-                </b-input-group>
-              </b-form-group>
+                </b-form-group>
 
-              <b-form-group>
-                <b-input-group
-                  class="input-group-merge round"
+                <!-- forgot password -->
+                <b-form-group>
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Password"
+                    vid="Password"
+                    rules="required|password|min:9"
+                  >
+                    <b-input-group
+                      class="input-group-merge round"
+                    >
+                      <b-form-input
+                        v-model="form.new_password"
+                        class="form-control-merge"
+                        :type="passwordFieldType"
+                        name="login-password"
+                        placeholder="New Password"
+                      />
+                      <b-input-group-append is-text>
+                        <feather-icon
+                          class="cursor-pointer"
+                          :icon="passwordToggleIcon"
+                          @click="togglePasswordVisibility"
+                        />
+                      </b-input-group-append>
+                    </b-input-group>
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+
+                <b-form-group>
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Confirm Password"
+                    rules="required|confirmed:Password"
+                  >
+                    <b-input-group
+                      class="input-group-merge round"
+                    >
+                      <b-form-input
+                        v-model="form.confirm_password"
+                        class="form-control-merge"
+                        :type="passwordFieldType"
+                        name="login-password"
+                        placeholder="Confirm Password"
+                      />
+                      <b-input-group-append is-text>
+                        <feather-icon
+                          class="cursor-pointer"
+                          :icon="passwordToggleIcon"
+                          @click="togglePasswordVisibility"
+                        />
+                      </b-input-group-append>
+                    </b-input-group>
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+                <b-button
+                  pill
+                  variant="gradient-warning"
+                  block
+                  @click="updatePassword"
                 >
-                  <b-form-input
-                    v-model="form.confirm_password"
-                    class="form-control-merge"
-                    :type="passwordFieldType"
-                    name="login-password"
-                    placeholder="Confirm Password"
-                  />
-                  <b-input-group-append is-text>
-                    <feather-icon
-                      class="cursor-pointer"
-                      :icon="passwordToggleIcon"
-                      @click="togglePasswordVisibility"
-                    />
-                  </b-input-group-append>
-                </b-input-group>
-              </b-form-group>
-              <b-button
-                pill
-                variant="gradient-warning"
-                block
-                @click="updatePassword"
-              >
-                Update Password
-              </b-button>
-              <br>
-            <!-- <a href="/dashboard">
-              I will do that later from my profile
-            </a> -->
-            </b-form>
+                  Update Password
+                </b-button>
+                <br>
+              <!-- <a href="/dashboard">
+                I will do that later from my profile
+              </a> -->
+              </b-form>
+            </validation-observer>
           </div>
         </b-col>
       </b-col>
@@ -215,7 +233,7 @@
 
 <script>
 /* eslint-disable global-require */
-// import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
   BRow, BCol, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BCardTitle, BImg, BForm, BButton, BLink, VBTooltip,
 } from 'bootstrap-vue'
@@ -247,12 +265,13 @@ export default {
     BButton,
     ConfirmOTP,
     // BCardText,
-    // ValidationProvider,
-    // ValidationObserver,
+    ValidationProvider,
+    ValidationObserver,
   },
   mixins: [togglePasswordVisibility],
   data() {
     return {
+      title: '',
       status: '',
       password: '',
       userEmail: '',
@@ -267,6 +286,7 @@ export default {
         email: '',
         new_password: '',
         confirm_password: '',
+        message: '',
       },
       password_updated: false,
       confirm_otp: false,
@@ -355,6 +375,13 @@ export default {
             this.reset_password = true
             this.form.email = response.user.email
             this.form.id = response.user.id
+            this.title = response.title
+          } else if (response.message === 'password_due_for_change') {
+            this.reset_password = true
+            this.form.email = response.user.email
+            this.form.id = response.user.id
+            this.title = response.title
+            this.form.message = 'password_due_for_change'
           } else {
             this.$toast({
               component: ToastificationContent,
@@ -389,7 +416,9 @@ export default {
     },
     updatePassword() {
       const app = this
-      if (app.form.confirm_password === app.form.new_password && app.form.new_password !== '') {
+      if (app.form.new_password === app.password) {
+        app.$alert('New password MUST be different from the old one')
+      } else if (app.form.confirm_password === app.form.new_password && app.form.new_password !== '') {
         app.loading = true
         this.$store.dispatch('user/updatePassword', app.form)
           .then(() => {
@@ -399,9 +428,15 @@ export default {
             app.reset_password = false
             app.password = ''
           }).catch(error => {
-            this.$message({
-              message: error.response.data.message,
-              type: 'danger',
+            this.$toast({
+              component: ToastificationContent,
+              position: 'top-right',
+              props: {
+                title: 'Error', // .response.statusText,
+                icon: 'AlertTriangleIcon',
+                variant: 'danger',
+                text: error.response.data.message,
+              },
             })
             app.loading = false
           })

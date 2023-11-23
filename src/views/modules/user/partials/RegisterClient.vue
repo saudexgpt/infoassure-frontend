@@ -111,180 +111,6 @@
               </b-row>
             </validation-observer>
           </tab-content>
-          <!-- Admission details tab -->
-          <tab-content
-            title="User Information"
-            :before-change="validationFormAdministrator"
-          >
-            <validation-observer
-              ref="administratorRules"
-              tag="form"
-            >
-              <b-row>
-                <b-col md="6">
-                  <b-form-group
-                    label="First Name"
-                    label-for="first_name"
-                  >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="First Name"
-                      rules="required"
-                    >
-                      <b-form-input
-                        id="first_name"
-                        v-model="form.admin_first_name"
-                        :state="errors.length > 0 ? false:null"
-                        placeholder="Enter First Name"
-                      />
-                      <small class="text-danger">{{ errors[0] }}</small>
-                    </validation-provider>
-                  </b-form-group>
-                </b-col>
-                <b-col md="6">
-                  <b-form-group
-                    label="Last Name"
-                    label-for="last_name"
-                  >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Last Name"
-                      rules="required"
-                    >
-                      <b-form-input
-                        id="last_name"
-                        v-model="form.admin_last_name"
-                        :state="errors.length > 0 ? false:null"
-                        placeholder="Enter Last Name"
-                      />
-                      <small class="text-danger">{{ errors[0] }}</small>
-                    </validation-provider>
-                  </b-form-group>
-                </b-col>
-                <b-col md="6">
-                  <b-form-group
-                    label="Valid Email"
-                    label-for="email"
-                  >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Email"
-                      rules="required"
-                    >
-                      <b-form-input
-                        id="email"
-                        v-model="form.admin_email"
-                        placeholder="Enter Email Address"
-                        :state="errors.length > 0 ? false:null"
-                      />
-                      <small class="text-danger">{{ errors[0] }}</small>
-                      <small class="text-primary"><strong>On successful registration a notification will be sent to this e-mail</strong></small>
-                    </validation-provider>
-                  </b-form-group>
-                </b-col>
-                <b-col md="6">
-                  <b-form-group
-                    label="Phone Number"
-                    label-for="phone"
-                  >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Phone Number"
-                      rules="required|integer:min:11|integer:max:11"
-                    >
-                      <b-form-input
-                        id="phone"
-                        v-model="form.admin_phone"
-                        :state="errors.length > 0 ? false:null"
-                        placeholder="Enter Phone Number"
-                      />
-                      <small class="text-danger">{{ errors[0] }}</small>
-                    </validation-provider>
-                  </b-form-group>
-                </b-col>
-                <b-col md="6">
-                  <b-form-group
-                    label="Designation"
-                    label-for="designation"
-                    rules="integer:min:11|integer:max:11"
-                  >
-                    <b-form-input
-                      id="phone2"
-                      v-model="form.designation"
-                      placeholder="Your designation at work"
-                    />
-                  </b-form-group>
-                </b-col>
-                <!-- <b-col md="6">
-                  <b-form-group
-                    label="Create Password"
-                    label-for="password"
-                  >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Password"
-                      vid="Password"
-                      rules="required|password"
-                    >
-                      <b-input-group
-                        class="input-group-merge"
-                      >
-                        <b-form-input
-                          id="login-password"
-                          v-model="form.password"
-                          class="form-control-merge"
-                          :type="passwordFieldType"
-                          name="login-password"
-                          placeholder="Create Password"
-                        />
-                        <b-input-group-append is-text>
-                          <feather-icon
-                            class="cursor-pointer"
-                            :icon="passwordToggleIcon"
-                            @click="togglePasswordVisibility"
-                          />
-                        </b-input-group-append>
-                      </b-input-group>
-                      <small class="text-danger">{{ errors[0] }}</small>
-                    </validation-provider>
-                  </b-form-group>
-                </b-col>
-                <b-col md="6">
-                  <b-form-group
-                    label="Confirm Password"
-                    label-for="cpassword"
-                  >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Confirm Password"
-                      rules="required|confirmed:Password"
-                    >
-                      <b-input-group
-                        class="input-group-merge"
-                      >
-                        <b-form-input
-                          id="login-password"
-                          v-model="form.cpassword"
-                          class="form-control-merge"
-                          :type="passwordFieldType"
-                          name="login-password"
-                          placeholder="Confirm Password"
-                        />
-                        <b-input-group-append is-text>
-                          <feather-icon
-                            class="cursor-pointer"
-                            :icon="passwordToggleIcon"
-                            @click="togglePasswordVisibility"
-                          />
-                        </b-input-group-append>
-                      </b-input-group>
-                      <small class="text-danger">{{ errors[0] }}</small>
-                    </validation-provider>
-                  </b-form-group>
-                </b-col> -->
-              </b-row>
-            </validation-observer>
-          </tab-content>
         </form-wizard>
       </b-col>
     <!-- /Login-->
@@ -335,16 +161,12 @@ export default {
       max: maxDate,
       selectedContry: '',
       selectedLanguage: '',
+      clients: [],
       form: {
         organization_name: '',
         contact_email: '',
         contact_phone: '',
         contact_address: '',
-        admin_first_name: '',
-        admin_last_name: '',
-        admin_email: '',
-        admin_phone: '',
-        designation: '',
         required,
       },
       empty_form: {
@@ -352,11 +174,6 @@ export default {
         contact_email: '',
         contact_phone: '',
         contact_address: '',
-        admin_first_name: '',
-        admin_last_name: '',
-        admin_email: '',
-        admin_phone: '',
-        designation: '',
         required,
       },
       genders: ['Male', 'Female'],
@@ -369,8 +186,7 @@ export default {
   //     return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
   //   },
   // },
-  created() {
-  },
+  created() {},
   methods: {
     formSubmitted() {
       const app = this
@@ -379,7 +195,8 @@ export default {
       app.loader = true
       // const email = form.admin_email
       registerResource.store(form)
-        .then(() => {
+        .then(response => {
+          app.clients.push(response.client)
           app.form = app.empty_form
           app.loader = false
           app.$toast({
@@ -410,17 +227,6 @@ export default {
 
           app.loader = false
         })
-    },
-    validationFormAdministrator() {
-      return new Promise((resolve, reject) => {
-        this.$refs.administratorRules.validate().then(success => {
-          if (success) {
-            resolve(true)
-          } else {
-            reject()
-          }
-        })
-      })
     },
     validationFormInfo() {
       return new Promise((resolve, reject) => {

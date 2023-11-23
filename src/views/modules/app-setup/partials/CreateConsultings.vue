@@ -14,7 +14,7 @@
       <template #default="{ hide }">
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
           <h5 class="mb-0">
-            Create Consultings
+            Create Units
           </h5>
           <div>
             <b-button
@@ -34,7 +34,7 @@
             <!-- first name -->
             <b-col cols="12">
               <b-form-group
-                label="Enter Name(s) of Consulting"
+                label="Enter Name(s) of Unit"
                 label-for="v-level_group"
               >
                 <b-form-input
@@ -42,7 +42,7 @@
                   placeholder="example: Process Consulting"
                 />
               </b-form-group><br>
-              <small>You can enter multiple consultings, just separate them with a vertical bar <code>|</code></small>
+              <small>You can enter multiple units, just separate them with a vertical bar <code>|</code></small>
             </b-col>
             <!-- submit and reset -->
             <b-col cols="12">

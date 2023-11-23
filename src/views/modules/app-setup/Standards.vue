@@ -134,7 +134,7 @@ export default {
 
       options: {
         headings: {
-          'consulting.name': 'Consulting Type',
+          'consulting.name': 'Unit',
         },
         pagination: {
           dropdown: true,

@@ -116,9 +116,52 @@
                 label="Type Question"
                 label-for="v-question"
               >
-                <b-form-textarea
+                <!-- <b-form-textarea
                   v-model="form.question"
                   placeholder="Give question for the selected clause here..."
+                /> -->
+                <ckeditor
+                  id="question"
+                  v-model="form.question"
+                  :editor="editor"
+                  placeholder="Type questions for the selected clause here..."
+                  :config="editorConfig"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
+                label="Needs evidence/reference document upload?"
+                label-for="v-upload_evidence"
+              >
+
+                <el-switch
+                  v-model="form.upload_evidence"
+                  style="display: block"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  active-text="Yes"
+                  inactive-text="No"
+                  :active-value="1"
+                  :inactive-value="0"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
+                label="Can have exceptions?"
+                label-for="v-upload_evidence"
+              >
+
+                <el-switch
+                  v-model="form.can_have_exception"
+                  style="display: block"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  active-text="Yes"
+                  inactive-text="No"
+                  :active-value="1"
+                  :inactive-value="0"
                 />
               </b-form-group>
             </b-col>
@@ -143,14 +186,15 @@
 
 <script>
 import {
-  BSidebar, BRow, BCol, BFormGroup, BButton, BFormTextarea,
+  BSidebar, BRow, BCol, BFormGroup, BButton,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    BFormTextarea,
+    // BFormTextarea,
     BSidebar,
     BRow,
     BCol,
@@ -187,12 +231,18 @@ export default {
         question: '',
         question_type: '',
         answer_type: '',
+        upload_evidence: 0,
+        can_have_exception: 1,
       },
       selectedStandard: {},
       clauses: [],
       loading: false,
       error: false,
       error_message: '',
+      editor: ClassicEditor,
+      editorConfig: {
+        // The configuration of the editor.
+      },
     }
   },
   created() {

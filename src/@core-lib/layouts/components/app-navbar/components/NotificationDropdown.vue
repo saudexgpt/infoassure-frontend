@@ -162,7 +162,7 @@ export default {
         key: process.env.VUE_APP_MIX_PUSHER_APP_KEY,
         cluster: process.env.VUE_APP_MIX_PUSHER_APP_CLUSTER,
         encrypted: true,
-        authEndpoint: `${process.env.VUE_APP_MIX_BASE_SERVER_URL}broadcasting/auth`,
+        authEndpoint: `${process.env.VUE_APP_MIX_BASE_SERVER_URL}api/broadcasting/auth`,
         auth: {
           headers: {
             Authorization: `Bearer ${this.$store.getters.token}`,

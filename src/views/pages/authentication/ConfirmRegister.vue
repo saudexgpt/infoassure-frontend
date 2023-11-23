@@ -62,7 +62,7 @@ export default {
       const { code } = app.$route.params
       const confirmCodeResource = new Resource('auth/confirm-registration')
       app.load = true
-      confirmCodeResource.get(code)
+      confirmCodeResource.list({ code })
         .then(response => {
           app.message = response
           app.load = false

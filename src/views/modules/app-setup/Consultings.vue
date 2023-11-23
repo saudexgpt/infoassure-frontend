@@ -5,14 +5,14 @@
         <b-col
           cols="6"
         >
-          <h4>Manage Consultings</h4>
+          <h4>Manage Units</h4>
         </b-col>
         <b-col
           cols="6"
         >
           <span class="pull-right">
             <b-button
-              v-if="checkPermission(['create-consulting'])"
+              v-if="checkPermission(['create-unit'])"
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
               variant="gradient-primary"
               @click="isCreateConsultingSidebarActive = true"
@@ -40,7 +40,7 @@
         slot-scope="props"
       >
         <b-button
-          v-if="checkPermission(['update-consulting'])"
+          v-if="checkPermission(['update-unit'])"
           variant="gradient-warning"
           class="btn-icon rounded-circle"
           @click="editThisRow(props.row)"
@@ -48,7 +48,7 @@
           <feather-icon icon="EditIcon" />
         </b-button>
         <b-button
-          v-if="checkPermission(['delete-consulting'])"
+          v-if="checkPermission(['delete-unit'])"
           variant="gradient-danger"
           class="btn-icon rounded-circle"
           @click="destroyRow(props.row)"

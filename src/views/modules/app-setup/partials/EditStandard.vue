@@ -32,7 +32,7 @@
           <b-row v-loading="loading">
             <b-col cols="12">
               <b-form-group
-                label="Select Consulting Type"
+                label="Select Unit"
                 label-for="v-standard"
               >
                 <el-select

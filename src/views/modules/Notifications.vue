@@ -3,7 +3,6 @@
     <div class="block">
       <legend>{{ title }}</legend>
       <div v-if="notifications.length > 0">
-
         <el-timeline
           v-loading="listLoading"
           style="height: 400px; overflow:auto;"
@@ -25,6 +24,13 @@
       <div v-else>
         <el-empty description="You have no notification" />
       </div>
+      <pagination
+        v-show="total > 0"
+        :total="total"
+        :page.sync="query.page"
+        :limit.sync="query.limit"
+        @pagination="markAsRead"
+      />
     </div>
   </el-card>
 </template>
@@ -32,9 +38,13 @@
 <script>
 import moment from 'moment'
 import Resource from '@/api/resource'
+import Pagination from '@/views/components/Pagination-main/index.vue'
 
 const markNotificationAsRead = new Resource('notification/mark-as-read')
 export default {
+  components: {
+    Pagination,
+  },
   props: {
     title: {
       type: String,
@@ -45,6 +55,11 @@ export default {
     return {
       show_notification: true,
       listLoading: false,
+      query: {
+        page: 1,
+        limit: 10,
+      },
+      total: 0,
     }
   },
   computed: {
@@ -59,10 +74,17 @@ export default {
     moment,
     markAsRead() {
       const app = this
+      const { limit, page } = app.query
       app.listLoading = true
-      markNotificationAsRead.list()
+      markNotificationAsRead.list(this.query)
         .then(response => {
-          app.$store.dispatch('user/setNotifications', response.notifications)
+          const { data } = response.notifications
+          data.forEach((element, index) => {
+            // eslint-disable-next-line dot-notation, no-param-reassign
+            element['index'] = (page - 1) * limit + index + 1
+          })
+          this.total = response.notifications.total
+          app.$store.dispatch('user/setNotifications', data)
           app.$store.dispatch('user/setUnreadNotificationCount', response.unread_notifications)
           this.listLoading = false
         })

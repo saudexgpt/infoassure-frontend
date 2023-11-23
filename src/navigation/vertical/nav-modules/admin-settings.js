@@ -15,10 +15,10 @@ export default [
     },
     children: [
       {
-        title: 'Consulting',
-        route: 'consultings',
+        title: 'Units',
+        route: 'units',
         acl: {
-          permissions: ['read-consulting'],
+          permissions: ['read-unit'],
         },
       },
       {

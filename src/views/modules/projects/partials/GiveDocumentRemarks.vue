@@ -13,8 +13,17 @@
     >
       <template #default="{ hide }">
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
-          <h5 class="mb-0">
-            Create Standards
+          <h5
+            v-if="isAdmin"
+            class="mb-0"
+          >
+            Fill the fields as applicable
+          </h5>
+          <h5
+            v-else
+            class="mb-0"
+          >
+            Consultant's Remarks
           </h5>
           <div>
             <b-button
@@ -28,50 +37,74 @@
             </b-button>
           </div>
         </div>
-        <div class="justify-content-between align-items-center px-2 py-1">
+        <div
+          v-if="isAdmin"
+          class="justify-content-between align-items-center px-2 py-1"
+        >
           <b-row v-loading="loading">
+
             <b-col cols="12">
+              <label>Status</label>
               <b-form-group
-                label="Select Unit"
-                label-for="v-standard"
+                label-for="v-status"
               >
                 <el-select
-                  v-model="form.consulting_id"
-                  style="width: 100%"
+                  v-model="form.status"
+                  placeholder="Select Status"
+                  style="width: 100%;"
+                  @blur="saveRemark('status')"
                 >
                   <el-option
-                    v-for="(consulting, index) in consultings"
+                    v-for="(status, index) in statuses"
                     :key="index"
-                    :value="consulting.id"
-                    :label="consulting.name"
+                    :value="status"
+                    :label="status"
                   />
                 </el-select>
               </b-form-group>
             </b-col>
-            <!-- first name -->
             <b-col cols="12">
+              <label>General Remark</label>
               <b-form-group
-                label="Enter Name(s) of Standard"
-                label-for="v-level_group"
+                label-for="v-remark"
               >
-                <b-form-input
-                  v-model="form.names"
-                  placeholder="example: ISO 27001|ISO 22301|ISO 20000"
+                <el-input
+                  v-model="form.remark"
+                  type="textarea"
+                  placeholder="Type your remark here..."
+                  style="width: 100%;"
+                  @blur="saveRemark('remark')"
                 />
-              </b-form-group><br>
-              <small>You can enter multiple standard names, just separate them with a vertical bar <code>|</code></small>
+              </b-form-group>
             </b-col>
             <!-- submit and reset -->
-            <b-col cols="12">
+            <b-col
+              cols="12"
+            >
               <b-button
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                 type="submit"
                 variant="primary"
                 class="mr-1"
-                @click="submit()"
+                @click="$emit('reload')"
               >
                 Submit
               </b-button>
+            </b-col>
+          </b-row>
+        </div>
+        <div
+          v-else
+          class="justify-content-between align-items-center px-2 py-1"
+        >
+          <b-row v-loading="loading">
+            <b-col cols="12">
+              <label>Status</label>
+              <p>{{ form.status }}</p>
+            </b-col>
+            <b-col cols="12">
+              <label>General Remark</label>
+              <p>{{ form.remark }}</p>
             </b-col>
           </b-row>
         </div>
@@ -82,7 +115,7 @@
 
 <script>
 import {
-  BSidebar, BRow, BCol, BFormGroup, BFormInput, BButton,
+  BSidebar, BRow, BCol, BFormGroup, BButton,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
@@ -93,7 +126,6 @@ export default {
     BRow,
     BCol,
     BFormGroup,
-    BFormInput,
     BButton,
   },
   directives: {
@@ -108,35 +140,39 @@ export default {
       type: Boolean,
       required: true,
     },
-    consultings: {
-      type: Array,
+    document: {
+      type: Object,
       required: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: () => false,
     },
   },
   data() {
     return {
       form: {
-        names: '',
-        consulting_id: '',
+        id: '',
+        status: '',
+        remark: '',
       },
       loading: false,
+      statuses: ['Pending on Client', 'Pending on Consultant', 'Reviewed'],
+      selectedConsulting: {},
     }
   },
+  created() {
+    this.form = this.document
+  },
   methods: {
-    submit() {
+    saveRemark(field) {
       const app = this
-      app.loading = true
-      const saveCurriculumSetupResource = new Resource('standards/save')
-      const param = app.form
-      saveCurriculumSetupResource.store(param)
-        .then(response => {
-          app.loading = false
-          app.$emit('save', response)
-          app.$emit('update:is-create-standard-sidebar-active', false)
-        }).catch(error => {
-          app.loading = false
-          app.$message(error.response.data.error)
-        })
+      const { form } = app
+      // console.log(document[field])
+      const param = { value: form[field], field }
+      const fetchConsultingsResource = new Resource('clauses/remark-on-upload')
+      fetchConsultingsResource.update(form.id, param)
+        .then(() => {})
     },
   },
 }
