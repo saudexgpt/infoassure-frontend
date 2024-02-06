@@ -3,10 +3,10 @@
 
     <router-view />
 
-    <app-customizer
+    <!-- <app-customizer
       v-if="roles.includes('admin')"
       slot="customizer"
-    />
+    /> -->
 
   </layout-vertical>
 </template>
@@ -14,12 +14,12 @@
 <script>
 // import axios from 'axios'
 import LayoutVertical from '@core/layouts/layout-vertical/LayoutVertical.vue'
-import AppCustomizer from '@core/layouts/components/app-customizer/AppCustomizer.vue'
+// import AppCustomizer from '@core/layouts/components/app-customizer/AppCustomizer.vue'
 import { $themeConfig } from '@themeConfig'
 
 export default {
   components: {
-    AppCustomizer,
+    // AppCustomizer,
     LayoutVertical,
   },
   data() {

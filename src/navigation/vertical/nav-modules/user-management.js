@@ -11,35 +11,28 @@ export default [
     // tag: '2',
     // tagVariant: 'light-warning',
     acl: {
-      permissions: ['can manage company staff', 'can manage staff', 'can manage student'],
+      permissions: ['read-partners', 'read-clients', 'read-staff'],
     },
     children: [
       {
-        title: 'Company Staff',
-        route: 'manage-company-staff',
+        title: 'Manage Partners',
+        route: 'manage-partners',
         acl: {
-          permissions: ['can manage company staff'],
+          permissions: ['read-partners'],
         },
       },
       {
-        title: 'Students',
-        route: 'manage-student',
+        title: 'Manage Clients',
+        route: 'manage-clients',
         acl: {
-          permissions: ['can manage student'],
+          permissions: ['read-clients'],
         },
       },
       {
-        title: 'Staff',
+        title: 'Manage Staff',
         route: 'manage-staff',
         acl: {
-          permissions: ['can manage staff'],
-        },
-      },
-      {
-        title: 'Parent',
-        route: 'manage-parent',
-        acl: {
-          permissions: ['can manage student'],
+          permissions: ['read-staff'],
         },
       },
     ],

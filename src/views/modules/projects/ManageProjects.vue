@@ -2,23 +2,31 @@
   <el-card>
     <b-tabs
       content-class="mt-1"
-      pills
     >
-      <b-tab lazy>
+      <b-tab
+        v-if="checkPermission(['manage-project-phases'])"
+        lazy
+      >
         <template #title>
           <feather-icon icon="BarChartIcon" />
           <span>Manage Project Phases</span>
         </template>
         <project-phases />
       </b-tab>
-      <b-tab lazy>
+      <b-tab
+        v-if="checkPermission(['manage-project-plan'])"
+        lazy
+      >
         <template #title>
           <feather-icon icon="LayersIcon" />
           <span>Manage Project Plan</span>
         </template>
         <project-plan />
       </b-tab>
-      <b-tab lazy>
+      <b-tab
+        v-if="checkPermission(['manage-client-projects'])"
+        lazy
+      >
         <template #title>
           <feather-icon icon="ListIcon" />
           <span>Manage Client Projects</span>

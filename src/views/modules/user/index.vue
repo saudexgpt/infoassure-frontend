@@ -17,7 +17,7 @@
       <b-tab v-if="checkPermission(['create-staff'])">
         <template #title>
           <feather-icon icon="UserPlusIcon" />
-          <span>Staff Registration</span>
+          <span>Register Staff</span>
         </template>
         <staff-registration />
       </b-tab>

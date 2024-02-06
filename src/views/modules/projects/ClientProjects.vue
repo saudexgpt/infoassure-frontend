@@ -64,8 +64,8 @@
       <el-row :gutter="10">
         <el-col
           :xs="24"
-          :sm="10"
-          :md="10"
+          :sm="8"
+          :md="8"
         >
           <el-select
             v-model="selectedClient"
@@ -85,8 +85,8 @@
         <el-col
           v-if="clientUsers.length > 0 && projects.length > 0"
           :xs="24"
-          :sm="6"
-          :md="6"
+          :sm="8"
+          :md="8"
         >
           <b-button
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
@@ -97,7 +97,7 @@
               icon="UsersIcon"
               class="mr-50"
             />
-            <span class="align-middle">Assign Project To Client</span>
+            <span class="align-middle">Assign Projects To Personnel</span>
           </b-button>
         </el-col>
         <el-col
@@ -155,6 +155,15 @@
         >{{ user.name }}<br></span>
       </div>
       <div
+        slot="assigned_consultant"
+        slot-scope="{row}"
+      >
+        <span
+          v-for="(user, consultant_index) in row.consultants"
+          :key="consultant_index"
+        >{{ user.name }}<br></span>
+      </div>
+      <div
         slot="is_completed"
         slot-scope="props"
       >
@@ -172,7 +181,7 @@
           />
         </select>
       </div>
-      <div
+      <!-- <div
         slot="start_date"
         slot-scope="props"
       >
@@ -215,7 +224,7 @@
           :picker-options="pickerOptions"
           @input="setDate($event, props.row, 'date_completed')"
         />
-      </div>
+      </div> -->
       <div
         slot="progress"
         slot-scope="{row}"
@@ -234,7 +243,19 @@
         slot-scope="props"
       >
         <el-tooltip
-          :content="`Setup project plan`"
+          :content="`Project Settings`"
+          placement="top"
+        >
+          <b-button
+            variant="gradient-dark"
+            class="btn-icon rounded-circle"
+            @click="showProjectSettings(props.row)"
+          >
+            <feather-icon icon="ToolIcon" />
+          </b-button>
+        </el-tooltip>
+        <el-tooltip
+          :content="`Activate project plan`"
           placement="top"
         >
           <b-button
@@ -368,7 +389,7 @@
               v-for="(user, user_index) in staff"
               :key="user_index"
               :value="user.id"
-              :label="user.name"
+              :label="`${user.name} [${user.designation}]`"
             />
           </el-select>
           <hr>
@@ -395,6 +416,11 @@
       :clients="clients"
       @save="updateTable"
     />
+    <client-project-settings
+      v-if="isProjectSettingSidebarActive"
+      v-model="isProjectSettingSidebarActive"
+      :selected-project="selected_project"
+    />
   </el-card>
 </template>
 
@@ -407,11 +433,13 @@ import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
 import AddProject from './partials/AddProject.vue'
+import ClientProjectSettings from './partials/ClientProjectSettings.vue'
 import ClientProjectDetails from './partials/ClientProjectDetails.vue'
 
 export default {
   components: {
     AddProject,
+    ClientProjectSettings,
     ClientProjectDetails,
     BButton,
     BRow,
@@ -435,26 +463,29 @@ export default {
       },
       loading: false,
       isCreateProjectSidebarActive: false,
+      isProjectSettingSidebarActive: false,
       pageLength: 10,
       dir: false,
       columns: [
-        'action',
         'assigned_staff',
+        'assigned_consultant',
         'standard.name',
-        'allow_document_uploads',
+        // 'allow_document_uploads',
         'progress',
         // 'id',
-        'start_date',
-        'deadline',
-        'date_completed',
+        // 'start_date',
+        // 'deadline',
+        // 'date_completed',
         'is_completed',
+        'action',
       ],
       options: {
         headings: {
           'standard.name': 'Project',
           allow_document_uploads: 'Can Upload Documents',
-          assigned_staff: 'Assigned Staff',
-          is_completed: 'Completion',
+          assigned_staff: 'Assigned Personnel',
+          assigned_consultant: 'Assigned Consultant',
+          is_completed: 'Completion Status',
         },
         pagination: {
           dropdown: true,
@@ -541,6 +572,11 @@ export default {
           app.clientUsers = response.users// .data
           app.loading = false
         }).catch(() => { app.loading = false })
+    },
+    showProjectSettings(project) {
+      const app = this
+      app.selected_project = project
+      app.isProjectSettingSidebarActive = true
     },
     setupProjectPlan(project) {
       const app = this

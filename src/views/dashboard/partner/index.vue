@@ -48,7 +48,7 @@ export default {
     fetchData() {
       const app = this
       app.load = true
-      const adminDashboardResource = new Resource('reports/admin-data-analysis-dashboard')
+      const adminDashboardResource = new Resource('reports/partner-data-analysis-dashboard')
       adminDashboardResource.list()
         .then(response => {
           app.dashboardData = response

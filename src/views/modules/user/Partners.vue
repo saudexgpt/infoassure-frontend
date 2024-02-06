@@ -7,29 +7,29 @@
       <b-tab lazy>
         <template #title>
           <feather-icon icon="ListIcon" />
-          <span>Client List</span>
+          <span>Partner List</span>
         </template>
-        <client-list />
+        <partner-list />
       </b-tab>
       <b-tab
-        v-if="checkPermission(['create-clients'])"
+        v-if="checkPermission(['create-partners'])"
         lazy
       >
         <template #title>
           <feather-icon icon="UserPlusIcon" />
-          <span>Register Clients</span>
+          <span>Register Partner</span>
         </template>
-        <client-registration />
+        <partner-registration />
       </b-tab>
       <b-tab
-        v-if="checkPermission(['create-clients'])"
+        v-if="checkPermission(['create-partners'])"
         lazy
       >
         <template #title>
           <feather-icon icon="UserPlusIcon" />
-          <span>Register Client Users</span>
+          <span>Register Partner Users</span>
         </template>
-        <client-user-registration />
+        <partner-user-registration />
       </b-tab>
     </b-tabs>
   </el-card>
@@ -39,18 +39,18 @@
 import {
   BTabs, BTab,
 } from 'bootstrap-vue'
-import ClientList from './partials/ClientList.vue'
-import ClientRegistration from './partials/RegisterClient.vue'
-import ClientUserRegistration from './partials/RegisterUserClient.vue'
+import PartnerList from './partials/PartnerList.vue'
+import PartnerRegistration from './partials/RegisterPartner.vue'
+import PartnerUserRegistration from './partials/RegisterUserPartner.vue'
 import checkPermission from '@/utils/permission'
 
 export default {
   components: {
     BTabs,
     BTab,
-    ClientList,
-    ClientRegistration,
-    ClientUserRegistration,
+    PartnerList,
+    PartnerRegistration,
+    PartnerUserRegistration,
   },
   methods: {
     checkPermission,

@@ -54,7 +54,7 @@ const eventsHub = new Vue()
 Vue.use(IdleVue, {
   eventEmitter: eventsHub,
   store,
-  idleTime: 90000000, // 900000, // 900 seconds i.e 15 mins
+  idleTime: 900000, // 900 seconds i.e 15 mins
   startAtIdle: false,
 })
 Vue.use(ElementUI, {

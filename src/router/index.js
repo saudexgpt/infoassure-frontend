@@ -32,6 +32,8 @@ import Router from 'vue-router'
  */
 // import apps from './modules/apps'
 import pages from './modules/pages'
+import riskAssessment from './modules/risk-assessment'
+import soa from './modules/soa'
 
 Vue.use(Router)
 export const constantRoutes = [
@@ -143,6 +145,8 @@ export const asyncRoutes = [
   // =============================================================================
   { path: '/', redirect: { name: 'dashboard' } },
   ...pages,
+  ...riskAssessment,
+  ...soa,
   // ...parent,
   {
     path: '*',

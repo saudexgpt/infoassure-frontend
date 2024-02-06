@@ -25,7 +25,7 @@ export default [
     name: 'manage-projects',
     component: () => import('@/views/modules/projects/ManageProjects.vue'),
     meta: {
-      permissions: ['manage-projects'],
+      permissions: ['manage-client-projects', 'manage-project-plan', 'manage-project-phases'],
     },
   },
   {
@@ -115,6 +115,14 @@ export default [
     component: () => import('@/views/modules/user/Clients.vue'),
     meta: {
       permissions: ['read-clients'],
+    },
+  },
+  {
+    path: '/manage-partners',
+    name: 'manage-partners',
+    component: () => import('@/views/modules/user/Partners.vue'),
+    meta: {
+      permissions: ['read-partners'],
     },
   },
   {

@@ -203,7 +203,7 @@ export default {
             consulting_id: '',
             client_id: '',
           }
-          // app.$emit('save', response)
+          app.$emit('save')
           // app.$emit('update:is-create-standard-sidebar-active', false)
         }).catch(error => {
           app.loading = false

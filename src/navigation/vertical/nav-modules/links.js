@@ -19,30 +19,14 @@ export default [
     icon: 'BriefcaseIcon',
     route: 'manage-projects',
     acl: {
-      permissions: ['manage-projects'],
+      permissions: ['manage-client-projects', 'manage-project-plan', 'manage-project-phases'],
     },
   },
-  {
-    title: 'Manage Clients',
-    icon: 'UsersIcon',
-    route: 'manage-clients',
-    acl: {
-      permissions: ['read-clients'],
-    },
-  },
-  {
-    title: 'Manage Staff',
-    icon: 'UsersIcon',
-    route: 'manage-staff',
-    acl: {
-      permissions: ['read-staff'],
-    },
-  },
-  {
-    title: 'Profile',
-    icon: 'UsersIcon',
-    route: 'UserProfile',
-  },
+  // {
+  //   title: 'Profile',
+  //   icon: 'UsersIcon',
+  //   route: 'UserProfile',
+  // },
   // {
   //   title: 'Process Consulting',
   //   icon: 'CpuIcon',
