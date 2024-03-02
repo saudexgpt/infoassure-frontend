@@ -7,14 +7,16 @@ import { asyncRoutes, constantRoutes } from '@/router'
  * @param {String[]} permissions
  * @param route
  */
-function canAccess(roles, permissions, route) {
+function canAccess(roles, permissions, modules, route) {
   if (route.meta) {
     let hasRole = true
     let hasPermission = true
-    if (route.meta.roles || route.meta.permissions) {
+    let hasModule = true
+    if (route.meta.roles || route.meta.permissions || route.meta.modules) {
       // If it has meta.roles or meta.permissions, accessible = hasRole || permission
       hasRole = false
       hasPermission = false
+      hasModule = false
       if (route.meta.roles) {
         hasRole = roles.some(role => route.meta.roles.includes(role))
       }
@@ -22,9 +24,12 @@ function canAccess(roles, permissions, route) {
       if (route.meta.permissions) {
         hasPermission = permissions.some(permission => route.meta.permissions.includes(permission))
       }
+      if (route.meta.modules) {
+        hasModule = modules.some(module => route.meta.modules.includes(module))
+      }
     }
 
-    return hasRole || hasPermission
+    return hasRole || hasPermission || hasModule
   }
 
   // If no meta.roles/meta.permissions inputted - the route should be accessible
@@ -36,17 +41,18 @@ function canAccess(roles, permissions, route) {
  * @param routes asyncRoutes
  * @param roles
  */
-function filterAsyncRoutes(routes, roles, permissions) {
+function filterAsyncRoutes(routes, roles, permissions, modules) {
   const res = []
 
   routes.forEach(route => {
     const tmp = { ...route }
-    if (canAccess(roles, permissions, tmp)) {
+    if (canAccess(roles, permissions, modules, tmp)) {
       if (tmp.children) {
         tmp.children = filterAsyncRoutes(
           tmp.children,
           roles,
           permissions,
+          modules,
         )
       }
       res.push(tmp)
@@ -69,7 +75,7 @@ const mutations = {
 }
 
 const actions = {
-  generateRoutes({ commit }, { roles, permissions }) {
+  generateRoutes({ commit }, { roles, permissions, modules }) {
     return new Promise(resolve => {
       let accessedRoutes = ''
       //   if (roles.includes('admin')) {
@@ -78,7 +84,7 @@ const actions = {
       //     accessedRoutes = filterAsyncRoutes(asyncRoutes, roles, permissions);
       //   }
       // accessedRoutes = asyncRoutes;
-      accessedRoutes = filterAsyncRoutes(asyncRoutes, roles, permissions)
+      accessedRoutes = filterAsyncRoutes(asyncRoutes, roles, permissions, modules)
 
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)

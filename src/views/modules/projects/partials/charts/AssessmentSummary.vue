@@ -96,6 +96,10 @@ export default {
                 y: reports.non_conformity,
                 color: '#f00c12',
               }, {
+                name: 'Open For Improvement',
+                y: reports.open_for_imporvement,
+                color: '#f0ff00',
+              }, {
                 name: 'N/A',
                 y: reports.not_applicable,
                 color: '#666666',

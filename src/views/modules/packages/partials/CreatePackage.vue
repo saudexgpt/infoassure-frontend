@@ -3,18 +3,18 @@
     <b-sidebar
       id="sidebar-task-handler"
       sidebar-class="sidebar-lg"
-      :visible="isCreateStandardSidebarActive"
+      :visible="isCreatePackageSidebarActive"
       bg-variant="white"
       shadow
       backdrop
       no-header
       right
-      @change="(val) => $emit('update:is-create-standard-sidebar-active', val)"
+      @change="(val) => $emit('update:is-create-package-sidebar-active', val)"
     >
       <template #default="{ hide }">
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
           <h5 class="mb-0">
-            Create Standards
+            Create Package
           </h5>
           <div>
             <b-button
@@ -30,55 +30,30 @@
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
           <b-row v-loading="loading">
+
+            <!-- Package Name -->
             <b-col cols="12">
               <b-form-group
-                label="Select Unit"
-                label-for="v-standard"
-              >
-                <el-select
-                  v-model="form.consulting_id"
-                  style="width: 100%"
-                >
-                  <el-option
-                    v-for="(consulting, index) in consultings"
-                    :key="index"
-                    :value="consulting.id"
-                    :label="consulting.name"
-                  />
-                </el-select>
-              </b-form-group>
-            </b-col>
-            <!-- first name -->
-            <b-col cols="12">
-              <b-form-group
-                label="Enter Name(s) of Standard"
-                label-for="v-level_group"
+                label="Package Name"
+                label-for="v-package_name"
               >
                 <b-form-input
-                  v-model="form.names"
-                  placeholder="example: ISO 27001|ISO 22301|ISO 20000"
+                  v-model="form.name"
+                  placeholder="Enter package name..."
                 />
               </b-form-group>
-              <small>You can enter multiple standard names, just separate them with a vertical bar <code>|</code></small>
             </b-col>
+            <!-- Abbrev -->
             <b-col cols="12">
-              <br>
               <b-form-group
-                label="Select Extra Activities"
-                label-for="v-activities"
+                label="Package Description"
+                label-for="v-package_group"
               >
-                <el-select
-                  v-model="form.assessment_activities"
-                  style="width: 100%"
-                  multiple
-                >
-                  <el-option
-                    v-for="(activity, index) in activities"
-                    :key="index"
-                    :value="activity.value"
-                    :label="activity.label"
-                  />
-                </el-select>
+                <el-input
+                  v-model="form.description"
+                  type="textarea"
+                  placeholder="Describe package..."
+                />
               </b-form-group>
             </b-col>
             <!-- submit and reset -->
@@ -93,6 +68,19 @@
                 Submit
               </b-button>
             </b-col>
+            <b-col
+              v-if="error"
+              cols="12"
+            >
+              <b-alert
+                variant="danger"
+                show
+              >
+                <div class="alert-body">
+                  <span><strong>{{ error_message }}</strong></span>
+                </div>
+              </b-alert>
+            </b-col>
           </b-row>
         </div>
       </template>
@@ -102,13 +90,14 @@
 
 <script>
 import {
-  BSidebar, BRow, BCol, BFormGroup, BFormInput, BButton,
+  BSidebar, BRow, BCol, BFormGroup, BFormInput, BButton, BAlert,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
   components: {
+    BAlert,
     BSidebar,
     BRow,
     BCol,
@@ -120,48 +109,45 @@ export default {
     Ripple,
   },
   model: {
-    prop: 'isCreateStandardSidebarActive',
-    event: 'update:is-create-standard-sidebar-active',
+    prop: 'isCreatePackageSidebarActive',
+    event: 'update:is-create-package-sidebar-active',
   },
   props: {
-    isCreateStandardSidebarActive: {
+    isCreatePackageSidebarActive: {
       type: Boolean,
-      required: true,
-    },
-    consultings: {
-      type: Array,
       required: true,
     },
   },
   data() {
     return {
       form: {
-        names: '',
-        consulting_id: '',
-        assessment_activities: [],
+        name: '',
+        description: '',
       },
+      selected_curriculum: '',
+      curriculumPackageGroups: [],
+      selectedCurriculumPackageGroups: '',
+      curricula: [],
       loading: false,
+      error: false,
+      error_message: '',
     }
-  },
-  computed: {
-    activities() {
-      return this.$store.getters.assessmentActivity
-    },
   },
   methods: {
     submit() {
       const app = this
       app.loading = true
-      const saveCurriculumSetupResource = new Resource('standards/save')
+      const savePackageResource = new Resource('packages/store')
       const param = app.form
-      saveCurriculumSetupResource.store(param)
+      savePackageResource.store(param)
         .then(response => {
           app.loading = false
           app.$emit('save', response)
-          app.$emit('update:is-create-standard-sidebar-active', false)
+          app.$emit('update:is-create-package-sidebar-active', false)
         }).catch(error => {
+          app.error = true
+          app.error_message = error
           app.loading = false
-          app.$message(error.response.data.error)
         })
     },
   },

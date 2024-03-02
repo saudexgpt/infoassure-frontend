@@ -24,6 +24,7 @@ const getters = {
   addRoutes: state => state.permission.addRoutes,
   baseServerUrl: state => state.app.baseServerUrl,
   token: state => state.user.token,
+  assessmentActivity: state => state.app.assessmentActivity,
 //   sidebar: state => state.app.sidebar,
 //   language: state => state.app.language,
 //   size: state => state.app.size,

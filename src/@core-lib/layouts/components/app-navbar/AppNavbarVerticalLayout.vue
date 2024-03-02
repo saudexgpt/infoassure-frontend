@@ -1,6 +1,7 @@
 <template>
   <div
     class="navbar-container d-flex content align-items-center"
+    :style="'background: ' + navbar_bg"
   >
     <!-- Nav Menu Toggler -->
     <ul class="nav navbar-nav d-xl-none">
@@ -107,6 +108,9 @@ export default {
   computed: {
     roles() {
       return this.$store.getters.userData.roles
+    },
+    navbar_bg() {
+      return this.$store.getters.userData.navbar_bg
     },
   },
   methods: {

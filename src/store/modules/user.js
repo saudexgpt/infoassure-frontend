@@ -21,19 +21,10 @@ const state = {
     p_status: '',
     notifications: [],
     password_status: '',
+    logo: '',
+    navbar_bg: '',
+    sidebar_bg: '',
     unreadNotificationCount: 0,
-    suspended_for_nonpayment: 0,
-    system_set_session: '',
-    system_set_term: '',
-    school: {
-      current_session: {
-        name: '',
-      },
-      current_term: {
-        name: '',
-      },
-    },
-    student: '',
     whatsapp_no: '2348160295559',
   },
 }
@@ -43,13 +34,13 @@ const mutations = {
     Object.assign(state.userData, objValue)
   },
   UPDATE_SCHOOL_LOGO(state, logo) {
-    state.userData.school.logo = logo
+    state.userData.partner.logo = logo
   },
   UPDATE_NAVBAR_COLOR(state, color) {
-    state.userData.school.navbar_bg = color
+    state.userData.partner.navbar_bg = color
   },
   UPDATE_SIDEBAR_COLOR(state, color) {
-    state.userData.school.sidebar_bg = color
+    state.userData.partner.sidebar_bg = color
   },
 
   SET_TOKEN(state, token) {
@@ -208,9 +199,9 @@ const actions = {
         })
     })
   },
-  loginToASchool({ commit }, schoolId) {
+  loginToASchool({ commit }, partnerId) {
     return new Promise((resolve, reject) => {
-      logout(schoolId)
+      logout(partnerId)
         .then(response => {
           commit('SET_USER_DATA', response)
           commit('SET_TOKEN', response.tk)

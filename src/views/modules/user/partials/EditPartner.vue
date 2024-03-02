@@ -101,6 +101,52 @@
                     />
                   </b-form-group>
                 </b-col>
+                <b-col md="6">
+
+                  <!-- Navbar Color -->
+                  <b-form-group
+                    label="Change Navbar Color"
+                  >
+                    <el-color-picker
+                      v-model="form.navbar_bg"
+                      show-alpha
+                      :predefine="predefineColors"
+                    />
+                  </b-form-group>
+                </b-col>
+                <b-col md="6">
+
+                  <!-- Sidebar Color -->
+                  <b-form-group
+                    label="Change Side Menu Color"
+                  >
+                    <el-color-picker
+                      v-model="form.sidebar_bg"
+                      show-alpha
+                      :predefine="predefineColors"
+                    />
+                  </b-form-group>
+                </b-col>
+                <b-col md="6">
+                  <span class="school-logo">
+                    <b-img
+                      align="center"
+                      :src="baseServerUrl +'storage/'+ form.logo"
+                      alt="logo"
+                      width="220"
+                    />
+                  </span>
+                  <b-form-group
+                    label="Change Logo"
+                  >
+                    <input
+                      type="file"
+                      class="form-control"
+                      @change="onImageChange"
+                    >
+                  </b-form-group>
+                </b-col>
+
               </b-row>
             </validation-observer>
           </tab-content>
@@ -124,6 +170,7 @@ import {
   BCol,
   BFormGroup,
   BFormInput,
+  BImg,
   // BInputGroupAppend,
   // BInputGroup,
   // BAlert,
@@ -142,6 +189,7 @@ export default {
     BCol,
     BFormGroup,
     BFormInput,
+    BImg,
     // BInputGroupAppend,
     // BInputGroup,
     // eslint-disable-next-line vue/no-unused-components
@@ -157,6 +205,22 @@ export default {
   data() {
     const maxDate = new Date()
     return {
+      predefineColors: [
+        '#ff4500',
+        '#ff8c00',
+        '#ffd700',
+        '#90ee90',
+        '#00ced1',
+        '#1e90ff',
+        '#c71585',
+        'rgba(255, 69, 0, 0.68)',
+        'rgb(255, 120, 0)',
+        'hsv(51, 100, 98)',
+        'hsva(120, 40, 94, 0.5)',
+        'hsl(181, 100%, 37%)',
+        'hsla(209, 100%, 56%, 0.73)',
+        '#c7158577',
+      ],
       max: maxDate,
       selectedContry: '',
       selectedLanguage: '',
@@ -168,16 +232,17 @@ export default {
         contact_address: '',
         required,
       },
+      logoToBeUploaded: '',
       genders: ['Male', 'Female'],
       loader: false,
       imgUrl: require('@/assets/images/pages/login/lms2.jpg'),
     }
   },
-  // computed: {
-  //   passwordToggleIcon() {
-  //     return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
-  //   },
-  // },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
+  },
   created() {
     this.setFormProperties(this.selectedPartner)
   },
@@ -186,13 +251,29 @@ export default {
       const app = this
       app.form = selectedPartner
     },
+    onImageChange(e) {
+      const app = this
+      // console.log(e)
+      // eslint-disable-next-line prefer-destructuring
+      app.logoToBeUploaded = e.target.files[0]
+
+      // app.submitUpload()
+    },
     formSubmitted() {
       const app = this
-      const registerResource = new Resource('partners/update')
-      const { form } = app
+      const formData = new FormData()
+      formData.append('id', app.form.id)
+      formData.append('name', app.form.name)
+      formData.append('contact_email', app.form.contact_email)
+      formData.append('contact_phone', app.form.contact_phone)
+      formData.append('contact_address', app.form.contact_address)
+      formData.append('navbar_bg', app.form.navbar_bg)
+      formData.append('sidebar_bg', app.form.sidebar_bg)
+      formData.append('logo', app.logoToBeUploaded)
       app.loader = true
+      const registerResource = new Resource('partners/update')
       // const email = form.admin_email
-      registerResource.update(form.id, form)
+      registerResource.store(formData)
         .then(() => {
           app.loader = false
           app.$toast({

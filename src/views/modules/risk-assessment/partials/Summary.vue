@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-button
       type="primary"
       @click="exportToExcel('riskAssessmentTabularSummary')"
@@ -93,22 +93,25 @@
 </template>
 <script>
 import TableToExcel from '@linways/table-to-excel'
+import Resource from '@/api/resource'
 
 export default {
   components: {
   },
   props: {
-    data: {
-      type: Array,
-      required: true,
-    },
     selectedClient: {
       type: Object,
+      required: true,
+    },
+    standardId: {
+      type: Number,
       required: true,
     },
   },
   data() {
     return {
+      data: [],
+      loading: false,
     }
   },
   computed: {
@@ -116,7 +119,21 @@ export default {
       return this.$store.getters.baseServerUrl
     },
   },
+  created() {
+    this.fetchRiskAssessmentSummary()
+  },
   methods: {
+    fetchRiskAssessmentSummary() {
+      const app = this
+      app.loading = true
+      const param = { client_id: app.selectedClient.id, standard_id: app.standardId }
+      const fetchConsultingsResource = new Resource('reports/risk-assessment-summary')
+      fetchConsultingsResource.list(param)
+        .then(response => {
+          app.data = response.summary
+          app.loading = false
+        })
+    },
     exportToExcel(id) {
       const app = this
       app.downloading = true

@@ -29,6 +29,7 @@
       </b-row>
     </div>
     <client-project-details
+      :selected-client="selectedClient"
       :selected-project="selected_project"
       :is-admin="true"
     />
@@ -380,8 +381,9 @@
         </el-col>
         <el-col :xs="24">
           <el-select
-            v-model="consultantForm.userId"
-            placeholder="Select Consultant"
+            v-model="consultantForm.userIds"
+            placeholder="Select Consultants"
+            multiple
             filterable
             style="width: 100%;"
           >
@@ -515,8 +517,8 @@ export default {
       showAssignModal: false,
       showAssignConsultantModal: false,
       consultantForm: {
-        projectIds: '',
-        userId: [],
+        projectIds: [],
+        userIds: [],
       },
       form: {
         projectId: '',
@@ -603,6 +605,10 @@ export default {
       const assignProjectsResource = new Resource('projects/assign-to-user')
       assignProjectsResource.update(app.form.projectId, { user_ids: app.form.userIds })
         .then(() => {
+          app.form = {
+            projectId: [],
+            userIds: [],
+          }
           app.fetchProjects()
           app.loading = false
         }).catch(() => { app.loading = false })
@@ -612,8 +618,12 @@ export default {
       // app.showAssignModal = false
       app.loading = true
       const assignProjectsResource = new Resource('projects/assign-projects-to-consultant')
-      assignProjectsResource.store({ project_ids: app.consultantForm.projectIds, user_id: app.consultantForm.userId })
+      assignProjectsResource.store({ project_ids: app.consultantForm.projectIds, user_ids: app.consultantForm.userIds })
         .then(() => {
+          app.consultantForm = {
+            projectIds: [],
+            userIds: [],
+          }
           app.$message('Action Successful')
           app.fetchProjects()
           app.loading = false

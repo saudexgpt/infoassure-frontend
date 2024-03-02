@@ -14,7 +14,7 @@
         </template>
         <setup />
       </b-tab>
-      <b-tab
+      <!-- <b-tab
         lazy
       >
         <template #title>
@@ -121,7 +121,7 @@
             </b-tab>
           </b-tabs>
         </div>
-      </b-tab>
+      </b-tab> -->
     </b-tabs>
   </el-card>
 </template>
@@ -132,10 +132,10 @@ import {
 } from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
 import Setup from './partials/Setup.vue'
-import Assessment from './partials/Assessment.vue'
-import ViewRiskAssessment from './ViewRiskAssessment.vue'
-import RiskRankingMatrix from './RiskRankingMatrix.vue'
-import RiskAssessmentSummary from './partials/Summary.vue'
+// import Assessment from './partials/Assessment.vue'
+// import ViewRiskAssessment from './ViewRiskAssessment.vue'
+// import RiskRankingMatrix from './RiskRankingMatrix.vue'
+// import RiskAssessmentSummary from './partials/Summary.vue'
 import Resource from '@/api/resource'
 
 export default {
@@ -143,10 +143,10 @@ export default {
     BTabs,
     BTab,
     Setup,
-    Assessment,
-    ViewRiskAssessment,
-    RiskRankingMatrix,
-    RiskAssessmentSummary,
+    // Assessment,
+    // ViewRiskAssessment,
+    // RiskRankingMatrix,
+    // RiskAssessmentSummary,
   },
   data() {
     return {

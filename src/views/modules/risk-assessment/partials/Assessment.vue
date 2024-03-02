@@ -155,7 +155,6 @@
               filterable
               style="width: 100%"
               placeholder="Likelihood value"
-              @change="fetchCustomers($event, index)"
             >
               <option
                 v-for="(likelihood, likelihood_index) in likelihoods"
@@ -171,7 +170,6 @@
               filterable
               style="width: 100%"
               placeholder="Confidentiality"
-              @change="fetchCustomers($event, index)"
             >
               <option
                 v-for="(impact, impact_index) in impacts"
@@ -187,7 +185,6 @@
               filterable
               style="width: 100%"
               placeholder="Integrity"
-              @change="fetchCustomers($event, index)"
             >
               <option
                 v-for="(impact, impact_index) in impacts"
@@ -203,7 +200,6 @@
               filterable
               style="width: 100%"
               placeholder="Availability"
-              @change="fetchCustomers($event, index)"
             >
               <option
                 v-for="(impact, impact_index) in impacts"
@@ -285,6 +281,10 @@ import Resource from '@/api/resource'
 
 export default {
   props: {
+    standardId: {
+      type: Number,
+      required: true,
+    },
     selectedClient: {
       type: Object,
       default: () => ({}),
@@ -435,7 +435,7 @@ export default {
         if (app.entries.length > 0) {
           app.load = true
           const submitSales = new Resource('risk-assessment/store-risk-assessment')
-          submitSales.store({ client_id: app.selectedClient.id, assessments: app.entries }).then(() => {
+          submitSales.store({ standard_id: app.standardId, client_id: app.selectedClient.id, assessments: app.entries }).then(() => {
             this.$message({
               type: 'success',
               message: 'Submitted Successfully',

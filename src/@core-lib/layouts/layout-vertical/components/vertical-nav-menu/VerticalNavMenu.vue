@@ -44,7 +44,7 @@
                 <div class="school-logo">
                   <img
                     align="center"
-                    :src="appLogoImage"
+                    :src="baseServerUrl +'storage/'+ logo"
                     alt="logo"
                   >
                 </div>
@@ -170,8 +170,8 @@ export default {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
-    school() {
-      return this.$store.getters.userData.school
+    logo() {
+      return this.$store.getters.userData.logo
     },
   },
   methods: {

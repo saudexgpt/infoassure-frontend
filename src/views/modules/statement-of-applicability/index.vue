@@ -23,7 +23,7 @@
         </template>
         <assessment />
       </b-tab> -->
-      <b-tab
+      <!-- <b-tab
         lazy
       >
         <template #title>
@@ -31,7 +31,7 @@
           <span>Statement of Applicability</span>
         </template>
         <statement-of-applicability />
-      </b-tab>
+      </b-tab> -->
     </b-tabs>
   </el-card>
 </template>
@@ -42,14 +42,14 @@ import {
 } from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
 import Setup from './partials/Setup.vue'
-import StatementOfApplicability from './StatementOfApplicability.vue'
+// import StatementOfApplicability from './StatementOfApplicability.vue'
 
 export default {
   components: {
     BTabs,
     BTab,
     Setup,
-    StatementOfApplicability,
+    // StatementOfApplicability,
   },
   data() {
     return {

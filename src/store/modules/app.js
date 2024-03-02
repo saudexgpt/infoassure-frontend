@@ -6,6 +6,11 @@ export default {
     windowWidth: 0,
     shallShowOverlay: false,
     baseServerUrl: process.env.VUE_APP_MIX_BASE_SERVER_URL,
+    assessmentActivity: [
+      { value: 'risk_assessment', label: 'Risk Assessment' },
+      { value: 'soa', label: 'Statement Of Applicability (SOA)' },
+      { value: 'bia', label: 'BIA' },
+    ],
   },
   getters: {
     currentBreakPoint: state => {

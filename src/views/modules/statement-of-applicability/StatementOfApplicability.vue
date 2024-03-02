@@ -1,14 +1,15 @@
 <template>
   <el-card>
-    <aside>
-      <el-button
-        v-if="selectedClient !== ''"
-        class="pull-right"
-        type="default"
-        icon="el-icon-refresh"
-        circle
-        @click="fetchSOA()"
-      />
+
+    <el-button
+      v-if="selectedClient !== ''"
+      class="pull-right"
+      type="default"
+      icon="el-icon-refresh"
+      circle
+      @click="fetchSOA()"
+    />
+    <!-- <aside>
       <el-row :gutter="10">
         <el-col
           :xs="24"
@@ -31,7 +32,7 @@
           </el-select>
         </el-col>
       </el-row>
-    </aside>
+    </aside> -->
     <div
       v-if="selectedClient !== ''"
     >
@@ -615,6 +616,16 @@ export default {
   directives: {
     Ripple,
   },
+  props: {
+    selectedClient: {
+      type: Object,
+      required: true,
+    },
+    standardId: {
+      type: Number,
+      required: true,
+    },
+  },
 
   data() {
     return {
@@ -685,14 +696,14 @@ export default {
       },
       risk_assessments: [],
       clients: [],
-      selectedClient: '',
       searchTerm: '',
       soas: [],
       summary: {},
     }
   },
   created() {
-    this.fetchClients()
+    this.fetchSOA()
+    this.fetchReportSummary()
   },
   methods: {
     checkPermission,
@@ -730,19 +741,11 @@ export default {
         .then(() => {
         })
     },
-    fetchClients() {
-      const app = this
-      const fetchClientsResource = new Resource('clients')
-      fetchClientsResource.list({ option: 'all' })
-        .then(response => {
-          app.clients = response.clients
-        })
-    },
     fetchSOA(load = true) {
       const app = this
       app.loading = load
       const fetchSOAsResource = new Resource('soa/fetch-soa')
-      fetchSOAsResource.list({ client_id: app.selectedClient.id })
+      fetchSOAsResource.list({ client_id: app.selectedClient.id, standard_id: app.standardId })
         .then(response => {
           app.soas = response.soas
           app.loading = false
@@ -750,7 +753,7 @@ export default {
     },
     fetchReportSummary() {
       const app = this
-      const param = { client_id: app.selectedClient.id }
+      const param = { client_id: app.selectedClient.id, standard_id: app.standardId }
       const fetchConsultingsResource = new Resource('reports/soa-summary')
       fetchConsultingsResource.list(param)
         .then(response => {

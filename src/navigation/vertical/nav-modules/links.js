@@ -6,14 +6,25 @@ export default [
     // tag: '2',
     tagVariant: 'light-warning',
   },
-  // {
-  //   title: 'Projects',
-  //   icon: 'BriefcaseIcon',
-  //   route: 'my-projects',
-  //   acl: {
-  //     roles: ['client'],
-  //   },
-  // },
+  {
+    title: 'Due Diligence Assessment',
+    icon: 'SearchIcon',
+    route: 'due-diligence',
+    acl: {
+      modules: ['due-diligence'],
+    },
+  },
+
+  {
+    title: 'Activated Modules',
+    icon: 'CheckIcon',
+    route: 'ActivatedModules',
+    acl: {
+      modules: ['due-diligence'],
+      except: ['client'],
+      roles: ['partner'],
+    },
+  },
   {
     title: 'Manage Projects',
     icon: 'BriefcaseIcon',

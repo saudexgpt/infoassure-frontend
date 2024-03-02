@@ -128,6 +128,7 @@ export default {
       columns: [
         'name',
         'consulting.name',
+        'assessment_activities',
         // 'description',
         'action',
       ],

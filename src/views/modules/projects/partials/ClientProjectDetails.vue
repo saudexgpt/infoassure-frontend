@@ -19,6 +19,7 @@
           <span>Project Activities</span>
         </template>
         <project-activities
+          :selected-client="selectedClient"
           :selected-project="selectedProject"
           :is-admin="isAdmin"
         />
@@ -43,6 +44,10 @@ export default {
     ProjectPlanDetails,
   },
   props: {
+    selectedClient: {
+      type: Object,
+      required: true,
+    },
     selectedProject: {
       type: Object,
       required: true,

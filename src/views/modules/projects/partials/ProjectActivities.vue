@@ -44,10 +44,7 @@
       </el-col>
     </el-row>
 
-    <b-tabs
-      fill
-      class="card padded"
-    >
+    <b-tabs>
       <b-tab
         title="GAP ASSESSMENT"
         lazy
@@ -77,6 +74,27 @@
           :selected-project="selectedProject"
           :is-admin="isAdmin"
           @reloadAnalytics="fetchAnalystics"
+        />
+      </b-tab>
+      <b-tab
+        v-if="assessment_activities_array.includes('risk_assessment')"
+        title="RISK ASSESSMENT"
+        lazy
+      >
+        <risk-assessment
+          :selected-client="selectedClient"
+          :standard-id="selectedProject.standard_id"
+        />
+      </b-tab>
+      <b-tab
+
+        v-if="assessment_activities_array.includes('soa')"
+        title="SOA"
+        lazy
+      >
+        <s-o-a
+          :selected-client="selectedClient"
+          :standard-id="selectedProject.standard_id"
         />
       </b-tab>
       <b-tab
@@ -113,6 +131,8 @@ import AuditQuestions from './AuditQuestions.vue'
 import Exceptions from './Exceptions.vue'
 import Certificate from './Certificate.vue'
 import Reports from './Reports.vue'
+import RiskAssessment from '@/views/modules/risk-assessment/AssessRisks.vue'
+import SOA from '@/views/modules/statement-of-applicability/StatementOfApplicability.vue'
 import Resource from '@/api/resource'
 
 export default {
@@ -128,8 +148,14 @@ export default {
     Exceptions,
     Certificate,
     Reports,
+    RiskAssessment,
+    SOA,
   },
   props: {
+    selectedClient: {
+      type: Object,
+      required: true,
+    },
     selectedProject: {
       type: Object,
       required: true,
@@ -144,13 +170,21 @@ export default {
       statistics: [],
       dashboardData: {},
       evidence: '',
+      assessment_activities_array: [],
     }
   },
   created() {
+    this.setAssessmentActivities()
     this.createProjectAnswers()
     this.createProjectUploads()
   },
   methods: {
+    setAssessmentActivities() {
+      const app = this
+      const { standard } = app.selectedProject
+      const assessmentActivities = standard.assessment_activities
+      app.assessment_activities_array = (assessmentActivities !== null) ? assessmentActivities.split('|') : null
+    },
     setData() {
       const app = this
       const data = [

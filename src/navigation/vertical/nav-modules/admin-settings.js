@@ -50,10 +50,25 @@ export default [
         },
       },
       {
+        title: 'Risk Assessment',
+        route: 'risk-assessment',
+      },
+      {
+        title: 'SOA',
+        route: 'soa',
+      },
+      {
         title: 'Client Certificate',
         route: 'client-certificate',
         acl: {
           permissions: ['upload-client certificate'],
+        },
+      },
+      {
+        title: 'Module Packages',
+        route: 'ManagePakages',
+        acl: {
+          roles: ['super'],
         },
       },
       {

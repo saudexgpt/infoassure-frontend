@@ -92,7 +92,7 @@
                 <el-button
                   circle
                   type="danger"
-                  @click="deletePartnerUser(row)"
+                  @click="deletePartnerUser(props.row.id, row.id)"
                 >
                   <feather-icon icon="TrashIcon" />
                 </el-button>
@@ -375,16 +375,15 @@ export default {
         // })
       })
     },
-    deletePartnerUser(user) {
-      this.$confirm(`Are you sure you want to delete ${user.name}
-      ?`, 'Confirm Delete Action', {
+    deletePartnerUser(partnerId, userId) {
+      this.$confirm('Are you sure you want to delete this user?', 'Confirm Delete Action', {
         confirmButtonText: 'Yes',
         cancelButtonText: 'No',
         type: 'warning',
       }).then(() => {
         this.loading = true
         const deleteStaffResource = new Resource('partners/delete-partner-user')
-        deleteStaffResource.destroy(user.id)
+        deleteStaffResource.update(partnerId, { user_id: userId })
           .then(() => {
             this.fetchPartners()
             this.$message({

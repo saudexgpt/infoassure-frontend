@@ -27,11 +27,12 @@
     </div>
     <aside>
       <el-row :gutter="5">
-        <!-- <el-col :lg="10">
+        <el-col :lg="10">
           <el-select
             v-model="query.standard_id"
             placeholder="Select Standard"
             style="width: 100%"
+            @input="fetchProjectPlan()"
           >
             <el-option
               v-for="(standard, index) in standards"
@@ -40,8 +41,8 @@
               :label="standard.name"
             />
           </el-select>
-        </el-col> -->
-        <el-col :lg="10">
+        </el-col>
+        <!-- <el-col :lg="10">
           <el-select
             v-model="query.project_phase_id"
             placeholder="Select Project Phase"
@@ -55,7 +56,7 @@
               :label="project_phase.title"
             />
           </el-select>
-        </el-col>
+        </el-col> -->
         <!-- <el-col :lg="4">
           <el-button
             type="primary"
@@ -72,7 +73,7 @@
       :columns="columns"
       :options="options"
     >
-      <div
+      <!-- <div
         slot="child_row"
         slot-scope="props"
       >
@@ -134,7 +135,7 @@
             </el-tooltip>
           </div>
         </v-client-table>
-      </div>
+      </div> -->
       <div
         slot="action"
         slot-scope="props"
@@ -261,7 +262,7 @@ export default {
       columns: [
         'action',
         // 'standard.name',
-        // 'project_phase.title',
+        'project_phase.title',
         'task',
         'responsibility',
         'resource',
@@ -270,7 +271,7 @@ export default {
       options: {
         headings: {
           // 'standard.name': 'Standard',
-          // 'project_phase.title': 'Project Phase',
+          'project_phase.title': 'Project Phase',
         },
         pagination: {
           dropdown: true,
@@ -293,6 +294,7 @@ export default {
       project_phases: [],
       standards: [],
       query: {
+        standard_id: '',
         project_phase_id: '',
       },
       form: {
@@ -302,7 +304,6 @@ export default {
   },
   created() {
     this.fetchStandards()
-    this.fetchProjectPhases()
   },
   methods: {
     checkPermission,
@@ -312,14 +313,6 @@ export default {
       fetchStandardsResource.list()
         .then(response => {
           app.standards = response.standards
-        })
-    },
-    fetchProjectPhases() {
-      const app = this
-      const fetchProjectsResource = new Resource('project-plans/fetch-project-phases')
-      fetchProjectsResource.list()
-        .then(response => {
-          app.project_phases = response.project_phases
         })
     },
     fetchProjectPlan(load = true) {

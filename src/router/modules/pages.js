@@ -12,6 +12,14 @@ export default [
       roles: ['client'],
     },
   },
+  {
+    path: '/due-diligence',
+    name: 'due-diligence',
+    component: () => import('@/views/modules/due-diligence/index.vue'),
+    meta: {
+      modules: ['due-diligence'],
+    },
+  },
   // {
   //   path: '/client-projects',
   //   name: 'client-projects',
@@ -93,6 +101,22 @@ export default [
   //   //   permissions: ['can manage staff'],
   //   // },
   // },
+  {
+    path: '/manage-packages',
+    name: 'ManagePakages',
+    component: () => import('@/views/modules/packages/index.vue'),
+    meta: {
+      roles: ['super'],
+    },
+  },
+  {
+    path: '/activated-modules',
+    name: 'ActivatedModules',
+    component: () => import('@/views/modules/packages/ActivatedModule.vue'),
+    meta: {
+      roles: ['partner'],
+    },
+  },
   {
     path: '/acl/roles',
     name: 'manage-roles',

@@ -24,6 +24,26 @@
           </span>
         </b-col>
       </b-row>
+      <b-row>
+        <b-col
+          cols="6"
+        >
+          <el-select
+            v-model="standard_id"
+            placeholder="Select Standard"
+            filterable
+            style="width: 100%"
+            @input="fetchProjectPhases()"
+          >
+            <el-option
+              v-for="(standard, index) in standards"
+              :key="index"
+              :value="standard.id"
+              :label="standard.name"
+            />
+          </el-select>
+        </b-col>
+      </b-row>
     </div>
     <label>Update by changing the value in the text box</label>
     <v-client-table
@@ -66,6 +86,23 @@
         :gutter="20"
       >
 
+        <el-col :xs="24">
+          <el-select
+            v-model="form.standard_ids"
+            placeholder="Select Standard"
+            filterable
+            multiple
+            collapse-tags
+            style="width: 100%"
+          >
+            <el-option
+              v-for="(standard, index) in standards"
+              :key="index"
+              :value="standard.id"
+              :label="standard.name"
+            />
+          </el-select>
+        </el-col>
         <el-col :xs="24">
           <small>You can enter multiple phase titles, just separate them with a vertical bar <code>|</code> <br>for example: Phase 1|Phase 2|Phase 3</small>
           <el-input
@@ -121,11 +158,13 @@ export default {
       dir: false,
       columns: [
         'action',
+        'standard.name',
         'title',
       ],
 
       options: {
         headings: {
+          'standard.name': 'Standard',
           title: 'Title',
         },
         pagination: {
@@ -148,11 +187,14 @@ export default {
       project_phases: [],
       form: {
         titles: '',
+        standard_ids: [],
       },
+      standards: [],
+      standard_id: '',
     }
   },
   created() {
-    this.fetchProjectPhases()
+    this.fetchStandards()
   },
   methods: {
     checkPermission,
@@ -160,10 +202,18 @@ export default {
       const app = this
       app.loading = true
       const fetchProjectsResource = new Resource('project-plans/fetch-project-phases')
-      fetchProjectsResource.list()
+      fetchProjectsResource.list({ standard_id: app.standard_id })
         .then(response => {
           app.project_phases = response.project_phases
           app.loading = false
+        })
+    },
+    fetchStandards() {
+      const app = this
+      const fetchStandardsResource = new Resource('standards')
+      fetchStandardsResource.list()
+        .then(response => {
+          app.standards = response.standards
         })
     },
     submitProjectPhases() {

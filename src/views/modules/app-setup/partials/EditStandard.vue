@@ -60,6 +60,26 @@
                 />
               </b-form-group>
             </b-col>
+            <b-col cols="12">
+              <br>
+              <b-form-group
+                label="Select Extra Activities"
+                label-for="v-activities"
+              >
+                <el-select
+                  v-model="form.assessment_activities"
+                  style="width: 100%"
+                  multiple
+                >
+                  <el-option
+                    v-for="(activity, index) in activities"
+                    :key="index"
+                    :value="activity.value"
+                    :label="activity.label"
+                  />
+                </el-select>
+              </b-form-group>
+            </b-col>
             <!-- Level Name -->
             <!-- <b-col cols="12">
               <b-form-group
@@ -149,16 +169,32 @@ export default {
         name: '',
         consulting_id: '',
         description: '',
+        assessment_activities: [],
       },
       loading: false,
       error: false,
       error_message: '',
     }
   },
+  computed: {
+    activities() {
+      return this.$store.getters.assessmentActivity
+    },
+  },
   created() {
-    this.form = this.selectedStandard
+    this.formatForm()
   },
   methods: {
+    formatForm() {
+      const app = this
+      const assessmentActivity = app.selectedStandard.assessment_activities
+      const assessmentActivityArray = (assessmentActivity !== null) ? assessmentActivity.split('|') : null
+      this.form.id = this.selectedStandard.id
+      this.form.name = this.selectedStandard.name
+      this.form.consulting_id = this.selectedStandard.consulting_id
+      this.form.description = this.selectedStandard.description
+      this.form.assessment_activities = assessmentActivityArray
+    },
     update() {
       const app = this
       app.loading = true

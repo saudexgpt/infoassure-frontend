@@ -126,6 +126,16 @@ export const constantRoutes = [
     },
   },
   {
+    hidden: true,
+    path: '/bia',
+    name: 'BIA',
+    component: () => import('@/views/modules/BIA/index.vue'),
+    meta: {
+      layout: 'full',
+      // redirectIfLoggedIn: true,
+    },
+  },
+  {
 
     path: '/notifications',
     name: 'Notifications',

@@ -3,31 +3,31 @@
     <el-row :gutter="5">
       <el-col :lg="12">
         <el-select
-          v-model="form.project_phase_id"
-          placeholder="Select Project Phase"
-          style="width: 100%"
-        >
-          <el-option
-            v-for="(project_phase, index) in projectPhases"
-            :key="index"
-            :value="project_phase.id"
-            :label="project_phase.title"
-          />
-        </el-select>
-      </el-col>
-      <el-col :lg="12">
-        <el-select
-          v-model="form.standard_ids"
+          v-model="form.standard_id"
           placeholder="Select Standard"
-          multiple
-          collapse-tags
           style="width: 100%"
+          @input="fetchProjectPhases()"
         >
           <el-option
             v-for="(standard, index) in standards"
             :key="index"
             :value="standard.id"
             :label="standard.name"
+          />
+        </el-select>
+      </el-col>
+      <el-col :lg="12">
+        <el-select
+          v-model="form.project_phase_id"
+          v-loading="loadProjectPhase"
+          placeholder="Select Project Phase"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="(project_phase, index) in project_phases"
+            :key="index"
+            :value="project_phase.id"
+            :label="project_phase.title"
           />
         </el-select>
       </el-col>
@@ -123,10 +123,6 @@ export default {
       type: Array,
       required: true,
     },
-    projectPhases: {
-      type: Array,
-      required: true,
-    },
   },
   data() {
     return {
@@ -135,18 +131,29 @@ export default {
       fill_fields_error: false,
       showSaveButton: true,
       load: false,
-      loadProduct: false,
+      loadProjectPhase: false,
       rowIndex: '',
       form: {
         project_phase_id: '',
-        standard_ids: [],
+        standard_id: '',
       },
+      project_phases: [],
     }
   },
   created() {
     this.addDetail()
   },
   methods: {
+    fetchProjectPhases() {
+      const app = this
+      app.loadProjectPhase = true
+      const fetchProjectsResource = new Resource('project-plans/fetch-project-phases')
+      fetchProjectsResource.list({ standard_id: app.form.standard_id })
+        .then(response => {
+          app.loadProjectPhase = false
+          app.project_phases = response.project_phases
+        })
+    },
     isRowEmpty() {
       const checkEmptyLines = this.details.filter(
         detail => detail.task === ''
@@ -204,10 +211,7 @@ export default {
               responsibility: '',
               resource: '',
             }]
-            app.form = {
-              project_phase_id: '',
-              standard_ids: [],
-            }
+            app.form.project_phase_id = ''
             app.load = false
           }).catch(() => {
             this.$message({

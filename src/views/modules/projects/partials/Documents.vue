@@ -242,7 +242,7 @@
           v-model="showRemarkModal"
           :document="selectedDocumentForRemark"
           :is-admin="isAdmin"
-          @reload="fetchClausesWithQuestions"
+          @reload="fetchClausesWithDocuments"
         />
       </app-collapse-item>
     </template>

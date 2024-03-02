@@ -42,38 +42,17 @@
           class="justify-content-between align-items-center px-2 py-1"
         >
           <b-row v-loading="loading">
-
             <b-col cols="12">
-              <label>Assessment Grade</label>
-              <b-form-group
-                label-for="v-consultant_grade"
-              >
-                <el-select
-                  v-model="form.consultant_grade"
-                  placeholder="Select Grade"
-                  style="width: 100%;"
-                  @input="saveRemark('consultant_grade')"
-                >
-                  <el-option
-                    v-for="(grade, index) in grades"
-                    :key="index"
-                    :value="grade"
-                    :label="grade"
-                  />
-                </el-select>
-              </b-form-group>
-            </b-col>
-            <b-col cols="12">
-              <label>Findings</label>
+              <label>Observations</label>
               <b-form-group
                 label-for="v-findings"
               >
                 <el-input
-                  v-model="form.findings"
+                  v-model="form.observation"
                   type="textarea"
                   placeholder="State your findings..."
                   style="width: 100%;"
-                  @blur="saveRemark('findings')"
+                  @blur="saveRemark('observation')"
                 />
               </b-form-group>
             </b-col>
@@ -92,15 +71,41 @@
               </b-form-group>
             </b-col>
             <b-col cols="12">
-              <label>Assessment Status</label>
+              <label>Risk Score</label>
               <b-form-group
-                label-for="v-status"
+                label-for="v-risk_score"
               >
                 <el-select
-                  v-model="form.status"
+                  v-model="form.risk_score"
+                  placeholder="Select Risk Score"
+                  style="width: 100%;"
+                  @input="saveRemark('risk_score')"
+                >
+                  <el-option
+                    v-for="(score, index) in risk_scores"
+                    :key="index"
+                    :value="score.value"
+                    :label="score.label"
+                  />
+                </el-select>
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <label>Impact</label>
+              <b-form-group
+                label-for="v-impact"
+              >
+                <el-input
+                  v-model="form.impact"
+                  placeholder="State Impact"
+                  style="width: 100%;"
+                  @blur="saveRemark('impact')"
+                />
+                <!-- <el-select
+                  v-model="form.impact"
                   placeholder="Select Status"
                   style="width: 100%;"
-                  @blur="saveRemark('status')"
+                  @blur="saveRemark('impact')"
                 >
                   <el-option
                     v-for="(status, index) in statuses"
@@ -108,21 +113,7 @@
                     :value="status"
                     :label="status"
                   />
-                </el-select>
-              </b-form-group>
-            </b-col>
-            <b-col cols="12">
-              <label>General Remark</label>
-              <b-form-group
-                label-for="v-remark"
-              >
-                <el-input
-                  v-model="form.remark"
-                  type="textarea"
-                  placeholder="Type your remark here..."
-                  style="width: 100%;"
-                  @blur="saveRemark('remark')"
-                />
+                </el-select> -->
               </b-form-group>
             </b-col>
             <!-- submit and reset -->
@@ -148,24 +139,20 @@
           <b-row v-loading="loading">
 
             <b-col cols="12">
-              <label>Assessment Grade</label>
-              <p>{{ form.consultant_grade }}</p>
-            </b-col>
-            <b-col cols="12">
-              <label>Findings</label>
-              <p>{{ form.findings }}</p>
+              <label>Observation</label>
+              <p>{{ form.observation }}</p>
             </b-col>
             <b-col cols="12">
               <label>Recommendations</label>
               <p>{{ form.recommendations }}</p>
             </b-col>
             <b-col cols="12">
-              <label>Assessment Status</label>
-              <p>{{ form.status }}</p>
+              <label>Risk Score</label>
+              <p>{{ form.risk_score }}</p>
             </b-col>
             <b-col cols="12">
-              <label>General Remark</label>
-              <p>{{ form.remark }}</p>
+              <label>Impact</label>
+              <p>{{ form.impact }}</p>
             </b-col>
           </b-row>
         </div>
@@ -221,7 +208,11 @@ export default {
         remark: '',
       },
       loading: false,
-      grades: ['Conformity', 'Non-Conformity', 'Opportunity For Improvement', 'Not Applicable'],
+      risk_scores: [
+        { value: 1, label: '1-Low' },
+        { value: 2, label: '2-Medium' },
+        { value: 3, label: '3-High' },
+      ],
       statuses: ['Open', 'Work In Progress', 'Closed'],
       selectedConsulting: {},
     }
@@ -235,7 +226,7 @@ export default {
       const { form } = app
       // console.log(answer[field])
       const param = { answer: form[field], field }
-      const fetchConsultingsResource = new Resource('answers/update')
+      const fetchConsultingsResource = new Resource('due-diligence/answers/update')
       fetchConsultingsResource.update(form.id, param)
         .then(() => {})
     },

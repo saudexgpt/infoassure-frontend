@@ -11,6 +11,7 @@
       v-if="isActive"
       v-bind="linkProps"
       class="d-flex align-items-center"
+      :style="'background: ' + sidebar_bg + '; border-radius: 20px;'"
     >
       <!-- <feather-icon :icon="item.icon || 'TargetIcon'" /> -->
       <feather-icon :icon="item.icon || ''" />
@@ -68,8 +69,8 @@ export default {
     },
   },
   computed: {
-    school() {
-      return this.$store.getters.userData.school
+    sidebar_bg() {
+      return this.$store.getters.userData.sidebar_bg
     },
   },
   setup(props) {
