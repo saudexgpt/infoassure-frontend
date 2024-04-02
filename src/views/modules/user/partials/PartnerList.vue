@@ -42,9 +42,17 @@
           </el-alert>
           <v-client-table
             v-model="props.row.users"
-            :columns="['name', 'email', 'phone', 'action']"
+            :columns="['name', 'action']"
             :options="{ filterable: false }"
           >
+            <div
+              slot="name"
+              slot-scope="{row}"
+            >
+              <strong>{{ row.name }}</strong> <br>
+              {{ row.email }} <br>
+              {{ row.phone }}
+            </div>
             <div
               slot="action"
               slot-scope="{row}"
@@ -376,7 +384,7 @@ export default {
       })
     },
     deletePartnerUser(partnerId, userId) {
-      this.$confirm('Are you sure you want to delete this user?', 'Confirm Delete Action', {
+      this.$confirm('Are you sure you want to remove this user from this partner?', 'Confirm Action', {
         confirmButtonText: 'Yes',
         cancelButtonText: 'No',
         type: 'warning',

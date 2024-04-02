@@ -84,7 +84,7 @@
           </tr>
           <tr>
             <td>1-Improbable</td>
-            <td>2-Umlikely</td>
+            <td>2-Unlikely</td>
             <td>3-Moderate</td>
             <td>4-Very Likely</td>
             <td>5-Almost Certain</td>

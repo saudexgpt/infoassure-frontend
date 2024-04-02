@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <div v-if="selectedProject.progress === 100">
+    <div v-if="selectedProject.is_completed === 1">
       <el-row
         v-if="!isAdmin && feedbacks.length < 1"
         :gutter="10"
@@ -86,15 +86,15 @@
         </el-col>
       </el-row>
       <el-row
-        v-else
         :gutter="20"
       >
         <el-col
+          v-if="isAdmin"
           :xs="24"
           :lg="8"
         >
           <aside style="height: 250px; overflow: auto">
-            <h4>Your feedback</h4>
+            <h4>Client's feedback</h4>
             <hr>
             <div
               v-for="(feedback, feedbackIndex) in feedbacks"
@@ -108,6 +108,7 @@
           </aside>
         </el-col>
         <el-col
+          v-if="feedbacks.length > 0"
           :xs="24"
           :lg="16"
         >

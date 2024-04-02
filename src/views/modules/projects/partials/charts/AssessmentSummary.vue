@@ -27,14 +27,15 @@ export default {
           },
         },
         title: {
-          text: 'Assessment Summary',
+          text: 'Performance/Assessment Summary',
           align: 'center',
         },
         subtitle: {
           text: '',
         },
         tooltip: {
-          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
+          pointFormat: '{series.name}:<b>{point.y}</b><br>{point.percentage}%',
+          // pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
         },
         accessibility: {
           point: {
@@ -49,7 +50,8 @@ export default {
             // innerSize: 100, // what makes it donut
             dataLabels: {
               enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+              format: '<b>{point.name}:</b> {point.y}<br>{point.percentage} %',
+              // format: '<b>{point.name}</b>: {point.percentage:.1f} %',
             },
           },
         },
@@ -98,15 +100,16 @@ export default {
               }, {
                 name: 'Open For Improvement',
                 y: reports.open_for_imporvement,
-                color: '#f0ff00',
+                color: '#FFA500',
               }, {
                 name: 'N/A',
                 y: reports.not_applicable,
-                color: '#666666',
+                color: '#cccccc',
               }],
             },
           ]
           app.chart_report.subtitle.text = response.subtitle
+          app.chart_report.title.text = response.title
           app.loading = false
         })
     },

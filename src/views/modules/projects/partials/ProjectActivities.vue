@@ -98,7 +98,6 @@
         />
       </b-tab>
       <b-tab
-        v-if="isAdmin"
         title="CERTIFICATE"
         lazy
       >
@@ -154,11 +153,11 @@ export default {
   props: {
     selectedClient: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
     selectedProject: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
     isAdmin: {
       type: Boolean,
@@ -183,7 +182,7 @@ export default {
       const app = this
       const { standard } = app.selectedProject
       const assessmentActivities = standard.assessment_activities
-      app.assessment_activities_array = (assessmentActivities !== null) ? assessmentActivities.split('|') : null
+      app.assessment_activities_array = (assessmentActivities !== null) ? assessmentActivities.split('|') : []
     },
     setData() {
       const app = this

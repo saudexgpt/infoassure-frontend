@@ -58,10 +58,10 @@ export default [
         route: 'soa',
       },
       {
-        title: 'Client Certificate',
-        route: 'client-certificate',
+        title: 'Client Feedback Form',
+        route: 'client-feedback-form',
         acl: {
-          permissions: ['upload-client certificate'],
+          permissions: ['manage-client-feedback'],
         },
       },
       {

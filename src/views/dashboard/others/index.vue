@@ -25,7 +25,7 @@ export default {
     ]),
   },
   created() {
-    if (this.userData.roles.includes('client')) {
+    if (this.userData.login_as === 'client') {
       this.currentRole = 'ClientDashboard'
     }
   },

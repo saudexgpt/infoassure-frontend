@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-if="getOtherToken()">
     <b-tabs
       content-class="mt-1"
       pills
@@ -9,36 +9,43 @@
       >
         <template #title>
           <feather-icon icon="ToolIcon" />
-          <span>Details</span>
+          <span>Create New</span>
         </template>
-        {{ business_impact_analyses }}
+        <create />
       </b-tab>
       <b-tab
         lazy
       >
         <template #title>
           <feather-icon icon="ToolIcon" />
-          <span>Create New</span>
+          <span>Details</span>
         </template>
-        <create />
+        <b-i-a-details />
       </b-tab>
     </b-tabs>
   </el-card>
+  <div v-else>
+    <other-user-login />
+  </div>
 </template>
 
 <script>
 import {
   BTabs, BTab,
 } from 'bootstrap-vue'
+import { getOtherToken } from '@/utils/auth'
 import checkPermission from '@/utils/permission'
 import Create from './Create.vue'
-import Resource from '@/api/resource'
+import BIADetails from './Details.vue'
+import OtherUserLogin from '@/views/pages/authentication/OtherUserLogin.vue'
 
 export default {
   components: {
     BTabs,
     BTab,
     Create,
+    BIADetails,
+    OtherUserLogin,
   },
   data() {
     return {
@@ -46,19 +53,9 @@ export default {
       loading: false,
     }
   },
-  created() {
-    this.fetchBIA()
-  },
   methods: {
     checkPermission,
-    fetchBIA() {
-      const app = this
-      const fetchClientsResource = new Resource('bia/fetch-bia')
-      fetchClientsResource.list({ client_id: 1 })
-        .then(response => {
-          app.business_impact_analyses = response.business_impact_analyses
-        })
-    },
+    getOtherToken,
   },
 }
 </script>

@@ -11,7 +11,8 @@
         slot-scope="{row}"
       >
         <div v-if="row.answer_id !== null">
-          {{ row.answer.question.question }}
+          <!--eslint-disable-next-line vue/no-v-html-->
+          <span v-html="row.answer.question.question" />
         </div>
         <div v-if="row.upload_id !== null">
           {{ row.upload.template_title }}

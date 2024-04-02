@@ -57,6 +57,19 @@
                 />
               </b-form-group>
             </b-col>
+            <b-col cols="12">
+              <b-form-group
+                label="Domain"
+                label-for="v-domain"
+              >
+
+                <el-input
+                  v-model="form.domain"
+                  style="width: 100%"
+                  placeholder="Input domain"
+                />
+              </b-form-group>
+            </b-col>
             <!-- submit and reset -->
             <b-col cols="12">
               <b-button
@@ -109,6 +122,7 @@ export default {
   data() {
     return {
       form: {
+        domain: '',
         question: '',
         key: '',
       },

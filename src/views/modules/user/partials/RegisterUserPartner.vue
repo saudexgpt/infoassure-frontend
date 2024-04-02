@@ -175,7 +175,6 @@
         <feather-icon icon="UserPlusIcon" />
         <span>Attach Existing User to Partner</span>
       </template>
-      <partner-registration />
       <div>
         <b-row>
           <b-col md="6">
@@ -185,6 +184,7 @@
             >
               <el-select
                 v-model="form.partner_id"
+                filterable
                 style="width: 100%"
               >
                 <el-option
@@ -203,6 +203,7 @@
             >
               <el-select
                 v-model="form.user_id"
+                filterable
                 style="width: 100%"
               >
                 <el-option

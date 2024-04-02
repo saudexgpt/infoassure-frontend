@@ -142,7 +142,7 @@
               <label>Observation</label>
               <p>{{ form.observation }}</p>
             </b-col>
-            <b-col cols="12">
+            <!-- <b-col cols="12">
               <label>Recommendations</label>
               <p>{{ form.recommendations }}</p>
             </b-col>
@@ -153,7 +153,7 @@
             <b-col cols="12">
               <label>Impact</label>
               <p>{{ form.impact }}</p>
-            </b-col>
+            </b-col> -->
           </b-row>
         </div>
       </template>

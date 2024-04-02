@@ -9,10 +9,19 @@
     </el-button>
     <table
       id="dueDiligenceReport"
+      v-loading="loading"
       class="table table-bordered table-responsive"
     >
       <thead>
         <tr>
+          <th
+            data-fill-color="333333"
+            data-f-color="ffffff"
+            style="font-size: 16px;"
+            data-f-sz="16"
+          ><div style="width: 250px">
+            Domain
+          </div></th>
           <th
             data-fill-color="333333"
             data-f-color="ffffff"
@@ -82,6 +91,7 @@
           v-for="(report, index) in data"
           :key="index"
         >
+          <td>{{ report.question.domain }}</td>
           <td>{{ report.question.question }}</td>
           <td>{{ report.question.key }}</td>
           <td>{{ report.answer }}</td>
@@ -158,10 +168,6 @@ export default {
   components: {
   },
   props: {
-    data: {
-      type: Array,
-      required: true,
-    },
     selectedClient: {
       type: Object,
       required: true,
@@ -175,6 +181,8 @@ export default {
         { value: 3, label: '3-High' },
       ],
       downloading: false,
+      loading: false,
+      data: [],
     }
   },
   computed: {
@@ -182,7 +190,20 @@ export default {
       return this.$store.getters.baseServerUrl
     },
   },
+  created() {
+    this.fetchReport()
+  },
   methods: {
+    fetchReport() {
+      const app = this
+      app.loading = true
+      const fetchQuestionsWithResponseResource = new Resource('due-diligence/answers/fetch-responses')
+      fetchQuestionsWithResponseResource.list({ client_id: app.selectedClient.id })
+        .then(response => {
+          app.data = response.answers
+          app.loading = false
+        })
+    },
     saveRemark(field) {
       const app = this
       const { form } = app

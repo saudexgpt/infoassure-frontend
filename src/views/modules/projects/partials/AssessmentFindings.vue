@@ -5,101 +5,110 @@
       type="primary"
       @click="exportTableToExcel('assessmentFindingsTable')"
     >
-      Export
+      Export to Excel
     </el-button>
-    <table
-      id="assessmentFindingsTable"
-      v-loading="load"
-      class="table table-bordered table-striped table-responsive"
+    <el-button
+      :loading="downloading"
+      type="success"
+      @click="exportToWord()"
     >
-      <thead>
-        <tr>
-          <th
-            rowspan="2"
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Standard</th>
-          <th
-            rowspan="2"
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Clause/Requirement</th>
-          <th
-            rowspan="2"
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          ><div
-            style="width: 350px;"
-          >Question</div></th>
-          <th
-            rowspan="2"
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Response</th>
-          <th
-            rowspan="2"
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Assessment Grade</th>
-          <th
-            rowspan="2"
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Findings</th>
-          <th
-            rowspan="2"
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Recommendations</th>
-          <th
-            rowspan="2"
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Assessment Status</th>
-          <th
-            rowspan="2"
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >General Remark</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(assessment, index) in assessment_answers"
-          :key="index"
+      Export to Word
+    </el-button>
+    <div id="docx">
+      <div class="WordSection1">
+        <table
+          id="assessmentFindingsTable"
+          v-loading="load"
+          class="table table-bordered table-striped table-responsive"
         >
-          <td>{{ assessment.standard.name }}</td>
-          <td>{{ assessment.clause.name }}</td>
-          <!--eslint-disable-next-line vue/no-v-html-->
-          <td><span v-html="assessment.question.question" /></td>
-          <td>{{ assessment.yes_or_no }}<br><br>
-            {{ assessment.open_ended_answer }}</td>
-          <td>{{ assessment.consultant_grade }}</td>
-          <td>{{ assessment.findings }}</td>
-          <td>{{ assessment.recommendations }}</td>
-          <td>{{ assessment.status }}</td>
-          <td>{{ assessment.remark }}</td>
-        </tr>
-      </tbody>
-    </table>
+          <thead>
+            <tr>
+              <th
+                style="font-size: 16px;"
+                data-f-sz="16"
+                data-fill-color="333333"
+                data-f-color="ffffff"
+              >Standard</th>
+              <th
+                style="font-size: 16px;"
+                data-f-sz="16"
+                data-fill-color="333333"
+                data-f-color="ffffff"
+              >Clause/Requirement</th>
+              <th
+                style="font-size: 16px;"
+                data-f-sz="16"
+                data-fill-color="333333"
+                data-f-color="ffffff"
+              ><div
+                style="width: 350px;"
+              >Question</div></th>
+              <th
+                style="font-size: 16px;"
+                data-f-sz="16"
+                data-fill-color="333333"
+                data-f-color="ffffff"
+              >Response</th>
+              <th
+                style="font-size: 16px;"
+                data-f-sz="16"
+                data-fill-color="333333"
+                data-f-color="ffffff"
+              >Assessment Grade</th>
+              <th
+                style="font-size: 16px;"
+                data-f-sz="16"
+                data-fill-color="333333"
+                data-f-color="ffffff"
+              >Findings</th>
+              <th
+                style="font-size: 16px;"
+                data-f-sz="16"
+                data-fill-color="333333"
+                data-f-color="ffffff"
+              >Recommendations</th>
+              <th
+                style="font-size: 16px;"
+                data-f-sz="16"
+                data-fill-color="333333"
+                data-f-color="ffffff"
+              >Assessment Status</th>
+              <th
+                style="font-size: 16px;"
+                data-f-sz="16"
+                data-fill-color="333333"
+                data-f-color="ffffff"
+              >General Remark</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(assessment, index) in assessment_answers"
+              :key="index"
+            >
+              <td>{{ assessment.standard.name }}</td>
+              <td>{{ assessment.clause.name }}</td>
+              <td>
+                <!--eslint-disable-next-line vue/no-v-html-->
+                <span v-html="assessment.question.question" />
+              </td>
+              <td>
+                {{ assessment.yes_or_no }}<br><br>
+                {{ assessment.open_ended_answer }}
+              </td>
+              <td
+                :style="`background: #${customClass(assessment.consultant_grade)}`"
+                :data-fill-color="customClass(assessment.consultant_grade)"
+              >{{ assessment.consultant_grade }}</td>
+              <td>{{ assessment.findings }}</td>
+              <td>{{ assessment.recommendations }}</td>
+              <td>{{ assessment.status }}</td>
+              <td>{{ assessment.remark }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </el-card>
 </template>
 
@@ -140,6 +149,19 @@ export default {
   },
   methods: {
     checkPermission,
+    customClass(value) {
+      switch (value) {
+        case 'Conformity':
+          return '00a65a'
+        case 'Non-Conformity':
+          return 'f00c12'
+        case 'Opportunity For Improvement':
+          return 'FFA500'
+        default:
+          // Not Applicable
+          return 'CCCCCC'
+      }
+    },
     fetchAssessmentAnswers() {
       const app = this
       app.load = true
@@ -155,6 +177,34 @@ export default {
           app.$message.error(error.response.data.error)
           app.loading = false
         })
+    },
+    exportToWord() {
+      // EU A4 use: size: 841.95pt 595.35pt;
+      // US Letter use: size:11.0in 8.5in;
+
+      const css = (
+        '<style>'
+        + '@page WordSection1{mso-page-orientation: landscape;}'
+        + 'div.WordSection1 {page: WordSection1;}'
+        + 'table{border-collapse:collapse;}td,th{border:1px gray solid;width:5em;padding:2px;}'
+        + '</style>'
+      )
+
+      const html = window.docx.innerHTML
+      const blob = new Blob(['\ufeff', css + html], {
+        type: 'application/msword',
+      })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('A')
+      link.href = url
+      // Set default file name.
+      // Word will append file extension - do not add an extension here.
+      link.download = 'AssessmentFindingsTable-Document'
+      document.body.appendChild(link)
+      if (navigator.msSaveOrOpenBlob) {
+        navigator.msSaveOrOpenBlob(blob, 'AssessmentFindingsTable-Document.doc')
+      } else { link.click() } // other browsers
+      document.body.removeChild(link)
     },
     exportTableToExcel(id) {
       const app = this

@@ -1,11 +1,19 @@
 import router from '@/router'
 // import store from './store'
 import store from '@/store'
-import { getToken } from '@/utils/auth' // get token from cookie
+import { getToken, getUserRole } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
-const whiteList = ['/login', '/bia', '/account/suspended', /* '/register', */ '/forgot-password', '/maintenance'] // no redirect whitelist
+function setRoutes(userData) {
+  const { roles, permissions, modules } = userData
+  store.dispatch('permission/generateRoutes', { roles, permissions, modules }).then(response => {
+    // dynamically add accessible routes
+    // console.log(response)
+    router.addRoutes(response)
+  })
+}
 
+const whiteList = ['/login', '/login-as', '/bia', '/account/suspended', /* '/register', */ '/forgot-password', '/maintenance'] // no redirect whitelist
 router.beforeEach(async (to, from, next) => {
   if (to.path === '/bia') {
     next()
@@ -17,34 +25,41 @@ router.beforeEach(async (to, from, next) => {
     const hasToken = getToken()
     if (hasToken) {
       const { userData } = store.getters
-      if (to.path === '/login') {
-        // if is logged in, redirect to the home page
-        next({ path: '/' })
+      if (to.path === '/login-as') {
+        next()
       } else {
-        // determine whether the user has obtained his permission roles through getInfo
-        const hasRoles = userData.roles && userData.roles.length > 0
-        if (hasRoles) {
-          next()
+        const userRole = getUserRole()
+        // console.log(userRole)
+        // determine whether the user has an active role to login as
+        // eslint-disable-next-line no-lonely-if, camelcase
+        if (userRole === 'empty') {
+          next('/login-as')
         } else {
-          try {
-            // get user info
-            // note: roles must be a object array! such as: ['admin'] or ,['manager','editor']
-            const { roles, permissions, modules } = await store.dispatch('user/getInfo')
-            // generate accessible routes map based on roles
-            // const accessRoutes = await store.dispatch('permission/generateRoutes', roles, permissions);
-            store.dispatch('permission/generateRoutes', { roles, permissions, modules }).then(response => {
-              // dynamically add accessible routes
-              // console.log(response)
-              router.addRoutes(response)
-              // hack method to ensure that addRoutes is complete
-              // set the replace: true, so the navigation will not leave a history record
-              next({ ...to, replace: true })
-            })
-          } catch (error) {
-            // remove token and go to login page to re-login
-            await store.dispatch('user/resetToken')
-            // router.push({ path: '/login', query: { to: to.path } }).catch(() => { })
-            next(`/login?redirect=${to.path}`)
+          // eslint-disable-next-line no-lonely-if
+          if (to.path === '/login') {
+            // if is logged in, redirect to the home page
+            next({ path: '/' })
+          } else {
+            const hasRoles = userData.roles && userData.roles.length > 0
+            // eslint-disable-next-line no-lonely-if
+            if (hasRoles) {
+              next()
+            } else {
+              try {
+              // get user info
+              // note: roles must be a object array! such as: ['admin'] or ,['manager','editor']
+                const reloadedUserData = await store.dispatch('user/getInfo')
+                // generate accessible routes map based on roles
+                // const accessRoutes = await store.dispatch('permission/generateRoutes', roles, permissions);
+                setRoutes(reloadedUserData)
+                next({ ...to, replace: true })
+              } catch (error) {
+              // remove token and go to login page to re-login
+                store.dispatch('user/resetToken')
+                // router.push({ path: '/login', query: { to: to.path } }).catch(() => { })
+                next(`/login?redirect=${to.path}`)
+              }
+            }
           }
         }
       }

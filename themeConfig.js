@@ -9,10 +9,11 @@ export const $themeBreakpoints = {}
 // APP CONFIG
 export const $themeConfig = {
   app: {
-    appName: 'InfoAssure Ltd', // Will update name in navigation menu (Branding)
+    appName: 'Compass', // Will update name in navigation menu (Branding)
+    appSlug: 'compliance made easy',
     // eslint-disable-next-line global-require
-    appLogoImage: require('@/assets/images/logo/logo2.png'), // Will update logo in navigation menu (Branding)
-    companyUrl: 'https://infoassureltd.com',
+    appLogoImage: require('@/assets/images/logo/decompass.jpg'), // Will update logo in navigation menu (Branding)
+    companyUrl: 'https://decompass.com',
   },
   layout: {
     isRTL: false,

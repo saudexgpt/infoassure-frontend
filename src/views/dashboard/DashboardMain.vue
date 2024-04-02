@@ -29,11 +29,11 @@ export default {
     // if (this.userData.roles.includes('super') || this.userData.roles.includes('admin') || this.userData.roles.includes('user')) {
     //   this.currentRole = 'AdminDashboard'
     // }
-    if (this.userData.roles.includes('super')) {
+    if (this.userData.login_as === 'super') {
       this.currentRole = 'AdminDashboard'
-    } else if (this.userData.roles.includes('partner')) {
+    } else if (this.userData.login_as === 'partner') {
       this.currentRole = 'PartnerDashboard'
-    } else if (!this.userData.roles.includes('client')) {
+    } else if (this.userData.login_as === 'admin') {
       this.currentRole = 'AdminDashboard'
     }
   },

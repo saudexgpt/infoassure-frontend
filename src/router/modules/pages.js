@@ -20,6 +20,14 @@ export default [
       modules: ['due-diligence'],
     },
   },
+  {
+    path: '/bia-setup',
+    name: 'bia-setup',
+    component: () => import('@/views/modules/BIA/SetUp.vue'),
+    meta: {
+      modules: ['bia'],
+    },
+  },
   // {
   //   path: '/client-projects',
   //   name: 'client-projects',
@@ -107,6 +115,14 @@ export default [
     component: () => import('@/views/modules/packages/index.vue'),
     meta: {
       roles: ['super'],
+    },
+  },
+  {
+    path: '/document-editor',
+    name: 'DocumentEditor',
+    component: () => import('@/views/modules/app-setup/VueDocumentEditor.vue'),
+    meta: {
+      // roles: ['super'],
     },
   },
   {

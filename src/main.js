@@ -6,6 +6,9 @@ import '@/styles/index.scss' // global css
 import 'vue-swatches/dist/vue-swatches.css'
 // Import stylesheet
 import ElementUI from 'element-ui'
+// import { DocumentEditorPlugin } from '@syncfusion/ej2-vue-documenteditor'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { registerLicense } from '@syncfusion/ej2-base'
 import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 import HighchartsVue from 'highcharts-vue'
@@ -30,16 +33,16 @@ import './global-components'
 import '@/permission'
 // 3rd party plugins
 import '@axios'
-import '@/libs/acl'
-import '@/libs/portal-vue'
-import '@/libs/clipboard'
+// import '@/libs/acl'
+// import '@/libs/portal-vue'
+// import '@/libs/clipboard'
 import '@/libs/toastification'
-import '@/libs/sweet-alerts'
-import '@/libs/vue-select'
-import '@/libs/tour'
+// import '@/libs/sweet-alerts'
+// import '@/libs/vue-select'
+// import '@/libs/tour'
 
 // Axios Mock Adapter
-import '@/@fake-db/db'
+// import '@/@fake-db/db'
 
 /* -------------------------------------------------------------------------- */
 /*                             PUSHER CONFIG                                  */
@@ -54,12 +57,21 @@ const eventsHub = new Vue()
 Vue.use(IdleVue, {
   eventEmitter: eventsHub,
   store,
-  idleTime: 900, // 900000, // 900 seconds i.e 15 mins
+  idleTime: 900000, // 900000ms == 900 seconds i.e 15 mins
   startAtIdle: false,
 })
 Vue.use(ElementUI, {
   i18n: (key, value) => lang.t(key, value),
 })
+// Vue.use(DocumentEditorPlugin)
+
+// registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCekx1WmFZfVpgcl9HZlZVRmYuP1ZhSXxXdkZhXn9YcXJRRGheWUQ=')
+// Trial license
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCekxyWmFZfVpgcV9DZFZTQWYuP1ZhSXxXdkZhUX9bdXBXQ2JbVkw=')
+
+/// //////////////live license///////////////////////
+// registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXxceXRTRmhdWE10XUA=')
+
 Vue.use(CKEditor)
 Vue.use(ClientTable, {
   perPage: 10,

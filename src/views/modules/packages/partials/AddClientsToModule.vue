@@ -14,7 +14,7 @@
       <template #default="{ hide }">
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
           <h5 class="mb-0">
-            Assign Partners to {{ selectedPackage.name }}
+            Assign Clients to {{ selectedPackage.name }}
           </h5>
           <div>
             <b-button
@@ -34,7 +34,7 @@
             <!-- first name -->
             <b-col cols="12">
               <b-form-group
-                label="Select Partners"
+                label="Select Clients"
                 label-for="v-clients"
               >
                 <el-select

@@ -275,7 +275,7 @@ export default {
       status: '',
       password: '',
       userEmail: '',
-      sideImg: require('@/assets/images/pages/login/lms2.jpg'),
+      sideImg: require('@/assets/images/pages/login/landingPage.jpg'),
 
       // validation rules
       required,
@@ -395,7 +395,8 @@ export default {
             })
 
             // we load the browser this once
-            window.location = '/' // this.$router.push({ path: '/' }).catch(() => {}) // window.location = '/dashboard/ecommerce'
+            window.location = '/'
+            // this.$router.push({ path: '/dashboard' }).catch(() => {}) // window.location = '/dashboard/ecommerce'
           }
           this.loading = false
         })
@@ -411,7 +412,7 @@ export default {
               text: error.response.data.message,
             },
           })
-          // console.log(error.response)
+          // console.log(error)
         })
     },
     updatePassword() {

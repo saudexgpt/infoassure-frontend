@@ -125,7 +125,7 @@ export default {
       // this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         // const multiHeader = [['List of Products', '', '', '', '']];
-        const tHeader = ['QUESTION', 'KEY']
+        const tHeader = ['DOMAIN', 'QUESTION', 'KEY']
         // const filterVal = []
         // const list = [] // this.items
         const data = [] // this.formatJson(filterVal, list)

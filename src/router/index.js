@@ -136,6 +136,16 @@ export const constantRoutes = [
     },
   },
   {
+    hidden: true,
+    path: '/login-as',
+    component: () => import('@/views/modules/user/LoginAs.vue'),
+    name: 'LoginAs',
+    meta: {
+      layout: 'full',
+      // redirectIfLoggedIn: true,
+    },
+  },
+  {
 
     path: '/notifications',
     name: 'Notifications',

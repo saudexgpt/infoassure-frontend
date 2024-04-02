@@ -1,19 +1,25 @@
 /* eslint-disable no-shadow */
 import {
-  login, logout, register, getInfo, updatePassword, confirmOTP,
+  login, otherUserLogin, logout, register, getInfo, updatePassword, confirmOTP,
 } from '@/api/auth'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import {
+  getToken, setToken, setOtherToken, getOtherToken, setUserRole, removeUserRole, removeToken,
+} from '@/utils/auth'
 import { resetRouter } from '@/router'
 // import store from '@/store'
 
 const state = {
   id: '',
   token: getToken(),
+  other_user_token: getOtherToken(),
   userData: {
     id: '',
     name: '',
     email: '',
     phone: '',
+    login_as: null,
+    partner_id: null,
+    client_id: null,
     introduction: '',
     modules: [],
     roles: [],
@@ -45,6 +51,9 @@ const mutations = {
 
   SET_TOKEN(state, token) {
     state.token = token
+  },
+  SET_OTHER_TOKEN(state, token) {
+    state.other_user_token = token
   },
   SET_ID(state, id) {
     state.id = id
@@ -79,7 +88,11 @@ const actions = {
   setUnreadNotificationCount({ commit }, count) {
     commit('SET_UNREADNOTIFICATION_COUNT', count)
   },
-  // user login
+  updateUserData({ commit }, data) {
+    commit('SET_USER_DATA', data)
+    const role = (data.login_as !== null) ? data.login_as : 'empty'
+    setUserRole(role)
+  },
   register(userInfo) {
     // const { name, email, password, c_password } = userInfo;
     return new Promise((resolve, reject) => {
@@ -104,6 +117,24 @@ const actions = {
             commit('SET_TOKEN', response.tk)
             commit('SET_ID', response.data.id)
             setToken(response.tk)
+            const role = (response.data.login_as !== null) ? response.data.login_as : 'empty'
+            setUserRole(role)
+          }
+          resolve(response)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+  otherUserLogin({ commit }, userInfo) {
+    const { email, access_code } = userInfo
+    return new Promise((resolve, reject) => {
+      otherUserLogin({ email: email.trim(), access_code })
+        .then(response => {
+          if (response.token) {
+            commit('SET_OTHER_TOKEN', response.token)
+            setOtherToken(response.token)
           }
           resolve(response)
         })
@@ -120,6 +151,8 @@ const actions = {
           commit('SET_USER_DATA', response.data)
           commit('SET_TOKEN', response.tk)
           commit('SET_ID', response.data.id)
+          const role = (response.data.login_as !== null) ? response.data.login_as : 'empty'
+          setUserRole(role)
           setToken(response.tk)
           resolve(response)
         })
@@ -128,7 +161,6 @@ const actions = {
         })
     })
   },
-
   // get user info
   getInfo({ commit }) {
     return new Promise((resolve, reject) => {
@@ -148,6 +180,8 @@ const actions = {
           // console.log(data)
           commit('SET_USER_DATA', data)
           commit('SET_ID', data.id)
+          const role = (response.data.login_as !== null) ? response.data.login_as : 'empty'
+          setUserRole(role)
           resolve(data)
         })
         .catch(error => {
@@ -176,6 +210,7 @@ const actions = {
       logout(state.token)
         .then(() => {
           commit('SET_USER_DATA', '')
+          removeUserRole()
           removeToken()
           resetRouter()
           resolve()
@@ -185,35 +220,6 @@ const actions = {
         })
     })
   },
-  loginAsUser({ commit }, userId) {
-    return new Promise((resolve, reject) => {
-      logout(userId)
-        .then(response => {
-          commit('SET_USER_DATA', response)
-          commit('SET_TOKEN', response.tk)
-          setToken(response.tk)
-          resolve()
-        })
-        .catch(error => {
-          reject(error)
-        })
-    })
-  },
-  loginToASchool({ commit }, partnerId) {
-    return new Promise((resolve, reject) => {
-      logout(partnerId)
-        .then(response => {
-          commit('SET_USER_DATA', response)
-          commit('SET_TOKEN', response.tk)
-          setToken(response.tk)
-          resolve()
-        })
-        .catch(error => {
-          reject(error)
-        })
-    })
-  },
-
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {

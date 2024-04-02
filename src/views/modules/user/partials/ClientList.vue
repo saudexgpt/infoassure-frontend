@@ -42,9 +42,17 @@
           </el-alert>
           <v-client-table
             v-model="props.row.users"
-            :columns="['name', 'email', 'phone', 'action']"
+            :columns="['name', 'action']"
             :options="{ filterable: false }"
           >
+            <div
+              slot="name"
+              slot-scope="{row}"
+            >
+              <strong>{{ row.name }}</strong> <br>
+              {{ row.email }} <br>
+              {{ row.phone }}
+            </div>
             <div
               slot="action"
               slot-scope="{row}"
@@ -92,7 +100,7 @@
                 <el-button
                   circle
                   type="danger"
-                  @click="deleteClientUser(row)"
+                  @click="deleteClientUser(props.row.id, row.id)"
                 >
                   <feather-icon icon="TrashIcon" />
                 </el-button>
@@ -375,16 +383,15 @@ export default {
         // })
       })
     },
-    deleteClientUser(user) {
-      this.$confirm(`Are you sure you want to delete ${user.name}
-      ?`, 'Confirm Delete Action', {
+    deleteClientUser(clientId, userId) {
+      this.$confirm('Are you sure you want to remove this user from this client?', 'Confirm Action', {
         confirmButtonText: 'Yes',
         cancelButtonText: 'No',
         type: 'warning',
       }).then(() => {
         this.loading = true
         const deleteStaffResource = new Resource('clients/delete-client-user')
-        deleteStaffResource.destroy(user.id)
+        deleteStaffResource.update(clientId, { user_id: userId })
           .then(() => {
             this.fetchClients()
             this.$message({

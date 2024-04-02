@@ -69,7 +69,7 @@
         :columns="columns"
         :options="options"
       >
-        <div
+        <!-- <div
           slot="question"
           slot-scope="{row}"
         >
@@ -80,7 +80,7 @@
             :config="editorConfig"
             disabled
           />
-        </div>
+        </div> -->
         <!-- <div
           slot="question"
           slot-scope="{row}"
@@ -179,6 +179,7 @@ export default {
       pageLength: 10,
       dir: false,
       columns: [
+        'domain',
         'question',
         'key',
         'action',
@@ -196,10 +197,10 @@ export default {
         texts: {
           filter: 'Search:',
         },
-        sortable: [],
+        sortable: ['domain'],
         // filterable: false,
         filterable: [
-          'question',
+          'domain', 'question',
         ],
       },
       questions: [],

@@ -1,90 +1,94 @@
 <template>
-
-  <app-collapse
-    v-loading="loading"
-    accordion
-    type="border"
-  >
-    <app-collapse-item
-      v-for="(project_phase_array, title) in project_phases"
-      :key="title"
-      :title="title"
+  <div v-if="project_phases.length > 0">
+    <app-collapse
+      v-loading="loading"
+      accordion
+      type="border"
     >
-      <table class="table table-striped table-bordered">
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Responsible</th>
-            <th>Resource</th>
-            <th>Progress</th>
-            <th>Status</th>
-            <th>Pending Items</th>
-            <th>Risk</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(project_phase, index) in project_phase_array"
-            :key="index"
-          >
-            <td>{{ project_phase.general_project_plan.task }}</td>
-            <td>{{ project_phase.general_project_plan.responsibility.replace("Client", selectedProject.client.name) }}</td>
-            <td>{{ project_phase.general_project_plan.resource }}</td>
-            <td v-if="isAdmin">
-              <select
-                v-model="project_phase.progress"
-                @change="updateFields('progress', $event, project_phase.id)"
-              >
-                <option
-                  v-for="(count, count_index) in progress"
-                  :key="count_index"
-                  :label="`${count}%`"
-                  :value="count"
+      <app-collapse-item
+        v-for="(project_phase_array, title) in project_phases"
+        :key="title"
+        :title="title"
+      >
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Responsible</th>
+              <th>Resource</th>
+              <th>Progress</th>
+              <th>Status</th>
+              <th>Pending Items</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(project_phase, index) in project_phase_array"
+              :key="index"
+            >
+              <td>{{ project_phase.general_project_plan.task }}</td>
+              <td>{{ project_phase.general_project_plan.responsibility.replace("Client", selectedProject.client.name) }}</td>
+              <td>{{ project_phase.general_project_plan.resource }}</td>
+              <td v-if="isAdmin">
+                <select
+                  v-model="project_phase.progress"
+                  @change="updateFields('progress', $event, project_phase.id)"
+                >
+                  <option
+                    v-for="(count, count_index) in progress"
+                    :key="count_index"
+                    :label="`${count}%`"
+                    :value="count"
+                  />
+                </select>
+              </td>
+              <td v-else>
+                {{ project_phase.progress }}%
+              </td>
+              <td v-if="isAdmin">
+                <select
+                  v-model="project_phase.status"
+                  @change="updateFields('status', $event, project_phase.id)"
+                >
+                  <option
+                    v-for="(status, status_index) in statuses"
+                    :key="status_index"
+                    :label="status"
+                    :value="status"
+                  />
+                </select>
+              </td>
+              <td v-else>
+                {{ project_phase.status }}
+              </td>
+              <td v-if="isAdmin">
+                <textarea
+                  v-model="project_phase.pending_items"
+                  @blur="updateFields('pending_items', $event, project_phase.id)"
                 />
-              </select>
-            </td>
-            <td v-else>
-              {{ project_phase.progress }}%
-            </td>
-            <td v-if="isAdmin">
-              <select
-                v-model="project_phase.status"
-                @change="updateFields('status', $event, project_phase.id)"
-              >
-                <option
-                  v-for="(status, status_index) in statuses"
-                  :key="status_index"
-                  :label="status"
-                  :value="status"
+              </td>
+              <td v-else>
+                {{ project_phase.pending_items }}
+              </td>
+              <td v-if="isAdmin">
+                <textarea
+                  v-model="project_phase.risk"
+                  @blur="updateFields('risk', $event, project_phase.id)"
                 />
-              </select>
-            </td>
-            <td v-else>
-              {{ project_phase.status }}
-            </td>
-            <td v-if="isAdmin">
-              <textarea
-                v-model="project_phase.pending_items"
-                @blur="updateFields('pending_items', $event, project_phase.id)"
-              />
-            </td>
-            <td v-else>
-              {{ project_phase.pending_items }}
-            </td>
-            <td v-if="isAdmin">
-              <textarea
-                v-model="project_phase.risk"
-                @blur="updateFields('risk', $event, project_phase.id)"
-              />
-            </td>
-            <td v-else>
-              {{ project_phase.risk }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </app-collapse-item>
-  </app-collapse>
+              </td>
+              <td v-else>
+                {{ project_phase.risk }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </app-collapse-item>
+    </app-collapse>
+  </div>
+  <el-empty
+    v-else
+  ><h3>Project Plan is yet to be set up</h3></el-empty>
 </template>
 <script>
 import {

@@ -42,9 +42,11 @@ export default {
         yAxis: {
           allowDecimals: false,
           min: 0,
-          max: 100,
           title: {
             text: 'Scale',
+          },
+          stackLabels: {
+            enabled: true,
           },
         },
         series: [],

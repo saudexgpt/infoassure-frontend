@@ -35,6 +35,8 @@
     </aside> -->
     <div
       v-if="selectedClient !== ''"
+      v-loading="loading"
+      element-loading-text="...loading, please wait"
     >
       <b-tabs
         content-class="mt-1"
@@ -91,26 +93,6 @@
                         placeholder="Applicable"
                         style="width: 100%"
                         @input="saveSOA('applicable', $event, scope.row.soa.id)"
-                      >
-                        <option value="Yes">
-                          Yes
-                        </option>
-                        <option value="No">
-                          No
-                        </option>
-                      </select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="Control Implemented"
-                    width="150"
-                  >
-                    <template slot-scope="scope">
-                      <select
-                        v-model="scope.row.soa.implemented"
-                        placeholder="Implemented"
-                        style="width: 100%"
-                        @input="saveSOA('implemented', $event, scope.row.soa.id)"
                       >
                         <option value="Yes">
                           Yes
@@ -211,6 +193,42 @@
                     </template>
                   </el-table-column>
                   <el-table-column
+                    label="Control Implemented"
+                    width="150"
+                  >
+                    <template slot-scope="scope">
+                      <select
+                        v-model="scope.row.soa.implemented"
+                        placeholder="Implemented"
+                        style="width: 100%"
+                        @input="saveSOA('implemented', $event, scope.row.soa.id)"
+                      >
+                        <option value="Fully Implemented">
+                          Fully Implemented
+                        </option>
+                        <option value="Partially Implemented">
+                          Partially Implemented
+                        </option>
+                        <option value="Not Implemented">
+                          Not Implemented
+                        </option>
+                      </select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="Additional Controls Required (if any)"
+                    width="250"
+                  >
+                    <template slot-scope="scope">
+                      <textarea
+                        v-model="scope.row.soa.addition_control_required"
+                        placeholder="Type here..."
+                        style="width: 100%"
+                        @blur="saveSOA('addition_control_required', $event, scope.row.soa.id)"
+                      />
+                    </template>
+                  </el-table-column>
+                  <el-table-column
                     label="Assets"
                     width="250"
                   >
@@ -246,19 +264,6 @@
                         placeholder="Type here..."
                         style="width: 100%"
                         @blur="saveSOA('issue', $event, scope.row.soa.id)"
-                      />
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="Additional Controls Required (if any)"
-                    width="250"
-                  >
-                    <template slot-scope="scope">
-                      <textarea
-                        v-model="scope.row.soa.addition_control_required"
-                        placeholder="Type here..."
-                        style="width: 100%"
-                        @blur="saveSOA('addition_control_required', $event, scope.row.soa.id)"
                       />
                     </template>
                   </el-table-column>
@@ -358,11 +363,6 @@
                   data-f-color="ffffff"
                 >Control Applicable</th>
                 <th
-                  rowspan="2"
-                  data-fill-color="333333"
-                  data-f-color="ffffff"
-                >Control Implemented</th>
-                <th
                   colspan="3"
                   style="font-size: 14px;"
                   data-f-sz="14"
@@ -383,6 +383,16 @@
                   rowspan="2"
                   data-fill-color="333333"
                   data-f-color="ffffff"
+                >Control Implemented</th>
+                <th
+                  rowspan="2"
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
+                >Additional Controls Required (if any)</th>
+                <th
+                  rowspan="2"
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
                 >Asset</th>
                 <th
                   rowspan="2"
@@ -394,11 +404,6 @@
                   data-fill-color="333333"
                   data-f-color="ffffff"
                 >Issue</th>
-                <th
-                  rowspan="2"
-                  data-fill-color="333333"
-                  data-f-color="ffffff"
-                >Additional Controls Required (if any)</th>
                 <th
                   rowspan="2"
                   data-fill-color="333333"
@@ -467,9 +472,6 @@
                     {{ control.soa.applicable }}
                   </td>
                   <td data-a-v="top">
-                    {{ control.soa.implemented }}
-                  </td>
-                  <td data-a-v="top">
                     {{ control.soa.legal_requirement }}
                   </td>
                   <td data-a-v="top">
@@ -491,6 +493,12 @@
                     {{ control.soa.reference_to_control_document }}
                   </td>
                   <td data-a-v="top">
+                    {{ control.soa.implemented }}
+                  </td>
+                  <td data-a-v="top">
+                    {{ control.soa.addition_control_required }}
+                  </td>
+                  <td data-a-v="top">
                     {{ control.soa.assets }}
                   </td>
                   <td
@@ -501,9 +509,6 @@
                   </td>
                   <td data-a-v="top">
                     {{ control.soa.issue }}
-                  </td>
-                  <td data-a-v="top">
-                    {{ control.soa.addition_control_required }}
                   </td>
                   <td data-a-v="top">
                     {{ control.soa.r }}

@@ -11,7 +11,7 @@
       v-if="isActive"
       v-bind="linkProps"
       class="d-flex align-items-center"
-      :style="'background: ' + sidebar_bg + '; border-radius: 20px;'"
+      :style="`background: ${sidebar_bg}; border: solid 1px ${navbar_bg}; box-shadow: 0 0 1px 1px ${navbar_bg}`"
     >
       <!-- <feather-icon :icon="item.icon || 'TargetIcon'" /> -->
       <feather-icon :icon="item.icon || ''" />
@@ -71,6 +71,9 @@ export default {
   computed: {
     sidebar_bg() {
       return this.$store.getters.userData.sidebar_bg
+    },
+    navbar_bg() {
+      return this.$store.getters.userData.navbar_bg
     },
   },
   setup(props) {

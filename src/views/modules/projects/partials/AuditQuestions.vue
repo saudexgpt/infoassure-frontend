@@ -1,41 +1,66 @@
 <template>
 
-  <app-collapse
-    v-loading="loading"
-    accordion
-    type="border"
-  >
-    <app-collapse-item
-      v-for="(clause, index) in clauses"
-      :key="index"
-      :title="clause.name"
+  <div v-if="showDocumentEditor">
+    <span
+      class="pull-right"
     >
-      <template v-for="(question, question_index) in clause.questions">
+      <el-button
+        type="danger"
+        class="btn-icon"
+        size="mini"
+        @click="showDocumentEditor = false "
+      >
+        <feather-icon icon="XIcon" />
+      </el-button>
+    </span>
+    <vue-document-editor
+      :document-path="selectedDocument.link"
+      :document-title="selectedDocument.evidence_title"
+    />
+    <!-- <vue-document-editor
+      :document-path="selectedDocument.link"
+      db-table="gap_assessment_evidences"
+      sub-folder="gap-assessment-evidence"
+      :doc-id="selectedDocument.id"
+    /> -->
+  </div>
+  <div v-else>
+    <app-collapse
+      v-loading="loading"
+      accordion
+      type="border"
+    >
+      <app-collapse-item
+        v-for="(clause, index) in clauses"
+        :key="index"
+        :title="clause.name"
+      >
+        <template v-for="(question, question_index) in clause.questions">
 
-        <div
-          :key="question_index"
-        >
           <div
-            v-if="current_question === question_index"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12 "
-            style="padding: 5px; border: 5px double #c0c0c0;border-radius: 8px;"
+            :key="question_index"
           >
-            <div>
+            <div
+              v-if="currenctQuestions[index] === question_index"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12 "
+              style="padding: 5px; border: 5px double #c0c0c0;border-radius: 8px;"
+            >
+              <div>
 
-              <span
-                class="pull-right"
-              >
-                <el-button
-                  size="mini"
-                  type="primary"
-                  @click="openRemarkModal(question.answer)"
+                <span
+                  class="pull-right"
                 >
-                  <feather-icon
-                    icon="MessageSquareIcon"
-                  />
-                  Consultant Remark
-                </el-button>
-                <!-- <el-popover
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    @click="openRemarkModal(question.answer)"
+                  >
+                    <feather-icon
+                      icon="MessageSquareIcon"
+                    />
+                    Consultant Remark
+                  </el-button>
+                  <!-- <el-popover
                   v-if="isAdmin"
                   placement="right"
                   width="400"
@@ -69,204 +94,204 @@
                     Give Remark
                   </el-button>
                 </el-popover> -->
-                <button
-                  v-if="isAdmin"
-                  class="btn btn-success  btn-sm"
-                  @click="allowModification(clause.questions);"
-                ><feather-icon
-                  icon="ThumbsUpIcon"
-                />
-                  Enable Modification
-                </button>
-              </span>
-              <strong style="color: red">
-                Question {{ question_index + 1 }}  of  {{ clause.questions.length }}
-              </strong>
-
-              <div>
-                <button
-                  v-if="question_index !== 0"
-                  class="btn btn-danger btn-sm"
-                  @click="change(question_index-1);"
-                > <feather-icon
-                  icon="ArrowLeftIcon"
-                /> Prev
-                </button>
-                <button
-                  v-if="parseInt(question_index + 1) < clause.questions.length"
-                  class="btn btn-primary  btn-sm"
-                  @click="change(question_index+1);"
-                > Next
-                  <feather-icon
-                    icon="ArrowRightIcon"
+                  <button
+                    v-if="isAdmin"
+                    class="btn btn-success  btn-sm"
+                    @click="allowModification(clause.questions);"
+                  ><feather-icon
+                    icon="ThumbsUpIcon"
                   />
-                </button>
-                <button
-                  v-if="!isAdmin && parseInt(question_index + 1) === clause.questions.length && question.answer.is_submitted === 0 && selectedProject.is_completed === 0"
-                  class="btn btn-success  btn-sm"
-                  @click="submitAnswers(clause.questions);"
-                ><feather-icon
-                  icon="SaveIcon"
-                />
-                  Submit
-                </button>
+                    Enable Modification
+                  </button>
+                </span>
+                <strong style="color: red">
+                  Question {{ question_index + 1 }}  of  {{ clause.questions.length }}
+                </strong>
 
-              </div>
-            </div>
-            <hr>
-            <el-row :gutter="5">
-              <el-col
-                :lg="16"
-                :md="16"
-                :sm="24"
-                :xs="24"
-              >
-
-                <ckeditor
-                  id="question"
-                  v-model="question.question"
-                  :editor="editor"
-                  :config="editorConfig"
-                  disabled
-                />
-                <div
-                  v-if="question.answer.is_exception === 0"
-                  style="padding:10px;"
-                >
-
-                  <div class="control-group">
-                    <label
-                      class="control-label"
-                      for="inputEmail"
+                <div>
+                  <button
+                    v-if="question_index !== 0"
+                    class="btn btn-danger btn-sm"
+                    @click="change(question_index-1, index);"
+                  > <feather-icon
+                    icon="ArrowLeftIcon"
+                  /> Prev
+                  </button>
+                  <button
+                    v-if="parseInt(question_index + 1) < clause.questions.length"
+                    class="btn btn-primary  btn-sm"
+                    @click="change(question_index+1, index);"
+                  > Next
+                    <feather-icon
+                      icon="ArrowRightIcon"
                     />
-                    <div class="controls">
-                      <input
-                        v-model="question.id"
-                        type="hidden"
-                      >
-                      <div v-if="!isAdmin">
+                  </button>
+                  <button
+                    v-if="!isAdmin && parseInt(question_index + 1) === clause.questions.length && question.answer.is_submitted === 0 && selectedProject.is_completed === 0"
+                    class="btn btn-success  btn-sm"
+                    @click="submitAnswers(clause.questions);"
+                  ><feather-icon
+                    icon="SaveIcon"
+                  />
+                    Submit
+                  </button>
 
-                        <div v-if="question.answer.is_submitted === 0">
-                          <div v-if="question.answer_type === 'yes-no'">
-                            <el-radio-group
-                              v-model="question.answer.yes_or_no"
-                              @change="saveAnswer(question.answer, 'yes_or_no')"
-                            >
-                              <el-radio
-                                label="YES"
-                                border
-                              >
-                                YES
-                              </el-radio>
-                              <el-radio
-                                label="NO"
-                                border
-                              >
-                                NO
-                              </el-radio>
-                            </el-radio-group>
-                          </div>
-                          <div v-else-if="question.answer_type === 'open_ended'">
-                            <el-input
-                              v-model="question.answer.open_ended_answer"
-                              type="textarea"
-                              placeholder="Type your response here..."
-                              style="width: 100%"
-                              @blur="saveAnswer(question.answer, 'open_ended_answer')"
-                            />
+                </div>
+              </div>
+              <hr>
+              <el-row :gutter="5">
+                <el-col
+                  :lg="16"
+                  :md="16"
+                  :sm="24"
+                  :xs="24"
+                >
+                  <div v-if="showQuestions">
+                    <ckeditor
+                      id="question"
+                      v-model="question.question"
+                      :editor="editor"
+                      :config="editorConfig"
+                      disabled
+                    /></div>
+                  <div
+                    v-if="question.answer.is_exception === 0"
+                    style="padding:10px;"
+                  >
 
+                    <div class="control-group">
+                      <label
+                        class="control-label"
+                        for="inputEmail"
+                      />
+                      <div class="controls">
+                        <input
+                          v-model="question.id"
+                          type="hidden"
+                        >
+                        <div v-if="!isAdmin">
+
+                          <div v-if="question.answer.is_submitted === 0">
+                            <div v-if="question.answer_type === 'yes-no'">
+                              <el-radio-group
+                                v-model="question.answer.yes_or_no"
+                                @change="saveAnswer(question.answer, 'yes_or_no')"
+                              >
+                                <el-radio
+                                  label="YES"
+                                  border
+                                >
+                                  YES
+                                </el-radio>
+                                <el-radio
+                                  label="NO"
+                                  border
+                                >
+                                  NO
+                                </el-radio>
+                              </el-radio-group>
+                            </div>
+                            <div v-else-if="question.answer_type === 'open_ended'">
+                              <el-input
+                                v-model="question.answer.open_ended_answer"
+                                type="textarea"
+                                placeholder="Type your response here..."
+                                style="width: 100%"
+                                @blur="saveAnswer(question.answer, 'open_ended_answer')"
+                              />
+
+                            </div>
+                            <div v-else>
+                              <el-radio-group
+                                v-model="question.answer.yes_or_no"
+                                @change="saveAnswer(question.answer, 'yes_or_no')"
+                              >
+                                <el-radio
+                                  label="YES"
+                                  border
+                                >
+                                  YES
+                                </el-radio>
+                                <el-radio
+                                  label="NO"
+                                  border
+                                >
+                                  NO
+                                </el-radio>
+                              </el-radio-group>
+                              <br>
+                              <el-input
+                                v-model="question.answer.open_ended_answer"
+                                type="textarea"
+                                placeholder="Give some details here..."
+                                style="width: 100%"
+                                @blur="saveAnswer(question.answer, 'open_ended_answer')"
+                              />
+                              <hr>
+                            </div>
                           </div>
                           <div v-else>
-                            <el-radio-group
-                              v-model="question.answer.yes_or_no"
-                              @change="saveAnswer(question.answer, 'yes_or_no')"
-                            >
-                              <el-radio
-                                label="YES"
-                                border
-                              >
-                                YES
-                              </el-radio>
-                              <el-radio
-                                label="NO"
-                                border
-                              >
-                                NO
-                              </el-radio>
-                            </el-radio-group>
-                            <br>
-                            <el-input
-                              v-model="question.answer.open_ended_answer"
-                              type="textarea"
-                              placeholder="Give some details here..."
-                              style="width: 100%"
-                              @blur="saveAnswer(question.answer, 'open_ended_answer')"
-                            />
-                            <hr>
+                            <strong>Response:</strong>&nbsp;{{ question.answer.yes_or_no }}<br><br>
+                            {{ question.answer.open_ended_answer }}
                           </div>
+
                         </div>
                         <div v-else>
                           <strong>Response:</strong>&nbsp;{{ question.answer.yes_or_no }}<br><br>
                           {{ question.answer.open_ended_answer }}
                         </div>
-
-                      </div>
-                      <div v-else>
-                        <strong>Response:</strong>&nbsp;{{ question.answer.yes_or_no }}<br><br>
-                        {{ question.answer.open_ended_answer }}
                       </div>
                     </div>
-                  </div>
 
-                  <el-popover
-                    v-if="!isAdmin && question.answer.is_exception === 0 && selectedProject.is_completed === 0 && question.can_have_exception === 1"
-                    placement="right"
-                    width="400"
-                    trigger="click"
-                  >
-                    <div>
-                      <strong>Kindly justify why it is not applicable, then click on DONE</strong>
-                      <el-input
-                        v-model="exceptionReason"
-                        placeholder="Type justification here..."
-                        type="textarea"
-                      />
-                      <br><br>
-                      <el-button
-                        :loading="loadButton"
-                        size="mini"
-                        type="success"
-                        :disabled="exceptionReason === ''"
-                        @click="createException(clause.id, question.answer.id, index, question_index)"
-                      >
-                        Done
-                      </el-button>
-                    </div>
-                    <el-button
-                      slot="reference"
-                      size="mini"
-                      type="danger"
+                    <el-popover
+                      v-if="!isAdmin && question.answer.is_exception === 0 && selectedProject.is_completed === 0 && question.can_have_exception === 1"
+                      placement="right"
+                      width="400"
+                      trigger="click"
                     >
-                      Click if Control/Requirement is NOT APPLICABLE
-                    </el-button>
-                  </el-popover>
-                </div>
-                <div v-else>
-                  <el-alert
-                    v-if="!isAdmin"
-                    type="error"
-                    :closable="false"
-                  >
-                    <strong>Not Applicable</strong>. To undo, click on the <code>EXCLUSIONS</code> tab and reverse it
-                  </el-alert>
-                  <el-alert
-                    v-else
-                    type="error"
-                    :closable="false"
-                  >
-                    <strong>Not Applicable</strong>
-                  </el-alert>
-                </div>
+                      <div>
+                        <strong>Kindly justify why it is not applicable, then click on DONE</strong>
+                        <el-input
+                          v-model="exceptionReason"
+                          placeholder="Type justification here..."
+                          type="textarea"
+                        />
+                        <br><br>
+                        <el-button
+                          :loading="loadButton"
+                          size="mini"
+                          type="success"
+                          :disabled="exceptionReason === ''"
+                          @click="createException(clause.id, question.answer.id, index, question_index)"
+                        >
+                          Done
+                        </el-button>
+                      </div>
+                      <el-button
+                        slot="reference"
+                        size="mini"
+                        type="danger"
+                      >
+                        Click if Control/Requirement is NOT APPLICABLE
+                      </el-button>
+                    </el-popover>
+                  </div>
+                  <div v-else>
+                    <el-alert
+                      v-if="!isAdmin"
+                      type="error"
+                      :closable="false"
+                    >
+                      <strong>Not Applicable</strong>. To undo, click on the <code>EXCLUSIONS</code> tab and reverse it
+                    </el-alert>
+                    <el-alert
+                      v-else
+                      type="error"
+                      :closable="false"
+                    >
+                      <strong>Not Applicable</strong>
+                    </el-alert>
+                  </div>
                 <!-- <div>
                   <div
                     v-if="question.answer.remark !== null"
@@ -283,86 +308,109 @@
                   </div>
                   <hr>
                 </div> -->
-              </el-col>
-              <el-col
-                :lg="8"
-                :md="8"
-                :sm="24"
-                :xs="24"
-              >
-                <div
-                  v-if="question.upload_evidence === 1"
-                  style="height: 300px; overflow: auto; background: #fcfcfc; padding: 10px;"
+                </el-col>
+                <el-col
+                  :lg="8"
+                  :md="8"
+                  :sm="24"
+                  :xs="24"
                 >
-                  <b-button
-                    v-if="!isAdmin"
-                    variant="gradient-primary"
-                    block
-                    @click="addEvidence(question.answer.id)"
+                  <div
+                    v-if="question.upload_evidence === 1"
+                    style="height: 300px; overflow: auto; background: #fcfcfc; padding: 10px;"
                   >
-                    <feather-icon icon="UploadIcon" />
-                    Upload Evidence
-                  </b-button>
-                  <div v-if="isAdmin">
-                    Uploaded Evidences
-                  </div>
-                  <hr>
-                  <b-alert
-                    v-for="(evidence, evidence_index) in question.answer.evidences"
-                    :key="evidence_index"
-                    variant="primary"
-                    show
-                  >
-                    <div
-                      v-loading="loadDelete"
-                      class="alert-body"
+                    <b-button
+                      v-if="!isAdmin"
+                      variant="gradient-primary"
+                      block
+                      @click="addEvidence(question.answer.id)"
                     >
-                      <a
-                        :href="baseServerUrl+'storage/'+evidence.link"
-                        target="_blank"
-                      >{{ evidence.evidence_title }}</a>
-                      <span
-                        v-if="!isAdmin"
-                        class="pull-right"
-                      ><b-button
-                        variant="flat-danger"
-                        class="btn-icon rounded-circle"
-                        @click="destroyGapAssessmentEvidence(evidence.id)"
-                      >
-                        <feather-icon icon="TrashIcon" />
-                      </b-button></span>
-
+                      <feather-icon icon="UploadIcon" />
+                      Upload Evidence
+                    </b-button>
+                    <div v-if="isAdmin">
+                      Uploaded Evidences
                     </div>
-                  </b-alert>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
-        </div>
-      </template>
-    </app-collapse-item>
-    <give-gap-assessment-remarks
-      v-if="showRemarkModal"
-      v-model="showRemarkModal"
-      :answer="selectedAnswerForRemark"
-      :is-admin="isAdmin"
-      @reload="fetchClausesWithQuestions"
-    />
-    <b-modal
-      v-model="showModal"
-      title="Upload Evidence"
-      centered
-      size="lg"
-      hide-footer
-    >
+                    <hr>
+                    <b-alert
+                      v-for="(evidence, evidence_index) in question.answer.evidences"
+                      :key="evidence_index"
+                      variant="primary"
+                      show
+                    >
+                      <div
+                        v-loading="loadDelete"
+                        class="alert-body"
+                      >
+                        <!-- <a
+                          :href="baseServerUrl+'storage/'+evidence.link"
+                          target="_blank"
+                        >{{ evidence.evidence_title }}</a> -->
+                        <small style="font-size: 11px">{{ evidence.evidence_title }}</small>
+                        <span
+                          class="pull-right"
+                        >
+                          <el-dropdown>
+                            <b-button
+                              variant="flat"
+                              class="btn-icon rounded-circle"
+                            >
+                              <i class="el-icon-more-outline" />
+                            </b-button>
+                            <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item v-if="evidence.link.split('.').pop() === 'docx' || evidence.link.split('.').pop() === 'doc'">
+                                <span @click="viewAndEditDocument(evidence)">Edit</span>
+                              </el-dropdown-item>
+                              <el-dropdown-item
+                                v-else
+                              >
+                                <a
+                                  :href="baseServerUrl+'storage/'+evidence.link"
+                                  target="_blank"
+                                >Download
+                                </a>
+                              </el-dropdown-item>
+                              <el-dropdown-item
+                                v-if="!isAdmin"
+                              >
+                                <span @click="destroyGapAssessmentEvidence(evidence.id)">Delete</span>
+                              </el-dropdown-item>
+                            </el-dropdown-menu>
+                          </el-dropdown>
+                        </span>
 
-      <upload-gap-assessment-evidence
-        :answer-id="selectedAnswer"
+                      </div>
+                    </b-alert>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+        </template>
+      </app-collapse-item>
+      <give-gap-assessment-remarks
+        v-if="showRemarkModal"
+        v-model="showRemarkModal"
+        :answer="selectedAnswerForRemark"
+        :is-admin="isAdmin"
         @reload="fetchClausesWithQuestions"
       />
+      <b-modal
+        v-model="showModal"
+        title="Upload Evidence"
+        centered
+        size="lg"
+        hide-footer
+      >
 
-    </b-modal>
-  </app-collapse>
+        <upload-gap-assessment-evidence
+          :answer-id="selectedAnswer"
+          @reload="fetchClausesWithQuestions"
+        />
+
+      </b-modal>
+    </app-collapse>
+  </div>
 </template>
 <script>
 import {
@@ -373,6 +421,7 @@ import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
 import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import UploadGapAssessmentEvidence from './UploadGapAssessmentEvidence.vue'
 import GiveGapAssessmentRemarks from './GiveGapAssessmentRemarks.vue'
+import VueDocumentEditor from '@/views/modules/app-setup/VueDocumentEditor.vue'
 import Resource from '@/api/resource'
 
 export default {
@@ -384,6 +433,7 @@ export default {
     BModal,
     UploadGapAssessmentEvidence,
     GiveGapAssessmentRemarks,
+    VueDocumentEditor,
   },
   props: {
     selectedProject: {
@@ -398,6 +448,9 @@ export default {
   data() {
     return {
       clauses: [],
+      currenctQuestions: {},
+      currentQuestionsAreSet: false,
+      showQuestions: true,
       current_question: 0,
       selectedAnswer: null,
       showRemarkModal: false,
@@ -412,6 +465,8 @@ export default {
       editorConfig: {
         // The configuration of the editor.
       },
+      showDocumentEditor: false,
+      selectedDocument: '',
     }
   },
   computed: {
@@ -423,6 +478,24 @@ export default {
     this.fetchClausesWithQuestions()
   },
   methods: {
+    setCurrentQuestions(clauses) {
+      const app = this
+      // eslint-disable-next-line no-plusplus
+      for (let index = 0; index < clauses.length; index++) {
+        app.currenctQuestions[index] = 0
+      }
+      app.currentQuestionsAreSet = true
+    },
+    change(value, index) {
+      const app = this
+      if (Object.hasOwnProperty.call(app.currenctQuestions, index)) {
+        app.currenctQuestions[index] = value
+      }
+      app.showQuestions = false
+      setTimeout(() => {
+        app.showQuestions = true
+      }, 5)
+    },
     openRemarkModal(selectedAnswer) {
       const app = this
       app.selectedAnswerForRemark = selectedAnswer
@@ -443,27 +516,15 @@ export default {
       fetchConsultingsResource.list({ client_id, standard_id })
         .then(response => {
           app.clauses = response.clauses
+          if (!app.currentQuestionsAreSet) {
+            app.setCurrentQuestions(app.clauses)
+          }
           app.loading = false
         })
     },
     colorButton(index, current) {
       document.getElementById(`quest_button_${index}_${current}`).style.backgroundColor = '#ccc'
       // }
-    },
-    change(value) {
-      // const count = noOfQuestions
-
-      // jQuery('#q_' + val ).show();
-      this.current_question = value
-      // document.getElementById(`quest_button_${index}_${value}`).style.backgroundColor = '#337ab7'
-      // eslint-disable-next-line no-plusplus
-      // for (let a = 0; a < count; a++) {
-      //   if (value !== a) {
-      //     this.colorButton(index, a)
-      //   }
-      // }
-      // jQuery('#preview').hide();
-      // jQuery('#back_to_quest').hide();
     },
     saveAnswer(answer, field) {
       // console.log(answer[field])
@@ -553,6 +614,11 @@ export default {
             app.$message(e.response.message)
           })
       }
+    },
+    viewAndEditDocument(data) {
+      const app = this
+      app.selectedDocument = data
+      app.showDocumentEditor = true
     },
   },
 

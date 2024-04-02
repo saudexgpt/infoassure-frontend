@@ -7,6 +7,14 @@ export function login(data) {
     data,
   })
 }
+export function otherUserLogin(data) {
+  return request({
+    url: '/auth/other-user-login',
+    method: 'post',
+    data,
+  })
+}
+
 export function register(data) {
   return request({
     url: '/auth/register',

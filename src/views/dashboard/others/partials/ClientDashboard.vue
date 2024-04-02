@@ -1,9 +1,11 @@
 <template>
-  <div>
-    <data-analysis
-      v-if="dashboardData !== null"
-      :dashboard-data="dashboardData"
-    />
+  <div v-loading="load">
+    <div v-if="dashboardData !== null">
+
+      <data-analysis
+        :dashboard-data="dashboardData"
+      />
+    </div>
   </div>
 </template>
 
@@ -20,6 +22,7 @@ export default {
         color: '#fff',
       },
       dashboardData: null,
+      load: false,
     }
   },
   created() {
@@ -28,9 +31,11 @@ export default {
   methods: {
     fetchDashboardData() {
       const app = this
+      app.load = true
       const dashboardDataResource = new Resource('reports/client-data-analysis-dashboard')
       dashboardDataResource.list().then(response => {
         app.dashboardData = response
+        app.load = false
       }).catch(error => {
         console.log(error)
         app.load = false

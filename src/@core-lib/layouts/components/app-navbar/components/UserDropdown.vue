@@ -9,7 +9,10 @@
         <p class="user-name font-weight-bolder mb-0">
           Welcome, {{ userData.name.split(' ')[0] }}
         </p>
-        <span class="user-status">{{ userData.role }}</span>
+        <span
+          v-if="userData.login_as !== null"
+          class="user-status"
+        >{{ (userData.login_as === 'super') ? 'Super Admin' : userData.login_as.toUpperCase() }}</span>
       </div>
       <b-avatar
         size="40"
@@ -38,39 +41,17 @@
       />
       <span>Profile</span>
     </b-dropdown-item>
-    <!-- <b-dropdown-item
-      :to="{ name: 'apps-email' }"
-      link-class="d-flex align-items-center"
-    >
-      <feather-icon
-        size="16"
-        icon="MailIcon"
-        class="mr-50"
-      />
-      <span>Inbox</span>
-    </b-dropdown-item>
     <b-dropdown-item
-      :to="{ name: 'apps-todo' }"
+      :to="{ name: 'LoginAs'}"
       link-class="d-flex align-items-center"
     >
       <feather-icon
         size="16"
-        icon="CheckSquareIcon"
+        icon="BriefcaseIcon"
         class="mr-50"
       />
-      <span>Task</span>
+      <span>Change Role</span>
     </b-dropdown-item>
-    <b-dropdown-item
-      :to="{ name: 'apps-chat' }"
-      link-class="d-flex align-items-center"
-    >
-      <feather-icon
-        size="16"
-        icon="MessageSquareIcon"
-        class="mr-50"
-      />
-      <span>Chat</span>
-    </b-dropdown-item> -->
 
     <b-dropdown-divider />
 

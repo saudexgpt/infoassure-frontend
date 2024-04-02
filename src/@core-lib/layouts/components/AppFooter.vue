@@ -2,11 +2,11 @@
   <p class="clearfix mb-0 no-print">
 
     <span class="float-md-right d-none d-md-block">
-      Powered By: <b-link
+      Product of: <b-link
         class="ml-25"
         :href="companyUrl"
         target="_blank"
-      >{{ appName }}</b-link> | © {{ new Date().getFullYear() }}
+      >{{ appName }}</b-link> © {{ new Date().getFullYear() }}
       <!-- <feather-icon
         icon="HeartIcon"
         size="21"

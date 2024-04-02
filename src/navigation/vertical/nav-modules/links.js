@@ -14,23 +14,40 @@ export default [
       modules: ['due-diligence'],
     },
   },
+  {
+    title: 'BIA Setup',
+    icon: 'BriefcaseIcon',
+    route: 'bia-setup',
+    acl: {
+      modules: ['bia'],
+    },
+  },
 
   {
     title: 'Activated Modules',
     icon: 'CheckIcon',
     route: 'ActivatedModules',
     acl: {
-      modules: ['due-diligence'],
+      modules: ['due-diligence', 'bia'],
       except: ['client'],
-      roles: ['partner'],
+      // roles: ['partner'],
     },
   },
   {
     title: 'Manage Projects',
-    icon: 'BriefcaseIcon',
+    icon: 'CpuIcon',
     route: 'manage-projects',
     acl: {
       permissions: ['manage-client-projects', 'manage-project-plan', 'manage-project-phases'],
+    },
+  },
+
+  {
+    title: 'Client Certificate',
+    icon: 'ClipboardIcon',
+    route: 'client-certificate',
+    acl: {
+      permissions: ['upload-client certificate'],
     },
   },
   // {
