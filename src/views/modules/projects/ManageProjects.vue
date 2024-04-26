@@ -1,45 +1,40 @@
 <template>
-  <el-card>
-    <b-tabs
-      content-class="mt-1"
+  <el-tabs type="border-card">
+    <el-tab-pane
+      v-if="checkPermission(['manage-project-phases'])"
+      lazy
     >
-      <b-tab
-        v-if="checkPermission(['manage-project-phases'])"
-        lazy
-      >
-        <template #title>
-          <feather-icon icon="BarChartIcon" />
-          <span>Manage Project Phases</span>
-        </template>
-        <project-phases />
-      </b-tab>
-      <b-tab
-        v-if="checkPermission(['manage-project-plan'])"
-        lazy
-      >
-        <template #title>
-          <feather-icon icon="LayersIcon" />
-          <span>Manage Project Plan</span>
-        </template>
-        <project-plan />
-      </b-tab>
-      <b-tab
-        v-if="checkPermission(['manage-client-projects'])"
-        lazy
-      >
-        <template #title>
-          <feather-icon icon="ListIcon" />
-          <span>Manage Client Projects</span>
-        </template>
-        <client-projects />
-      </b-tab>
-    </b-tabs>
-  </el-card>
+      <template slot="label">
+        <!-- <feather-icon icon="BarChartIcon" /> -->
+        <span>Manage Project Phases</span>
+      </template>
+      <project-phases />
+    </el-tab-pane>
+    <el-tab-pane
+      v-if="checkPermission(['manage-project-plan'])"
+      lazy
+    >
+      <template slot="label">
+        <!-- <feather-icon icon="LayersIcon" /> -->
+        <span>Manage Project Plan</span>
+      </template>
+      <project-plan />
+    </el-tab-pane>
+    <el-tab-pane
+      v-if="checkPermission(['manage-client-projects'])"
+      lazy
+    >
+      <template slot="label">
+        <!-- <feather-icon icon="ListIcon" /> -->
+        <span>Manage Client Projects</span>
+      </template>
+      <client-projects />
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script>
 import {
-  BTabs, BTab,
 } from 'bootstrap-vue'
 import ClientProjects from './ClientProjects.vue'
 import ProjectPhases from './ProjectPhases.vue'
@@ -48,8 +43,6 @@ import checkPermission from '@/utils/permission'
 
 export default {
   components: {
-    BTabs,
-    BTab,
     ClientProjects,
     ProjectPhases,
     ProjectPlan,

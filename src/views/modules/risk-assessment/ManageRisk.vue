@@ -3,7 +3,7 @@
     <div slot="header">
       <b-row>
         <b-col cols="6">
-          <h4>Manage Business Processes</h4>
+          <h4>Manage Risk</h4>
         </b-col>
         <b-col
           cols="6"
@@ -12,7 +12,7 @@
             <b-button
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
               variant="gradient-success"
-              @click="isCreateBusinessProcessSidebarActive = true"
+              @click="isCreateRiskSidebarActive = true"
             >
               <feather-icon
                 icon="PlusIcon"
@@ -37,7 +37,8 @@
             value-key="id"
             placeholder="Select Client"
             style="width: 100%;"
-            @input="fetchBusinessUnits()"
+            filterable
+            @input="fetchRisks()"
           >
             <el-option
               v-for="(client, index) in clients"
@@ -47,29 +48,10 @@
             />
           </el-select>
         </el-col>
-        <el-col
-          :xs="24"
-          :sm="8"
-          :md="8"
-        >
-          <el-select
-            v-model="business_unit_id"
-            placeholder="Select Business Unit"
-            style="width: 100%;"
-            @input="fetchBusinessProcesses()"
-          >
-            <el-option
-              v-for="(business_unit, index) in business_units"
-              :key="index"
-              :value="business_unit.id"
-              :label="business_unit.unit_name"
-            />
-          </el-select>
-        </el-col>
       </el-row>
     </aside>
     <v-client-table
-      v-model="business_processes"
+      v-model="risks"
       v-loading="loading"
       :columns="columns"
       :options="options"
@@ -85,7 +67,7 @@
           <b-button
             variant="gradient-primary"
             class="btn-icon rounded-circle"
-            @click="fetchClients()"
+            @click="manageProject(props.row)"
           >
             <feather-icon icon="EditIcon" />
           </b-button>
@@ -100,9 +82,9 @@
         </b-button>
       </div>
     </v-client-table>
-    <create-business-process
-      v-if="isCreateBusinessProcessSidebarActive"
-      v-model="isCreateBusinessProcessSidebarActive"
+    <create-risk
+      v-if="isCreateRiskSidebarActive"
+      v-model="isCreateRiskSidebarActive"
       :clients="clients"
     />
   </el-card>
@@ -112,15 +94,15 @@
 import {
   BButton, BRow, BCol,
 } from 'bootstrap-vue'
-// import { VueGoodTable } from 'vue-good-table'
+  // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
-import createBusinessProcess from './CreateBusinessProcess.vue'
+import createRisk from './partials/CreateRisk.vue'
 
 export default {
   components: {
-    createBusinessProcess,
+    createRisk,
     BButton,
     BRow,
     BCol,
@@ -141,54 +123,35 @@ export default {
         },
       },
       loading: false,
-      isCreateBusinessProcessSidebarActive: false,
+      isCreateRiskSidebarActive: false,
       pageLength: 10,
       dir: false,
       columns: [
-        // 'client_id',
-        // 'business_unit_id',
-        'name',
+        'risk_unique_id',
+        'type',
         'description',
-        'roles_responsible',
-        'no_of_people_involved',
-        'minimum_no_of_people_involved',
-        'product_or_service_delivered',
-        'regulatory_obligations',
-        'applications_used',
-        'business_units_depended_on',
-        'processes_depended_on',
-        'key_vendors_or_external_dependencies',
-        'vital_non_electronic_records',
-        'vital_electronic_records',
-        'alternative_workaround_during_system_failure',
-        'key_individuals_process_depends_on',
-        'peak_periods',
-        'remote_working',
+        'outcome',
         'action',
       ],
       options: {
         headings: {
+          risk_unique_id: 'Risk ID',
+          type: 'Risk Type',
         },
         pagination: {
           dropdown: true,
           chunk: 10,
         },
         perPage: 10,
-        filterByColumn: false,
+        filterByColumn: true,
         texts: {
           filter: 'Search:',
         },
-        sortable: [
-          'standard.name',
-        ],
+        sortable: [],
         // filterable: false,
-        filterable: [
-          'standard.name',
-        ],
+        filterable: [],
       },
-      business_unit_id: '',
-      business_units: [],
-      business_processes: [],
+      risks: [],
       clients: [],
       staff: [],
       clientUsers: [],
@@ -207,29 +170,19 @@ export default {
     checkPermission,
     fetchClients() {
       const app = this
-      const fetchBusinessProcesssResource = new Resource('clients')
-      fetchBusinessProcesssResource.list({ option: 'all' })
+      const fetchRisksResource = new Resource('clients')
+      fetchRisksResource.list({ option: 'all' })
         .then(response => {
           app.clients = response.clients
         })
     },
-    fetchBusinessUnits() {
-      const app = this
-      app.business_unit_id = ''
-      const fetchBusinessUnitsResource = new Resource('bia/fetch-business-units')
-      fetchBusinessUnitsResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.business_units = response.business_units
-          app.loading = false
-        }).catch(() => { app.loading = false })
-    },
-    fetchBusinessProcesses() {
+    fetchRisks() {
       const app = this
       app.loading = true
-      const fetchBusinessProcesssResource = new Resource('bia/fetch-business-processes')
-      fetchBusinessProcesssResource.list({ business_unit_id: app.business_unit_id, client_id: app.selectedClient.id })
+      const fetchRisksResource = new Resource('risk-assessment/fetch-risks')
+      fetchRisksResource.list({ client_id: app.selectedClient.id })
         .then(response => {
-          app.business_processes = response.business_processes
+          app.risks = response.risks
           app.loading = false
         }).catch(() => { app.loading = false })
     },
@@ -239,10 +192,10 @@ export default {
       // eslint-disable-next-line no-alert
       if (window.confirm('Are you sure you want to delete this entry?')) {
         app.loading = true
-        const destroyProjectsResource = new Resource('business_units/destroy')
+        const destroyProjectsResource = new Resource('risk-assessment/destroy')
         destroyProjectsResource.destroy(row.id)
           .then(() => {
-            app.fetchBusinessProcesss()
+            app.fetchRisks()
             app.loading = false
           })
       }
@@ -250,6 +203,6 @@ export default {
   },
 }
 </script>
-<style lang="scss" >
-@import '@core/scss/vue/libs/vue-good-table.scss';
-</style>
+  <style lang="scss" >
+  @import '@core/scss/vue/libs/vue-good-table.scss';
+  </style>

@@ -112,11 +112,11 @@ export default {
             access_code: '',
           }
           app.load = false
-          window.location = '/bia'
+          window.location = app.$route.path
         })
         .catch(error => {
           app.$message({
-            message: error.message,
+            message: error.response.data.message,
             type: 'error',
           })
           app.load = false

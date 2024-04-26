@@ -34,7 +34,7 @@ export default {
           text: '',
         },
         tooltip: {
-          pointFormat: '{series.name}:<b>{point.y}</b><br>{point.percentage}%',
+          pointFormat: '{series.name}:<b>{point.y}</b><br>{point.percentage:.1f}%',
           // pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
         },
         accessibility: {
@@ -50,7 +50,7 @@ export default {
             // innerSize: 100, // what makes it donut
             dataLabels: {
               enabled: true,
-              format: '<b>{point.name}:</b> {point.y}<br>{point.percentage} %',
+              format: '<b>{point.name}:</b> {point.y}<br>{point.percentage:.1f} %',
               // format: '<b>{point.name}</b>: {point.percentage:.1f} %',
             },
           },

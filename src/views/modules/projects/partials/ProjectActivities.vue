@@ -31,7 +31,7 @@
               >
                 {{ item.statistic }}
               </h2>
-              <span>{{ item.title }}</span>
+              <span>{{ item.label }}</span>
             </div>
           </b-card-body>
           <b-card-footer>
@@ -44,7 +44,7 @@
       </el-col>
     </el-row>
 
-    <b-tabs>
+    <b-tabs type="card">
       <b-tab
         title="GAP ASSESSMENT"
         lazy
@@ -123,7 +123,7 @@
 </template>
 <script>
 import {
-  BTabs, BTab, BCard, BCardFooter, BCardBody, BAvatar,
+  BCard, BCardFooter, BCardBody, BAvatar, BTabs, BTab,
 } from 'bootstrap-vue'
 import Documents from './Documents.vue'
 import AuditQuestions from './AuditQuestions.vue'
@@ -188,13 +188,13 @@ export default {
       const app = this
       const data = [
         {
-          color: 'success', icon: 'HelpCircleIcon', statistic: app.dashboardData.all_questions, title: 'Gap Assessment', title2: 'Responses', statistic2: app.dashboardData.answered_questions, footer: true,
+          color: 'success', icon: 'HelpCircleIcon', statistic: app.dashboardData.all_questions, label: 'Gap Assessment', title2: 'Responses', statistic2: app.dashboardData.answered_questions, footer: true,
         },
         {
-          color: 'primary', icon: 'UploadIcon', statistic: app.dashboardData.expected_documents, title: 'Expected Documents', title2: 'Uploaded Documents', statistic2: app.dashboardData.uploaded_documents, footer: true,
+          color: 'primary', icon: 'UploadIcon', statistic: app.dashboardData.expected_documents, label: 'Expected Documents', title2: 'Uploaded Documents', statistic2: app.dashboardData.uploaded_documents, footer: true,
         },
         {
-          color: 'danger', icon: 'AlertCircleIcon', statistic: app.dashboardData.exceptions, title: 'EXCLUSIONS',
+          color: 'danger', icon: 'AlertCircleIcon', statistic: app.dashboardData.exceptions, label: 'EXCLUSIONS',
         },
       ]
       app.statistics = data

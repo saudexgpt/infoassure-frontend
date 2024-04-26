@@ -1,32 +1,38 @@
 <template>
 
-  <div v-if="showDocumentEditor">
-    <span
-      class="pull-right"
-    >
-      <el-button
-        type="danger"
-        class="btn-icon"
-        size="mini"
-        @click="showDocumentEditor = false "
+  <div v-if="showDocumentEditor !== 'none'">
+    <div>
+      <span
+        class="pull-right"
       >
-        <feather-icon icon="XIcon" />
-      </el-button>
-    </span>
-    <vue-document-editor
-      :document-path="selectedDocument.link"
-      :document-title="selectedDocument.evidence_title"
-    />
-    <!-- <vue-document-editor
-      :document-path="selectedDocument.link"
-      db-table="gap_assessment_evidences"
-      sub-folder="gap-assessment-evidence"
-      :doc-id="selectedDocument.id"
-    /> -->
+        <el-button
+          type="danger"
+          class="btn-icon"
+          size="mini"
+          @click="showDocumentEditor = 'none'"
+        >
+          <feather-icon icon="XIcon" />
+        </el-button>
+      </span>
+    </div>
+    <div>
+      <vue-document-editor
+        v-if="showDocumentEditor === 'word'"
+        :document-path="selectedDocument.link"
+        :document-title="selectedDocument.evidence_title"
+      />
+      <vue-spreadsheet-editor
+        v-if="showDocumentEditor === 'spreadsheet'"
+        :document-path="selectedDocument.link"
+        :document-title="selectedDocument.evidence_title"
+      />
+    </div>
   </div>
-  <div v-else>
+  <div
+    v-else
+    v-loading="loading"
+  >
     <app-collapse
-      v-loading="loading"
       accordion
       type="border"
     >
@@ -317,20 +323,22 @@
                 >
                   <div
                     v-if="question.upload_evidence === 1"
+                    v-loading="loadDelete"
                     style="height: 300px; overflow: auto; background: #fcfcfc; padding: 10px;"
                   >
                     <b-button
                       v-if="!isAdmin"
-                      variant="gradient-primary"
+                      variant="success"
                       block
                       @click="addEvidence(question.answer.id)"
                     >
                       <feather-icon icon="UploadIcon" />
-                      Upload Evidence
+                      Click to upload evidence
                     </b-button>
-                    <div v-if="isAdmin">
+                    <br>
+                    <small>
                       Uploaded Evidences
-                    </div>
+                    </small>
                     <hr>
                     <b-alert
                       v-for="(evidence, evidence_index) in question.answer.evidences"
@@ -339,7 +347,6 @@
                       show
                     >
                       <div
-                        v-loading="loadDelete"
                         class="alert-body"
                       >
                         <!-- <a
@@ -358,12 +365,18 @@
                               <i class="el-icon-more-outline" />
                             </b-button>
                             <el-dropdown-menu slot="dropdown">
-                              <el-dropdown-item v-if="evidence.link.split('.').pop() === 'docx' || evidence.link.split('.').pop() === 'doc'">
-                                <span @click="viewAndEditDocument(evidence)">Edit</span>
-                              </el-dropdown-item>
                               <el-dropdown-item
-                                v-else
+                                v-if="evidence.link.split('.').pop() === 'docx' || evidence.link.split('.').pop() === 'doc'"
                               >
+                                <span @click="viewAndEditDocument(evidence, 'word')">Edit Word Doc</span>
+                              </el-dropdown-item>
+
+                              <!-- <el-dropdown-item
+                                v-if="evidence.link.split('.').pop() === 'xlsx' || evidence.link.split('.').pop() === 'xls'"
+                              >
+                                <span @click="viewAndEditDocument(evidence, 'spreadsheet')">Edit Spreadsheet</span>
+                              </el-dropdown-item> -->
+                              <el-dropdown-item>
                                 <a
                                   :href="baseServerUrl+'storage/'+evidence.link"
                                   target="_blank"
@@ -421,7 +434,8 @@ import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
 import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import UploadGapAssessmentEvidence from './UploadGapAssessmentEvidence.vue'
 import GiveGapAssessmentRemarks from './GiveGapAssessmentRemarks.vue'
-import VueDocumentEditor from '@/views/modules/app-setup/VueDocumentEditor.vue'
+import VueDocumentEditor from '@/views/components/editors/VueDocumentEditor.vue'
+import VueSpreadsheetEditor from '@/views/components/editors/VueSpreadsheetEditor.vue'
 import Resource from '@/api/resource'
 
 export default {
@@ -434,6 +448,7 @@ export default {
     UploadGapAssessmentEvidence,
     GiveGapAssessmentRemarks,
     VueDocumentEditor,
+    VueSpreadsheetEditor,
   },
   props: {
     selectedProject: {
@@ -465,7 +480,7 @@ export default {
       editorConfig: {
         // The configuration of the editor.
       },
-      showDocumentEditor: false,
+      showDocumentEditor: 'none',
       selectedDocument: '',
     }
   },
@@ -615,10 +630,10 @@ export default {
           })
       }
     },
-    viewAndEditDocument(data) {
+    viewAndEditDocument(data, type) {
       const app = this
       app.selectedDocument = data
-      app.showDocumentEditor = true
+      app.showDocumentEditor = type
     },
   },
 

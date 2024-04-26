@@ -37,7 +37,7 @@
             value-key="id"
             placeholder="Select Client"
             style="width: 100%;"
-            @input="fetchOtherUsers()"
+            @input="fetchBusinessUnits()"
           >
             <el-option
               v-for="(client, index) in clients"
@@ -49,15 +49,39 @@
         </el-col>
         <el-col
           :xs="24"
-          :sm="12"
-          :md="12"
+          :sm="8"
+          :md="8"
+        >
+          <el-select
+            v-model="selectedBusinessUnit"
+            value-key="id"
+            placeholder="Select Business Unit"
+            style="width: 100%;"
+            @input="fetchOtherUsers()"
+          >
+            <el-option
+              v-for="(business_unit, index) in business_units"
+              :key="index"
+              :value="business_unit"
+              :label="business_unit.unit_name"
+            />
+          </el-select>
+        </el-col>
+        <el-col
+          :xs="24"
+          :sm="8"
+          :md="8"
         >
 
-          <div v-if="selectedClient !== null">
-            Access Code: <strong> {{ selectedClient.access_code }} </strong>
+          <div v-if="selectedBusinessUnit !== null">
+            Access Code: <code v-loading="loadCode"> {{ selectedBusinessUnit.access_code }} </code>
 
-            <el-button @click="refreshCode()">
-              Refresh Code
+            <el-button
+              size="mini"
+              type="warning"
+              @click="refreshCode()"
+            >
+              New Code
             </el-button>
           </div>
         </el-col>
@@ -66,12 +90,12 @@
     <v-client-table
       v-model="users"
       v-loading="loading"
-      :columns="['name', 'email']"
+      :columns="['name', 'email', 'action']"
       :options="{}"
     >
-      <!-- <div
+      <div
         slot="action"
-        slot-scope="$props"
+        slot-scope="props"
       >
         <el-tooltip
           content="Edit"
@@ -80,24 +104,32 @@
           <b-button
             variant="gradient-primary"
             class="btn-icon rounded-circle"
-            @click="manageProject(props.row)"
+            @click="editRow(props.row)"
           >
             <feather-icon icon="EditIcon" />
           </b-button>
         </el-tooltip>
-        <b-button
+        <!-- <b-button
           variant="gradient-danger"
           class="btn-icon rounded-circle"
           @click="destroyRow($props.row)"
         >
           <feather-icon icon="TrashIcon" />
-        </b-button>
-      </div> -->
+        </b-button> -->
+      </div>
     </v-client-table>
     <create-other-user
       v-if="isCreateActive"
       v-model="isCreateActive"
       :clients="clients"
+      @save="fetchOtherUsers"
+    />
+    <edit-other-user
+      v-if="isEditActive"
+      v-model="isEditActive"
+      :clients="clients"
+      :selected-user="selectedUser"
+      @update="fetchOtherUsers"
     />
   </el-card>
 </template>
@@ -111,10 +143,12 @@ import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
 import CreateOtherUser from './CreateOtherUser.vue'
+import EditOtherUser from './EditOtherUser.vue'
 
 export default {
   components: {
     CreateOtherUser,
+    EditOtherUser,
     BButton,
     BRow,
     BCol,
@@ -129,8 +163,14 @@ export default {
       dir: false,
       users: [],
       clients: [],
+      business_units: [],
+      business_unit_id: '',
+      selectedBusinessUnit: null,
       selectedClient: null,
+      selectedUser: null,
       isCreateActive: false,
+      isEditActive: false,
+      loadCode: false,
     }
   },
   created() {
@@ -144,23 +184,47 @@ export default {
       fetchClientsResource.list({ option: 'all' })
         .then(response => {
           app.clients = response.clients
+          if (app.clients.length === 1) {
+            // eslint-disable-next-line prefer-destructuring
+            app.selectedClient = app.clients[0]
+            app.fetchBusinessUnits()
+          }
         })
+    },
+    fetchBusinessUnits() {
+      const app = this
+      app.selectedBusinessUnit = null
+      const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')
+      fetchBusinessUnitsResource.list({ client_id: app.selectedClient.id })
+        .then(response => {
+          app.business_units = response.business_units
+          app.loading = false
+        }).catch(() => { app.loading = false })
     },
     fetchOtherUsers() {
       const app = this
-      const fetchOtherClientUsersResource = new Resource('clients/fetch-other-users')
-      fetchOtherClientUsersResource.list({ client_id: app.selectedClient.id })
+      app.loading = true
+      const fetchOtherClientUsersResource = new Resource('business-units/fetch-other-users')
+      fetchOtherClientUsersResource.list({ business_unit_id: app.selectedBusinessUnit.id })
         .then(response => {
+          app.loading = false
           app.users = response.users
-        })
+        }).catch(() => { app.loading = false })
     },
     refreshCode() {
       const app = this
-      const fetchOtherClientUsersResource = new Resource('clients/refresh-access-code')
-      fetchOtherClientUsersResource.update(app.selectedClient.id)
+      app.loadCode = true
+      const fetchOtherClientUsersResource = new Resource('business-units/refresh-access-code')
+      fetchOtherClientUsersResource.update(app.selectedBusinessUnit.id)
         .then(response => {
-          app.selectedClient = response.client
-        })
+          app.loadCode = false
+          app.selectedBusinessUnit = response.business_unit
+        }).catch(() => { app.loadCode = false })
+    },
+    editRow(row) {
+      const app = this
+      app.selectedUser = row
+      app.isEditActive = true
     },
   },
 }

@@ -21,13 +21,29 @@ export default [
     },
   },
   {
-    path: '/bia-setup',
-    name: 'bia-setup',
-    component: () => import('@/views/modules/BIA/SetUp.vue'),
-    meta: {
-      modules: ['bia'],
-    },
+    path: '/business-unit',
+    name: 'business-unit',
+    component: () => import('@/views/modules/business-units/SetUp.vue'),
+    // meta: {
+    //   except: ['client'],
+    // },
   },
+  {
+    path: '/risk-setup',
+    name: 'risk-setup',
+    component: () => import('@/views/modules/risk-assessment/ManageRisk.vue'),
+    // meta: {
+    //   except: ['client'],
+    // },
+  },
+  // {
+  //   path: '/bia-setup',
+  //   name: 'bia-setup',
+  //   component: () => import('@/views/modules/BIA/SetUp.vue'),
+  //   meta: {
+  //     modules: ['bia'],
+  //   },
+  // },
   // {
   //   path: '/client-projects',
   //   name: 'client-projects',
@@ -76,6 +92,14 @@ export default [
       permissions: ['upload-client certificate'],
     },
   },
+  {
+    path: '/client-feedback-form',
+    name: 'client-feedback-form',
+    component: () => import('@/views/modules/app-setup/FeedBackForm.vue'),
+    meta: {
+      permissions: ['manage-client-feedback'],
+    },
+  },
 
   {
     path: '/questions',
@@ -120,7 +144,15 @@ export default [
   {
     path: '/document-editor',
     name: 'DocumentEditor',
-    component: () => import('@/views/modules/app-setup/VueDocumentEditor.vue'),
+    component: () => import('@/views/components/editors/VueDocumentEditor.vue'),
+    meta: {
+      // roles: ['super'],
+    },
+  },
+  {
+    path: '/spreadsheet-editor',
+    name: 'SpreadsheetEditor',
+    component: () => import('@/views/components/editors/VueSpreadsheetEditor.vue'),
     meta: {
       // roles: ['super'],
     },

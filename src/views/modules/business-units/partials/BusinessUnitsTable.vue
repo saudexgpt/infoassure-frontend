@@ -37,6 +37,7 @@
             value-key="id"
             placeholder="Select Client"
             style="width: 100%;"
+            filterable
             @input="fetchBusinessUnits()"
           >
             <el-option
@@ -57,7 +58,7 @@
     >
       <div
         slot="action"
-        slot-scope="$props"
+        slot-scope="props"
       >
         <el-tooltip
           content="Edit"
@@ -66,25 +67,33 @@
           <b-button
             variant="gradient-primary"
             class="btn-icon rounded-circle"
-            @click="manageProject(props.row)"
+            @click="editRow(props.row)"
           >
             <feather-icon icon="EditIcon" />
           </b-button>
         </el-tooltip>
-        <b-button
+        <!-- <b-button
           v-if="checkPermission(['delete-client project'])"
           variant="gradient-danger"
           class="btn-icon rounded-circle"
           @click="destroyRow($props.row)"
         >
           <feather-icon icon="TrashIcon" />
-        </b-button>
+        </b-button> -->
       </div>
     </v-client-table>
     <create-business-unit
       v-if="isCreateBusinessUnitSidebarActive"
       v-model="isCreateBusinessUnitSidebarActive"
       :clients="clients"
+      @save="fetchBusinessUnits"
+    />
+    <edit-business-unit
+      v-if="isEditBusinessUnitSidebarActive"
+      v-model="isEditBusinessUnitSidebarActive"
+      :clients="clients"
+      :business-unit="selectedBusinessUnit"
+      @update="fetchBusinessUnits"
     />
   </el-card>
 </template>
@@ -98,10 +107,12 @@ import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
 import createBusinessUnit from './CreateBusinessUnit.vue'
+import editBusinessUnit from './EditBusinessUnit.vue'
 
 export default {
   components: {
     createBusinessUnit,
+    editBusinessUnit,
     BButton,
     BRow,
     BCol,
@@ -123,13 +134,16 @@ export default {
       },
       loading: false,
       isCreateBusinessUnitSidebarActive: false,
+      isEditBusinessUnitSidebarActive: false,
       pageLength: 10,
       dir: false,
       columns: [
         'group_name',
         'unit_name',
+        'teams',
         'function_performed',
         'contact_phone',
+        // 'access_code',
         'action',
       ],
       options: {
@@ -144,15 +158,12 @@ export default {
         texts: {
           filter: 'Search:',
         },
-        sortable: [
-          'standard.name',
-        ],
+        sortable: [],
         // filterable: false,
-        filterable: [
-          'standard.name',
-        ],
+        filterable: [],
       },
       business_units: [],
+      selectedBusinessUnit: null,
       clients: [],
       staff: [],
       clientUsers: [],
@@ -175,17 +186,27 @@ export default {
       fetchBusinessUnitsResource.list({ option: 'all' })
         .then(response => {
           app.clients = response.clients
+          if (app.clients.length === 1) {
+            // eslint-disable-next-line prefer-destructuring
+            app.selectedClient = app.clients[0]
+            app.fetchBusinessUnits()
+          }
         })
     },
     fetchBusinessUnits() {
       const app = this
       app.loading = true
-      const fetchBusinessUnitsResource = new Resource('bia/fetch-business-units')
+      const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')
       fetchBusinessUnitsResource.list({ client_id: app.selectedClient.id })
         .then(response => {
           app.business_units = response.business_units
           app.loading = false
         }).catch(() => { app.loading = false })
+    },
+    editRow(row) {
+      const app = this
+      app.selectedBusinessUnit = row
+      app.isEditBusinessUnitSidebarActive = true
     },
     destroyRow(row) {
       const app = this
@@ -198,7 +219,7 @@ export default {
           .then(() => {
             app.fetchBusinessUnits()
             app.loading = false
-          })
+          }).catch(() => { app.loading = false })
       }
     },
   },

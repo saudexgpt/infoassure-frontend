@@ -31,7 +31,7 @@ tagVariant
 
 */
 // import appsAndPages from './apps-and-pages'
-// import appSetup from './nav-modules/app-setup'
+import appSetup from './nav-modules/app-setup'
 // import accessControl from './nav-modules/access-control'
 import links from './nav-modules/links'
 import adminSettings from './nav-modules/admin-settings'
@@ -42,7 +42,7 @@ import userManagement from './nav-modules/user-management'
 // import formAndTable from './forms-and-table'
 
 // Array of sections
-export default [...links, ...userManagement, ...adminSettings]
+export default [...links, ...appSetup, ...userManagement, ...adminSettings]
 
 // import store from '@/store'
 

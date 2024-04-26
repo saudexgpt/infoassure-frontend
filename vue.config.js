@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  publicPath: '/',
+  publicPath: '',
   css: {
     loaderOptions: {
       sass: {
@@ -22,6 +22,7 @@ module.exports = {
     resolve: {
       extensions: ['.js', '.vue', '.json'],
       alias: {
+        vue$: 'vue/dist/vue.esm.js',
         '@': path.resolve(__dirname, 'src'),
         '@themeConfig': path.resolve(__dirname, 'themeConfig.js'),
         '@core': path.resolve(__dirname, 'src/@core-lib'),

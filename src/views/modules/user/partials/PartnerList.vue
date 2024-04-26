@@ -216,9 +216,9 @@ import Ripple from 'vue-ripple-directive'
 import checkPermission from '@/utils/permission'
 import checkRole from '@/utils/role'
 import Pagination from '@/views/components/Pagination-main/index.vue'
+import Resource from '@/api/resource'
 import EditPartner from './EditPartner.vue'
 import EditPartnerUser from './EditPartnerUser.vue'
-import Resource from '@/api/resource'
 
 export default {
   components: {

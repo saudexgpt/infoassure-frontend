@@ -14,14 +14,14 @@ export default [
       modules: ['due-diligence'],
     },
   },
-  {
-    title: 'BIA Setup',
-    icon: 'BriefcaseIcon',
-    route: 'bia-setup',
-    acl: {
-      modules: ['bia'],
-    },
-  },
+  // {
+  //   title: 'BIA Setup',
+  //   icon: 'BriefcaseIcon',
+  //   route: 'bia-setup',
+  //   acl: {
+  //     modules: ['bia'],
+  //   },
+  // },
 
   {
     title: 'Activated Modules',

@@ -118,9 +118,9 @@
           >
 
             <div v-if="selectedProject.certificate !== null">
-              <div v-if="selectedProject.certificate.preview !== null && selectedProject.certificate.original === null">
+              <div v-if="selectedProject.certificate.report !== null">
                 <a
-                  :href="baseServerUrl+'storage/'+selectedProject.certificate.preview"
+                  :href="baseServerUrl+'storage/'+selectedProject.certificate.report"
                   target="_blank"
                 >
                   <feather-icon
@@ -128,13 +128,27 @@
                     icon="DownloadIcon"
                     color="black"
                   /><br><br>
-                  <h2>DOWNLOAD CERTIFICATE SAMPLE</h2>
+                  <h2>DOWNLOAD REPORT HERE</h2>
                 </a>
 
               </div>
               <div v-if="selectedProject.certificate.original !== null">
                 <a
                   :href="baseServerUrl+'storage/'+selectedProject.certificate.original"
+                  target="_blank"
+                >
+                  <feather-icon
+                    size="70"
+                    icon="DownloadIcon"
+                    color="green"
+                  /><br><br>
+                  <h2>DOWNLOAD CERTIFICATE</h2>
+                </a>
+
+              </div>
+              <div v-if="selectedProject.certificate.preview !== null">
+                <a
+                  :href="baseServerUrl+'storage/'+selectedProject.certificate.preview"
                   target="_blank"
                 >
                   <feather-icon

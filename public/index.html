@@ -5,8 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1" />
-
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script> -->
     <!-- Splash Screen/Loader Styles -->
     <link rel="stylesheet" type="text/css" href="<%= BASE_URL %>loader.css" />
 
@@ -15,7 +13,6 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
       rel="stylesheet"
     />
-    <!-- <link rel="stylesheet" href="<%= BASE_URL %>mathquill/build/mathquill.css"/> -->
     
     <title>Compass | Compliance Made Easy</title>
   </head>
@@ -27,7 +24,7 @@
       >
     </noscript>
     <div id="loading-bg">
-      <div class="loading-logo" align="center">
+      <div class="loading-logo">
         <img src="<%= BASE_URL %>images/logo/logo.png" alt="Logo" width="200" />
         <p>...loading, please wait</p>
       </div>
@@ -38,25 +35,5 @@
       </div> -->
     </div>
     <div id="app"></div>
-    <!-- <script src="https://js.pusher.com/7.2/pusher.min.js"></script> -->
-
-    <!-- <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
-    <script>
-      const beamsClient = new PusherPushNotifications.Client({
-        instanceId: '87026ab7-396f-4314-8d28-1edc446b3cae',
-      });
-
-      beamsClient.start()
-        .then(() => beamsClient.addDeviceInterest('hello'))
-        .then(() => console.log('Successfully registered and subscribed!'))
-        .catch(console.error);
-    </script> -->
-
-    <!-- built files will be auto injected -->
-    <!-- <script src="<%= BASE_URL %>mathquill/build/mathquill.js"></script>
-    <script>
-    var MQ = MathQuill.getInterface(2);
-    console.log(MQ)
-    </script> -->
   </body>
 </html>

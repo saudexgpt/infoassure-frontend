@@ -31,21 +31,21 @@
       :options="options"
     >
       <div
-        slot="preview"
+        slot="report"
         slot-scope="{row}"
       >
         <input
           class="form-control"
           type="file"
-          @change="onImageChange($event, row.id, 'preview' )"
+          @change="onImageChange($event, row.id, 'report' )"
         ><br>
         <el-alert
-          v-if="row.preview !== null"
+          v-if="row.report !== null"
           :closable="false"
           type="success"
         >
           <a
-            :href="baseServerUrl+'storage/'+row.preview"
+            :href="baseServerUrl+'storage/'+row.report"
             target="_blank"
           >
             <el-button
@@ -72,7 +72,20 @@
           type="success"
         >
           <a
+            v-if="row.original !== null"
             :href="baseServerUrl+'storage/'+row.original"
+            target="_blank"
+          >
+            <el-button
+              round
+              type="primary"
+            >
+              <feather-icon icon="DownloadIcon" /> View
+            </el-button>
+          </a>
+          <a
+            v-else
+            :href="baseServerUrl+'storage/'+row.preview"
             target="_blank"
           >
             <el-button
@@ -134,7 +147,7 @@ export default {
       dir: false,
       columns: [
         'project.standard.name',
-        'preview',
+        'report',
         'client_comment_on_preview',
         'original',
       ],

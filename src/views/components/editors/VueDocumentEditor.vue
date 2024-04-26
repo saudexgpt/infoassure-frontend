@@ -50,22 +50,6 @@ import {
 } from '@syncfusion/ej2-vue-documenteditor'
 
 import Resource from '@/api/resource'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@syncfusion/ej2-buttons/styles/material.css'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@syncfusion/ej2-inputs/styles/material.css'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@syncfusion/ej2-popups/styles/material.css'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@syncfusion/ej2-lists/styles/material.css'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@syncfusion/ej2-navigations/styles/material.css'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@syncfusion/ej2-splitbuttons/styles/material.css'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@syncfusion/ej2-dropdowns/styles/material.css'
-import '@/styles/ej2-base/doc-editor-material.css'
-import '@/styles/ej2-base/material.css'
 
 Vue.use(DocumentEditorContainerPlugin)
 export default {
@@ -172,3 +156,15 @@ export default {
   },
 }
 </script>
+<style>
+@import '../../../styles/ej2-base/buttons.css';
+@import '../../../styles/ej2-base/inputs.css';
+@import '../../../styles/ej2-base/popups.css';
+@import '../../../styles/ej2-base/lists.css';
+@import '../../../styles/ej2-base/navigations.css';
+@import '../../../styles/ej2-base/splitbuttons.css';
+@import '../../../styles/ej2-base/dropdowns.css';
+@import '../../../styles/ej2-base/base.css';
+@import '../../../styles/ej2-base/doc-editor-material.css';
+/* @import '@/styles/ej2-base/doc-editor-material.css' */
+</style>

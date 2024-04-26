@@ -1,17 +1,37 @@
 /* eslint-disable no-shadow */
+import { get, set } from 'idb-keyval'
+import store from '@/store'
 import {
   login, otherUserLogin, logout, register, getInfo, updatePassword, confirmOTP,
 } from '@/api/auth'
 import {
-  getToken, setToken, setOtherToken, getOtherToken, setUserRole, removeUserRole, removeToken,
+  getToken, setToken, setOtherToken, getOtherToken, removeOtherToken, setUserRole, removeUserRole, removeToken,
 } from '@/utils/auth'
 import { resetRouter } from '@/router'
 // import store from '@/store'
+function saveOtherUser(data) {
+  set('other_user', (JSON.stringify(data)))
+    .then().catch(err => console.log('Cannots save data!', err))
+}
+function loadOtherUserData() {
+  get('other_user').then(value => {
+    if (value) {
+      const otherUser = JSON.parse(value)
 
+      store.dispatch('user/setOtherUserData', otherUser)
+    }
+  })
+}
 const state = {
   id: '',
   token: getToken(),
   other_user_token: getOtherToken(),
+  otherUserData: {
+    client_id: null,
+    business_unit_id: null,
+    name: '',
+    email: '',
+  },
   userData: {
     id: '',
     name: '',
@@ -55,6 +75,9 @@ const mutations = {
   SET_OTHER_TOKEN(state, token) {
     state.other_user_token = token
   },
+  SET_OTHER_USER_DATA(state, data) {
+    Object.assign(state.otherUserData, data)
+  },
   SET_ID(state, id) {
     state.id = id
   },
@@ -92,6 +115,18 @@ const actions = {
     commit('SET_USER_DATA', data)
     const role = (data.login_as !== null) ? data.login_as : 'empty'
     setUserRole(role)
+  },
+  setOtherUserData({ commit }, data) {
+    commit('SET_OTHER_USER_DATA', data)
+  },
+
+  loadOtherUserData() {
+    return new Promise(resolve => {
+      loadOtherUserData()
+      setTimeout(() => {
+        resolve('success')
+      }, 1000)
+    })
   },
   register(userInfo) {
     // const { name, email, password, c_password } = userInfo;
@@ -134,13 +169,23 @@ const actions = {
         .then(response => {
           if (response.token) {
             commit('SET_OTHER_TOKEN', response.token)
+            commit('SET_OTHER_USER_DATA', response.other_user)
             setOtherToken(response.token)
+            saveOtherUser(response.other_user)
           }
           resolve(response)
         })
         .catch(error => {
           reject(error)
         })
+    })
+  },
+  logoutOtherUser({ commit }) {
+    return new Promise(resolve => {
+      removeOtherToken()
+      saveOtherUser('')
+      commit('SET_OTHER_TOKEN', '')
+      resolve()
     })
   },
   confirmOTP({ commit }, data) {

@@ -141,11 +141,11 @@ export default {
           filter: 'Search:',
         },
         sortable: [
-          'name',
+          'available_module.name',
         ],
         // filterable: false,
         filterable: [
-          'name',
+          'available_module.name',
         ],
       },
       activated_modules: [],

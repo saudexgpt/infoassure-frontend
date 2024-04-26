@@ -10,8 +10,8 @@ body {
   position: absolute;
 }
 .loading-logo {
-  position: absolute;
-  left: calc(50% - 45px);
+  position: relative;
+  text-align: center;
   top: 40%;
 }
 .loading {

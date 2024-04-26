@@ -1,11 +1,28 @@
 <template>
-  <div>
+  <el-card>
     <el-button
       :loading="downloading"
       type="primary"
+      size="mini"
       @click="exportToExcel('BIAReport')"
     >
       Export
+    </el-button>
+    <el-button
+      v-if="!expand"
+      type="warning"
+      size="mini"
+      @click="expand = true"
+    >
+      Expand Table
+    </el-button>
+    <el-button
+      v-else
+      type="danger"
+      size="mini"
+      @click="expand = false"
+    >
+      Shrink Table
     </el-button>
     <table
       id="BIAReport"
@@ -15,6 +32,7 @@
       <thead>
         <tr>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -25,6 +43,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -45,6 +64,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -55,6 +75,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -65,6 +86,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -75,6 +97,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -85,6 +108,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -95,6 +119,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -111,7 +136,7 @@
             data-f-sz="14"
           >
             <div style="width: 250px">
-              Disaster
+              Impact Criteria
             </div>
           </th>
           <th
@@ -175,6 +200,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -185,6 +211,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -195,6 +222,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -205,6 +233,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -215,6 +244,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -225,6 +255,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -235,6 +266,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -245,6 +277,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -255,6 +288,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -265,6 +299,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -275,6 +310,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -285,6 +321,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -295,6 +332,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -305,6 +343,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -315,6 +354,7 @@
             </div>
           </th>
           <th
+            v-if="expand"
             data-fill-color="333333"
             data-f-color="ffffff"
             style="font-size: 14px;"
@@ -332,97 +372,166 @@
         >
 
           <tr :key="index">
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ index + 1 }}
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_unit.unit_name }}
             </td>
             <td :rowspan="report.impacts.length">
               {{ report.business_process.name }}
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.description }}
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.roles_responsible }}
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.no_of_people_involved }}
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.minimum_no_of_people_involved }}
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.product_or_service_delivered }}
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.regulatory_obligations }}
             </td>
-            <td>{{ report.impacts[0].disaster }}</td>
+            <td>{{ report.impacts[0].criteria }}</td>
             <td>{{ report.impacts[0].one_hr }}</td>
             <td>{{ report.impacts[0].three_hrs }}</td>
             <td>{{ report.impacts[0].one_day }}</td>
             <td>{{ report.impacts[0].three_days }}</td>
             <td>{{ report.impacts[0].one_week }}</td>
             <td>{{ report.impacts[0].two_weeks }}</td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.priority }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.minimum_service_level }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.maximum_allowable_outage }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.recovery_time_objective }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.recovery_point_objective }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.applications_used }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.business_units_depended_on }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.processes_depended_on }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.key_vendors_or_external_dependencies }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.vital_non_electronic_records }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.vital_electronic_records }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.alternative_workaround_during_system_failure }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.key_individuals_process_depends_on }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.peak_periods }}
 
             </td>
-            <td :rowspan="report.impacts.length">
+            <td
+              v-if="expand"
+              :rowspan="report.impacts.length"
+            >
               {{ report.business_process.remote_working }}
 
             </td>
@@ -434,7 +543,7 @@
             >
               <template v-if="report.impacts[impact_index + 1]">
 
-                <td>{{ report.impacts[impact_index + 1].disaster }}</td>
+                <td>{{ report.impacts[impact_index + 1].criteria }}</td>
                 <td>{{ report.impacts[impact_index + 1].one_hr }}</td>
                 <td>{{ report.impacts[impact_index + 1].three_hrs }}</td>
                 <td>{{ report.impacts[impact_index + 1].one_day }}</td>
@@ -464,18 +573,30 @@
         </tr>
       </tbody>
     </table>
-  </div>
+  </el-card>
 </template>
 <script>
 // import TableToExcel from '@linways/table-to-excel'
 import Resource from '@/api/resource'
 
 export default {
+  props: {
+    businessUnitId: {
+      type: Number,
+      default: null,
+    },
+    clientId: {
+      type: Number,
+      default: null,
+    },
+  },
   data() {
     return {
+      expand: false,
       business_impact_analyses: [],
       loading: false,
       downloading: false,
+      impacts_list: [{ value: 1, label: '1-Low' }, { value: 2, label: '2-Medium' }, { value: 3, label: '3-High' }],
     }
   },
   created() {
@@ -487,7 +608,7 @@ export default {
       const app = this
       app.loading = true
       const fetchBIAResource = new Resource('bia/fetch-bia')
-      fetchBIAResource.list({ client_id: 1 })
+      fetchBIAResource.list({ client_id: app.clientId, business_unit_id: app.businessUnitId })
         .then(response => {
           app.loading = false
           app.business_impact_analyses = response.business_impact_analyses

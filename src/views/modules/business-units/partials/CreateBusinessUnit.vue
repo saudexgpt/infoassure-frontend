@@ -3,7 +3,7 @@
     <b-sidebar
       id="sidebar-task-handler"
       sidebar-class="sidebar-lg"
-      :visible="isCreateActive"
+      :visible="isCreateBusinessUnitSidebarActive"
       bg-variant="white"
       shadow
       backdrop
@@ -14,7 +14,7 @@
       <template #default="{ hide }">
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
           <h5 class="mb-0">
-            Create User Access
+            Create Business Unit
           </h5>
           <div>
             <b-button
@@ -33,6 +33,7 @@
 
             <b-col cols="12">
               <b-form-group
+                label="Select Client"
                 label-for="v-business-unit"
               >
                 <el-select
@@ -54,12 +55,12 @@
               cols="12"
             >
               <b-form-group
-                label="Full Name"
-                label-for="v-name"
+                label="Group Name"
+                label-for="v-business-unit"
               >
                 <el-input
-                  v-model="form.name"
-                  placeholder="Full Name"
+                  v-model="form.group_name"
+                  placeholder="Group Name"
                   style="width: 100%;"
                 />
               </b-form-group>
@@ -69,12 +70,58 @@
               cols="12"
             >
               <b-form-group
-                label="Email"
-                label-for="v-email"
+                label="Unit Name"
+                label-for="v-business-unit"
               >
                 <el-input
-                  v-model="form.email"
-                  placeholder="email"
+                  v-model="form.unit_name"
+                  placeholder="Unit Name"
+                  style="width: 100%;"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col
+              v-if="form.client_id !== ''"
+              cols="12"
+            >
+              <b-form-group
+                label="Teams"
+                label-for="v-teams"
+              >
+                <el-input
+                  v-model="form.teams"
+                  placeholder="Example: Engineering, Backend, etc"
+                  style="width: 100%;"
+                />
+                <small>Separate multiple entries by a comma <code>,</code></small>
+              </b-form-group>
+            </b-col>
+            <b-col
+              v-if="form.client_id !== ''"
+              cols="12"
+            >
+              <b-form-group
+                label="Function Performed"
+                label-for="v-business-unit"
+              >
+                <el-input
+                  v-model="form.function_performed"
+                  placeholder="Function Performed"
+                  style="width: 100%;"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col
+              v-if="form.client_id !== ''"
+              cols="12"
+            >
+              <b-form-group
+                label="Contact Phone"
+                label-for="v-business-unit"
+              >
+                <el-input
+                  v-model="form.contact_phone"
+                  placeholder="Contact Phone"
                   style="width: 100%;"
                 />
               </b-form-group>
@@ -118,11 +165,11 @@ export default {
     Ripple,
   },
   model: {
-    prop: 'isCreateActive',
+    prop: 'isCreateBusinessUnitSidebarActive',
     event: 'update:is-create-business-unit-sidebar-active',
   },
   props: {
-    isCreateActive: {
+    isCreateBusinessUnitSidebarActive: {
       type: Boolean,
       required: true,
     },
@@ -139,8 +186,11 @@ export default {
     return {
       form: {
         client_id: '',
-        name: '',
-        email: '',
+        group_name: '',
+        unit_name: '',
+        function_performed: '',
+        contact_phone: '',
+        teams: '',
       },
       loading: false,
       consultings: [],
@@ -148,13 +198,17 @@ export default {
     }
   },
   created() {
+    if (this.clients.length === 1) {
+      // eslint-disable-next-line prefer-destructuring
+      this.form.client_id = this.clients[0].id
+    }
   },
   methods: {
     submit() {
       const app = this
       app.loading = true
-      const saveBusinessUnitsResource = new Resource('clients/save-other-users')
-      const param = app.form
+      const saveBusinessUnitsResource = new Resource('business-units/save-business-units')
+      const param = { client_id: app.form.client_id, business_units: [app.form] }
       saveBusinessUnitsResource.store(param)
         .then(() => {
           app.loading = false
@@ -164,8 +218,10 @@ export default {
           })
           app.form = {
             client_id: '',
-            name: '',
-            email: '',
+            group_name: '',
+            unit_name: '',
+            function_performed: '',
+            contact_phone: '',
           }
           app.$emit('save')
           // app.$emit('update:is-create-business-unit-sidebar-active', false)

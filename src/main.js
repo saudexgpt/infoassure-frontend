@@ -33,16 +33,16 @@ import './global-components'
 import '@/permission'
 // 3rd party plugins
 import '@axios'
-// import '@/libs/acl'
-// import '@/libs/portal-vue'
-// import '@/libs/clipboard'
+import '@/libs/acl'
+import '@/libs/portal-vue'
+import '@/libs/clipboard'
 import '@/libs/toastification'
-// import '@/libs/sweet-alerts'
+import '@/libs/sweet-alerts'
 // import '@/libs/vue-select'
 // import '@/libs/tour'
 
 // Axios Mock Adapter
-// import '@/@fake-db/db'
+import '@/@fake-db/db'
 
 /* -------------------------------------------------------------------------- */
 /*                             PUSHER CONFIG                                  */
@@ -67,10 +67,10 @@ Vue.use(ElementUI, {
 
 // registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCekx1WmFZfVpgcl9HZlZVRmYuP1ZhSXxXdkZhXn9YcXJRRGheWUQ=')
 // Trial license
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCekxyWmFZfVpgcV9DZFZTQWYuP1ZhSXxXdkZhUX9bdXBXQ2JbVkw=')
+// registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCekxyWmFZfVpgcV9DZFZTQWYuP1ZhSXxXdkZhUX9bdXBXQ2JbVkw=')
 
 /// //////////////live license///////////////////////
-// registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXxceXRTRmhdWE10XUA=')
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXxceXRTRmhdWE10XUA=')
 
 Vue.use(CKEditor)
 Vue.use(ClientTable, {

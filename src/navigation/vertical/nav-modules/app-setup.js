@@ -6,25 +6,25 @@ export default [
   //   },
   // },
   {
-    title: 'Settings',
+    title: 'Setup',
     icon: 'ToolIcon',
     // tag: '2',
     // tagVariant: 'light-warning',
-    acl: {
-      roles: ['super'],
-    },
+    // acl: {
+    //   roles: ['super'],
+    // },
     children: [
       {
-        title: 'Currlm. Level Group',
-        route: 'curriculum-level-group',
+        title: 'Business Units',
+        route: 'business-unit',
+        acl: {
+          // modules: ['bia'],
+          // except: ['client'],
+        },
       },
       {
-        title: 'Curriculum Level',
-        route: 'curriculum-level-setup',
-      },
-      {
-        title: 'Terms & Sessions',
-        route: 'AcademicSession',
+        title: 'Risk',
+        route: 'risk-setup',
       },
     ],
   },

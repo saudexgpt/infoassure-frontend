@@ -4574,18 +4574,13 @@ label[for*=_wholeWord_e-de-rtl] {
   border-bottom: none !important;
   color: #fff;
 }
+
 .e-de-tool-ctnr-properties-pane {
   display: -ms-flexbox;
-  display: flex;  
-  height: 500px;
-  width: 100%;
-}
-/* .e-de-tool-ctnr-properties-pane {
-  display: -ms-flexbox;
-  display: flex;  
+  display: flex;
   height: calc(100% - 115px);
   width: 100%;
-} */
+}
 
 .e-de-ctnr-properties-pane {
   display: -ms-flexbox;

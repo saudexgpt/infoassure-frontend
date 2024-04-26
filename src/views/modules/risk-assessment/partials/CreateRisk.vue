@@ -3,18 +3,18 @@
     <b-sidebar
       id="sidebar-task-handler"
       sidebar-class="sidebar-lg"
-      :visible="isCreateBusinessUnitSidebarActive"
+      :visible="isCreateRiskSidebarActive"
       bg-variant="white"
       shadow
       backdrop
       no-header
       right
-      @change="(val) => $emit('update:is-create-business-unit-sidebar-active', val)"
+      @change="(val) => $emit('update:is-create-risk-sidebar-active', val)"
     >
       <template #default="{ hide }">
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
           <h5 class="mb-0">
-            Create Business Unit
+            Create Risk
           </h5>
           <div>
             <b-button
@@ -33,7 +33,7 @@
 
             <b-col cols="12">
               <b-form-group
-                label-for="v-business-unit"
+                label-for="v-risk"
               >
                 <el-select
                   v-model="form.client_id"
@@ -54,11 +54,11 @@
               cols="12"
             >
               <b-form-group
-                label-for="v-business-unit"
+                label-for="v-risk"
               >
                 <el-input
-                  v-model="form.group_name"
-                  placeholder="Group Name"
+                  v-model="form.risk_unique_id"
+                  placeholder="Risk ID"
                   style="width: 100%;"
                 />
               </b-form-group>
@@ -68,26 +68,11 @@
               cols="12"
             >
               <b-form-group
-                label-for="v-business-unit"
+                label-for="v-risk"
               >
                 <el-input
-                  v-model="form.unit_name"
-                  placeholder="Unit Name"
-                  style="width: 100%;"
-                />
-              </b-form-group>
-              <br>
-            </b-col>
-            <b-col
-              v-if="form.client_id !== ''"
-              cols="12"
-            >
-              <b-form-group
-                label-for="v-business-unit"
-              >
-                <el-input
-                  v-model="form.function_performed"
-                  placeholder="Function Performed"
+                  v-model="form.type"
+                  placeholder="Risk Type"
                   style="width: 100%;"
                 />
               </b-form-group>
@@ -98,11 +83,27 @@
               cols="12"
             >
               <b-form-group
-                label-for="v-business-unit"
+                label-for="v-risk"
               >
                 <el-input
-                  v-model="form.contact_phone"
-                  placeholder="Contact Phone"
+                  v-model="form.description"
+                  type="textarea"
+                  placeholder="Risk Description"
+                  style="width: 100%;"
+                />
+              </b-form-group>
+              <br>
+            </b-col>
+            <b-col
+              v-if="form.client_id !== ''"
+              cols="12"
+            >
+              <b-form-group
+                label-for="v-risk"
+              >
+                <el-input
+                  v-model="form.outcome"
+                  placeholder="Impact/Outcome"
                   style="width: 100%;"
                 />
               </b-form-group>
@@ -146,11 +147,11 @@ export default {
     Ripple,
   },
   model: {
-    prop: 'isCreateBusinessUnitSidebarActive',
-    event: 'update:is-create-business-unit-sidebar-active',
+    prop: 'isCreateRiskSidebarActive',
+    event: 'update:is-create-risk-sidebar-active',
   },
   props: {
-    isCreateBusinessUnitSidebarActive: {
+    isCreateRiskSidebarActive: {
       type: Boolean,
       required: true,
     },
@@ -158,7 +159,7 @@ export default {
       type: Array,
       required: true,
     },
-    // registeredBusinessUnits: {
+    // registeredRisks: {
     //   type: Array,
     //   required: true,
     // },
@@ -167,10 +168,10 @@ export default {
     return {
       form: {
         client_id: '',
-        group_name: '',
-        unit_name: '',
-        function_performed: '',
-        contact_phone: '',
+        risk_unique_id: '',
+        type: '',
+        description: '',
+        outcome: '',
       },
       loading: false,
       consultings: [],
@@ -183,9 +184,8 @@ export default {
     submit() {
       const app = this
       app.loading = true
-      const saveBusinessUnitsResource = new Resource('bia/save-business-units')
-      const param = { client_id: app.form.client_id, business_units: [app.form] }
-      saveBusinessUnitsResource.store(param)
+      const saveRisksResource = new Resource('risk-assessment/save-risk')
+      saveRisksResource.store(app.form)
         .then(() => {
           app.loading = false
           // app.$message('Action Successful')
@@ -194,13 +194,13 @@ export default {
           })
           app.form = {
             client_id: '',
-            group_name: '',
-            unit_name: '',
-            function_performed: '',
-            contact_phone: '',
+            risk_unique_id: '',
+            type: '',
+            description: '',
+            outcome: '',
           }
           app.$emit('save')
-          // app.$emit('update:is-create-business-unit-sidebar-active', false)
+          // app.$emit('update:is-create-risk-sidebar-active', false)
         }).catch(error => {
           app.loading = false
           app.$message(error.response.data.error)
@@ -209,6 +209,6 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-@import '~@core/scss/base/bootstrap-extended/include';
-</style>
+  <style lang="scss" scoped>
+  @import '~@core/scss/base/bootstrap-extended/include';
+  </style>

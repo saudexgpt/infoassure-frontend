@@ -18,6 +18,9 @@ export function setOtherToken(token) {
 export function getOtherToken() {
   return Cookies.get(OtherToken)
 }
+export function removeOtherToken() {
+  return Cookies.remove(OtherToken)
+}
 export function removeToken() {
   return Cookies.remove(TokenKey)
 }

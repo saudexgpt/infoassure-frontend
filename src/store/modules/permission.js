@@ -12,6 +12,7 @@ function canAccess(roles, permissions, modules, route) {
     let hasRole = true
     let hasPermission = true
     let hasModule = true
+    let excluded = false
     if (route.meta.roles || route.meta.permissions || route.meta.modules) {
       // If it has meta.roles or meta.permissions, accessible = hasRole || permission
       hasRole = false
@@ -28,7 +29,13 @@ function canAccess(roles, permissions, modules, route) {
         hasModule = modules.some(module => route.meta.modules.includes(module))
       }
     }
+    if (route.meta.except) {
+      excluded = roles.some(role => route.meta.except.includes(role))
+    }
 
+    if (excluded) {
+      return false
+    }
     return hasRole || hasPermission || hasModule
   }
 

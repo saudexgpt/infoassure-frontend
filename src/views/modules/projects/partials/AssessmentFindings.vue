@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <div>
     <el-button
       :loading="downloading"
       type="primary"
@@ -15,11 +15,14 @@
       Export to Word
     </el-button>
     <div id="docx">
-      <div class="WordSection1">
+      <div
+        class="WordSection1"
+      >
         <table
           id="assessmentFindingsTable"
           v-loading="load"
           class="table table-bordered table-striped table-responsive"
+          style="height: 550px; overflow: auto;"
         >
           <thead>
             <tr>
@@ -109,7 +112,7 @@
         </table>
       </div>
     </div>
-  </el-card>
+  </div>
 </template>
 
 <script>
