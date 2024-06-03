@@ -24,739 +24,742 @@
     >
       View Less
     </el-button>
-    <table
-      id="BIAReport"
-      v-loading="loading"
-      class="table table-bordered table-responsive"
-    >
-      <thead>
-        <tr>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 10px">
-              SN
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Business Unit
-            </div>
-          </th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Business Process Name
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Business Process Description Summary
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Role(s) responsible for business process
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Number of individuals involved in performing the business process
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Minimum number of people that can carry out this process that would still make economic sense
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Product or Service being delivered
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Legal, Regulatory and Contractual Obligations
-            </div>
-          </th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Impact Criteria
-            </div>
-          </th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Less than 1 Hour (60 mins)
-            </div>
-          </th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              3 Hours (180 mins)
-            </div>
-          </th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              1 day (540 mins)
-            </div>
-          </th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              3 days (1420 mins)
-            </div>
-          </th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              1 week (2700 mins)
-            </div>
-          </th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              2 weeks (5400 mins)
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 50px">
-              Priority
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 100px">
-              Minimum Service Level
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              MAO (Maximum Allowable Outage)
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              RTO (Recovery Time Objective)
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              RPO (Recovery Point Objective)
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Applications used by process
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Which Business Units are you dependent on?
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Which Business Processes are you dependent on in the Business Unit(s) listed in the previous cell.
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Who are your Key vendors or External dependencies
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Vital Non-Electronic Records
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Vital Electronic Records
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Alternative Workarounds during system failure
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Are there important key individuals this process is dependent on
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Peak Period
-            </div>
-          </th>
-          <th
-            v-if="expand"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="14"
-          >
-            <div style="width: 150px">
-              Remote Working
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody v-if="!downloading">
-        <template
-          v-for="(report, index1) in business_impact_analyses"
-        >
-
-          <tr :key="index1">
-            <td
+    <div class="table-responsive">
+      <table
+        id="BIAReport"
+        v-loading="loading"
+        class="table table-bordered"
+      >
+        <thead>
+          <tr>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ index1 + 1 }}
-            </td>
-            <td
+              <div style="width: 10px">
+                SN
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_unit.unit_name }}
-            </td>
-            <td :rowspan="report.impacts.length">
-              {{ report.business_process.name }}
-            </td>
-            <td
+              <div style="width: 150px">
+                Business Unit
+              </div>
+            </th>
+            <th
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
+            >
+              <div style="width: 150px">
+                Business Process Name
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.description }}
-            </td>
-            <td
+              <div style="width: 500px">
+                Business Process Description Summary
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.roles_responsible }}
-            </td>
-            <td
+              <div style="width: 150px">
+                Role(s) responsible for business process
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.no_of_people_involved }}
-            </td>
-            <td
+              <div style="width: 150px">
+                Number of individuals involved in performing the business process
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.minimum_no_of_people_involved }}
-            </td>
-            <td
+              <div style="width: 150px">
+                Minimum number of people that can carry out this process that would still make economic sense
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.product_or_service_delivered }}
-            </td>
-            <td
+              <div style="width: 150px">
+                Product or Service being delivered
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.regulatory_obligations }}
-            </td>
-            <td>{{ report.impacts[0].criteria }}</td>
-            <td>
-              <select
-                v-model="report.impacts[0].one_hr"
-                placeholder="Select"
-                class="form-control"
-                @change="updateImpact($event, report.impacts[0].id, 'one_hr')"
-              >
-                <option
-                  v-for="(imp, imp_index) in impacts_list"
-                  :key="imp_index"
-                  :value="imp.value"
-                  :label="imp.label"
-                />
-              </select>
-            </td>
-            <td>
-              <select
-                v-model="report.impacts[0].three_hrs"
-                placeholder="Select"
-                class="form-control"
-                @change="updateImpact($event, report.impacts[0].id, 'three_hrs')"
-              >
-                <option
-                  v-for="(imp, imp_index) in impacts_list"
-                  :key="imp_index"
-                  :value="imp.value"
-                  :label="imp.label"
-                />
-              </select>
-            </td>
-            <td>
-              <select
-                v-model="report.impacts[0].one_day"
-                placeholder="Select"
-                class="form-control"
-                @change="updateImpact($event, report.impacts[0].id, 'one_day')"
-              >
-                <option
-                  v-for="(imp, imp_index) in impacts_list"
-                  :key="imp_index"
-                  :value="imp.value"
-                  :label="imp.label"
-                />
-              </select>
-            </td>
-            <td>
-              <select
-                v-model="report.impacts[0].three_days"
-                placeholder="Select"
-                class="form-control"
-                @change="updateImpact($event, report.impacts[0].id, 'three_days')"
-              >
-                <option
-                  v-for="(imp, imp_index) in impacts_list"
-                  :key="imp_index"
-                  :value="imp.value"
-                  :label="imp.label"
-                />
-              </select>
-            </td>
-            <td>
-              <select
-                v-model="report.impacts[0].one_week"
-                placeholder="Select"
-                class="form-control"
-                @change="updateImpact($event, report.impacts[0].id, 'one_week')"
-              >
-                <option
-                  v-for="(imp, imp_index) in impacts_list"
-                  :key="imp_index"
-                  :value="imp.value"
-                  :label="imp.label"
-                />
-              </select>
-            </td>
-            <td>
-              <select
-                v-model="report.impacts[0].two_weeks"
-                placeholder="Select"
-                class="form-control"
-                @change="updateImpact($event, report.impacts[0].id, 'two_weeks')"
-              >
-                <option
-                  v-for="(imp, imp_index) in impacts_list"
-                  :key="imp_index"
-                  :value="imp.value"
-                  :label="imp.label"
-                />
-              </select>
-            </td>
-            <td
+              <div style="width: 150px">
+                Legal, Regulatory and Contractual Obligations
+              </div>
+            </th>
+            <th
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
+            >
+              <div style="width: 150px">
+                Impact Criteria
+              </div>
+            </th>
+            <th
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
+            >
+              <div style="width: 150px">
+                Less than 1 Hour (60 mins)
+              </div>
+            </th>
+            <th
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
+            >
+              <div style="width: 150px">
+                3 Hours (180 mins)
+              </div>
+            </th>
+            <th
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
+            >
+              <div style="width: 150px">
+                1 day (540 mins)
+              </div>
+            </th>
+            <th
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
+            >
+              <div style="width: 150px">
+                3 days (1420 mins)
+              </div>
+            </th>
+            <th
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
+            >
+              <div style="width: 150px">
+                1 week (2700 mins)
+              </div>
+            </th>
+            <th
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
+            >
+              <div style="width: 150px">
+                2 weeks (5400 mins)
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
-              :style="`background: ${calculatePriority(report.impacts)[1]}`"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ calculatePriority(report.impacts)[0] }}
-
-            </td>
-            <td
+              <div style="width: 50px">
+                Priority
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ calculateMinumimServiceLevel(report.business_process.minimum_no_of_people_involved, report.business_process.no_of_people_involved) }}%
-
-            </td>
-            <td
+              <div style="width: 100px">
+                Minimum Service Level
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              <textarea
-                v-model="report.maximum_allowable_outage"
-                class="form-control"
-                placeholder="Type something..."
-                @blur="updateBIA($event, report.id, 'maximum_allowable_outage')"
-              />
-
-            </td>
-            <td
+              <div style="width: 150px">
+                MAO (Maximum Allowable Outage)
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              <textarea
-                v-model="report.recovery_time_objective"
-                class="form-control"
-                placeholder="Type something..."
-                @blur="updateBIA($event, report.id, 'recovery_time_objective')"
-              />
-
-            </td>
-            <td
+              <div style="width: 150px">
+                RTO (Recovery Time Objective)
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              <textarea
-                v-model="report.recovery_point_objective"
-                class="form-control"
-                placeholder="Type something..."
-                @blur="updateBIA($event, report.id, 'recovery_point_objective')"
-              />
-
-            </td>
-            <td
+              <div style="width: 150px">
+                RPO (Recovery Point Objective)
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.applications_used }}
-
-            </td>
-            <td
+              <div style="width: 150px">
+                Applications used by process
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.business_units_depended_on }}
-
-            </td>
-            <td
+              <div style="width: 150px">
+                Which Business Units are you dependent on?
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.processes_depended_on }}
-
-            </td>
-            <td
+              <div style="width: 150px">
+                Which Business Processes are you dependent on in the Business Unit(s) listed in the previous cell.
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.key_vendors_or_external_dependencies }}
-
-            </td>
-            <td
+              <div style="width: 150px">
+                Who are your Key vendors or External dependencies
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.vital_non_electronic_records }}
-
-            </td>
-            <td
+              <div style="width: 150px">
+                Vital Non-Electronic Records
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.vital_electronic_records }}
-
-            </td>
-            <td
+              <div style="width: 150px">
+                Vital Electronic Records
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.alternative_workaround_during_system_failure }}
-
-            </td>
-            <td
+              <div style="width: 150px">
+                Alternative Workarounds during system failure
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.key_individuals_process_depends_on }}
-
-            </td>
-            <td
+              <div style="width: 150px">
+                Are there important key individuals this process is dependent on
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.peak_periods }}
-
-            </td>
-            <td
+              <div style="width: 150px">
+                Peak Period
+              </div>
+            </th>
+            <th
               v-if="expand"
-              :rowspan="report.impacts.length"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px;"
+              data-f-sz="14"
             >
-              {{ report.business_process.remote_working }}
-
-            </td>
+              <div style="width: 150px">
+                Remote Working
+              </div>
+            </th>
           </tr>
-          <template v-if="report.impacts.length > 1">
-            <tr
-              v-for="(impact, impact_index) in report.impacts"
-              :key="impact_index"
-            >
-              <template v-if="report.impacts[impact_index + 1]">
+        </thead>
+        <tbody v-if="!downloading">
+          <template
+            v-for="(report, index1) in business_impact_analyses"
+          >
 
-                <td>{{ report.impacts[impact_index + 1].criteria }}</td>
-                <td>
-                  <select
-                    v-model="report.impacts[impact_index + 1].one_hr"
-                    placeholder="Select"
-                    class="form-control"
-                    @change="updateImpact($event, report.impacts[impact_index + 1].id, 'one_hr')"
-                  >
-                    <option
-                      v-for="(imp, imp_index) in impacts_list"
-                      :key="imp_index"
-                      :value="imp.value"
-                      :label="imp.label"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <select
-                    v-model="report.impacts[impact_index + 1].three_hrs"
-                    placeholder="Select"
-                    class="form-control"
-                    @change="updateImpact($event, report.impacts[impact_index + 1].id, 'three_hrs')"
-                  >
-                    <option
-                      v-for="(imp, imp_index) in impacts_list"
-                      :key="imp_index"
-                      :value="imp.value"
-                      :label="imp.label"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <select
-                    v-model="report.impacts[impact_index + 1].one_day"
-                    placeholder="Select"
-                    class="form-control"
-                    @change="updateImpact($event, report.impacts[impact_index + 1].id, 'one_day')"
-                  >
-                    <option
-                      v-for="(imp, imp_index) in impacts_list"
-                      :key="imp_index"
-                      :value="imp.value"
-                      :label="imp.label"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <select
-                    v-model="report.impacts[impact_index + 1].three_days"
-                    placeholder="Select"
-                    class="form-control"
-                    @change="updateImpact($event, report.impacts[impact_index + 1].id, 'three_days')"
-                  >
-                    <option
-                      v-for="(imp, imp_index) in impacts_list"
-                      :key="imp_index"
-                      :value="imp.value"
-                      :label="imp.label"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <select
-                    v-model="report.impacts[impact_index + 1].one_week"
-                    placeholder="Select"
-                    class="form-control"
-                    @change="updateImpact($event, report.impacts[impact_index + 1].id, 'one_week')"
-                  >
-                    <option
-                      v-for="(imp, imp_index) in impacts_list"
-                      :key="imp_index"
-                      :value="imp.value"
-                      :label="imp.label"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <select
-                    v-model="report.impacts[impact_index + 1].two_weeks"
-                    placeholder="Select"
-                    class="form-control"
-                    @change="updateImpact($event, report.impacts[impact_index + 1].id, 'two_weeks')"
-                  >
-                    <option
-                      v-for="(imp, imp_index) in impacts_list"
-                      :key="imp_index"
-                      :value="imp.value"
-                      :label="imp.label"
-                    />
-                  </select>
-                </td>
-              </template>
+            <tr :key="index1">
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ index1 + 1 }}
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_unit.unit_name }}
+              </td>
+              <td :rowspan="report.impacts.length">
+                {{ report.business_process.name }}
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                <!--eslint-disable-next-line vue/no-v-html-->
+                <span v-html="report.business_process.description" />
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.roles_responsible }}
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.no_of_people_involved }}
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.minimum_no_of_people_involved }}
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.product_or_service_delivered }}
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.regulatory_obligations }}
+              </td>
+              <td>{{ report.impacts[0].criteria }}</td>
+              <td>
+                <select
+                  v-model="report.impacts[0].one_hr"
+                  placeholder="Select"
+                  class="form-control"
+                  @change="updateImpact($event, report.impacts[0].id, 'one_hr')"
+                >
+                  <option
+                    v-for="(imp, imp_index) in impacts_list"
+                    :key="imp_index"
+                    :value="imp.value"
+                    :label="imp.label"
+                  />
+                </select>
+              </td>
+              <td>
+                <select
+                  v-model="report.impacts[0].three_hrs"
+                  placeholder="Select"
+                  class="form-control"
+                  @change="updateImpact($event, report.impacts[0].id, 'three_hrs')"
+                >
+                  <option
+                    v-for="(imp, imp_index) in impacts_list"
+                    :key="imp_index"
+                    :value="imp.value"
+                    :label="imp.label"
+                  />
+                </select>
+              </td>
+              <td>
+                <select
+                  v-model="report.impacts[0].one_day"
+                  placeholder="Select"
+                  class="form-control"
+                  @change="updateImpact($event, report.impacts[0].id, 'one_day')"
+                >
+                  <option
+                    v-for="(imp, imp_index) in impacts_list"
+                    :key="imp_index"
+                    :value="imp.value"
+                    :label="imp.label"
+                  />
+                </select>
+              </td>
+              <td>
+                <select
+                  v-model="report.impacts[0].three_days"
+                  placeholder="Select"
+                  class="form-control"
+                  @change="updateImpact($event, report.impacts[0].id, 'three_days')"
+                >
+                  <option
+                    v-for="(imp, imp_index) in impacts_list"
+                    :key="imp_index"
+                    :value="imp.value"
+                    :label="imp.label"
+                  />
+                </select>
+              </td>
+              <td>
+                <select
+                  v-model="report.impacts[0].one_week"
+                  placeholder="Select"
+                  class="form-control"
+                  @change="updateImpact($event, report.impacts[0].id, 'one_week')"
+                >
+                  <option
+                    v-for="(imp, imp_index) in impacts_list"
+                    :key="imp_index"
+                    :value="imp.value"
+                    :label="imp.label"
+                  />
+                </select>
+              </td>
+              <td>
+                <select
+                  v-model="report.impacts[0].two_weeks"
+                  placeholder="Select"
+                  class="form-control"
+                  @change="updateImpact($event, report.impacts[0].id, 'two_weeks')"
+                >
+                  <option
+                    v-for="(imp, imp_index) in impacts_list"
+                    :key="imp_index"
+                    :value="imp.value"
+                    :label="imp.label"
+                  />
+                </select>
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+                :style="`background: ${calculatePriority(report.impacts)[1]}`"
+              >
+                {{ calculatePriority(report.impacts)[0] }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ calculateMinumimServiceLevel(report.business_process.minimum_no_of_people_involved, report.business_process.no_of_people_involved) }}%
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                <textarea
+                  v-model="report.maximum_allowable_outage"
+                  class="form-control"
+                  placeholder="Type something..."
+                  @blur="updateBIA($event, report.id, 'maximum_allowable_outage')"
+                />
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                <textarea
+                  v-model="report.recovery_time_objective"
+                  class="form-control"
+                  placeholder="Type something..."
+                  @blur="updateBIA($event, report.id, 'recovery_time_objective')"
+                />
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                <textarea
+                  v-model="report.recovery_point_objective"
+                  class="form-control"
+                  placeholder="Type something..."
+                  @blur="updateBIA($event, report.id, 'recovery_point_objective')"
+                />
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.applications_used }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.business_units_depended_on }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.processes_depended_on }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.key_vendors_or_external_dependencies }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.vital_non_electronic_records }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.vital_electronic_records }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.alternative_workaround_during_system_failure }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.key_individuals_process_depends_on }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.peak_periods }}
+
+              </td>
+              <td
+                v-if="expand"
+                :rowspan="report.impacts.length"
+              >
+                {{ report.business_process.remote_working }}
+
+              </td>
             </tr>
+            <template v-if="report.impacts.length > 1">
+              <tr
+                v-for="(impact, impact_index) in report.impacts"
+                :key="impact_index"
+              >
+                <template v-if="report.impacts[impact_index + 1]">
+
+                  <td>{{ report.impacts[impact_index + 1].criteria }}</td>
+                  <td>
+                    <select
+                      v-model="report.impacts[impact_index + 1].one_hr"
+                      placeholder="Select"
+                      class="form-control"
+                      @change="updateImpact($event, report.impacts[impact_index + 1].id, 'one_hr')"
+                    >
+                      <option
+                        v-for="(imp, imp_index) in impacts_list"
+                        :key="imp_index"
+                        :value="imp.value"
+                        :label="imp.label"
+                      />
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      v-model="report.impacts[impact_index + 1].three_hrs"
+                      placeholder="Select"
+                      class="form-control"
+                      @change="updateImpact($event, report.impacts[impact_index + 1].id, 'three_hrs')"
+                    >
+                      <option
+                        v-for="(imp, imp_index) in impacts_list"
+                        :key="imp_index"
+                        :value="imp.value"
+                        :label="imp.label"
+                      />
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      v-model="report.impacts[impact_index + 1].one_day"
+                      placeholder="Select"
+                      class="form-control"
+                      @change="updateImpact($event, report.impacts[impact_index + 1].id, 'one_day')"
+                    >
+                      <option
+                        v-for="(imp, imp_index) in impacts_list"
+                        :key="imp_index"
+                        :value="imp.value"
+                        :label="imp.label"
+                      />
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      v-model="report.impacts[impact_index + 1].three_days"
+                      placeholder="Select"
+                      class="form-control"
+                      @change="updateImpact($event, report.impacts[impact_index + 1].id, 'three_days')"
+                    >
+                      <option
+                        v-for="(imp, imp_index) in impacts_list"
+                        :key="imp_index"
+                        :value="imp.value"
+                        :label="imp.label"
+                      />
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      v-model="report.impacts[impact_index + 1].one_week"
+                      placeholder="Select"
+                      class="form-control"
+                      @change="updateImpact($event, report.impacts[impact_index + 1].id, 'one_week')"
+                    >
+                      <option
+                        v-for="(imp, imp_index) in impacts_list"
+                        :key="imp_index"
+                        :value="imp.value"
+                        :label="imp.label"
+                      />
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      v-model="report.impacts[impact_index + 1].two_weeks"
+                      placeholder="Select"
+                      class="form-control"
+                      @change="updateImpact($event, report.impacts[impact_index + 1].id, 'two_weeks')"
+                    >
+                      <option
+                        v-for="(imp, imp_index) in impacts_list"
+                        :key="imp_index"
+                        :value="imp.value"
+                        :label="imp.label"
+                      />
+                    </select>
+                  </td>
+                </template>
+              </tr>
+            </template>
+
           </template>
 
-        </template>
-
-      </tbody>
-      <tbody v-else>
-        <tr
-          v-for="(report, index2) in business_impact_analyses"
-          :key="index2"
-        >
-          <td>{{ report.question.question }}</td>
-          <td>{{ report.question.key }}</td>
-          <td>{{ report.answer }}</td>
-          <td>{{ report.detailed_explanation }}</td>
-          <td>{{ report.observation }}</td>
-          <td>{{ formatRiskScore(report.risk_score) }}</td>
-          <td>{{ report.impact }}</td>
-          <td>{{ report.recommendations }}</td>
-        </tr>
-      </tbody>
-    </table>
+        </tbody>
+        <tbody v-else>
+          <tr
+            v-for="(report, index2) in business_impact_analyses"
+            :key="index2"
+          >
+            <td>{{ report.question.question }}</td>
+            <td>{{ report.question.key }}</td>
+            <td>{{ report.answer }}</td>
+            <td>{{ report.detailed_explanation }}</td>
+            <td>{{ report.observation }}</td>
+            <td>{{ formatRiskScore(report.risk_score) }}</td>
+            <td>{{ report.impact }}</td>
+            <td>{{ report.recommendations }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </el-card>
 </template>
 <script>

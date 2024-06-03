@@ -3,22 +3,33 @@
     <div slot="header">
       <b-row>
         <b-col cols="6">
-          <h4>Manage Risk</h4>
+          <h4>Manage Risk/Threat Register</h4>
         </b-col>
         <b-col
           cols="6"
         >
           <span class="pull-right">
             <b-button
-              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              v-if="page === 'table'"
               variant="gradient-success"
-              @click="isCreateRiskSidebarActive = true"
+              @click="page = 'create'"
             >
               <feather-icon
                 icon="PlusIcon"
                 class="mr-50"
               />
               <span class="align-middle">Create</span>
+            </b-button>
+            <b-button
+              v-else
+              variant="gradient-danger"
+              @click="page = 'table'"
+            >
+              <feather-icon
+                icon="XIcon"
+                class="mr-50"
+              />
+              <span class="align-middle">Close</span>
             </b-button>
           </span>
         </b-col>
@@ -33,32 +44,32 @@
           :md="8"
         >
           <el-select
-            v-model="selectedClient"
-            value-key="id"
-            placeholder="Select Client"
+            v-model="form.business_unit_id"
+            placeholder="Select Business Unit"
             style="width: 100%;"
             filterable
             @input="fetchRisks()"
           >
             <el-option
-              v-for="(client, index) in clients"
+              v-for="(business_unit, index) in business_units"
               :key="index"
-              :value="client"
-              :label="client.name"
+              :value="business_unit.id"
+              :label="business_unit.unit_name"
             />
           </el-select>
         </el-col>
       </el-row>
     </aside>
     <v-client-table
-      v-model="risks"
+      v-if="page === 'table'"
+      v-model="risk_registers"
       v-loading="loading"
       :columns="columns"
       :options="options"
     >
       <div
         slot="action"
-        slot-scope="$props"
+        slot-scope="{row}"
       >
         <el-tooltip
           content="Edit"
@@ -67,7 +78,7 @@
           <b-button
             variant="gradient-primary"
             class="btn-icon rounded-circle"
-            @click="manageProject(props.row)"
+            @click="editRisk(row)"
           >
             <feather-icon icon="EditIcon" />
           </b-button>
@@ -76,16 +87,24 @@
           v-if="checkPermission(['delete-client project'])"
           variant="gradient-danger"
           class="btn-icon rounded-circle"
-          @click="destroyRow($props.row)"
+          @click="destroyRow(row)"
         >
           <feather-icon icon="TrashIcon" />
         </b-button>
       </div>
     </v-client-table>
-    <create-risk
-      v-if="isCreateRiskSidebarActive"
-      v-model="isCreateRiskSidebarActive"
-      :clients="clients"
+    <div v-if="page === 'create'">
+      <create-risk
+        :client-id="selectedClient.id"
+        :business-unit-id="form.business_unit_id"
+        @save="fetchRisks(); page = 'table'"
+      />
+    </div>
+    <edit-risk
+      v-if="isEditRiskSidebarActive"
+      v-model="isEditRiskSidebarActive"
+      :selected-risk="selectedRisk"
+      @update="fetchRisks"
     />
   </el-card>
 </template>
@@ -98,11 +117,13 @@ import {
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
-import createRisk from './partials/CreateRisk.vue'
+import CreateRisk from './partials/CreateRiskRegister.vue'
+import EditRisk from './partials/EditRiskRegister.vue'
 
 export default {
   components: {
-    createRisk,
+    CreateRisk,
+    EditRisk,
     BButton,
     BRow,
     BCol,
@@ -110,40 +131,40 @@ export default {
   directives: {
     Ripple,
   },
+  props: {
+    selectedClient: {
+      type: Object,
+      default: null,
+    },
+  },
   data() {
     return {
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now()
-        },
-      },
-      pickerOptions2: {
-        disabledDate(time) {
-          return time.getTime() <= Date.now()
-        },
-      },
       loading: false,
       isCreateRiskSidebarActive: false,
+      isEditRiskSidebarActive: false,
       pageLength: 10,
       dir: false,
+      page: 'table',
       columns: [
-        'risk_unique_id',
-        'type',
-        'description',
-        'outcome',
+        'unit_name',
+        'risk_id',
+        'risk_type',
+        'vunerability_description',
+        'threat_impact_description',
+        'existing_controls',
+        'risk_owner',
         'action',
       ],
       options: {
         headings: {
-          risk_unique_id: 'Risk ID',
-          type: 'Risk Type',
+          unit_name: 'Business Unit',
         },
         pagination: {
           dropdown: true,
           chunk: 10,
         },
         perPage: 10,
-        filterByColumn: true,
+        filterByColumn: false,
         texts: {
           filter: 'Search:',
         },
@@ -151,40 +172,47 @@ export default {
         // filterable: false,
         filterable: [],
       },
-      risks: [],
-      clients: [],
-      staff: [],
-      clientUsers: [],
-      searchTerm: '',
-      selected_project: '',
+      risk_registers: [],
+      business_units: [],
       showManageProject: false,
-      selectedClient: null,
       showAssignModal: false,
       showAssignConsultantModal: false,
+      form: {
+        client_id: '',
+        business_unit_id: '',
+      },
+      selectedRisk: null,
     }
   },
   created() {
-    this.fetchClients()
+    this.form.client_id = this.selectedClient.id
+    this.fetchBusinessUnits()
   },
   methods: {
     checkPermission,
-    fetchClients() {
+    fetchBusinessUnits() {
       const app = this
-      const fetchRisksResource = new Resource('clients')
-      fetchRisksResource.list({ option: 'all' })
+      app.form.business_unit_id = ''
+      const fetchCriteriaResource = new Resource('business-units/fetch-business-units')
+      fetchCriteriaResource.list({ client_id: app.form.client_id })
         .then(response => {
-          app.clients = response.clients
-        })
+          app.business_units = response.business_units
+        }).catch(() => { app.loading = false })
     },
     fetchRisks() {
       const app = this
       app.loading = true
-      const fetchRisksResource = new Resource('risk-assessment/fetch-risks')
-      fetchRisksResource.list({ client_id: app.selectedClient.id })
+      const fetchRisksResource = new Resource('fetch-risk-registers')
+      fetchRisksResource.list({ client_id: app.form.client_id, business_unit_id: app.form.business_unit_id })
         .then(response => {
-          app.risks = response.risks
+          app.risk_registers = response.risk_registers
           app.loading = false
         }).catch(() => { app.loading = false })
+    },
+    editRisk(row) {
+      const app = this
+      app.selectedRisk = row
+      app.isEditRiskSidebarActive = true
     },
     destroyRow(row) {
       const app = this

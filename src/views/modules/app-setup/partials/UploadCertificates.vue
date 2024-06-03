@@ -155,6 +155,7 @@ export default {
       options: {
         headings: {
           'project.standard.name': 'Project',
+          original: 'Certificate',
         },
         pagination: {
           dropdown: true,
@@ -201,6 +202,7 @@ export default {
     fetchProjects() {
       const app = this
       app.loading = true
+      app.certificates = []
       const fetchProjectsResource = new Resource('projects/client-project-certificates')
       fetchProjectsResource.list({ client_id: app.selectedClient.id })
         .then(response => {

@@ -1,41 +1,18 @@
 <template>
-  <el-card>
-    <b-tabs
-      content-class="mt-1"
-      pills
-    >
-      <b-tab
-        lazy
-      >
-        <template #title>
-          <span>Business Units</span>
-        </template>
-        <business-units />
-      </b-tab>
-      <b-tab
-        lazy
-      >
-        <template #title>
-          <span>Impact Criteria</span>
-        </template>
-        <impact-criteria />
-      </b-tab>
-      <b-tab
-        lazy
-      >
-        <template #title>
-          <span>Manage User Access</span>
-        </template>
-        <manage-access />
-      </b-tab>
-    </b-tabs>
-  </el-card>
+  <el-tabs type="border-card">
+    <el-tab-pane label="Business Units">
+      <business-units />
+    </el-tab-pane>
+    <el-tab-pane label="Impact Criteria">
+      <impact-criteria />
+    </el-tab-pane>
+    <el-tab-pane label="Manage User Access">
+      <manage-access />
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script>
-import {
-  BTabs, BTab,
-} from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
 import BusinessUnits from './partials/BusinessUnitsTable.vue'
 import ImpactCriteria from './partials/ImpactCriteria.vue'
@@ -43,8 +20,6 @@ import ManageAccess from './partials/ManageAccess.vue'
 
 export default {
   components: {
-    BTabs,
-    BTab,
     ImpactCriteria,
     BusinessUnits,
     ManageAccess,

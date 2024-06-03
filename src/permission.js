@@ -73,9 +73,9 @@ router.beforeEach(async (to, from, next) => {
         next()
       } else {
         const url = to.path.split('/')
-        if (url[1] === 'confirm-registration') {
+        if (url.includes('confirm-registration')) {
           next()
-        } else if (url[1] === 'reset-password') {
+        } else if (url.includes('reset-password')) {
           next()
         } else {
           // other pages that do not have permission to access are redirected to the login page.

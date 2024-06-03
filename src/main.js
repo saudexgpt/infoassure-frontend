@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import '@/permission'
 import '@/styles/element-variables.scss'
 import '@/styles/index.scss' // global css
 
@@ -30,7 +31,6 @@ import store from './store'
 import App from './App.vue'
 // Global Components
 import './global-components'
-import '@/permission'
 // 3rd party plugins
 import '@axios'
 import '@/libs/acl'
@@ -57,7 +57,7 @@ const eventsHub = new Vue()
 Vue.use(IdleVue, {
   eventEmitter: eventsHub,
   store,
-  idleTime: 900000, // 900000ms == 900 seconds i.e 15 mins
+  idleTime: 90000000, // 900000ms == 900 seconds i.e 15 mins
   startAtIdle: false,
 })
 Vue.use(ElementUI, {

@@ -6,6 +6,13 @@
         :gutter="10"
       >
         <el-col
+          :xs="24"
+          :sm="24"
+          :md="12"
+          :lg="12"
+          :xl="12"
+        ><strong>We would love to get your feedback</strong></el-col>
+        <el-col
           v-for="(form_field, form_index) in form_fields"
           :key="form_index"
           :xs="24"

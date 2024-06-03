@@ -23,7 +23,6 @@
               </b-button>
             &nbsp;
               <b-button
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                 variant="gradient-primary"
                 class="btn-icon rounded-circle"
                 @click="reload()"
@@ -40,6 +39,7 @@
 
       <client-project-details
         :selected-project="selected_project"
+        :selected-client="selectedClient"
       />
     </div>
     <div v-else>
@@ -353,6 +353,7 @@ export default {
       statistics: [],
       projects: [],
       selectedProject: '',
+      selectedClient: '',
       analyticsData: {
         uploaded_documents: 0,
         expected_documents: 0,
@@ -426,6 +427,7 @@ export default {
       ]
       app.statistics = data
       app.projects = app.dashboardData.all_projects
+      app.selectedClient = app.dashboardData.client
       // eslint-disable-next-line prefer-destructuring
       app.selectedProject = app.projects[0]
       if (app.projects.length > 0) {

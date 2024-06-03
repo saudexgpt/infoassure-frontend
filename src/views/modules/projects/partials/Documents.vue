@@ -347,8 +347,9 @@ export default {
       app.loading = true
       const { client_id } = app.selectedProject
       const { standard_id } = app.selectedProject
+      const { id } = app.selectedProject
       const fetchConsultingsResource = new Resource('clauses/fetch-clauses-with-documents')
-      fetchConsultingsResource.list({ client_id, standard_id })
+      fetchConsultingsResource.list({ client_id, standard_id, project_id: id })
         .then(response => {
           app.clauses = response.clauses
           app.loading = false

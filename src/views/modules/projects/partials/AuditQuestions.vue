@@ -527,8 +527,9 @@ export default {
       app.loading = load
       const { client_id } = app.selectedProject
       const { standard_id } = app.selectedProject
+      const { id } = app.selectedProject
       const fetchConsultingsResource = new Resource('clauses/fetch-clauses-with-questions')
-      fetchConsultingsResource.list({ client_id, standard_id })
+      fetchConsultingsResource.list({ client_id, standard_id, project_id: id })
         .then(response => {
           app.clauses = response.clauses
           if (!app.currentQuestionsAreSet) {

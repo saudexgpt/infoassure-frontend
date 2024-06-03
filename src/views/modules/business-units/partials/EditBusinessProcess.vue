@@ -1,42 +1,49 @@
 <template>
   <div>
-    <b-sidebar
-      id="sidebar-task-handler"
-      sidebar-class="sidebar-lg"
-      :visible="isEditBusinessProcessSidebarActive"
-      bg-variant="white"
-      shadow
-      backdrop
-      no-header
-      right
-      @change="(val) => $emit('update:is-edit-business-process-sidebar-active', val)"
-    >
-      <template #default="{ hide }">
-        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
-          <h5 class="mb-0">
-            Edit Business Process
-          </h5>
-          <div>
-            <b-button
-              variant="gradient-danger"
-              class="btn-icon"
-              @click="hide"
-            >
-              <feather-icon
-                icon="XIcon"
-              />
-            </b-button>
-          </div>
-        </div>
-        <div class="justify-content-between align-items-center px-2 py-1">
+    <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
+      <h3 class="mb-0">
+        Update Business Process
+      </h3>
+      <div>
+        <b-button
+          variant="gradient-danger"
+          class="btn-icon"
+          @click="$emit('updated')"
+        >
+          <feather-icon
+            icon="XIcon"
+          />
+        </b-button>
+      </div>
+    </div>
+    <div class="justify-content-between align-items-center px-2 py-1">
+      <b-button
+        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+        type="submit"
+        variant="primary"
+        class="mr-1"
+        :disabled="isImportantFieldsEmpty()"
+        @click="update()"
+      >
+        Update
+      </b-button>
+      <br>
+      <el-collapse
+        v-model="activeName"
+        accordion
+      >
+        <el-collapse-item name="1">
+          <template slot="title">
+            <h4>Process Description</h4>
+          </template>
           <b-row v-loading="loading">
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
+                label="Process Title"
                 label-for="v-name"
               >
-                <small>Process Name</small>
                 <el-input
                   v-model="form.name"
                   placeholder="Process Name"
@@ -45,15 +52,14 @@
               </b-form-group>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
+                label="Process Objective"
                 label-for="v-description"
               >
-                <small>Process Description</small>
                 <el-input
-                  v-model="form.description"
-                  type="textarea"
+                  v-model="form.objective"
                   placeholder="Process Description"
                   style="width: 100%;"
                 />
@@ -61,7 +67,88 @@
               <br>
             </b-col>
             <b-col
+              cols="6"
+            >
+              <b-form-group
+                label="Process Owner"
+                label-for="v-name"
+              >
+                <el-select
+                  v-model="form.process_owner"
+                  placeholder="Process Owner"
+                  style="width: 100%;"
+                >
+                  <el-option
+                    v-for="(owner, index) in team_members"
+                    :key="index"
+                    :label="owner.name"
+                    :value="owner.id"
+                  />
+                </el-select>
+              </b-form-group>
+            </b-col>
+            <b-col
+              cols="6"
+            >
+              <b-form-group
+                label="Teams Involved"
+                label-for="v-description"
+              >
+                <el-select
+                  v-model="form.teams"
+                  placeholder="Teams"
+                  multiple
+                  style="width: 100%;"
+                >
+                  <el-option
+                    v-for="(team, index) in unitTeams"
+                    :key="index"
+                    :label="team"
+                    :value="team"
+                  />
+                </el-select>
+              </b-form-group>
+              <br>
+            </b-col>
+            <!--<b-col
+              cols="6"
+            >
+              <b-form-group
+                label="Process Objective"
+                label-for="v-description"
+              >
+                <el-input
+                  v-model="form.objective"
+                  type="textarea"
+                  placeholder="Process Objective"
+                  style="width: 100%;"
+                />
+              </b-form-group>
+              <br>
+            </b-col> -->
+            <b-col
               cols="12"
+            >
+              <b-form-group
+                label="Detailed Description/Narrative"
+                label-for="v-name"
+              >
+                <ckeditor
+                  v-model="form.description"
+                  :editor="editor"
+                  :config="editorConfig"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </el-collapse-item>
+        <el-collapse-item name="2">
+          <template slot="title">
+            <h4>Other Details</h4>
+          </template>
+          <b-row v-loading="loading">
+            <b-col
+              cols="6"
             >
               <b-form-group
                 label-for="v-roles"
@@ -76,7 +163,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-no_of_people_involved"
@@ -92,7 +179,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-minimum_no_of_people_involved"
@@ -108,7 +195,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-product_or_service_delivered"
@@ -123,7 +210,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-regulatory_obligations"
@@ -138,7 +225,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-applications_used"
@@ -154,7 +241,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-business_units_depended_on"
@@ -179,7 +266,7 @@
             </b-col>
 
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-processes_depended_on"
@@ -196,7 +283,7 @@
             </b-col>
 
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-key_vendors_or_external_dependencies"
@@ -212,7 +299,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-vital_non_electronic_records"
@@ -227,7 +314,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-vital_electronic_records"
@@ -242,7 +329,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-alternative_workaround_during_system_failure"
@@ -257,7 +344,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-key_individuals_process_depends_on"
@@ -273,7 +360,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-peak_periods"
@@ -290,7 +377,7 @@
               <br>
             </b-col>
             <b-col
-              cols="12"
+              cols="6"
             >
               <b-form-group
                 label-for="v-remote_working"
@@ -313,35 +400,33 @@
               </b-form-group>
               <br>
             </b-col>
-            <!-- submit and reset -->
-            <b-col cols="12">
-              <b-button
-                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                type="submit"
-                variant="success"
-                class="mr-1"
-                @click="update()"
-              >
-                Update
-              </b-button>
-            </b-col>
           </b-row>
-        </div>
-      </template>
-    </b-sidebar>
+        </el-collapse-item>
+      </el-collapse>
+      <br>
+      <b-button
+        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+        type="submit"
+        variant="primary"
+        class="mr-1"
+        :disabled="isImportantFieldsEmpty()"
+        @click="update()"
+      >
+        Update
+      </b-button>
+    </div>
   </div>
 </template>
-
 <script>
 import {
-  BSidebar, BRow, BCol, BFormGroup, BButton,
+  BRow, BCol, BFormGroup, BButton,
 } from 'bootstrap-vue'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    BSidebar,
     BRow,
     BCol,
     BFormGroup,
@@ -350,33 +435,32 @@ export default {
   directives: {
     Ripple,
   },
-  model: {
-    prop: 'isEditBusinessProcessSidebarActive',
-    event: 'update:is-edit-business-process-sidebar-active',
-  },
   props: {
-    isEditBusinessProcessSidebarActive: {
-      type: Boolean,
-      required: true,
-    },
     businessProcess: {
       type: Object,
       default: null,
     },
-    // registeredBusinessProcesss: {
-    //   type: Array,
-    //   required: true,
-    // },
   },
   data() {
     return {
+      activeName: '1',
+      editor: ClassicEditor,
+      editorConfig: {
+        // The configuration of the editor.
+      },
       business_units: [],
+      selectedBusinessUnit: null,
+      unitTeams: [],
+      team_members: [],
       form: {
-        id: '',
         client_id: '',
         business_unit_id: '',
         name: '',
         description: '',
+        process_owner: '',
+        teams: [],
+        // narrative: '',
+        objective: '',
         roles_responsible: '',
         no_of_people_involved: '',
         minimum_no_of_people_involved: '',
@@ -401,16 +485,30 @@ export default {
   created() {
     this.fetchBusinessUnits()
     this.form = this.businessProcess
-    this.form.business_units_depended_on = this.businessProcess.business_units_depended_on.split(',')
   },
   methods: {
+    isImportantFieldsEmpty() {
+      const app = this
+      if (app.form.name === '' || app.form.process_owner === '' || app.form.description === '' || app.form.objective === '') {
+        return true
+      }
+      return false
+    },
     fetchBusinessUnits() {
       const app = this
-      app.form.business_unit_id = ''
       const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')
       fetchBusinessUnitsResource.list({ client_id: app.businessProcess.client_id })
         .then(response => {
           app.business_units = response.business_units
+          app.business_units.forEach(unit => {
+            if (unit.id === app.businessProcess.business_unit_id) {
+              app.selectedBusinessUnit = unit
+              const { teams } = unit
+              const teamMembers = unit.team_members
+              app.unitTeams = teams.split(',')
+              app.team_members = teamMembers
+            }
+          })
           app.loading = false
         }).catch(() => { app.loading = false })
     },
@@ -436,6 +534,6 @@ export default {
   },
 }
 </script>
-  <style lang="scss" scoped>
-  @import '~@core/scss/base/bootstrap-extended/include';
-  </style>
+<style lang="scss" scoped>
+@import '~@core/scss/base/bootstrap-extended/include';
+</style>

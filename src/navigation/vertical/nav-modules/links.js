@@ -1,12 +1,5 @@
 export default [
   {
-    title: 'Dashboard',
-    icon: 'HomeIcon',
-    route: 'dashboard',
-    // tag: '2',
-    tagVariant: 'light-warning',
-  },
-  {
     title: 'Due Diligence Assessment',
     icon: 'SearchIcon',
     route: 'due-diligence',
@@ -29,8 +22,8 @@ export default [
     route: 'ActivatedModules',
     acl: {
       modules: ['due-diligence', 'bia'],
-      except: ['client'],
-      // roles: ['partner'],
+      // except: ['client'],
+      roles: ['partner'],
     },
   },
   {

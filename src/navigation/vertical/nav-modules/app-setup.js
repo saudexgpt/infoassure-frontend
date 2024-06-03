@@ -15,6 +15,10 @@ export default [
     // },
     children: [
       {
+        title: 'Manage Assets',
+        route: 'manage-assets',
+      },
+      {
         title: 'Business Units',
         route: 'business-unit',
         acl: {
@@ -22,9 +26,13 @@ export default [
           // except: ['client'],
         },
       },
+      // {
+      //   title: 'Risk & Control Matrix',
+      //   route: 'risk-setup',
+      // },
       {
-        title: 'Risk',
-        route: 'risk-setup',
+        title: 'Risk & Threats',
+        route: 'risk-and-threats',
       },
     ],
   },

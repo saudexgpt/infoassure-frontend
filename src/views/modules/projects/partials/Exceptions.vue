@@ -117,14 +117,10 @@ export default {
           filter: 'Search:',
         },
         sortable: [
-          'name',
-          'standard.name',
           'clause.name',
         ],
         // filterable: false,
         filterable: [
-          'name',
-          'standard.name',
           'clause.name',
         ],
       },
@@ -149,6 +145,7 @@ export default {
       const { limit, page } = this.query
       const param = this.query
       param.client_id = app.selectedProject.client_id
+      param.project_id = app.selectedProject.id
       app.loading = true
       const fetchQuestionsResource = new Resource('exceptions/fetch')
       fetchQuestionsResource.list(param)

@@ -240,3 +240,15 @@ border: 1px solid #f0f0f0!important;
       background: #9892ec; color: #ffffff; border: 2px solid #ffffff;
     }
 }
+
+.sticky-header {
+  width: 100%;
+}
+
+/*This will work on every browser*/
+.sticky-header thead tr:nth-child(1) th {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 10;
+}

@@ -168,6 +168,7 @@ export default {
     fetchAssessmentAnswers() {
       const app = this
       app.load = true
+      app.assessment_answers = []
       const fetchEntryResource = new Resource('reports/fetch-project-answers')
       fetchEntryResource.list({ project_id: app.selectedProject.id })
         .then(response => {

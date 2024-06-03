@@ -14,7 +14,7 @@
       <template #default="{ hide }">
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
           <h5 class="mb-0">
-            Create Risk
+            Edit Risk Register
           </h5>
           <div>
             <b-button
@@ -30,84 +30,87 @@
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
           <b-row v-loading="loading">
-
-            <b-col cols="12">
+            <b-col
+              cols="12"
+            >
               <b-form-group
-                label-for="v-risk"
+                label="Risk Type"
               >
+                <!-- <el-input
+                  v-model="form.risk_type"
+                  type="text"
+                  outline
+                  placeholder="Risk Type"
+                /> -->
                 <el-select
-                  v-model="form.client_id"
-                  placeholder="Select Client"
-                  style="width: 100%;"
+                  v-model="form.risk_type"
+                  placeholder="Risk Type"
+                  style="width: 100%"
                 >
                   <el-option
-                    v-for="(client, index) in clients"
-                    :key="index"
-                    :value="client.id"
-                    :label="client.name"
+                    v-for="(risk_type, type_index) in risk_types"
+                    :key="type_index"
+                    :value="risk_type"
+                    :label="risk_type"
                   />
                 </el-select>
               </b-form-group>
             </b-col>
             <b-col
-              v-if="form.client_id !== ''"
               cols="12"
             >
               <b-form-group
-                label-for="v-risk"
+                label="Vulnerability Description"
               >
                 <el-input
-                  v-model="form.risk_unique_id"
-                  placeholder="Risk ID"
-                  style="width: 100%;"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col
-              v-if="form.client_id !== ''"
-              cols="12"
-            >
-              <b-form-group
-                label-for="v-risk"
-              >
-                <el-input
-                  v-model="form.type"
-                  placeholder="Risk Type"
-                  style="width: 100%;"
-                />
-              </b-form-group>
-              <br>
-            </b-col>
-            <b-col
-              v-if="form.client_id !== ''"
-              cols="12"
-            >
-              <b-form-group
-                label-for="v-risk"
-              >
-                <el-input
-                  v-model="form.description"
+                  v-model="form.vunerability_description"
                   type="textarea"
-                  placeholder="Risk Description"
-                  style="width: 100%;"
+                  outline
+                  placeholder="Describe Risk/Threat"
                 />
               </b-form-group>
-              <br>
             </b-col>
             <b-col
-              v-if="form.client_id !== ''"
               cols="12"
             >
               <b-form-group
-                label-for="v-risk"
+                label="Impact/Outcome Description"
               >
                 <el-input
-                  v-model="form.outcome"
-                  placeholder="Impact/Outcome"
+                  v-model="form.threat_impact_description"
+                  type="textarea"
+                  placeholder="State impact outcome"
                   style="width: 100%;"
                 />
               </b-form-group>
-              <br>
+            </b-col>
+            <b-col
+              cols="12"
+            >
+              <b-form-group
+                label="Existing Control"
+              >
+                <el-input
+                  v-model="form.existing_controls"
+                  placeholder="What controls are in place"
+                  type="textarea"
+                  style="width: 100%;"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col
+              cols="12"
+            >
+              <b-form-group
+                label="Risk Owner"
+              >
+                <el-input
+                  v-model="form.risk_owner"
+                  placeholder="State the Risk owner"
+                  type="text"
+                  style="width: 100%;"
+                />
+              </b-form-group>
             </b-col>
             <!-- submit and reset -->
             <b-col cols="12">
@@ -116,9 +119,9 @@
                 type="submit"
                 variant="primary"
                 class="mr-1"
-                @click="submit()"
+                @click="update()"
               >
-                Submit
+                Update
               </b-button>
             </b-col>
           </b-row>
@@ -155,8 +158,8 @@ export default {
       type: Boolean,
       required: true,
     },
-    clients: {
-      type: Array,
+    selectedRisk: {
+      type: Object,
       required: true,
     },
     // registeredRisks: {
@@ -168,38 +171,35 @@ export default {
     return {
       form: {
         client_id: '',
-        risk_unique_id: '',
-        type: '',
-        description: '',
-        outcome: '',
+        business_unit_id: '',
+        risk_id: '',
+        risk_type: '',
+        vunerability_description: '',
+        threat_impact_description: '',
+        existing_controls: '',
+        risk_owner: '',
       },
+      business_units: [],
       loading: false,
-      consultings: [],
-      selectedConsulting: {},
+      risk_types: ['Financial', 'Legal, Compliance & Regulatory', 'Operational', 'Strategic'],
     }
   },
   created() {
+    this.form = this.selectedRisk
   },
   methods: {
-    submit() {
+    update() {
       const app = this
       app.loading = true
-      const saveRisksResource = new Resource('risk-assessment/save-risk')
-      saveRisksResource.store(app.form)
+      const saveRisksResource = new Resource('update-risk-register')
+      saveRisksResource.update(app.form.id, app.form)
         .then(() => {
           app.loading = false
           // app.$message('Action Successful')
           app.$notify({
             title: 'Action Successful',
           })
-          app.form = {
-            client_id: '',
-            risk_unique_id: '',
-            type: '',
-            description: '',
-            outcome: '',
-          }
-          app.$emit('save')
+          app.$emit('update')
           // app.$emit('update:is-create-risk-sidebar-active', false)
         }).catch(error => {
           app.loading = false
@@ -209,6 +209,6 @@ export default {
   },
 }
 </script>
-  <style lang="scss" scoped>
-  @import '~@core/scss/base/bootstrap-extended/include';
-  </style>
+    <style lang="scss" scoped>
+    @import '~@core/scss/base/bootstrap-extended/include';
+    </style>

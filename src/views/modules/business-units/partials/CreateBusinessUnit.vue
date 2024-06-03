@@ -85,7 +85,7 @@
               cols="12"
             >
               <b-form-group
-                label="Teams"
+                label="Teams/Sub Units"
                 label-for="v-teams"
               >
                 <el-input

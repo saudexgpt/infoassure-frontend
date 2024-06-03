@@ -16,7 +16,7 @@
       >
         <categories />
       </b-tab>
-      <b-tab
+      <!-- <b-tab
         lazy
         title="Impacts"
       >
@@ -27,7 +27,7 @@
         title="Likelihoods"
       >
         <likelihoods />
-      </b-tab>
+      </b-tab> -->
     </b-tabs>
   </el-card>
 </template>
@@ -39,8 +39,8 @@ import {
 import checkPermission from '@/utils/permission'
 import AssetTypes from './AssetTypes.vue'
 import Categories from './Categories.vue'
-import Likelihoods from './Likelihoods.vue'
-import Impacts from './Impacts.vue'
+// import Likelihoods from './Likelihoods.vue'
+// import Impacts from './Impacts.vue'
 
 export default {
   components: {
@@ -48,8 +48,8 @@ export default {
     BTab,
     AssetTypes,
     Categories,
-    Likelihoods,
-    Impacts,
+    // Likelihoods,
+    // Impacts,
   },
   data() {
     return {

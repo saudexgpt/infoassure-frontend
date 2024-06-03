@@ -29,9 +29,49 @@ export default [
     // },
   },
   {
-    path: '/risk-setup',
-    name: 'risk-setup',
-    component: () => import('@/views/modules/risk-assessment/ManageRisk.vue'),
+    path: '/manage-rcm',
+    name: 'manage-rcm',
+    component: () => import('@/views/modules/RCSA/RCM.vue'),
+    meta: {
+      modules: ['rcsa'],
+    },
+  },
+  {
+    path: '/manage-rcsa',
+    name: 'manage-rcsa',
+    component: () => import('@/views/modules/RCSA/RCSAAssessments.vue'),
+    meta: {
+      modules: ['rcsa'],
+    },
+  },
+  {
+    path: '/risk-log',
+    name: 'risk-log',
+    component: () => import('@/views/modules/RCSA/RiskRegister.vue'),
+    meta: {
+      modules: ['rcsa'],
+    },
+  },
+  {
+    path: '/manage-assets',
+    name: 'manage-assets',
+    component: () => import('@/views/modules/ManageAssets/index.vue'),
+    // meta: {
+    //   modules: ['rcsa'],
+    // },
+  },
+  // {
+  //   path: '/risk-setup',
+  //   name: 'risk-setup',
+  //   component: () => import('@/views/modules/risk-assessment/ManageRisk.vue'),
+  //   // meta: {
+  //   //   except: ['client'],
+  //   // },
+  // },
+  {
+    path: '/risk-and-threats',
+    name: 'risk-and-threats',
+    component: () => import('@/views/modules/RiskAndTreats/index.vue'),
     // meta: {
     //   except: ['client'],
     // },

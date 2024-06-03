@@ -17,9 +17,9 @@
           <i class="el-icon-setting" />
           <span slot="title">Manage Processes</span>
         </el-menu-item>
-        <el-menu-item @click="page = 'analyze'">
+        <el-menu-item @click="page = 'rcm'">
           <i class="el-icon-search" />
-          <span slot="title">Analyze</span>
+          <span slot="title">Risk & Control Matrix</span>
         </el-menu-item>
         <!-- <el-menu-item @click="page = 'view'">
           <i class="el-icon-view" />
@@ -56,12 +56,12 @@
               :business-unit-id="otherUserData.business_unit_id"
             />
           </div>
-          <div v-if="page === 'analyze'">
-            <analyze
+          <!-- <div v-if="page === 'rcm'">
+            <r-c-m
               :client-id="otherUserData.client_id"
               :business-unit-id="otherUserData.business_unit_id"
             />
-          </div>
+          </div> -->
           <!-- <div v-if="page === 'view'">
             <b-i-a-details
               :client-id="otherUserData.client_id"
@@ -79,14 +79,14 @@
 
 <script>
 import checkPermission from '@/utils/permission'
-import Analyze from './Analyze.vue'
+// import RCM from './RCM.vue'
 // import BIADetails from './Details.vue'
 import BusinessProcesses from '@/views/modules/business-units/partials/BusinessProcesses.vue'
 import OtherUserLogin from '@/views/pages/authentication/OtherUserLogin.vue'
 
 export default {
   components: {
-    Analyze,
+    // RCM,
     // BIADetails,
     BusinessProcesses,
     OtherUserLogin,

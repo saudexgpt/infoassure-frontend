@@ -1,5 +1,5 @@
 <template>
-  <div v-if="project_phases.length > 0">
+  <div v-if="project_phases !== '{}'">
     <app-collapse
       v-loading="loading"
       accordion
@@ -10,7 +10,7 @@
         :key="title"
         :title="title"
       >
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered table-responsive">
           <thead>
             <tr>
               <th>Task</th>

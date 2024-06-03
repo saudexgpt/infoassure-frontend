@@ -1,70 +1,50 @@
 <template>
   <el-card>
-    <!-- <aside>
+    <aside>
       <el-row :gutter="10">
         <el-col
           :xs="24"
-          :sm="10"
-          :md="10"
+          :sm="8"
+          :md="8"
         >
           <el-select
-            v-model="matrix"
-            placeholder="Select Matrix"
+            v-model="selectedClient"
+            placeholder="Select Client"
             style="width: 100%;"
-            @input="setMatrix()"
+            key-value="id"
+            filterable
           >
             <el-option
-              value="3x3"
-              label="3x3 Matrix"
-            />
-            <el-option
-              value="5x5"
-              label="5x5 Matrix"
+              v-for="(client, index) in clients"
+              :key="index"
+              :value="client"
+              :label="client.name"
             />
           </el-select>
         </el-col>
       </el-row>
-    </aside> -->
-    <div v-if="selectedClient !== ''">
+    </aside>
+    <div v-if="selectedClient !== null">
       <b-tabs
         content-class="mt-1"
       >
-        <!-- <b-tab
-          lazy
-        >
-          <template #title>
-            <feather-icon icon="PlusIcon" />
-            <span>Create New</span>
-          </template>
-
-          <assessment
-
-            v-loading="loading"
-            :selected-client="selectedClient"
-            :standard-id="standardId"
-            :impacts="impacts"
-            :likelihoods="likelihoods"
-            :matrix="matrix"
-            @submit="fetchRiskAssessments(false)"
-          />
-        </b-tab> -->
         <b-tab
           lazy
         >
           <template #title>
             <feather-icon icon="ListIcon" />
-            <span>View Assessments</span>
+            <span>Process Level Risk Universe</span>
           </template>
           <view-risk-assessment
             v-loading="loading"
             :selected-client="selectedClient"
-            :standard-id="standardId"
+            :standard-id="0"
             :impacts="impacts"
             :likelihoods="likelihoods"
-            assessment-module="ra"
+            :assessment-module="'rcsa'"
           />
         </b-tab>
-        <b-tab
+        <!-- <b-tab
           lazy
         >
           <template #title>
@@ -84,7 +64,7 @@
             <span>Risk Ranking Matrix</span>
           </template>
           <risk-ranking-matrix :matrix="matrix" />
-        </b-tab>
+        </b-tab> -->
       </b-tabs>
     </div>
   </el-card>
@@ -96,54 +76,44 @@ import {
 } from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
 // import Assessment from './partials/Assessment.vue'
-import ViewRiskAssessment from './ViewRiskAssessment.vue'
-import RiskRankingMatrix from './RiskRankingMatrix.vue'
-import RiskAssessmentSummary from './partials/Summary.vue'
+import ViewRiskAssessment from '@/views/modules/risk-assessment/ViewRiskAssessment.vue'
+// import RiskRankingMatrix from './RiskRankingMatrix.vue'
+// import RiskAssessmentSummary from './partials/Summary.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
     BTabs,
     BTab,
-    // Assessment,
     ViewRiskAssessment,
-    RiskRankingMatrix,
-    RiskAssessmentSummary,
-  },
-  props: {
-    selectedClient: {
-      type: Object,
-      required: true,
-    },
-    standardId: {
-      type: Number,
-      required: true,
-    },
   },
   data() {
     return {
       clients: [],
       impacts: [],
       likelihoods: [],
-      risk_assessments: [],
+      selectedClient: null,
       loading: false,
     }
   },
   created() {
-    this.setMatrix()
+    this.fetchClients()
   },
   methods: {
     checkPermission,
-    // fetchRiskAssessments(load = true) {
-    //   const app = this
-    //   app.loading = load
-    //   const fetchRiskAssessmentsResource = new Resource('risk-assessment/fetch-risk_assessments')
-    //   fetchRiskAssessmentsResource.list({ client_id: app.selectedClient.id, standard_id: app.standardId })
-    //     .then(response => {
-    //       app.risk_assessments = response.risk_assessments
-    //       app.loading = false
-    //     }).catch(() => { app.loading = false })
-    // },
+    fetchClients() {
+      const app = this
+      const fetchCriteriaResource = new Resource('clients')
+      fetchCriteriaResource.list({ option: 'all' })
+        .then(response => {
+          app.clients = response.clients
+          if (app.clients.length === 1) {
+            // eslint-disable-next-line prefer-destructuring
+            app.selectedClient = app.clients[0]
+            app.setMatrix()
+          }
+        })
+    },
     setMatrix() {
       this.fetchImpacts()
       this.fetchLikelihoods()

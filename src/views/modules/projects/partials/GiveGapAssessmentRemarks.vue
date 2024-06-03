@@ -100,7 +100,7 @@
                   v-model="form.status"
                   placeholder="Select Status"
                   style="width: 100%;"
-                  @blur="saveRemark('status')"
+                  @input="saveRemark('status')"
                 >
                   <el-option
                     v-for="(status, index) in statuses"

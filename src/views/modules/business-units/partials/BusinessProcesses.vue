@@ -4,7 +4,7 @@
       <div slot="header">
         <b-row>
           <b-col cols="6">
-            <h4>Manage Business Processes</h4>
+            <h4>Manage Business Processes & Validation</h4>
           </b-col>
           <b-col
             cols="6"
@@ -19,7 +19,7 @@
                   icon="PlusIcon"
                   class="mr-50"
                 />
-                <span class="align-middle">Create</span>
+                <span class="align-middle">Create New</span>
               </b-button>
             </span>
           </b-col>
@@ -32,11 +32,61 @@
         :options="options"
       >
         <div
+          slot="status"
+          slot-scope="{row}"
+        >
+          <el-badge
+            :value="row.status"
+            :type="formatColor(row.status)"
+          />
+          <div v-if="canChangeStatus">
+            <el-select
+              v-model="row.status"
+              @change="changeStatus(row, $event)"
+            >
+              <el-option
+                v-for="(status, index) in statuses"
+                :key="index"
+                :value="status"
+                :label="status"
+              />
+            </el-select>
+            <!-- <el-button
+              v-if="row.status == 'Pending'"
+              type="success"
+              size="mini"
+              @click="changeStatus(row, 'Completed')"
+            >
+              Mark As Completed
+            </el-button>
+            <el-button
+              v-else
+              type="danger"
+              size="mini"
+              @click="changeStatus(row, 'Pending')"
+            >
+              Mark As Pending
+            </el-button> -->
+          </div>
+        </div>
+        <div
+          slot="flow_chart_diagram"
+          slot-scope="{row}"
+        >
+          <img
+            v-if="row.flow_chart_diagram !== null"
+            :src="`${baseServerUrl}storage/${row.flow_chart_diagram}`"
+            width="100"
+            alt="Diagram Not Uploaded"
+            @click="selectedDiagram = row.flow_chart_diagram; enlargeDiagram = true"
+          >
+        </div>
+        <div
           slot="action"
           slot-scope="props"
         >
           <el-tooltip
-            content="Edit"
+            content="View Details"
             placement="top"
           >
             <b-button
@@ -44,7 +94,19 @@
               class="btn-icon rounded-circle"
               @click="editProcess(props.row)"
             >
-              <feather-icon icon="EditIcon" />
+              <feather-icon icon="EyeIcon" />
+            </b-button>
+          </el-tooltip>
+          <el-tooltip
+            content="Upload Process Flow"
+            placement="top"
+          >
+            <b-button
+              variant="gradient-warning"
+              class="btn-icon rounded-circle"
+              @click="uploadProcessFlow(props.row)"
+            >
+              <feather-icon icon="UploadIcon" />
             </b-button>
           </el-tooltip>
         <!-- <b-button
@@ -67,16 +129,53 @@
     />
     <edit-business-process
       v-if="display === 'edit'"
-      v-model="isEditBusinessProcessSidebarActive"
       :business-process="selectedBusinessProcess"
       @updated="fetchBusinessProcesses"
     />
+    <b-modal
+      v-model="showModal"
+      title="Upload Process Flow Diagram (Expected File Format: jpeg, jpg, or png)"
+      centered
+      size="lg"
+      hide-footer
+    >
+      <div v-loading="uploading">
+        <input
+          class="form-control"
+          type="file"
+          @change="onImageChange"
+        >
+        <br>
+        <b-button
+          variant="success"
+          class="btn-icon"
+          :disabled="uploadableFile === null"
+          @click="submitUpload()"
+        >
+          Submit
+        </b-button>
+      </div>
+    </b-modal>
+    <b-modal
+      v-model="enlargeDiagram"
+      title="Uploaded Process Flow Diagram"
+      centered
+      size="lg"
+      hide-footer
+    >
+      <div align="center">
+        <img
+          :src="`${baseServerUrl}storage/${selectedDiagram}`"
+          alt="Diagram Not Uploaded"
+        >
+      </div>
+    </b-modal>
   </el-card>
 </template>
 
 <script>
 import {
-  BButton, BRow, BCol,
+  BButton, BRow, BCol, BModal,
 } from 'bootstrap-vue'
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
@@ -92,6 +191,7 @@ export default {
     BButton,
     BRow,
     BCol,
+    BModal,
   },
   directives: {
     Ripple,
@@ -105,19 +205,14 @@ export default {
       type: Number,
       default: null,
     },
+    canChangeStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now()
-        },
-      },
-      pickerOptions2: {
-        disabledDate(time) {
-          return time.getTime() <= Date.now()
-        },
-      },
+      statuses: ['In Progress', 'Completed', 'Complete and Validated'],
       loading: false,
       display: 'table',
       pageLength: 10,
@@ -125,11 +220,13 @@ export default {
       columns: [
         // 'client_id',
         // 'business_unit_id',
-        'action',
+        'generated_process_id',
         'name',
         'owner.name',
         'teams',
+        'flow_chart_diagram',
         'status',
+        'action',
         // 'minimum_no_of_people_involved',
         // 'product_or_service_delivered',
         // 'regulatory_obligations',
@@ -146,7 +243,9 @@ export default {
       ],
       options: {
         headings: {
+          generated_process_id: 'ID',
           'owner.name': 'Process Owner',
+          flow_chart_diagram: 'Flow Chart Diagram',
         },
         pagination: {
           dropdown: true,
@@ -162,7 +261,18 @@ export default {
         filterable: [],
       },
       business_processes: [],
+      selectedBusinessProcess: null,
+      showModal: false,
+      uploadableFile: null,
+      uploading: false,
+      enlargeDiagram: false,
+      selectedDiagram: null,
     }
+  },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
   },
   created() {
     this.fetchBusinessProcesses()
@@ -180,10 +290,65 @@ export default {
           app.loading = false
         }).catch(() => { app.loading = false })
     },
+    formatColor(status) {
+      let statusColor = 'danger'
+      switch (status) {
+        case 'Complete and Validated':
+          statusColor = 'success'
+          break
+        case 'Completed':
+          statusColor = 'primary'
+          break
+        default:
+          break
+      }
+      return statusColor
+    },
+    changeStatus(row, status) {
+      const app = this
+      console.log(status)
+      app.loading = true
+      const changeStatusResource = new Resource('business-units/change-process-status')
+      changeStatusResource.update(row.id, { status })
+        .then(() => {
+          app.loading = false
+          app.fetchBusinessProcesses()
+        }).catch(() => { app.loading = false })
+    },
     editProcess(row) {
       const app = this
       app.selectedBusinessProcess = row
       app.display = 'edit'
+    },
+    uploadProcessFlow(row) {
+      const app = this
+      app.selectedBusinessProcess = row
+      app.showModal = true
+    },
+    onImageChange(e) {
+      const app = this
+      // eslint-disable-next-line prefer-destructuring
+      app.uploadableFile = e.target.files[0]
+    },
+    submitUpload() {
+      const app = this
+      app.uploading = true
+      const formData = new FormData()
+      formData.append('id', app.selectedBusinessProcess.id)
+      formData.append('file_uploaded', app.uploadableFile)
+      const updatePhotoResource = new Resource('business-units/upload-process-flow')
+      updatePhotoResource.store(formData)
+        .then(() => {
+          app.uploading = false
+          app.uploadableFile = null
+          app.fetchBusinessProcesses()
+          app.$message('File upload successful')
+          app.showModal = false
+        })
+        .catch(e => {
+          app.uploading = false
+          app.$message(e.response.data.message)
+        })
     },
     destroyRow(row) {
       const app = this
