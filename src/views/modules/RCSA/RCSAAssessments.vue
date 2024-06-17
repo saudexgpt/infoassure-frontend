@@ -1,5 +1,6 @@
 <template>
   <el-card>
+    <h4>Risk Control Self Assessment</h4>
     <aside>
       <el-row :gutter="10">
         <el-col
@@ -49,7 +50,6 @@
         <span class="pull-right">
           <el-button
             type="danger"
-            size="mini"
             @click="showNewCategoryForm = false"
           >
             Close Form
@@ -64,365 +64,513 @@
       </div>
       <div
         v-else
-        class="table-responsive"
       >
         <span class="pull-right">
           <el-button
             type="primary"
-            size="mini"
-            @click="exportToExcel('RCMReport')"
+
+            @click="exportToExcel('RCSAReport', 'ProcessScoreDetails')"
           >
             Export
           </el-button>
           <el-button
             type="success"
-            size="mini"
+
             @click="showNewCategoryForm = true"
           >
             Create New Category
           </el-button>
         </span>
-        <table
-          id="RCMReport"
-          v-loading="loading"
-          class="table table-bordered"
-        >
-          <thead>
-            <tr>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  KEY PROCESS
-                </div>
-              </th>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  CONTROL ACTIVITIES
-                </div>
-              </th>
-              <th
-
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  CONTROL OWNER
-                </div>
-              </th>
-              <th
-
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  SOURCE
-                </div>
-              </th>
-              <th
-
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 150px">
-                  CONTROL TYPE
-                </div>
-              </th>
-              <th
-
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 150px">
-                  RISK DESCRIPTION
-                </div>
-              </th>
-              <th
-
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  RESIDUAL RISK RATING IN THE RISK REGISTER
-                </div>
-              </th>
-              <th
-
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  SELF ASSESSMENT OF CONTROL
-                </div>
-              </th>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  SELF ASSESSMENT SCORE
-                </div>
-              </th>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  COMMENT ON CURRENT STATUS OR ACTION PLAN
-                </div>
-              </th>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  RM RATING OF CONTROL
-                </div>
-              </th>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 100px">
+        <div class="table-responsive">
+          <p />
+          <table
+            id="RCSAReport"
+            v-loading="loading"
+            class="table table-bordered"
+          >
+            <thead>
+              <tr>
+                <th colspan="7" />
+                <th
+                  data-fill-color="CCCCCC"
+                  data-b-a-s="thin"
+                  data-f-color="000000"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                  colspan="3"
+                >
+                  SELF ASSESSMENT
+                </th>
+                <th
+                  data-fill-color="9fb5b6"
+                  data-b-a-s="thin"
+                  data-f-color="000000"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                  colspan="3"
+                >
                   VALIDATION
-                </div>
-              </th>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  BASIS OF RM RATING
-                </div>
-              </th>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  SELF ASSESSMENT OF PROCESS LEVEL RISK
-                </div>
-              </th>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  RM VALIDATED PROCESS LEVEL RISK
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody v-if="!downloading">
-            <template
-              v-for="(categories, category_key) in rcsas"
-            >
-              <tr :key="category_key">
-                <td
-                  colspan="15"
-                  style="background-color: #409EFF; color: #ffffff;"
+                </th>
+                <th
+                  data-fill-color="CCCCCC"
+                  data-b-a-s="thin"
+                  data-f-color="000000"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                  colspan="2"
                 >
-                  {{ category_key }}
-                </td>
+                  PROCESS LEVEL RISK ASSESSMENT
+                </th>
               </tr>
-              <tr
-                v-for="(report, index) in categories"
-                :key="index"
-              >
-
-                <td>{{ report.key_process }}</td>
-                <td>{{ report.control_activities }}</td>
-                <td>{{ report.control_owner }}</td>
-                <td>
-                  <input
-                    v-model="report.source"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'source', report)"
-                  >
-                </td>
-                <td>
-                  {{ report.control_type }}
-                </td>
-                <td>
-                  {{ report.risk_description }}
-                </td>
-                <td>
-                  <select
-                    v-model="report.risk_rating"
-                    class="form-control"
-                    @change="updateField($event, 'risk_rating', report)"
-                  >
-                    <option
-                      label="High"
-                      value="High"
-                    />
-                    <option
-                      label="Medium"
-                      value="Medium"
-                    />
-                    <option
-                      label="Low"
-                      value="Low"
-                    />
-                  </select>
-                </td>
-                <td :style="`background-color: ${setControlBgColor(report.self_assessment_control)}`">
-                  <select
-                    v-model="report.self_assessment_control"
-                    class="form-control"
-                    @change="updateField($event, 'self_assessment_control', report)"
-                  >
-                    <option
-                      v-for="(control, control_index) in control_assessments"
-                      :key="control_index"
-                      :label="control"
-                      :value="control"
-                    />
-                  </select>
-                </td>
-                <td>
-                  {{ report.self_assessment_score }}
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.comment_on_status"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'comment_on_status', report)"
-                  />
-                </td>
-                <td :style="`background-color: ${setControlBgColor(report.rm_rating_of_control)}`">
-                  <select
-                    v-model="report.rm_rating_of_control"
-                    class="form-control"
-                    @change="updateField($event, 'rm_rating_of_control', report)"
-                  >
-                    <option
-                      v-for="(control, control_index) in control_assessments"
-                      :key="control_index"
-                      :label="control"
-                      :value="control"
-                    />
-                  </select>
-                </td>
-                <td>
-                  {{ report.validation }}
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.basis_of_rm_rating"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'basis_of_rm_rating', report)"
-                  />
-                </td>
-                <td :style="`background-color: ${setRiskBgColor(report.self_assessment_of_process_level_risk)}; color: #ffffff`">
-                  {{ report.self_assessment_of_process_level_risk }}
-                </td>
-                <td :style="`background-color: ${setRiskBgColor(report.rm_validated_process_level_risk)}; color: #ffffff`">
-                  {{ report.rm_validated_process_level_risk }}
-                </td>
-              </tr>
-            </template>
-
-          </tbody>
-          <tbody v-else>
-            <template
-              v-for="(categories, category_key) in rcsas"
-            >
-              <tr :key="category_key">
-                <td
-                  colspan="15"
-                  style="background: #409EFF;"
+              <tr>
+                <th
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
                 >
-                  <strong>{{ category_key }}</strong>
-                </td>
-              </tr>
-              <tr
-                v-for="(report, index) in categories"
-                :key="index"
-              >
+                  <div style="width: 250px">
+                    KEY PROCESS
+                  </div>
+                </th>
+                <th
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    CONTROL ACTIVITIES
+                  </div>
+                </th>
+                <th
 
-                <td>{{ report.key_process }}</td>
-                <td>{{ report.control_activities }}</td>
-                <td>{{ report.control_owner }}</td>
-                <td>
-                  {{ report.source }}
-                </td>
-                <td>
-                  {{ report.control_type }}
-                </td>
-                <td>
-                  {{ report.risk_description }}
-                </td>
-                <td>
-                  {{ report.risk_rating }}
-                </td>
-                <td>
-                  {{ report.self_assessment_control }}
-                </td>
-                <td>
-                  {{ report.self_assessment_score }}
-                </td>
-                <td>
-                  {{ report.comment_on_status }}
-                </td>
-                <td>
-                  {{ report.rm_rating_of_control }}
-                </td>
-                <td>
-                  {{ report.validation }}
-                </td>
-                <td>
-                  {{ report.basis_of_rm_rating }}
-                </td>
-                <td :style="`background-color: ${setRiskBgColor(report.self_assessment_of_process_level_risk)}`">
-                  {{ report.self_assessment_of_process_level_risk }}
-                </td>
-                <td :style="`background-color: ${setRiskBgColor(report.rm_validated_process_level_risk)}`">
-                  {{ report.rm_validated_process_level_risk }}
-                </td>
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    CONTROL OWNER
+                  </div>
+                </th>
+                <th
+
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    SOURCE
+                  </div>
+                </th>
+                <th
+
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 150px">
+                    CONTROL TYPE
+                  </div>
+                </th>
+                <th
+
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 150px">
+                    RISK DESCRIPTION
+                  </div>
+                </th>
+                <th
+
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    RESIDUAL RISK RATING IN THE RISK REGISTER
+                  </div>
+                </th>
+                <th
+
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    SELF ASSESSMENT OF CONTROL
+                  </div>
+                </th>
+                <th
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    SELF ASSESSMENT SCORE
+                  </div>
+                </th>
+                <th
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    COMMENT ON CURRENT STATUS OR ACTION PLAN
+                  </div>
+                </th>
+                <th
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    RM RATING OF CONTROL
+                  </div>
+                </th>
+                <th
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 100px">
+                    VALIDATION
+                  </div>
+                </th>
+                <th
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    BASIS OF RM RATING
+                  </div>
+                </th>
+                <th
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    SELF ASSESSMENT OF PROCESS LEVEL RISK
+                  </div>
+                </th>
+                <th
+                  data-fill-color="666666"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="12"
+                >
+                  <div style="width: 250px">
+                    RM VALIDATED PROCESS LEVEL RISK
+                  </div>
+                </th>
               </tr>
-            </template>
-          </tbody>
-        </table>
+            </thead>
+            <tbody v-if="!downloading">
+              <template
+                v-for="(categories, category_key) in rcsas"
+              >
+                <tr :key="category_key + '_a'">
+                  <td
+                    colspan="15"
+                    style="background-color: #409EFF; color: #ffffff;"
+                  >
+                    {{ category_key }}
+                  </td>
+                </tr>
+                <tr
+                  v-for="report in categories"
+                  :key="report.id"
+                >
+
+                  <td>{{ report.key_process }}</td>
+                  <td>{{ report.control_activities }}</td>
+                  <td>{{ report.control_owner }}</td>
+                  <td>
+                    <input
+                      v-model="report.source"
+                      type="text"
+                      class="form-control"
+                      @blur="updateField($event, 'source', report)"
+                    >
+                  </td>
+                  <td>
+                    {{ report.control_type }}
+                  </td>
+                  <td>
+                    {{ report.risk_description }}
+                  </td>
+                  <td>
+                    <select
+                      v-model="report.risk_rating"
+                      class="form-control"
+                      @change="updateField($event, 'risk_rating', report)"
+                    >
+                      <option
+                        label="High"
+                        value="High"
+                      />
+                      <option
+                        label="Medium"
+                        value="Medium"
+                      />
+                      <option
+                        label="Low"
+                        value="Low"
+                      />
+                    </select>
+                  </td>
+                  <td :style="`background-color: #${setControlBgColor(report.self_assessment_control)}`">
+                    <select
+                      v-model="report.self_assessment_control"
+                      class="form-control"
+                      @change="updateField($event, 'self_assessment_control', report)"
+                    >
+                      <option
+                        v-for="(control, control_index) in control_assessments"
+                        :key="control_index"
+                        :label="control"
+                        :value="control"
+                      />
+                    </select>
+                  </td>
+                  <td>
+                    {{ report.self_assessment_score }}
+                  </td>
+                  <td>
+                    <textarea
+                      v-model="report.comment_on_status"
+                      type="text"
+                      class="form-control"
+                      @blur="updateField($event, 'comment_on_status', report)"
+                    />
+                  </td>
+                  <td :style="`background-color: #${setControlBgColor(report.rm_rating_of_control)}`">
+                    <select
+                      v-model="report.rm_rating_of_control"
+                      class="form-control"
+                      @change="updateField($event, 'rm_rating_of_control', report)"
+                    >
+                      <option
+                        v-for="(control, control_index) in control_assessments"
+                        :key="control_index"
+                        :label="control"
+                        :value="control"
+                      />
+                    </select>
+                  </td>
+                  <td>
+                    {{ report.validation }}
+                  </td>
+                  <td>
+                    <textarea
+                      v-model="report.basis_of_rm_rating"
+                      type="text"
+                      class="form-control"
+                      @blur="updateField($event, 'basis_of_rm_rating', report)"
+                    />
+                  </td>
+                  <td :style="`background-color: #${setRiskBgColor(report.self_assessment_of_process_level_risk)}; color: #ffffff`">
+                    {{ report.self_assessment_of_process_level_risk }}
+                  </td>
+                  <td :style="`background-color: 3${setRiskBgColor(report.rm_validated_process_level_risk)}; color: #ffffff`">
+                    {{ report.rm_validated_process_level_risk }}
+                  </td>
+                </tr>
+              </template>
+
+            </tbody>
+            <tbody v-else>
+              <template
+                v-for="(categories, category_key) in rcsas"
+              >
+                <tr :key="category_key +'_b'">
+                  <td
+                    colspan="15"
+                    data-fill-color="409EFF"
+                    data-b-a-s="thin"
+                    data-f-color="FFFFFF"
+                  >
+                    <strong>{{ category_key }}</strong>
+                  </td>
+                </tr>
+                <tr
+                  v-for="report in categories"
+                  :key="report.id"
+                >
+
+                  <td>{{ report.key_process }}</td>
+                  <td>{{ report.control_activities }}</td>
+                  <td>{{ report.control_owner }}</td>
+                  <td>
+                    {{ report.source }}
+                  </td>
+                  <td>
+                    {{ report.control_type }}
+                  </td>
+                  <td>
+                    {{ report.risk_description }}
+                  </td>
+                  <td>
+                    {{ report.risk_rating }}
+                  </td>
+                  <td
+                    :data-fill-color="setControlBgColor(report.self_assessment_control)"
+                    data-b-a-s="thin"
+                    data-f-color="000000"
+                  >
+                    {{ report.self_assessment_control }}
+                  </td>
+                  <td
+                    data-fill-color="CCCCCC"
+                    data-b-a-s="thin"
+                    data-f-color="000000"
+                  >
+                    {{ report.self_assessment_score }}
+                  </td>
+                  <td
+                    data-fill-color="CCCCCC"
+                    data-b-a-s="thin"
+                    data-f-color="000000"
+                  >
+                    {{ report.comment_on_status }}
+                  </td>
+                  <td
+                    :data-fill-color="setControlBgColor(report.rm_rating_of_control)"
+                    data-b-a-s="thin"
+                    data-f-color="000000"
+                  >
+                    {{ report.rm_rating_of_control }}
+                  </td>
+                  <td
+                    data-fill-color="9fb5b6"
+                    data-b-a-s="thin"
+                    data-f-color="000000"
+                  >
+                    {{ report.validation }}
+                  </td>
+                  <td
+                    data-fill-color="9fb5b6"
+                    data-b-a-s="thin"
+                    data-f-color="000000"
+                  >
+                    {{ report.basis_of_rm_rating }}
+                  </td>
+                  <td
+                    :data-fill-color="setRiskBgColor(report.self_assessment_of_process_level_risk)"
+                    data-b-a-s="thin"
+                    data-f-color="000000"
+                  >
+                    {{ report.self_assessment_of_process_level_risk }}
+                  </td>
+                  <td
+                    :data-fill-color="setRiskBgColor(report.rm_validated_process_level_risk)"
+                    data-b-a-s="thin"
+                    data-f-color="000000"
+                  >
+                    {{ report.rm_validated_process_level_risk }}
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
         <br>
       </div>
+      <table
+        id="ProcessScoreDetails"
+        class="table table-bordered"
+      >
+        <thead>
+          <tr>
+            <th colspan="4">
+              <h4>Process Score</h4>
+            </th>
+          </tr>
+          <tr>
+            <th>Category</th>
+            <th>Self Assessment Score</th>
+            <th>Validation Score</th>
+            <th>Overall Process Control Ratings</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(detail, index) in category_details"
+            :key="index + 'cat_details'"
+          >
+            <td>{{ detail.category }}</td>
+            <td>{{ detail.percent_self_assessment_score }}%</td>
+            <td>{{ detail.percent_validation_score }}%</td>
+            <td>
+              <select
+                v-if="!downloading"
+                v-model="detail.overall_process_control_rating"
+                class="form-control"
+                @change="updateOverallRating($event, detail.category)"
+              >
+                <option
+                  v-for="(control, control_index) in control_assessments"
+                  :key="control_index"
+                  :label="control"
+                  :value="control"
+                />
+              </select>
+              <div v-else>
+                {{ detail.overall_process_control_rating }}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Total Score</td>
+            <td>{{ total_scores.total_self_assessment_score }}</td>
+            <td>{{ total_scores.total_validation_score }}</td>
+            <td />
+          </tr>
+          <tr>
+            <td>Potential Maximum Score</td>
+            <td>{{ total_scores.potential_max_score }}</td>
+            <td>{{ total_scores.potential_max_score }}</td>
+            <td />
+          </tr>
+          <tr>
+            <td>Percentage Rating</td>
+            <td>{{ total_scores.self_assessment_percentage_rating }}%</td>
+            <td>{{ total_scores.validation_percentage_rating }}%</td>
+            <td />
+          </tr>
+        </tbody>
+      </table>
     </div>
   </el-card>
 </template>
@@ -451,6 +599,8 @@ export default {
       downloading: false,
       control_assessments: ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'N/A'],
       rcsas: [],
+      category_details: [],
+      total_scores: '',
       clients: [],
       business_units: [],
       showManageProject: false,
@@ -505,6 +655,8 @@ export default {
       fetchRisksResource.store({ client_id: app.form.client_id, business_unit_id: app.form.business_unit_id })
         .then(response => {
           app.rcsas = response.rcsas
+          app.total_scores = response.total_scores
+          app.category_details = response.category_details
           app.loading = false
         }).catch(() => { app.loading = false })
     },
@@ -515,29 +667,48 @@ export default {
       fetchRisksResource.get({ client_id: app.form.client_id, business_unit_id: app.form.business_unit_id })
         .then(response => {
           app.rcsas = response.rcsas
+          app.total_scores = response.total_scores
+          app.category_details = response.category_details
           app.loading = false
         }).catch(() => { app.loading = false })
     },
-    updateField($event, field, assessment) {
+    updateField(event, field, assessment) {
       const app = this
-      const params = { field, value: $event.target.value }
+      const params = {
+        field, value: event.target.value, client_id: app.form.client_id, business_unit_id: app.form.business_unit_id,
+      }
       const updateResource = new Resource('rcsa/update-fields')
       updateResource.update(assessment.id, params)
         .then(response => {
           app.rcsas = response.rcsas
+          app.total_scores = response.total_scores
+          app.category_details = response.category_details
+        })
+    },
+    updateOverallRating(event, category) {
+      const app = this
+      const params = {
+        category, value: event.target.value, client_id: app.form.client_id, business_unit_id: app.form.business_unit_id,
+      }
+      const updateResource = new Resource('rcsa/update-overall-control-rating')
+      updateResource.store(params)
+        .then(response => {
+          app.rcsas = response.rcsas
+          app.total_scores = response.total_scores
+          app.category_details = response.category_details
         })
     },
     setControlBgColor(value) {
-      let color = 'red'
+      let color = 'ff0000'
       switch (value) {
         case 'Level 2':
-          color = 'orange'
+          color = 'ffa500'
           break
         case 'Level 3':
-          color = 'yellow'
+          color = 'ffff00'
           break
         case 'Level 4':
-          color = 'green'
+          color = '008000'
           break
         default:
           break
@@ -545,35 +716,50 @@ export default {
       return color
     },
     setRiskBgColor(value) {
-      let color = '#c9004d'
+      let color = 'c9004d'
       switch (value) {
         case 'Medium':
-          color = '#ebaf41'
+          color = 'ebaf41'
           break
         case 'Low':
-          color = '#056b16'
+          color = '056b16'
           break
         default:
           break
       }
       return color
     },
-    exportToExcel(id) {
+    exportToExcel(id1, id2) {
       const app = this
       app.downloading = true
       setTimeout(() => {
-        TableToExcel.convert(document.getElementById(id), {
-          name: 'RCM-Report.xlsx',
-          sheet: {
-            name: 'Sheet 1',
-          },
-        })
+        const table1 = document.getElementById(id1)
+        const table2 = document.getElementById(id2)
+        const book = TableToExcel.tableToBook(table1, { sheet: { name: 'Risk Control Self Assessment' } })
+        TableToExcel.tableToSheet(book, table2, { sheet: { name: 'Overall Process Control Rating' } })
+        TableToExcel.save(book, 'RCSA-Report.xlsx')
       }, 1000)
 
       setTimeout(() => {
         app.downloading = false
       }, 30000)
     },
+    // exportToExcel(id) {
+    //   const app = this
+    //   app.downloading = true
+    //   setTimeout(() => {
+    //     TableToExcel.convert(document.getElementById(id), {
+    //       name: 'RCSA-Report.xlsx',
+    //       sheet: {
+    //         name: 'Sheet 1',
+    //       },
+    //     })
+    //   }, 1000)
+
+    //   setTimeout(() => {
+    //     app.downloading = false
+    //   }, 30000)
+    // },
     destroyRow(row) {
       const app = this
 

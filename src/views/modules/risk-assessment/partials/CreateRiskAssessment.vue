@@ -52,7 +52,10 @@
                 </el-select>
               </b-form-group>
             </b-col>
-            <b-col cols="12">
+            <b-col
+              v-if="business_unit_id !== ''"
+              cols="12"
+            >
               <b-form-group
                 label="Select Risk"
                 label-for="v-level_group"
@@ -68,12 +71,15 @@
                     v-for="(risk_register, index) in risk_registers"
                     :key="index"
                     :value="risk_register"
-                    :label="`(${risk_register.risk_id}) - ${risk_register.vunerability_description}`"
+                    :label="`(${risk_register.risk_id}) - ${risk_register.vulnerability_description}`"
                   />
                 </el-select>
               </b-form-group>
             </b-col>
-            <b-col cols="12">
+            <b-col
+              v-if="business_unit_id !== ''"
+              cols="12"
+            >
               <b-form-group
                 label="Select Business Process(es)"
               >
@@ -103,6 +109,7 @@
                 type="submit"
                 variant="primary"
                 class="mr-1"
+                :disabled="business_unit_id === '' || selected_risk_register === '' || selected_business_processes.length < 1"
                 @click="addEntry()"
               >
                 Continue
@@ -245,6 +252,6 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-@import '~@core/scss/base/bootstrap-extended/include';
-</style>
+  <style lang="scss" scoped>
+  @import '~@core/scss/base/bootstrap-extended/include';
+  </style>

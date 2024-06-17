@@ -11,7 +11,7 @@
       v-if="isActive"
       v-bind="linkProps"
       class="d-flex align-items-center"
-      :style="`background: ${sidebar_bg}; border: solid 1px ${navbar_bg}; box-shadow: 0 0 1px 1px ${navbar_bg}`"
+      :style="`background: ${sidebar_bg}; border: ${navbar_bg}; box-shadow: 0 0 1px 1px ${navbar_bg}; border-radius: 5px; padding: 5px 10px 5px 20px;`"
     >
       <!-- <feather-icon :icon="item.icon || 'TargetIcon'" /> -->
       <feather-icon :icon="item.icon || ''" />

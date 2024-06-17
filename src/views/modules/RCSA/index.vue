@@ -1,126 +1,203 @@
 <template>
-  <el-container style="height: 100%; border: 1px solid #eee">
-    <el-aside
-      v-if="getOtherToken"
-      width="250px"
-      style="background-color: rgb(238, 241, 246)"
-    >
-      <div style="text-align: center;">
-
-        <h1 style="font-size: 48px; font-weight: 600;  font-family:'Times New Roman', Times, serif">
-          RCSA
-        </h1>
-        <span>Risk Control Self Assessment</span>
+  <div>
+    <el-row :gutter="5">
+      <!-- <el-col :md="4">
+      <div class="card">
+        <div class="project-menu">
+          <feather-icon
+            size="36"
+            icon="LayersIcon"
+          />
+          <p>Project Plan</p>
+        </div>
       </div>
-      <el-menu>
-        <el-menu-item @click="page = 'business'">
-          <i class="el-icon-setting" />
-          <span slot="title">Manage Processes</span>
-        </el-menu-item>
-        <el-menu-item @click="page = 'rcm'">
-          <i class="el-icon-search" />
-          <span slot="title">Risk & Control Matrix</span>
-        </el-menu-item>
-        <!-- <el-menu-item @click="page = 'view'">
-          <i class="el-icon-view" />
-          <span slot="title">View Analysis</span>
-        </el-menu-item> -->
-      </el-menu>
-    </el-aside>
-
-    <el-container>
-      <el-header
-        v-if="getOtherToken"
-        style="text-align: right; font-size: 12px"
-      >
-        <el-dropdown
-          @command="logout"
+    </el-col> -->
+      <el-col :md="4">
+        <div
+          id="business_unit"
+          class="card activeCard"
+          @click="setView('business_unit')"
         >
-          <i
-            class="el-icon-user"
-            style="margin-right: 15px"
-          > {{ otherUserData.name }}</i>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="a">
-              Logout
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </el-header>
-
-      <el-main>
-        <div v-if="getOtherToken">
-          <div v-if="page === 'business'">
-            <business-processes
-              :client-id="otherUserData.client_id"
-              :business-unit-id="otherUserData.business_unit_id"
-            />
+          <div class="project-menu">
+            <img src="images/project-icons/business-unit.png">
+            <p>Business Units</p>
           </div>
-          <!-- <div v-if="page === 'rcm'">
-            <r-c-m
-              :client-id="otherUserData.client_id"
-              :business-unit-id="otherUserData.business_unit_id"
-            />
-          </div> -->
-          <!-- <div v-if="page === 'view'">
-            <b-i-a-details
-              :client-id="otherUserData.client_id"
-              :business-unit-id="otherUserData.business_unit_id"
-            />
-          </div> -->
         </div>
-        <div v-else>
-          <other-user-login />
+      </el-col>
+      <el-col
+        :md="4"
+      >
+        <div
+          id="rcm"
+          class="card"
+          @click="setView('rcm')"
+        >
+          <div class="project-menu">
+            <img src="images/project-icons/risk-matrix.png">
+            <p>RCM</p>
+          </div>
         </div>
-      </el-main>
-    </el-container>
-  </el-container>
+      </el-col>
+      <el-col
+        :md="4"
+      >
+        <div
+          id="rcsa"
+          class="card"
+          @click="setView('rcsa')"
+        >
+          <div class="project-menu">
+            <img src="images/project-icons/rcsa.png">
+            <p>RCSA</p>
+          </div>
+        </div>
+      </el-col>
+      <el-col
+        :md="4"
+      >
+        <div
+          id="risk_log"
+          class="card"
+          @click="setView('risk_log')"
+        >
+          <div class="project-menu">
+            <img src="images/project-icons/risk-log.png">
+            <p>Risk Register</p>
+          </div>
+        </div>
+      </el-col>
+      <el-col
+        :md="4"
+      >
+        <div
+          id="enterprise"
+          class="card"
+          @click="setView('enterprise')"
+        >
+          <div class="project-menu">
+            <img src="images/project-icons/err.png">
+            <p><small>Enterprise Risk Register</small></p>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    <div>
+      <business-unit
+        v-if="current_view === 'business_unit'"
+      />
+      <r-c-m
+        v-if="current_view === 'rcm'"
+      />
+      <r-c-s-a
+        v-if="current_view === 'rcsa'"
+      />
+      <risk-register
+        v-if="current_view === 'risk_log'"
+      />
+      <enterprise-risk-register
+        v-if="current_view === 'enterprise'"
+      />
+    </div>
+  </div>
+  <!-- <el-tabs
+    type="border-card"
+  >
+    <el-tab-pane lazy>
+      <template slot="label">
+        <feather-icon icon="LayersIcon" />
+        <el-col>Project Plan in Phases</el-col>
+      </template>
+      <project-plan-details
+        :selected-project="selectedProject"
+        :is-admin="isAdmin"
+      />
+    </el-tab-pane>
+    <el-tab-pane lazy>
+      <template slot="label">
+        <feather-icon icon="FileTextIcon" />
+        <el-col>Project Activities</el-col>
+      </template>
+      <project-activities
+        :selected-client="selectedClient"
+        :selected-project="selectedProject"
+        :is-admin="isAdmin"
+      />
+    </el-tab-pane>
+  </el-tabs> -->
 </template>
 
 <script>
+// import {
+//   BTabs, BTab,
+// } from 'bootstrap-vue'
+import BusinessUnit from '@/views/modules/business-units/SetUp.vue'
+import RCM from '@/views/modules/RCSA/RCM.vue'
+import RCSA from '@/views/modules/RCSA/RCSAAssessments.vue'
+import RiskRegister from '@/views/modules/RCSA/RiskRegister.vue'
+import EnterpriseRiskRegister from '@/views/modules/RCSA/EnterpriseRiskRegister.vue'
+// import ProjectPlanDetails from './ProjectPlanDetails.vue'
 import checkPermission from '@/utils/permission'
-// import RCM from './RCM.vue'
-// import BIADetails from './Details.vue'
-import BusinessProcesses from '@/views/modules/business-units/partials/BusinessProcesses.vue'
-import OtherUserLogin from '@/views/pages/authentication/OtherUserLogin.vue'
 
 export default {
   components: {
-    // RCM,
-    // BIADetails,
-    BusinessProcesses,
-    OtherUserLogin,
+    // BTabs,
+    // BTab,
+    BusinessUnit,
+    RCM,
+    RCSA,
+    RiskRegister,
+    EnterpriseRiskRegister,
+    // ProjectPlanDetails,
   },
   data() {
     return {
-      business_impact_analyses: [],
-      loading: false,
-      page: 'business',
+      current_view: 'business_unit',
     }
-  },
-  computed: {
-    getOtherToken() {
-      return this.$store.getters.other_user_token
-    },
-    otherUserData() {
-      return this.$store.getters.otherUserData
-    },
   },
   methods: {
     checkPermission,
-    async logout() {
-      await this.$store.dispatch('user/logoutOtherUser')
+    setView(viewId) {
+      const app = this
+      app.current_view = viewId
+      app.changeActiveTabBgColor(viewId)
+    },
+    changeActiveTabBgColor(viewId) {
+      const divs = document.getElementsByClassName('card')
+      // Loop through the buttons and add the activeCard class to the current/clicked button
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < divs.length; i++) {
+        const current = document.getElementsByClassName('activeCard')
+        // If there's no activeCard class
+        if (current.length > 0) {
+          current[0].className = current[0].className.replace(' activeCard', '')
+        }
+      }
+      document.getElementById(viewId).className += ' activeCard'
     },
   },
 }
 </script>
-<style>
-  .el-header {
-    background-color: #B3C0D1;
-    color: #333;
-    line-height: 60px
-  }
-  .el-aside {
-    color: #333
-  }
+<style scoped>
+.project-menu {
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  padding: 10px;
+}
+.card {
+  border: 1px solid #EBEEF5;
+  background-color: #FFF;
+  border-radius: 5px;
+  color: #303133;
+}
+.card :hover {
+  background-color: #3458cf;
+  border-radius: 5px;
+  color: #ffffff;
+}
+.activeCard {
+  background-color: #0B173D;
+  border-radius: 5px;
+  color: #ffffff;
+}
 </style>

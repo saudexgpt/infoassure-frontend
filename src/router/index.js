@@ -137,16 +137,6 @@ export const constantRoutes = [
   },
   {
     hidden: true,
-    path: '/rcsa',
-    name: 'RCSA',
-    component: () => import('@/views/modules/RCSA/index.vue'),
-    meta: {
-      layout: 'full',
-      // redirectIfLoggedIn: true,
-    },
-  },
-  {
-    hidden: true,
     path: '/login-as',
     component: () => import('@/views/modules/user/LoginAs.vue'),
     name: 'LoginAs',

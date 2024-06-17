@@ -3,7 +3,7 @@
     <el-button
       :loading="downloading"
       type="primary"
-      size="mini"
+
       @click="exportToExcel('BIAReport')"
     >
       Export
@@ -11,7 +11,7 @@
     <el-button
       v-if="!expand"
       type="warning"
-      size="mini"
+
       @click="expand = true"
     >
       View More
@@ -19,7 +19,7 @@
     <el-button
       v-else
       type="danger"
-      size="mini"
+
       @click="expand = false"
     >
       View Less

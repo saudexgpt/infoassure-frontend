@@ -36,6 +36,7 @@
             value-key="id"
             placeholder="Select Client/Vendor"
             style="width: 100%;"
+            filterable
             @input="setDueDiligenceResponses()"
           >
             <el-option

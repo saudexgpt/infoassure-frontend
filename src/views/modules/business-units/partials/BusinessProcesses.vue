@@ -222,7 +222,7 @@ export default {
         // 'business_unit_id',
         'generated_process_id',
         'name',
-        'owner.name',
+        'process_owner',
         'teams',
         'flow_chart_diagram',
         'status',
@@ -244,7 +244,7 @@ export default {
       options: {
         headings: {
           generated_process_id: 'ID',
-          'owner.name': 'Process Owner',
+          process_owner: 'Process Owner',
           flow_chart_diagram: 'Flow Chart Diagram',
         },
         pagination: {

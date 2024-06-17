@@ -12,7 +12,14 @@
     }
   }
 }
+.el-button {
+  border-radius: 30px !important;
 
+}
+.btn {
+  border-radius: 30px !important;
+
+}
 .blue-btn {
   @include colorBtn($blue)
 }

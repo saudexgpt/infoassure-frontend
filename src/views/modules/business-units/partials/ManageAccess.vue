@@ -37,6 +37,7 @@
             value-key="id"
             placeholder="Select Client"
             style="width: 100%;"
+            filterable
             @input="fetchBusinessUnits()"
           >
             <el-option

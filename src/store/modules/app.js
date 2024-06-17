@@ -10,6 +10,9 @@ export default {
       { value: 'risk_assessment', label: 'Risk Assessment' },
       { value: 'soa', label: 'Statement Of Applicability (SOA)' },
       { value: 'bia', label: 'BIA' },
+      { value: 'dpia', label: 'DPIA' },
+      { value: 'ropa', label: 'RoPA' },
+      { value: 'pda', label: 'PDA' },
     ],
   },
   getters: {

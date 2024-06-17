@@ -1,0 +1,724 @@
+<template>
+  <div>
+    <div
+      v-if="selectedClient !== null"
+      v-loading="loading"
+    >
+      <el-row
+        :gutter="20"
+      >
+        <el-col
+          :xs="24"
+          :sm="16"
+          :md="16"
+        >
+          <p>Select the matrix your company uses</p>
+          <table class="table table-bordered">
+            <tr>
+              <th>Matrix</th>
+              <th />
+            </tr>
+            <tr
+              v-for="(matrix_val, index) in matrices"
+              :key="index"
+            >
+              <td>{{ matrix_val }}</td>
+              <td>
+                <el-button
+
+                  type="warning"
+                  @click="sendProposedMatrix(matrix_val)"
+                >
+                  Select
+                </el-button></td>
+            </tr>
+          </table>
+          <table
+            v-if="risk_matrix !== null"
+            class="table table-bordered"
+          >
+            <tr>
+              <th v-if="risk_matrix.proposed_matrix !== null">
+                Proposed Matrix
+              </th>
+              <th v-if="risk_matrix.proposed_matrix === null">
+                Active Matrix
+              </th>
+              <th v-if="risk_matrix.proposed_matrix !== null">
+                Proposed By
+              </th>
+              <th v-if="risk_matrix.proposed_matrix === null">
+                Approved By
+              </th>
+              <th v-if="risk_matrix.proposed_matrix !== null" />
+            </tr>
+            <tr>
+              <td v-if="risk_matrix.proposed_matrix !== null">
+                {{ risk_matrix.proposed_matrix }}
+              </td>
+              <td v-if="risk_matrix.proposed_matrix === null">
+                {{ risk_matrix.current_matrix }}
+              </td>
+              <td v-if="risk_matrix.proposed_matrix !== null">
+                {{ risk_matrix.creator.name }}
+              </td>
+              <td v-if="risk_matrix.proposed_matrix === null">
+                {{ risk_matrix.approver.name }}
+              </td>
+              <td v-if="risk_matrix.proposed_matrix !== null">
+                <el-button
+
+                  type="success"
+                  @click="approvematrix(risk_matrix.id)"
+                >
+                  Click to approve
+                </el-button>
+              </td>
+            </tr>
+          </table>
+        </el-col>
+        <el-col
+          v-if="matrix !== ''"
+          :xs="24"
+          :sm="8"
+          :md="8"
+        >
+          <strong>Set your Risk Appetite here</strong>
+          <el-select
+            v-model="risk_appetite"
+            style="width: 100%"
+            @change="setRiskAppetite(risk_matrix.id)"
+          >
+            <el-option
+              v-for="(appetite, index) in fetchRiskAppetite(matrix)"
+              :key="index"
+              :value="appetite.value"
+              :label="appetite.label"
+            />
+          </el-select>
+          <highcharts :options="riskAppetiteAnalytics" />
+        </el-col>
+      </el-row>
+      <el-tabs
+        v-if="matrix !== ''"
+        type="card"
+      >
+        <el-tab-pane :label="`${matrix} Matrix Risk Ratings`">
+          <div>
+            <p>You can modify the description to suite your company's need</p>
+            <el-row :gutter="20">
+              <el-col
+                :xs="24"
+                :sm="12"
+                :md="12"
+              >
+                <h3>Impact Ratings</h3>
+                <aside>
+
+                  <table
+                    class="table table-bordered"
+                  >
+                    <tr>
+                      <td>Rating</td>
+                      <td>Description</td>
+                    </tr>
+                    <tr
+                      v-for="(content, impact_matrix_index) in impact_matrices[matrix]"
+                      :key="impact_matrix_index"
+                    >
+                      <td>{{ content.value }}</td>
+                      <td>
+                        <input
+                          v-model="content.name"
+                          type="text"
+                          class="form-control"
+                          @blur="customizeRiskDescription(content.id, 'impact', $event)"
+                        >
+                      </td>
+                    </tr>
+                  </table>
+                </aside>
+              </el-col>
+              <el-col
+                :xs="24"
+                :sm="12"
+                :md="12"
+              >
+                <h3>Likelihood Ratings</h3>
+                <aside>
+
+                  <table
+                    class="table table-bordered"
+                    nowrap
+                  >
+                    <tr>
+                      <td>Rating</td>
+                      <td>Description</td>
+                    </tr>
+                    <tr
+                      v-for="(content, likelihood_matrix_index) in likelihood_matrices[matrix]"
+                      :key="likelihood_matrix_index"
+                    >
+                      <td>{{ content.value }}</td>
+                      <td>
+                        <input
+                          v-model="content.name"
+                          type="text"
+                          class="form-control"
+                          @blur="customizeRiskDescription(content.id, 'impact', $event)"
+                        >
+                      </td>
+                    </tr>
+                  </table>
+                </aside>
+              </el-col>
+            </el-row>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="Impact Analysis">
+
+          <el-row>
+            <el-col :col="12">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Rating</th>
+                      <th>Description</th>
+                      <th
+                        v-for="(impact_on_area, impact_area_index1) in impact_matrices[matrix][0].impact_on_areas"
+                        :key="impact_area_index1"
+                      >
+                        {{ impact_on_area.impact_area.area }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(content, i_matrix_index) in impact_matrices[matrix]"
+                      :key="i_matrix_index"
+                    >
+                      <td>{{ content.value }}</td>
+                      <td>{{ content.name }}</td>
+                      <td
+                        v-for="(impact_on_area, impact_area_index2) in content.impact_on_areas"
+                        :key="impact_area_index2"
+                      >
+                        <div>
+                          <textarea
+                            v-model="impact_on_area.impact_level"
+                            type="text"
+                            :placeholder="`Enter ${impact_on_area.impact_area.area}`"
+                            @blur="saveImpactOnAreas(impact_on_area.id, $event)"
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane
+          label="Risk Ranking Matrix"
+          :lazy="true"
+        >
+
+          <div>
+            <div v-if="matrix === '3x3'">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <td rowspan="5">
+                      Likelihood
+                    </td>
+                    <td rowspan="2" />
+                    <td colspan="3">
+                      Impact
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: red" />
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: red" />
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: yellow" />
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <td>
+                      Risk Rating Scale
+                    </td>
+                    <td>
+                      Description
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="color: #000000; background: red">
+                      High
+                    </td>
+                    <td>All risk value &gt; 5 (Management Action/decision required for risk treatment)</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #000000; background: yellow">
+                      Medium
+                    </td>
+                    <td> All risk values &gt;= 3 but &lt;= 5 (Line Manager action/decision required)</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #000000; background: green">
+                      Low
+                    </td>
+                    <!-- eslint-disable-next-line vue/no-parsing-error -->
+                    <td>All risk values &gt;=1 but &lt;= 2 (no action required however recommended for improvement to Line Manager)</td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+            <div v-if="matrix === '5x5'">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <td rowspan="7">
+                      Likelihood
+                    </td>
+                    <td rowspan="2" />
+                    <td colspan="5">
+                      Impact
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: red" />
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: red" />
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: red" />
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: yellow" />
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: green" />
+                    <td style="color: #000000; background: yellow" />
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <td>
+                      Risk Rating Scale
+                    </td>
+                    <td>
+                      Description
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="color: #000000; background: red">
+                      High
+                    </td>
+                    <td>All risk value &gt;= 12 (Management Action/decision required for risk treatment)</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #000000; background: yellow">
+                      Medium
+                    </td>
+                    <td> All risk values &gt;= 5 but &lt;= 11 (Line Manager action/decision required)</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #000000; background: green">
+                      Low
+                    </td>
+                    <!-- eslint-disable-next-line vue/no-parsing-error -->
+                    <td>All risk values &gt;=1 but &lt;= 4 (no action required however recommended for improvement to Line Manager)</td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+            <table class="table table-bordered">
+              <tbody>
+                <tr>
+                  <td colspan="3">
+                    Confidentiality Requirement Level
+                  </td>
+                </tr>
+                <tr>
+                  <td>Value</td>
+                  <td>Ranking</td>
+                  <td>Guideline/Description</td>
+                </tr>
+                <tr>
+                  <td>1</td>
+                  <td>Low</td>
+                  <td>The impact of unauthorized disclosure of such information shall not harm organisation in anyway.</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Medium</td>
+                  <td>The unauthorized disclosure of information here can cause a limited harm to the organization.</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>High</td>
+                  <td>The unauthorized disclosure of such information can cause severe harm (e.g. legal or financial liability, adverse competitive impact, loss of brand name).</td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="table table-bordered">
+              <tbody>
+                <tr>
+                  <td colspan="3">
+                    Integrity Requirement Level
+                  </td>
+                </tr>
+                <tr>
+                  <td>Value</td>
+                  <td>Ranking</td>
+                  <td>Guideline/Description</td>
+                </tr>
+                <tr>
+                  <td>1</td>
+                  <td>Low</td>
+                  <td>There is no impact on business if the accuracy and completeness of data is degraded</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Medium</td>
+                  <td>There is minimal impact on the business if the accuracy and completeness of data is degraded.</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>High</td>
+                  <td>There is severe impact on business if the asset if the accuracy and completeness of data is degraded.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+  </div>
+</template>
+<script>
+import Resource from '@/api/resource'
+
+export default {
+  components: {
+  },
+  props: {
+    selectedClient: {
+      type: Object,
+      default: null,
+    },
+  },
+  data() {
+    return {
+      riskAppetiteAnalytics: {
+        chart: {
+          type: 'gauge',
+          plotBackgroundColor: null,
+          plotBackgroundImage: null,
+          plotBorderWidth: 0,
+          plotShadow: false,
+        },
+        title: {
+          text: 'Risk Appetite Scale',
+        },
+        pane: {
+          startAngle: -90,
+          endAngle: 89.9,
+          background: null,
+          size: '80%',
+        },
+        // the value axis
+        yAxis: {
+          min: 0,
+          max: 100,
+          tickLength: 20,
+          tickWidth: 2,
+          minorTickInterval: null,
+          tickPositions: [],
+          tickColor: '#fff',
+          labels: {
+            step: 2,
+            rotation: 'auto',
+          },
+          title: {
+            text: '',
+          },
+          plotBands: [
+            {
+              from: 0,
+              to: 4,
+              thickness: 20,
+              borderRadius: '50%',
+              color: '#48a11e', // red
+            },
+            {
+              from: 4,
+              to: 7,
+              thickness: 20,
+              borderRadius: '50%',
+              color: '#DDDF0D', // yellow
+            },
+            {
+              from: 7,
+              to: 12,
+              thickness: 20,
+              borderRadius: '50%',
+              color: '#DF5353', // green
+            },
+          ],
+        },
+        series: [
+          {
+            dataLabels: {
+              enabled: false,
+            },
+            name: 'Risk Appetite',
+            data: [0],
+            dial: {
+              radius: '80%',
+              backgroundColor: 'gray',
+              baseWidth: 12,
+              baseLength: '0%',
+              rearLength: '0%',
+            },
+            pivot: {
+              backgroundColor: 'gray',
+              radius: 6,
+            },
+          },
+        ],
+        credits: {
+          enabled: false,
+        },
+        exporting: {
+          enabled: false,
+        },
+      },
+      clients: [],
+      matrices: [],
+      impact_matrices: [],
+      likelihood_matrices: [],
+      form: {
+        proposed_matrix: '',
+        client_id: '',
+      },
+      risk_matrix: null,
+      matrix: '',
+      risk_impact_areas: [],
+      risk_appetite: '',
+      loader: false,
+      loading: false,
+    }
+  },
+  created() {
+    this.loadFunctions()
+  },
+  methods: {
+    loadFunctions() {
+      this.fetchRiskMatricesSetup()
+      this.fetchRiskImpactAreas()
+    },
+    fetchRiskImpactAreas() {
+      const app = this
+      app.loading = true
+      const fetchRisksResource = new Resource('fetch-risk-impact-area')
+      fetchRisksResource.list({ client_id: app.selectedClient.id })
+        .then(response => {
+          app.risk_impact_areas = response.risk_impact_areas
+          app.loading = false
+        }).catch(() => { app.loading = false })
+    },
+    fetchRiskMatricesSetup() {
+      const app = this
+      const fetchMatriceResource = new Resource('setup-risk-matrices')
+      fetchMatriceResource.list({ client_id: app.selectedClient.id }).then(response => {
+        app.impact_matrices = response.impact_matrices
+        app.likelihood_matrices = response.likelihood_matrices
+        app.risk_matrix = response.risk_matrix
+        app.matrix = response.risk_matrix.current_matrix
+        app.risk_appetite = response.risk_matrix.risk_appetite
+        app.changeChartData(app.risk_appetite, app.matrix)
+        app.matrices = response.matrices
+      }).catch()
+    },
+    customizeRiskDescription(id, table, event) {
+      const name = event.target.value
+      const fetchMatriceResource = new Resource('customize-risk-matrix-description')
+      fetchMatriceResource.store({ id, table, name }).then().catch()
+    },
+    saveImpactOnAreas(id, event) {
+      const { value } = event.target
+      const approveMatrixResource = new Resource('update-risk-impact-on-area')
+      approveMatrixResource.update(id, { impact_level: value }).then(() => {
+      }).catch()
+    },
+    sendProposedMatrix(matrix) {
+      const app = this
+      app.loader = true
+      app.form.client_id = app.selectedClient.id
+      app.form.proposed_matrix = matrix
+      const proposedMatrixResource = new Resource('propose-matrix')
+      proposedMatrixResource.store(app.form).then(response => {
+        app.$notify({ message: `${matrix} Matrix activation request sent and awaiting approval`, type: 'success' })
+        app.risk_matrix = response.risk_matrix
+        app.loader = false
+      }).catch(app.loader = false)
+    },
+    approvematrix(id) {
+      const app = this
+      app.loader = true
+      const approveMatrixResource = new Resource('approve-matrix')
+      approveMatrixResource.update(id).then(() => {
+        app.loadFunctions()
+        app.loader = false
+      }).catch(app.loader = false)
+    },
+    setRiskAppetite(id) {
+      const app = this
+      app.loader = true
+      app.changeChartData(app.risk_appetite, app.matrix)
+      const approveMatrixResource = new Resource('set-risk-appetite')
+      approveMatrixResource.update(id, { risk_appetite: app.risk_appetite }).then(response => {
+        app.risk_matrix = response.risk_matrix
+        app.loader = false
+      }).catch(app.loader = false)
+    },
+    changeChartData(value, matrix) {
+      const app = this
+      if (matrix === '3x3') {
+        // const percentageValue = (value / 9) * 100
+        app.riskAppetiteAnalytics.series[0].data = [value]
+      } else {
+        // const percentageValue = (value / 25) * 100
+        app.riskAppetiteAnalytics.series[0].data = [value]
+      }
+    },
+    fetchRiskAppetite(matrix) {
+      const app = this
+      let matrixRange = []
+      if (matrix === '3x3') {
+        app.riskAppetiteAnalytics.yAxis.max = 12
+        app.riskAppetiteAnalytics.yAxis.plotBands = [
+          {
+            from: 0,
+            to: 4,
+            thickness: 20,
+            borderRadius: '50%',
+            color: '#48a11e', // red
+          },
+          {
+            from: 4,
+            to: 7,
+            thickness: 20,
+            borderRadius: '50%',
+            color: '#DDDF0D', // yellow
+          },
+          {
+            from: 7,
+            to: 12,
+            thickness: 20,
+            borderRadius: '50%',
+            color: '#DF5353', // green
+          },
+        ]
+        matrixRange = [
+          { value: 2, label: 'LOW (Between 1 & 2)' },
+          { value: 5, label: 'MEDIUM (Between 3 & 5)' },
+          { value: 9, label: 'HIGH (Above 5)' },
+        ]
+      }
+      if (matrix === '5x5') {
+        app.riskAppetiteAnalytics.yAxis.max = 30
+        app.riskAppetiteAnalytics.yAxis.plotBands = [
+          {
+            from: 0,
+            to: 8,
+            thickness: 20,
+            borderRadius: '50%',
+            color: '#48a11e', // red
+          },
+          {
+            from: 8,
+            to: 15,
+            thickness: 20,
+            borderRadius: '50%',
+            color: '#DDDF0D', // yellow
+          },
+          {
+            from: 15,
+            to: 30,
+            thickness: 20,
+            borderRadius: '50%',
+            color: '#DF5353', // green
+          },
+        ]
+        matrixRange = [
+          { value: 4, label: 'LOW (Between 1 & 4)' },
+          { value: 11, label: 'MEDIUM (Between 5 & 11)' },
+          { value: 25, label: 'HIGH (Above 11)' },
+        ]
+      }
+      return matrixRange
+    },
+
+  },
+}
+</script>

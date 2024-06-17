@@ -9,10 +9,11 @@
         >
           <el-select
             v-model="selectedClient"
+            value-key="id"
             placeholder="Select Client"
             style="width: 100%;"
-            key-value="id"
             filterable
+            @input="setMatrix()"
           >
             <el-option
               v-for="(client, index) in clients"
@@ -44,27 +45,35 @@
             :assessment-module="'rcsa'"
           />
         </b-tab>
-        <!-- <b-tab
+        <b-tab
           lazy
         >
           <template #title>
-            <feather-icon icon="EyeIcon" />
-            <span>Risk Assessment Summary</span>
+            <feather-icon icon="AlertTriangleIcon" />
+            <span>Key Risk Indicator Assessment</span>
           </template>
-          <risk-assessment-summary
+          <k-r-i-assessment
             :selected-client="selectedClient"
-            :standard-id="standardId"
+            :standard-id="0"
+            :assessment-module="'rcsa'"
+            mode="manage"
           />
         </b-tab>
         <b-tab
           lazy
         >
           <template #title>
-            <feather-icon icon="EyeIcon" />
-            <span>Risk Ranking Matrix</span>
+            <feather-icon icon="DownloadIcon" />
+            <span>Download</span>
           </template>
-          <risk-ranking-matrix :matrix="matrix" />
-        </b-tab> -->
+          <download-risk-register
+            :selected-client="selectedClient"
+            :standard-id="0"
+            :impacts="impacts"
+            :likelihoods="likelihoods"
+            :assessment-module="'rcsa'"
+          />
+        </b-tab>
       </b-tabs>
     </div>
   </el-card>
@@ -76,9 +85,10 @@ import {
 } from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
 // import Assessment from './partials/Assessment.vue'
-import ViewRiskAssessment from '@/views/modules/risk-assessment/ViewRiskAssessment.vue'
 // import RiskRankingMatrix from './RiskRankingMatrix.vue'
-// import RiskAssessmentSummary from './partials/Summary.vue'
+import ViewRiskAssessment from './partials/RiskAssessmentDetails.vue'
+import KRIAssessment from './partials/KRIAssessment.vue'
+import DownloadRiskRegister from './partials/DownloadRiskRegister.vue'
 import Resource from '@/api/resource'
 
 export default {
@@ -86,6 +96,8 @@ export default {
     BTabs,
     BTab,
     ViewRiskAssessment,
+    KRIAssessment,
+    DownloadRiskRegister,
   },
   data() {
     return {

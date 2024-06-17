@@ -28,12 +28,26 @@
       v-if="selectedClient !== null"
       type="border-card"
     >
-      <el-tab-pane label="Risk Register">
-        <risk-register
+      <el-tab-pane
+        label="Risk Category"
+        :lazy="true"
+      >
+        <risk-categories
           :selected-client="selectedClient"
         />
       </el-tab-pane>
-      <el-tab-pane label="Impact Areas">
+      <el-tab-pane
+        label="Risk & Control Matrix"
+        :lazy="true"
+      >
+        <view-risk-control-matrix
+          :client-id="selectedClient.id"
+        />
+      </el-tab-pane>
+      <el-tab-pane
+        label="Impact Criteria"
+        :lazy="true"
+      >
         <risk-impact-areas
           :selected-client="selectedClient"
         />
@@ -49,14 +63,16 @@
 </template>
 
 <script>
+import RiskCategories from './RiskCategories.vue'
 import RiskMatrix from './RiskMatrix.vue'
-import RiskRegister from './RiskRegister.vue'
+import ViewRiskControlMatrix from './ViewRiskControlMatrix.vue'
 import RiskImpactAreas from './RiskImpactAreas.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    RiskRegister,
+    RiskCategories,
+    ViewRiskControlMatrix,
     RiskMatrix,
     RiskImpactAreas,
   },

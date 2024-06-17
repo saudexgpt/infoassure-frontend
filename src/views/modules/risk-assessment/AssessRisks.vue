@@ -1,53 +1,9 @@
 <template>
   <el-card>
-    <!-- <aside>
-      <el-row :gutter="10">
-        <el-col
-          :xs="24"
-          :sm="10"
-          :md="10"
-        >
-          <el-select
-            v-model="matrix"
-            placeholder="Select Matrix"
-            style="width: 100%;"
-            @input="setMatrix()"
-          >
-            <el-option
-              value="3x3"
-              label="3x3 Matrix"
-            />
-            <el-option
-              value="5x5"
-              label="5x5 Matrix"
-            />
-          </el-select>
-        </el-col>
-      </el-row>
-    </aside> -->
     <div v-if="selectedClient !== ''">
       <b-tabs
         content-class="mt-1"
       >
-        <!-- <b-tab
-          lazy
-        >
-          <template #title>
-            <feather-icon icon="PlusIcon" />
-            <span>Create New</span>
-          </template>
-
-          <assessment
-
-            v-loading="loading"
-            :selected-client="selectedClient"
-            :standard-id="standardId"
-            :impacts="impacts"
-            :likelihoods="likelihoods"
-            :matrix="matrix"
-            @submit="fetchRiskAssessments(false)"
-          />
-        </b-tab> -->
         <b-tab
           lazy
         >
@@ -61,7 +17,7 @@
             :standard-id="standardId"
             :impacts="impacts"
             :likelihoods="likelihoods"
-            assessment-module="ra"
+            :assessment-module="assessmentModule"
           />
         </b-tab>
         <b-tab
@@ -69,22 +25,22 @@
         >
           <template #title>
             <feather-icon icon="EyeIcon" />
-            <span>Risk Assessment Summary</span>
+            <span>Assessment Summary</span>
           </template>
           <risk-assessment-summary
             :selected-client="selectedClient"
             :standard-id="standardId"
           />
         </b-tab>
-        <b-tab
+        <!-- <b-tab
           lazy
         >
           <template #title>
             <feather-icon icon="EyeIcon" />
             <span>Risk Ranking Matrix</span>
           </template>
-          <risk-ranking-matrix :matrix="matrix" />
-        </b-tab>
+          <risk-ranking-matrix />
+        </b-tab> -->
       </b-tabs>
     </div>
   </el-card>
@@ -97,7 +53,7 @@ import {
 import checkPermission from '@/utils/permission'
 // import Assessment from './partials/Assessment.vue'
 import ViewRiskAssessment from './ViewRiskAssessment.vue'
-import RiskRankingMatrix from './RiskRankingMatrix.vue'
+// import RiskRankingMatrix from './RiskRankingMatrix.vue'
 import RiskAssessmentSummary from './partials/Summary.vue'
 import Resource from '@/api/resource'
 
@@ -107,7 +63,7 @@ export default {
     BTab,
     // Assessment,
     ViewRiskAssessment,
-    RiskRankingMatrix,
+    // RiskRankingMatrix,
     RiskAssessmentSummary,
   },
   props: {
@@ -118,6 +74,10 @@ export default {
     standardId: {
       type: Number,
       required: true,
+    },
+    assessmentModule: {
+      type: String,
+      default: () => ('ra'),
     },
   },
   data() {

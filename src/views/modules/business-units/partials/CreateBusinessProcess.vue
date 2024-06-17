@@ -73,7 +73,12 @@
                 label="Process Owner"
                 label-for="v-name"
               >
-                <el-select
+                <el-input
+                  v-model="form.process_owner"
+                  placeholder="Example: CTO"
+                  style="width: 100%;"
+                />
+                <!-- <el-select
                   v-model="form.process_owner"
                   placeholder="Process Owner"
                   style="width: 100%;"
@@ -84,7 +89,7 @@
                     :label="owner.name"
                     :value="owner.id"
                   />
-                </el-select>
+                </el-select> -->
               </b-form-group>
             </b-col>
             <b-col
@@ -130,7 +135,7 @@
               cols="12"
             >
               <b-form-group
-                label="Detailed Description/Narrative"
+                label="Detailed Description/Narrative of process"
                 label-for="v-name"
               >
                 <ckeditor
@@ -506,7 +511,10 @@ export default {
   methods: {
     isImportantFieldsEmpty() {
       const app = this
-      if (app.form.name === '' || app.form.process_owner === '' || app.form.description === '' || app.form.objective === '') {
+      // if (app.form.name === '' || app.form.process_owner === '' || app.form.description === '' || app.form.objective === '') {
+      //   return true
+      // }
+      if (app.form.name === '' || app.form.process_owner === '') {
         return true
       }
       return false

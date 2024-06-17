@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-row>
+  <el-card>
+    <div slot="header">
       <span class="pull-right">
         <b-button
           v-if="!showAnalysis"
@@ -15,8 +15,9 @@
           @click="showAnalysis = false"
         >Hide Analysis</b-button>
       </span>
-    </el-row>
-    <aside
+      <h4>Manage Gap Assessment</h4>
+    </div>
+    <div
       v-if="showAnalysis"
     >
       <el-row
@@ -63,14 +64,12 @@
           </b-card>
         </el-col>
       </el-row>
-    </aside>
+    </div>
     <b-tabs
-      type="card"
-      pills
       variant="danger"
     >
       <b-tab
-        title="GAP ASSESSMENT"
+        title="AUDIT QUESTIONS"
         lazy
       >
         <audit-questions
@@ -100,28 +99,7 @@
           @reloadAnalytics="fetchAnalystics"
         />
       </b-tab>
-      <b-tab
-        v-if="assessment_activities_array.includes('risk_assessment')"
-        title="RISK ASSESSMENT"
-        lazy
-      >
-        <risk-assessment
-          :selected-client="selectedClient"
-          :standard-id="selectedProject.standard_id"
-        />
-      </b-tab>
-      <b-tab
-
-        v-if="assessment_activities_array.includes('soa')"
-        title="SOA"
-        lazy
-      >
-        <s-o-a
-          :selected-client="selectedClient"
-          :standard-id="selectedProject.standard_id"
-        />
-      </b-tab>
-      <b-tab
+      <!-- <b-tab
         title="CERTIFICATE"
         lazy
       >
@@ -130,10 +108,10 @@
           :is-admin="isAdmin"
           @reloadAnalytics="fetchAnalystics"
         />
-      </b-tab>
+      </b-tab> -->
       <b-tab
         v-if="isAdmin"
-        title="REPORTS"
+        title="ASSESSMENT REPORTS"
         lazy
       >
         <reports
@@ -143,7 +121,7 @@
         />
       </b-tab>
     </b-tabs>
-  </div>
+  </el-card>
 </template>
 <script>
 import {
@@ -152,10 +130,9 @@ import {
 import Documents from './Documents.vue'
 import AuditQuestions from './AuditQuestions.vue'
 import Exceptions from './Exceptions.vue'
-import Certificate from './Certificate.vue'
+// import Certificate from './Certificate.vue'
 import Reports from './Reports.vue'
-import RiskAssessment from '@/views/modules/risk-assessment/AssessRisks.vue'
-import SOA from '@/views/modules/statement-of-applicability/StatementOfApplicability.vue'
+
 import Resource from '@/api/resource'
 
 export default {
@@ -170,10 +147,8 @@ export default {
     Documents,
     AuditQuestions,
     Exceptions,
-    Certificate,
+    // Certificate,
     Reports,
-    RiskAssessment,
-    SOA,
   },
   props: {
     selectedClient: {
@@ -195,21 +170,13 @@ export default {
       statistics: [],
       dashboardData: {},
       evidence: '',
-      assessment_activities_array: [],
     }
   },
   created() {
-    this.setAssessmentActivities()
     this.createProjectAnswers()
     this.createProjectUploads()
   },
   methods: {
-    setAssessmentActivities() {
-      const app = this
-      const { standard } = app.selectedProject
-      const assessmentActivities = standard.assessment_activities
-      app.assessment_activities_array = (assessmentActivities !== null) ? assessmentActivities.split('|') : []
-    },
     setData() {
       const app = this
       const data = [

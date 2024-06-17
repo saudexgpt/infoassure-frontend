@@ -44,7 +44,7 @@ import userManagement from './nav-modules/user-management'
 // import formAndTable from './forms-and-table'
 
 // Array of sections
-export default [...dashboard, ...appSetup, ...links, ...rcsa, ...userManagement, ...adminSettings]
+export default [...dashboard, ...appSetup, ...rcsa, ...links, ...userManagement, ...adminSettings]
 
 // import store from '@/store'
 

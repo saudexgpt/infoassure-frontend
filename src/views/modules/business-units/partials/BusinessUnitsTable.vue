@@ -50,7 +50,7 @@
         </el-col>
       </el-row>
     </aside>
-    <p>click on the <code>+</code> sign to manage business processes</p>
+    <p>Click on the <code>+</code> sign to manage business processes</p>
     <v-client-table
       v-model="business_units"
       v-loading="loading"

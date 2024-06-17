@@ -13,19 +13,20 @@ export default [
     acl: {
       modules: ['rcsa'],
     },
-    children: [
-      {
-        title: 'RCM',
-        route: 'manage-rcm',
-      },
-      {
-        title: 'RCSA',
-        route: 'manage-rcsa',
-      },
-      {
-        title: 'Risk Log',
-        route: 'risk-log',
-      },
-    ],
+    route: 'manage-rcsa',
+    // children: [
+    //   {
+    //     title: 'RCM',
+    //     route: 'manage-rcm',
+    //   },
+    //   {
+    //     title: 'RCSA',
+    //     route: 'manage-rcsa',
+    //   },
+    //   {
+    //     title: 'Risk Log',
+    //     route: 'risk-log',
+    //   },
+    // ],
   },
 ]

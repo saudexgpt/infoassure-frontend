@@ -73,7 +73,12 @@
                 label="Process Owner"
                 label-for="v-name"
               >
-                <el-select
+                <el-input
+                  v-model="form.process_owner"
+                  placeholder="Example: CTO"
+                  style="width: 100%;"
+                />
+                <!-- <el-select
                   v-model="form.process_owner"
                   placeholder="Process Owner"
                   style="width: 100%;"
@@ -84,7 +89,7 @@
                     :label="owner.name"
                     :value="owner.id"
                   />
-                </el-select>
+                </el-select> -->
               </b-form-group>
             </b-col>
             <b-col

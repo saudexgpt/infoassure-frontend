@@ -72,6 +72,7 @@
             v-model="selectedClient"
             value-key="id"
             placeholder="Select Client"
+            filterable
             style="width: 100%;"
             @input="fetchProjects()"
           >

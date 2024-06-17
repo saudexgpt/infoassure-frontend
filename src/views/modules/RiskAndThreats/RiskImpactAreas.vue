@@ -3,7 +3,7 @@
     <div slot="header">
       <b-row>
         <b-col cols="6">
-          <h4>Manage Risk Impact Areas</h4>
+          <h4>Manage Impact Criteria</h4>
         </b-col>
         <b-col
           cols="6"
@@ -101,6 +101,7 @@ export default {
       ],
       options: {
         headings: {
+          area: 'Impact Areas',
         },
         pagination: {
           dropdown: true,

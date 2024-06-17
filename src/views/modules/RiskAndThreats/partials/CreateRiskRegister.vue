@@ -29,7 +29,7 @@
                       v-if="risk_registers.length > 1"
                       type="danger"
                       circle
-                      size="mini"
+
                       @click="removeLine(index)"
                     >
                       <feather-icon
@@ -40,7 +40,7 @@
                       v-if="index + 1 === risk_registers.length"
                       type="primary"
                       circle
-                      size="mini"
+
                       @click="addLine(index)"
                     >
                       <feather-icon
