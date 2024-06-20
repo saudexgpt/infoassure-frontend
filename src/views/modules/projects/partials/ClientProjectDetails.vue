@@ -112,11 +112,10 @@
         :selected-client="selectedClient"
         :standard-id="selectedProject.standard_id"
       />
-      <risk-assessment
+      <d-p-i-a
         v-if="current_view === 'dpia'"
         :selected-client="selectedClient"
         :standard-id="selectedProject.standard_id"
-        assessment-module="dpia"
       />
       <s-o-a
         v-if="current_view === 'soa'"
@@ -167,7 +166,7 @@
 //   BTabs, BTab,
 // } from 'bootstrap-vue'
 import GapAssessment from './GapAssessment.vue'
-import RiskAssessment from '@/views/modules/risk-assessment/AssessRisks.vue'
+import DPIA from '@/views/modules/DPIA/index.vue'
 import SOA from '@/views/modules/statement-of-applicability/StatementOfApplicability.vue'
 import RoPA from '@/views/modules/RoPA/index.vue'
 import PDA from '@/views/modules/PDA/index.vue'
@@ -179,7 +178,7 @@ export default {
     // BTabs,
     // BTab,
     GapAssessment,
-    RiskAssessment,
+    DPIA,
     SOA,
     RoPA,
     PDA,

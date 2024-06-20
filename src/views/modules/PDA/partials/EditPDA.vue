@@ -52,7 +52,7 @@
             id="sensitive_personal_data"
             v-model="form.sensitive_personal_data"
             class="form-control"
-            @change="updateField($event.target.value, 'sensitive_personal_data'); updateField('', 'exception_used_personal_data')"
+            @change="updateField($event.target.value, 'sensitive_personal_data'); updateField('N/A', 'exception_used_personal_data')"
           >
             <option
               v-for="option in yes_no"
@@ -157,7 +157,7 @@
             id="lawful_basis_of_processing"
             v-model="form.lawful_basis_of_processing"
             class="form-control"
-            @change="updateField($event.target.value, 'lawful_basis_of_processing'); updateField('', 'how_is_consent_obtained')"
+            @change="updateField($event.target.value, 'lawful_basis_of_processing'); updateField('N/A', 'how_is_consent_obtained')"
           >
             <option
               v-for="option in lawful_bases"
@@ -407,9 +407,6 @@ export default {
       yes_no: ['Yes', 'No'],
       lawful_bases: ['Consent-based', 'Contractual', 'Legal Obligation', 'Vital Interests', 'Public Interests', 'Legitimate Interests'],
       exceptions: ['Explicit Consent', 'Legal Obligation', 'Public Data', 'Legal Claims', 'Public Interest', 'Health Purposes', 'Public Health', 'Archiving and Research'],
-      editorConfig: {
-        // The configuration of the editor.
-      },
       form: {
         client_id: '',
         business_unit_id: '',

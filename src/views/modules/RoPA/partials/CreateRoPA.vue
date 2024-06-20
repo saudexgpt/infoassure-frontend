@@ -74,7 +74,7 @@
         </b-col>
         <b-col md="6">
           <b-form-group
-            label="Contact Details of Controller"
+            label="Contact Details of Joint Controller"
           >
             <b-tooltip
               target="joint_controller_contact_details"

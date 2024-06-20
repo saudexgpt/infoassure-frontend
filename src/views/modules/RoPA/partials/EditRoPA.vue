@@ -267,10 +267,10 @@
         </b-col>
       </b-row>
       <el-button
-        type="success"
-        @click="submit()"
+        type="primary"
+        @click="$emit('updated')"
       >
-        Submit
+        Update
       </el-button>
     </div>
   </div>

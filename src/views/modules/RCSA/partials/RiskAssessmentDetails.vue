@@ -472,121 +472,19 @@
       </table>
     </div>
     <div v-else>
-      <el-empty>
-        <el-button
-          size="mini"
-          type="success"
-
-          @click="isCreateSidebarActive = true"
-        >
-          <feather-icon
-            icon="PlusIcon"
-            class="mr-50"
-          />
-          <span class="align-middle">Create New</span>
-        </el-button>
-      </el-empty>
+      <el-empty />
     </div>
-    <!-- CREATE NEW RISK ASSESSMENT-->
-    <create-risk-assessment
-      v-if="isCreateSidebarActive"
-      v-model="isCreateSidebarActive"
-      :standard-id="standardId"
-      :selected-client="selectedClient"
-      :assessment-module="assessmentModule"
-      @submit="fetchRiskAssessments"
-    />
-    <!--  CREATE NEW RISK ASSESSMENT ENDS-->
-    <!-- RISK TREATMENT OPTION-->
-    <b-modal
-      v-model="showTreatmentModal"
-      title="Risk Treatment Option"
-      centered
-      size="md"
-      hide-footer
-    >
-      <div>
-        <el-alert :type="treatment_alert_type">
-          {{ treatment_comment }}
-        </el-alert>
-        <div v-if="!showTreatmentOption">
-          <el-button
-            type="success"
-            @click="updateField('Accept', 'assessment_option', selectedAssessment); showTreatmentModal = false"
-          >
-            Accept
-          </el-button><br>
-          <a @click="showTreatmentOption = true">
-            I want to explore other options
-          </a>
-        </div>
-        <div v-else>
-          <p>Kindly specify your option</p>
-          <select
-            v-model="selectedAssessment.assessment_option"
-            class="form-control"
-            placeholder="Select Option"
-            @change="updateField($event.target.value, 'assessment_option', selectedAssessment); showTreatmentModal = false"
-          >
-            <option
-              v-for="(assessment_option, option_index) in assessment_options"
-              :key="option_index"
-              :label="assessment_option"
-              :value="assessment_option"
-            />
-          </select>
-        </div>
-      </div>
-    </b-modal>
-    <!-- RISK TREATMENT OPTION ENDS-->
-    <!-- CREATE ASSET TYPES BEGINS-->
-    <b-modal
-      v-model="createAssetTypeModal"
-      title="Asset Type"
-      centered
-      size="lg"
-      hide-footer
-    >
-      <create-asset-type
-        :client-id="selectedClient.id"
-        @save="fetchAssetTypes"
-      />
-    </b-modal>
-    <!-- CREATE ASSET TYPES ENDS-->
-    <b-modal
-      v-model="createAssetModal"
-      title="Asset"
-      centered
-      size="lg"
-      hide-footer
-    >
-      <create-asset
-        :asset-type-id="selectedAssetTypeId"
-        :client-id="selectedClient.id"
-        @save="fetchAssets(selectedAssetTypeId); createModal = false"
-      />
-    </b-modal>
   </div>
 </template>
 
 <script>
-import {
-  BModal,
-} from 'bootstrap-vue'
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
-import CreateRiskAssessment from './CreateRiskAssessment.vue'
-import CreateAssetType from '@/views/modules/ManageAssets/CreateAssetType.vue'
-import CreateAsset from '@/views/modules/ManageAssets/CreateAsset.vue'
 
 export default {
   components: {
-    BModal,
-    CreateRiskAssessment,
-    CreateAssetType,
-    CreateAsset,
   },
   directives: {
     Ripple,
@@ -626,12 +524,9 @@ export default {
       clients: [],
       searchTerm: '',
       categories: [],
-      asset_types: [],
-      assets: [],
       assessment_options: ['Effective', 'Ineffective', 'Sub-optimal'],
       downloading: false,
       selectedAssetTypeId: '',
-      risk_appetite: null,
       selectedAssessment: '',
       treatment_comment: '',
       treatment_alert_type: 'error',
@@ -639,7 +534,6 @@ export default {
     }
   },
   created() {
-    this.fetchAssetTypes()
     this.fetchRiskAssessments()
   },
   methods: {
@@ -704,11 +598,10 @@ export default {
     fetchRiskAssessments(load = true) {
       const app = this
       app.loading = load
-      const fetchRiskAssessmentsResource = new Resource('risk-assessment/fetch-risk_assessments')
+      const fetchRiskAssessmentsResource = new Resource('rcsa/fetch-risk-assessments')
       fetchRiskAssessmentsResource.list({ client_id: app.selectedClient.id, standard_id: app.standardId, module: app.assessmentModule })
         .then(response => {
           app.riskAssessments = response.risk_assessments
-          app.risk_appetite = response.risk_appetite
           app.loading = false
         }).catch(() => { app.loading = false })
     },
@@ -719,7 +612,7 @@ export default {
       }
       // eslint-disable-next-line no-param-reassign
       // assessment.loader = true
-      const fetchClientsResource = new Resource('risk-assessment/update-fields')
+      const fetchClientsResource = new Resource('rcsa/update-risk-assessment-fields')
       fetchClientsResource.update(assessment.id, params)
         .then(() => {
           // app.risk_assessments[assessment.index] = response
@@ -747,30 +640,6 @@ export default {
       }
       app.selectedAssessment = assessment
       app.showTreatmentModal = true
-    },
-    fetchAssetTypes() {
-      const app = this
-      const fetchEntryResource = new Resource('risk-assessment/fetch-asset-types')
-      app.loading = true
-      fetchEntryResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.asset_types = response.asset_types
-        })
-        .catch(error => {
-          // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
-        })
-    },
-    fetchAssets(assetTypeId) {
-      const app = this
-      // const assetTypeId = event.target.value
-      const fetchAssetsResource = new Resource('risk-assessment/fetch-assets')
-      fetchAssetsResource.list({ client_id: app.selectedClient.id, asset_type_id: assetTypeId })
-        .then(response => {
-          app.assets = response.assets
-          app.loading = false
-        }).catch(() => { app.loading = false })
     },
     formatIds(value, option) {
       const app = this

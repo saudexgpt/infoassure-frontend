@@ -2,8 +2,11 @@
   <el-card
     v-loading="loading"
   >
-    <div v-if="display === 'details'">
-      <span>
+    <div slot="header">
+      <span
+        v-if="display === 'details'"
+        class="pull-right"
+      >
         <el-button
           type="success"
           size="mini"
@@ -20,6 +23,41 @@
           View Summary Sheet
         </el-button>
       </span>
+      <span
+        v-if="display==='summary'"
+        class="pull-right"
+      >
+        <el-button
+          type="danger"
+          size="mini"
+          @click="display='details'"
+        >
+          View Details
+        </el-button>
+        <el-button
+          type="primary"
+          size="mini"
+          :loading="downloading"
+          @click="exportToExcel('PDASheet')"
+        >
+          Export
+        </el-button>
+      </span>
+      <span
+        v-if="display==='create'"
+        class="pull-right"
+      >
+        <el-button
+          type="danger"
+          size="mini"
+          @click="display='details'"
+        >
+          Close Form
+        </el-button>
+      </span>
+      <h3>Personal Data Analysis</h3>
+    </div>
+    <div v-if="display === 'details'">
       <p />
       <app-collapse
         accordion
@@ -40,23 +78,6 @@
       </app-collapse>
     </div>
     <div v-if="display=== 'summary'">
-      <span>
-        <el-button
-          type="danger"
-          size="mini"
-          @click="display='details'"
-        >
-          View Details
-        </el-button>
-        <el-button
-          type="primary"
-          size="mini"
-          :loading="downloading"
-          @click="exportToExcel('RoPASheet')"
-        >
-          Export
-        </el-button>
-      </span>
       <p />
       <p-d-a-table
         id="PDASheet"
@@ -66,14 +87,6 @@
     <div
       v-if="display==='create'"
     >
-      <el-button
-        type="danger"
-        size="mini"
-        @click="display='details'"
-      >
-        Close Form
-      </el-button>
-      <h3>Personal Data Analysis Form</h3>
       <create-p-d-a
         :client-id="selectedClient.id"
         :standard-id="standardId"

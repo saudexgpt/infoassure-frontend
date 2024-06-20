@@ -94,7 +94,7 @@
               id="sensitive_personal_data"
               v-model="form.sensitive_personal_data"
               class="form-control"
-              @change="form.exception_used_personal_data = ''"
+              @change="form.exception_used_personal_data = 'N/A'"
             >
               <option
                 v-for="option in yes_no"
@@ -195,7 +195,7 @@
               id="lawful_basis_of_processing"
               v-model="form.lawful_basis_of_processing"
               class="form-control"
-              @change="form.how_is_consent_obtained = ''"
+              @change="form.how_is_consent_obtained = 'N/A'"
             >
               <option
                 v-for="option in lawful_bases"
@@ -207,7 +207,6 @@
           </b-form-group>
         </b-col>
         <b-col
-          v-if="form.lawful_basis_of_processing === 'Consent-based'"
           md="6"
         >
           <b-form-group
@@ -222,6 +221,7 @@
               id="how_is_consent_obtained"
               v-model="form.how_is_consent_obtained"
               class="form-control"
+              :disabled="form.lawful_basis_of_processing !== 'Consent-based'"
             >
           </b-form-group>
         </b-col>

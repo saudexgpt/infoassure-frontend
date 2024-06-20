@@ -13,26 +13,19 @@
           :md="16"
         >
           <p>Select the matrix your company uses</p>
-          <table class="table table-bordered">
-            <tr>
-              <th>Matrix</th>
-              <th />
-            </tr>
-            <tr
+          <el-select
+            v-model="risk_matrix.current_matrix"
+            style="width: 100%"
+            @input="sendProposedMatrix($event)"
+          >
+            <el-option
               v-for="(matrix_val, index) in matrices"
               :key="index"
-            >
-              <td>{{ matrix_val }}</td>
-              <td>
-                <el-button
-
-                  type="warning"
-                  @click="sendProposedMatrix(matrix_val)"
-                >
-                  Select
-                </el-button></td>
-            </tr>
-          </table>
+              :lable="matrix_val"
+              :value="matrix_val"
+            />
+          </el-select>
+          <p />
           <table
             v-if="risk_matrix !== null"
             class="table table-bordered"
@@ -60,10 +53,10 @@
                 {{ risk_matrix.current_matrix }}
               </td>
               <td v-if="risk_matrix.proposed_matrix !== null">
-                {{ risk_matrix.creator.name }}
+                {{ (risk_matrix.creator) ? risk_matrix.creator.name : '' }}
               </td>
               <td v-if="risk_matrix.proposed_matrix === null">
-                {{ risk_matrix.approver.name }}
+                {{ (risk_matrix.approver) ? risk_matrix.approver.name : '' }}
               </td>
               <td v-if="risk_matrix.proposed_matrix !== null">
                 <el-button
@@ -109,8 +102,8 @@
             <el-row :gutter="20">
               <el-col
                 :xs="24"
-                :sm="12"
-                :md="12"
+                :sm="8"
+                :md="8"
               >
                 <h3>Impact Ratings</h3>
                 <aside>
@@ -132,7 +125,7 @@
                           v-model="content.name"
                           type="text"
                           class="form-control"
-                          @blur="customizeRiskDescription(content.id, 'impact', $event)"
+                          @blur="customizeRiskMatrix(content.id, 'impact', 'name', $event)"
                         >
                       </td>
                     </tr>
@@ -141,8 +134,8 @@
               </el-col>
               <el-col
                 :xs="24"
-                :sm="12"
-                :md="12"
+                :sm="16"
+                :md="16"
               >
                 <h3>Likelihood Ratings</h3>
                 <aside>
@@ -154,6 +147,7 @@
                     <tr>
                       <td>Rating</td>
                       <td>Description</td>
+                      <td>Summary</td>
                     </tr>
                     <tr
                       v-for="(content, likelihood_matrix_index) in likelihood_matrices[matrix]"
@@ -165,8 +159,16 @@
                           v-model="content.name"
                           type="text"
                           class="form-control"
-                          @blur="customizeRiskDescription(content.id, 'impact', $event)"
+                          @blur="customizeRiskMatrix(content.id, 'likelihood', 'name', $event)"
                         >
+                      </td>
+                      <td>
+                        <textarea
+                          v-model="content.summary"
+                          type="text"
+                          class="form-control"
+                          @blur="customizeRiskMatrix(content.id, 'likelihood', 'summary', $event)"
+                        />
                       </td>
                     </tr>
                   </table>
@@ -245,21 +247,39 @@
                   </tr>
                   <tr>
                     <td>3</td>
-                    <td style="color: #000000; background: yellow" />
-                    <td style="color: #000000; background: red" />
-                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: yellow">
+                      3
+                    </td>
+                    <td style="color: #000000; background: red">
+                      6
+                    </td>
+                    <td style="color: #000000; background: red">
+                      9
+                    </td>
                   </tr>
                   <tr>
                     <td>2</td>
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: yellow" />
-                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: green">
+                      2
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      4
+                    </td>
+                    <td style="color: #000000; background: red">
+                      6
+                    </td>
                   </tr>
                   <tr>
                     <td>1</td>
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: green">
+                      1
+                    </td>
+                    <td style="color: #000000; background: green">
+                      2
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      3
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -317,43 +337,93 @@
                   </tr>
                   <tr>
                     <td>5</td>
-                    <td style="color: #000000; background: yellow" />
-                    <td style="color: #000000; background: yellow" />
-                    <td style="color: #000000; background: red" />
-                    <td style="color: #000000; background: red" />
-                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: yellow">
+                      5
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      10
+                    </td>
+                    <td style="color: #000000; background: red">
+                      15
+                    </td>
+                    <td style="color: #000000; background: red">
+                      20
+                    </td>
+                    <td style="color: #000000; background: red">
+                      25
+                    </td>
                   </tr>
                   <tr>
                     <td>4</td>
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: yellow" />
-                    <td style="color: #000000; background: red" />
-                    <td style="color: #000000; background: red" />
-                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: green">
+                      4
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      8
+                    </td>
+                    <td style="color: #000000; background: red">
+                      12
+                    </td>
+                    <td style="color: #000000; background: red">
+                      16
+                    </td>
+                    <td style="color: #000000; background: red">
+                      20
+                    </td>
                   </tr>
                   <tr>
                     <td>3</td>
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: yellow" />
-                    <td style="color: #000000; background: yellow" />
-                    <td style="color: #000000; background: red" />
-                    <td style="color: #000000; background: red" />
+                    <td style="color: #000000; background: green">
+                      3
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      6
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      9
+                    </td>
+                    <td style="color: #000000; background: red">
+                      12
+                    </td>
+                    <td style="color: #000000; background: red">
+                      15
+                    </td>
                   </tr>
                   <tr>
                     <td>2</td>
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: yellow" />
-                    <td style="color: #000000; background: yellow" />
-                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: green">
+                      2
+                    </td>
+                    <td style="color: #000000; background: green">
+                      4
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      6
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      8
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      10
+                    </td>
                   </tr>
                   <tr>
                     <td>1</td>
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: green" />
-                    <td style="color: #000000; background: yellow" />
+                    <td style="color: #000000; background: green">
+                      1
+                    </td>
+                    <td style="color: #000000; background: green">
+                      2
+                    </td>
+                    <td style="color: #000000; background: green">
+                      3
+                    </td>
+                    <td style="color: #000000; background: green">
+                      4
+                    </td>
+                    <td style="color: #000000; background: yellow">
+                      5
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -595,14 +665,16 @@ export default {
         app.risk_matrix = response.risk_matrix
         app.matrix = response.risk_matrix.current_matrix
         app.risk_appetite = response.risk_matrix.risk_appetite
-        app.changeChartData(app.risk_appetite, app.matrix)
+        app.changeChartData(app.risk_appetite)
         app.matrices = response.matrices
       }).catch()
     },
-    customizeRiskDescription(id, table, event) {
-      const name = event.target.value
-      const fetchMatriceResource = new Resource('customize-risk-matrix-description')
-      fetchMatriceResource.store({ id, table, name }).then().catch()
+    customizeRiskMatrix(id, table, field, event) {
+      const { value } = event.target
+      const fetchMatriceResource = new Resource('customize-risk-matrix')
+      fetchMatriceResource.store({
+        id, table, field, value,
+      }).then().catch()
     },
     saveImpactOnAreas(id, event) {
       const { value } = event.target
@@ -634,22 +706,16 @@ export default {
     setRiskAppetite(id) {
       const app = this
       app.loader = true
-      app.changeChartData(app.risk_appetite, app.matrix)
+      app.changeChartData(app.risk_appetite)
       const approveMatrixResource = new Resource('set-risk-appetite')
       approveMatrixResource.update(id, { risk_appetite: app.risk_appetite }).then(response => {
         app.risk_matrix = response.risk_matrix
         app.loader = false
       }).catch(app.loader = false)
     },
-    changeChartData(value, matrix) {
+    changeChartData(value) {
       const app = this
-      if (matrix === '3x3') {
-        // const percentageValue = (value / 9) * 100
-        app.riskAppetiteAnalytics.series[0].data = [value]
-      } else {
-        // const percentageValue = (value / 25) * 100
-        app.riskAppetiteAnalytics.series[0].data = [value]
-      }
+      app.riskAppetiteAnalytics.series[0].data = [value]
     },
     fetchRiskAppetite(matrix) {
       const app = this

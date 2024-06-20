@@ -2,8 +2,11 @@
   <el-card
     v-loading="loading"
   >
-    <div v-if="display === 'details'">
-      <span>
+    <div slot="header">
+      <span
+        v-if="display === 'details'"
+        class="pull-right"
+      >
         <el-button
           type="success"
           size="mini"
@@ -20,27 +23,10 @@
           View Summary Sheet
         </el-button>
       </span>
-      <p />
-      <app-collapse
-        accordion
-        type="border"
+      <span
+        v-if="display==='summary'"
+        class="pull-right"
       >
-        <app-collapse-item
-          v-for="(ropa, index) in ropas"
-          :key="index"
-          :title="`${ropa.business_unit} - ${ropa.controller_name}`"
-        >
-
-          <edit-ro-p-a
-            :selected-data="ropa"
-            :countries="countries"
-            @updated="$notify({ title: 'Data Uropated'}); fetchRoPA()"
-          />
-        </app-collapse-item>
-      </app-collapse>
-    </div>
-    <div v-if="display=== 'summary'">
-      <span>
         <el-button
           type="danger"
           size="mini"
@@ -57,6 +43,41 @@
           Export
         </el-button>
       </span>
+      <span
+        v-if="display==='create'"
+        class="pull-right"
+      >
+        <el-button
+          type="danger"
+          size="mini"
+          @click="display='details'"
+        >
+          Close Form
+        </el-button>
+      </span>
+      <h3>Records of Processing Activities</h3>
+    </div>
+    <div v-if="display === 'details'">
+      <p />
+      <app-collapse
+        accordion
+        type="border"
+      >
+        <app-collapse-item
+          v-for="(ropa, index) in ropas"
+          :key="index"
+          :title="`${ropa.business_unit} - ${ropa.controller_name}`"
+        >
+
+          <edit-ro-p-a
+            :selected-data="ropa"
+            :countries="countries"
+            @updated="$notify({ title: 'Data Updated'}); fetchRoPA()"
+          />
+        </app-collapse-item>
+      </app-collapse>
+    </div>
+    <div v-if="display=== 'summary'">
       <p />
       <ro-p-a-table
         id="RoPASheet"
@@ -66,14 +87,6 @@
     <div
       v-if="display==='create'"
     >
-      <el-button
-        type="danger"
-        size="mini"
-        @click="display='details'"
-      >
-        Close Form
-      </el-button>
-      <h3>Records of Processing Activities (RoPA)</h3>
       <create-ro-p-a
         :client-id="selectedClient.id"
         :standard-id="standardId"

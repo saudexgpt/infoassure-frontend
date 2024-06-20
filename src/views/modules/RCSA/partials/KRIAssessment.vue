@@ -477,7 +477,7 @@ export default {
     },
     submitThreshhold() {
       const app = this
-      const fetchRiskAssessmentsResource = new Resource('risk-assessment/save-kri-threshold')
+      const fetchRiskAssessmentsResource = new Resource('rcsa/save-kri-threshold')
       fetchRiskAssessmentsResource.store({ id: app.threshold.id, threshold: app.threshold.data })
         .then(() => {
           app.fetchAssessments(true)
@@ -490,7 +490,7 @@ export default {
     fetchAssessments(load = true) {
       const app = this
       app.loading = load
-      const fetchRiskAssessmentsResource = new Resource('risk-assessment/fetch-risk-indicator-assessments')
+      const fetchRiskAssessmentsResource = new Resource('rcsa/fetch-risk-indicator-assessments')
       fetchRiskAssessmentsResource.list({ client_id: app.selectedClient.id, module: app.assessmentModule })
         .then(response => {
           app.assessments = response.assessments
@@ -504,7 +504,7 @@ export default {
       }
       // eslint-disable-next-line no-param-reassign
       // assessment.loader = true
-      const updateResources = new Resource('risk-assessment/update-risk-indicator-assessment')
+      const updateResources = new Resource('rcsa/update-risk-indicator-assessment')
       updateResources.update(assessment.id, params)
         .then(() => {
           // app.risk_assessments[assessment.index] = response
@@ -519,7 +519,7 @@ export default {
       }
       // eslint-disable-next-line no-param-reassign
       // assessment.loader = true
-      const updateResources = new Resource('risk-assessment/update-kri-assessment-value')
+      const updateResources = new Resource('rcsa/update-kri-assessment-value')
       updateResources.update(row.id, params)
         .then(() => {
           app.fetchAssessments(false)
