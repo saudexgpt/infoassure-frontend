@@ -27,7 +27,7 @@
       >
         Update
       </b-button>
-      <br>
+      <p />
       <el-collapse
         v-model="activeName"
         accordion
@@ -409,7 +409,7 @@
         </el-collapse-item>
       </el-collapse>
       <br>
-      <b-button
+      <!-- <b-button
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         type="submit"
         variant="primary"
@@ -418,7 +418,7 @@
         @click="update()"
       >
         Update
-      </b-button>
+      </b-button> -->
     </div>
   </div>
 </template>
@@ -510,7 +510,7 @@ export default {
               app.selectedBusinessUnit = unit
               const { teams } = unit
               const teamMembers = unit.team_members
-              app.unitTeams = teams.split(',')
+              app.unitTeams = teams
               app.team_members = teamMembers
             }
           })

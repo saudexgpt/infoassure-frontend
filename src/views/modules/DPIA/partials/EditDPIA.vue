@@ -263,8 +263,13 @@
           <app-collapse-item
             title="TREATMENT"
           >
-
-            <b-row>
+            <risk-treatment-options
+              :selected-data="selectedData"
+              :risk-appetite="riskAppetite"
+              table="d_p_i_assessments"
+              @selected="resetForm"
+            />
+            <!-- <b-row>
               <b-col md="12">
                 <b-form-group
                   label="Treatment Actions"
@@ -302,9 +307,10 @@
                   />
                 </b-form-group>
               </b-col>
-            </b-row>
+            </b-row> -->
           </app-collapse-item>
           <app-collapse-item
+            v-if="form.treatment_option === 'Mitigate'"
             title="POST-TREATMENT"
           >
 
@@ -463,7 +469,7 @@
           type="primary"
           @click="$emit('updated')"
         >
-          Update
+          Done
         </el-button>
       </b-col>
       <b-col
@@ -482,7 +488,7 @@
           </p>
         </aside>
         <hr>
-        <aside>
+        <aside v-if="form.treatment_option === 'Mitigate'">
           <div align="center">
             <h4>Post-Treatment Values</h4>
             <img
@@ -587,6 +593,7 @@ import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
 import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
+import RiskTreatmentOptions from '@/views/modules/risk-assessment/partials/RiskTreatmentOptions.vue'
 
 export default {
   components: {
@@ -596,6 +603,7 @@ export default {
     BTooltip,
     AppCollapse,
     AppCollapseItem,
+    RiskTreatmentOptions,
     // BButton,
   },
   directives: {
@@ -692,6 +700,10 @@ export default {
     this.fetchRiskRegister()
   },
   methods: {
+    resetForm(data) {
+      const app = this
+      app.form = data
+    },
     changeImpactImage(str) {
       if (str) {
         return `images/project-icons/${str.toLowerCase()}-impact-level.png`

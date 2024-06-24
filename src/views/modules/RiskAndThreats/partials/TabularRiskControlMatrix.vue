@@ -665,13 +665,13 @@
               <tr :key="index">
                 <template v-if="assessmentModule === 'rcsa'">
                   <td>
-                    {{ (report.teams.split(',').length > 0) ? report.teams.split(',')[0] : '' }}
+                    {{ report.l1 }}
                   </td>
                   <td>
-                    {{ (report.teams.split(',').length > 1) ? report.teams.split(',')[1] : '' }}
+                    {{ report.l2 }}
                   </td>
                   <td>
-                    {{ (report.teams.split(',').length > 2) ? report.teams.split(',')[2] : '' }}
+                    {{ report.sub_unit }}
                   </td>
                 </template>
                 <td>
@@ -815,6 +815,13 @@ export default {
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
+    },
+  },
+  watch: {
+    businessUnitId() {
+      this.form.client_id = this.clientId
+      this.form.business_unit_id = this.businessUnitId
+      this.fetchRisks()
     },
   },
   created() {

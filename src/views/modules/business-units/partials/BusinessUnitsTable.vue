@@ -74,6 +74,19 @@
         />
       </div>
       <div
+        slot="teams"
+        slot-scope="{row}"
+      >
+        <ol>
+          <li
+            v-for="team in row.teams"
+            :key="team"
+          >
+            {{ team }}
+          </li>
+        </ol>
+      </div>
+      <div
         slot="action"
         slot-scope="props"
       >
@@ -167,7 +180,9 @@ export default {
       ],
       options: {
         headings: {
-          teams: 'Team/Sub Units',
+          group_name: 'Department (L1)',
+          unit_name: 'Unit (L2)',
+          teams: 'Sub-Units (L3)',
         },
         pagination: {
           dropdown: true,

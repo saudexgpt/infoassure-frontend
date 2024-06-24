@@ -435,17 +435,17 @@
               >
                 Treat
               </el-button>
-              <strong>{{ assessment.assessment_option }}</strong>
+              <strong>{{ assessment.treatment_option }}</strong>
               <!-- <select
-                v-model="assessment.assessment_option"
+                v-model="assessment.treatment_option"
                 placeholder="Select"
-                @change="updateField($event.target.value, 'assessment_option', assessment)"
+                @change="updateField($event.target.value, 'treatment_option', assessment)"
               >
                 <option
-                  v-for="(assessment_option, option_index) in assessment_options"
+                  v-for="(treatment_option, option_index) in treatment_options"
                   :key="option_index"
-                  :label="assessment_option"
-                  :value="assessment_option"
+                  :label="treatment_option"
+                  :value="treatment_option"
                 />
               </select> -->
 
@@ -571,10 +571,10 @@
                 @change="updateField($event.target.value, 'risk_treatment_option_b', assessment)"
               >
                 <option
-                  v-for="(assessment_option, option_index2) in assessment_options"
+                  v-for="(treatment_option, option_index2) in treatment_options"
                   :key="option_index2"
-                  :label="assessment_option"
-                  :value="assessment_option"
+                  :label="treatment_option"
+                  :value="treatment_option"
                 />
               </select>
             </td>
@@ -683,7 +683,7 @@
             </td>
             <td>
 
-              {{ assessment.assessment_option }}
+              {{ assessment.treatment_option }}
 
             </td>
             <td
@@ -795,7 +795,7 @@
         <div v-if="!showTreatmentOption">
           <el-button
             type="success"
-            @click="updateField('Accept', 'assessment_option', selectedAssessment); showTreatmentModal = false"
+            @click="updateField('Accept', 'treatment_option', selectedAssessment); showTreatmentModal = false"
           >
             Accept
           </el-button>
@@ -809,16 +809,16 @@
         <div v-else>
           <p>Kindly specify your option</p>
           <select
-            v-model="selectedAssessment.assessment_option"
+            v-model="selectedAssessment.treatment_option"
             class="form-control"
             placeholder="Select Option"
-            @change="updateField($event.target.value, 'assessment_option', selectedAssessment); showTreatmentModal = false"
+            @change="updateField($event.target.value, 'treatment_option', selectedAssessment); showTreatmentModal = false"
           >
             <option
-              v-for="(assessment_option, option_index) in assessment_options"
+              v-for="(treatment_option, option_index) in treatment_options"
               :key="option_index"
-              :label="assessment_option"
-              :value="assessment_option"
+              :label="treatment_option"
+              :value="treatment_option"
             />
           </select>
         </div>
@@ -915,7 +915,7 @@ export default {
       categories: [],
       asset_types: [],
       assets: [],
-      assessment_options: ['Avoid', 'Mitigate', 'Transfer', 'Accept'],
+      treatment_options: ['Avoid', 'Mitigate', 'Transfer', 'Accept'],
       downloading: false,
       selectedAssetTypeId: '',
       risk_appetite: null,

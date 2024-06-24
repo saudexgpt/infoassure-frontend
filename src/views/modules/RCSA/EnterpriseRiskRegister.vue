@@ -7,169 +7,182 @@
     <div
       v-if="riskAssessments.length > 0"
     >
-      <b-row>
-        <b-col md="9">
-          <table
-            id="riskAssessmentTable"
-            class="table table-bordered table-striped table-responsive"
-          >
-            <thead>
-              <tr>
-                <th
+      <el-tabs type="card">
+        <el-tab-pane label="Tabular View">
+          <b-row>
+            <b-col md="9">
+              <table
+                id="riskAssessmentTable"
+                class="table table-bordered table-responsive"
+              >
+                <thead>
+                  <tr>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >REF</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >REF</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Risk Category</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Risk Category</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >RISK Sub-Category</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >RISK Sub-Category</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Risk Description</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Risk Description</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Impact/Outcome</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Impact/Outcome</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Impact Rating</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Impact Rating</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Control/Mitigating Actions</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Control/Mitigating Actions</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Likelihood Rating</th>
-                <!-- <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Likelihood Rating</th>
+                    <!-- <th
 
               data-fill-color="333333"
               data-b-a-s="thin" data-f-color="ffffff"
             >Impact Rationale</th> -->
-                <th
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Risk Score</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Risk Score</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Control Effectiveness</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Control Effectiveness</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Risk Status</th>
-                <th
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Risk Status</th>
+                    <th
 
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Comment</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(assessment, index) in riskAssessments"
-                :key="index"
-              >
-                <td>
-                  <div>
-                    {{ assessment.risk_id }}
-                  </div>
-                </td>
-                <td>
-                  <div>
-                    {{ assessment.type }}
-                  </div>
-                </td>
-                <td>{{ assessment.sub_type }}</td>
-                <td>
-                  <div style="width: 300px">
-                    {{ assessment.vulnerability_description }}
-                  </div>
-                </td>
-                <td>
-                  <div style="width: 250px">
-                    {{ assessment.outcome }}
-                  </div>
-                </td>
-                <td>
+                      data-fill-color="333333"
+                      data-b-a-s="thin"
+                      data-f-color="ffffff"
+                    >Comment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(assessment, index) in riskAssessments"
+                    :key="index"
+                  >
+                    <td>
+                      <div>
+                        {{ assessment.risk_id }}
+                      </div>
+                    </td>
+                    <td>
+                      <div>
+                        {{ assessment.type }}
+                      </div>
+                    </td>
+                    <td>{{ assessment.sub_type }}</td>
+                    <td>
+                      <div style="width: 300px">
+                        {{ assessment.vulnerability_description }}
+                      </div>
+                    </td>
+                    <td>
+                      <div style="width: 250px">
+                        {{ assessment.outcome }}
+                      </div>
+                    </td>
+                    <td>
 
-                  {{ assessment.impact_of_occurence }}
+                      {{ assessment.revised_impact_of_occurence }}
 
-                </td>
-                <td>
-                  <div style="width: 300px">
-                    {{ assessment.recommended_control }}
-                  </div>
-                </td>
-                <td>
+                    </td>
+                    <td>
+                      <div style="width: 300px">
+                        {{ assessment.recommended_control }}
+                      </div>
+                    </td>
+                    <td>
 
-                  {{ assessment.likelihood_of_occurence }}
+                      {{ assessment.revised_likelihood_of_occurence }}
 
-                </td>
-                <td>
+                    </td>
+                    <td>
 
-                  {{ assessment.overall_risk_rating }}
+                      {{ assessment.revised_overall_risk_rating }}
 
-                </td>
-                <td>
-                  {{ assessment.control_effectiveness_level }}
-                </td>
-                <td>
-                  {{ assessment.status }}
-                </td>
-                <td>
-                  {{ assessment.comments }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </b-col>
-        <b-col md="3">
-          <aside>
-            <div align="center">
-              <h4>Assessment Summary</h4>
-              <img
-                :src="changeImpactImage(average_risk_score)"
-              >
-              <h4><strong>{{ overall_rating }}</strong></h4>
-            </div>
-            <p>
-              Overall Impact Rating: <strong>{{ overall_impact_rating }}</strong><br>
-              Overall Likelihood Rating: <strong>{{ overall_likelihood_rating }}</strong><br>
-              Average Risk Score: <strong>{{ average_risk_score }}</strong><br>
-            </p>
-          </aside>
-        </b-col>
-      </b-row>
+                    </td>
+                    <td>
+                      {{ assessment.control_effectiveness_level }}
+                    </td>
+                    <td>
+                      {{ assessment.status }}
+                    </td>
+                    <td>
+                      {{ assessment.comments }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </b-col>
+            <b-col md="3">
+              <aside>
+                <div align="center">
+                  <h4>Overall Ratings</h4>
+                  <img
+                    :src="changeImpactImage(average_risk_score)"
+                  >
+                  <h4><strong>{{ overall_rating }}</strong></h4>
+                </div>
+                <p>
+                  Impact Rating: <strong>{{ overall_impact_rating }}</strong><br>
+                  Likelihood Rating: <strong>{{ overall_likelihood_rating }}</strong><br>
+                  Average Risk Score: <strong>{{ average_risk_score }}</strong><br>
+                </p>
+              </aside>
+            </b-col>
+          </b-row>
+
+        </el-tab-pane>
+        <el-tab-pane label="Analytics">
+          <e-r-r-charts
+            v-if="columnChartData.length > 0"
+            :column-chart-data="columnChartData"
+            :pie-chart-data="pieChartData"
+          />
+
+        </el-tab-pane>
+      </el-tabs>
 
     </div>
     <div v-else>
@@ -185,10 +198,13 @@ import {
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
+import ERRCharts from './partials/charts/EnterpriseRiskRegister.vue'
 
 export default {
   components: {
-    BRow, BCol,
+    BRow,
+    BCol,
+    ERRCharts,
   },
   directives: {
     Ripple,
@@ -225,6 +241,8 @@ export default {
       overall_likelihood_rating: 0,
       average_risk_score: 0,
       overall_rating: 'None',
+      columnChartData: [],
+      pieChartData: [],
     }
   },
   created() {
@@ -260,6 +278,8 @@ export default {
           app.overall_impact_rating = response.overall_impact_rating
           app.overall_likelihood_rating = response.overall_likelihood_rating
           app.average_risk_score = response.average_risk_score
+          app.columnChartData = response.column_series
+          app.pieChartData = response.pie_series
           app.loading = false
         }).catch(() => { app.loading = false })
     },

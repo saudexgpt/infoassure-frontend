@@ -71,7 +71,7 @@
           </table>
         </el-col>
         <el-col
-          v-if="matrix !== ''"
+          v-if="matrix !== '' && risk_matrix !== null"
           :xs="24"
           :sm="8"
           :md="8"
@@ -89,12 +89,15 @@
               :label="appetite.label"
             />
           </el-select>
-          <highcharts :options="riskAppetiteAnalytics" />
+          <!-- <highcharts :options="riskAppetiteAnalytics" /> -->
+          <img
+            :src="changeImpactImage(risk_appetite)"
+          >
         </el-col>
       </el-row>
       <el-tabs
         v-if="matrix !== ''"
-        type="card"
+        type="border-card"
       >
         <el-tab-pane :label="`${matrix} Matrix Risk Ratings`">
           <div>
@@ -538,90 +541,90 @@ export default {
   },
   data() {
     return {
-      riskAppetiteAnalytics: {
-        chart: {
-          type: 'gauge',
-          plotBackgroundColor: null,
-          plotBackgroundImage: null,
-          plotBorderWidth: 0,
-          plotShadow: false,
-        },
-        title: {
-          text: 'Risk Appetite Scale',
-        },
-        pane: {
-          startAngle: -90,
-          endAngle: 89.9,
-          background: null,
-          size: '80%',
-        },
-        // the value axis
-        yAxis: {
-          min: 0,
-          max: 100,
-          tickLength: 20,
-          tickWidth: 2,
-          minorTickInterval: null,
-          tickPositions: [],
-          tickColor: '#fff',
-          labels: {
-            step: 2,
-            rotation: 'auto',
-          },
-          title: {
-            text: '',
-          },
-          plotBands: [
-            {
-              from: 0,
-              to: 4,
-              thickness: 20,
-              borderRadius: '50%',
-              color: '#48a11e', // red
-            },
-            {
-              from: 4,
-              to: 7,
-              thickness: 20,
-              borderRadius: '50%',
-              color: '#DDDF0D', // yellow
-            },
-            {
-              from: 7,
-              to: 12,
-              thickness: 20,
-              borderRadius: '50%',
-              color: '#DF5353', // green
-            },
-          ],
-        },
-        series: [
-          {
-            dataLabels: {
-              enabled: false,
-            },
-            name: 'Risk Appetite',
-            data: [0],
-            dial: {
-              radius: '80%',
-              backgroundColor: 'gray',
-              baseWidth: 12,
-              baseLength: '0%',
-              rearLength: '0%',
-            },
-            pivot: {
-              backgroundColor: 'gray',
-              radius: 6,
-            },
-          },
-        ],
-        credits: {
-          enabled: false,
-        },
-        exporting: {
-          enabled: false,
-        },
-      },
+      // riskAppetiteAnalytics: {
+      //   chart: {
+      //     type: 'gauge',
+      //     plotBackgroundColor: null,
+      //     plotBackgroundImage: null,
+      //     plotBorderWidth: 0,
+      //     plotShadow: false,
+      //   },
+      //   title: {
+      //     text: 'Risk Appetite Scale',
+      //   },
+      //   pane: {
+      //     startAngle: -90,
+      //     endAngle: 89.9,
+      //     background: null,
+      //     size: '80%',
+      //   },
+      //   // the value axis
+      //   yAxis: {
+      //     min: 0,
+      //     max: 100,
+      //     tickLength: 20,
+      //     tickWidth: 2,
+      //     minorTickInterval: null,
+      //     tickPositions: [],
+      //     tickColor: '#fff',
+      //     labels: {
+      //       step: 2,
+      //       rotation: 'auto',
+      //     },
+      //     title: {
+      //       text: '',
+      //     },
+      //     plotBands: [
+      //       {
+      //         from: 0,
+      //         to: 4,
+      //         thickness: 20,
+      //         borderRadius: '50%',
+      //         color: '#48a11e', // red
+      //       },
+      //       {
+      //         from: 4,
+      //         to: 7,
+      //         thickness: 20,
+      //         borderRadius: '50%',
+      //         color: '#DDDF0D', // yellow
+      //       },
+      //       {
+      //         from: 7,
+      //         to: 12,
+      //         thickness: 20,
+      //         borderRadius: '50%',
+      //         color: '#DF5353', // green
+      //       },
+      //     ],
+      //   },
+      //   series: [
+      //     {
+      //       dataLabels: {
+      //         enabled: false,
+      //       },
+      //       name: 'Risk Appetite',
+      //       data: [0],
+      //       dial: {
+      //         radius: '80%',
+      //         backgroundColor: 'gray',
+      //         baseWidth: 12,
+      //         baseLength: '0%',
+      //         rearLength: '0%',
+      //       },
+      //       pivot: {
+      //         backgroundColor: 'gray',
+      //         radius: 6,
+      //       },
+      //     },
+      //   ],
+      //   credits: {
+      //     enabled: false,
+      //   },
+      //   exporting: {
+      //     enabled: false,
+      //   },
+      // },
       clients: [],
       matrices: [],
       impact_matrices: [],
@@ -630,7 +633,7 @@ export default {
         proposed_matrix: '',
         client_id: '',
       },
-      risk_matrix: null,
+      risk_matrix: { current_matrix: '', risk_appetite: '' },
       matrix: '',
       risk_impact_areas: [],
       risk_appetite: '',
@@ -645,6 +648,30 @@ export default {
     loadFunctions() {
       this.fetchRiskMatricesSetup()
       this.fetchRiskImpactAreas()
+    },
+    changeImpactImage(score) {
+      const app = this
+      const { matrix } = app
+      if (matrix === '3x3') {
+        if (score >= 6) {
+          return 'images/project-icons/high-impact-level.png'
+        } if (score >= 3 && score <= 5) {
+          return 'images/project-icons/medium-impact-level.png'
+        } if (score >= 1 && score <= 2) {
+          return 'images/project-icons/low-impact-level.png'
+        }
+      }
+      if (matrix === '5x5') {
+        if (score >= 12) {
+          return 'images/project-icons/high-impact-level.png'
+        } if (score >= 5 && score <= 11) {
+          return 'images/project-icons/medium-impact-level.png'
+        } if (score >= 1 && score <= 4) {
+          return 'images/project-icons/low-impact-level.png'
+        }
+      }
+
+      return 'images/project-icons/no-impact-level.png'
     },
     fetchRiskImpactAreas() {
       const app = this
@@ -665,7 +692,6 @@ export default {
         app.risk_matrix = response.risk_matrix
         app.matrix = response.risk_matrix.current_matrix
         app.risk_appetite = response.risk_matrix.risk_appetite
-        app.changeChartData(app.risk_appetite)
         app.matrices = response.matrices
       }).catch()
     },
@@ -706,80 +732,26 @@ export default {
     setRiskAppetite(id) {
       const app = this
       app.loader = true
-      app.changeChartData(app.risk_appetite)
       const approveMatrixResource = new Resource('set-risk-appetite')
       approveMatrixResource.update(id, { risk_appetite: app.risk_appetite }).then(response => {
         app.risk_matrix = response.risk_matrix
         app.loader = false
       }).catch(app.loader = false)
     },
-    changeChartData(value) {
-      const app = this
-      app.riskAppetiteAnalytics.series[0].data = [value]
-    },
     fetchRiskAppetite(matrix) {
-      const app = this
       let matrixRange = []
       if (matrix === '3x3') {
-        app.riskAppetiteAnalytics.yAxis.max = 12
-        app.riskAppetiteAnalytics.yAxis.plotBands = [
-          {
-            from: 0,
-            to: 4,
-            thickness: 20,
-            borderRadius: '50%',
-            color: '#48a11e', // red
-          },
-          {
-            from: 4,
-            to: 7,
-            thickness: 20,
-            borderRadius: '50%',
-            color: '#DDDF0D', // yellow
-          },
-          {
-            from: 7,
-            to: 12,
-            thickness: 20,
-            borderRadius: '50%',
-            color: '#DF5353', // green
-          },
-        ]
         matrixRange = [
-          { value: 2, label: 'LOW (Between 1 & 2)' },
-          { value: 5, label: 'MEDIUM (Between 3 & 5)' },
-          { value: 9, label: 'HIGH (Above 5)' },
+          { value: 2, label: 'LOW (1-2 Risk Score)' },
+          { value: 5, label: 'MEDIUM (3-5 Risk Score)' },
+          { value: 9, label: 'HIGH (Above 5 Risk Score)' },
         ]
       }
       if (matrix === '5x5') {
-        app.riskAppetiteAnalytics.yAxis.max = 30
-        app.riskAppetiteAnalytics.yAxis.plotBands = [
-          {
-            from: 0,
-            to: 8,
-            thickness: 20,
-            borderRadius: '50%',
-            color: '#48a11e', // red
-          },
-          {
-            from: 8,
-            to: 15,
-            thickness: 20,
-            borderRadius: '50%',
-            color: '#DDDF0D', // yellow
-          },
-          {
-            from: 15,
-            to: 30,
-            thickness: 20,
-            borderRadius: '50%',
-            color: '#DF5353', // green
-          },
-        ]
         matrixRange = [
-          { value: 4, label: 'LOW (Between 1 & 4)' },
-          { value: 11, label: 'MEDIUM (Between 5 & 11)' },
-          { value: 25, label: 'HIGH (Above 11)' },
+          { value: 4, label: 'LOW (1-4 Risk Score)' },
+          { value: 11, label: 'MEDIUM (5-11 Risk Score)' },
+          { value: 25, label: 'HIGH (Above 12 Risk Score)' },
         ]
       }
       return matrixRange

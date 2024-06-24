@@ -237,7 +237,7 @@
               <span v-loading="assessment.loader">{{ assessment.overall_risk_rating }}</span>
 
             </td>
-            <td :style="`background: #${customClass(assessment, 'risk_category')}`">
+            <td :style="`background: #${assessment.level_color}`">
               <div
                 v-loading="assessment.loader"
               >{{ assessment.risk_category }}
@@ -265,9 +265,9 @@
                 Treat
               </el-button> -->
               <select
-                v-model="assessment.assessment_option"
+                v-model="assessment.control_effectiveness_level"
                 placeholder="Select"
-                @change="updateField($event.target.value, 'assessment_option', assessment)"
+                @change="updateField($event.target.value, 'control_effectiveness_level', assessment)"
               >
                 <option
                   v-for="(assessment_option, option_index) in assessment_options"
@@ -328,7 +328,7 @@
               <span v-loading="assessment.loader">{{ assessment.revised_overall_risk_rating }}</span>
 
             </td>
-            <td :style="`background: #${customClass(assessment, 'revised_risk_category')}`">
+            <td :style="`background: #${assessment.revised_level_color}`">
               <div
                 v-loading="assessment.loader"
               >{{ assessment.revised_risk_category }}
@@ -404,7 +404,7 @@
 
             </td>
             <td
-              :data-fill-color="customClass(assessment, 'risk_category')"
+              :data-fill-color="assessment.level_color"
               data-b-a-s="thin"
               data-f-color="ffffff"
             >
@@ -452,7 +452,7 @@
               {{ assessment.revised_overall_risk_rating }}
             </td>
             <td
-              :data-fill-color="customClass(assessment, 'revised_risk_category')"
+              :data-fill-color="assessment.revised_level_color"
               data-b-a-s="thin"
               data-f-color="ffffff"
             >
@@ -572,29 +572,29 @@ export default {
         app.createAssetModal = true
       }
     },
-    customClass(row, opt) {
-      if (opt === 'risk_category') {
-        if (row.risk_category === 'High') {
-          return 'DD2C2C'
-        } if (row.risk_category === 'Medium') {
-          return 'F0C63E'
-        }
-        if (row.risk_category === 'Low') {
-          return '3BD135'
-        }
-      }
-      if (opt === 'revised_risk_category') {
-        if (row.revised_risk_category === 'High') {
-          return 'DD2C2C'
-        } if (row.revised_risk_category === 'Medium') {
-          return 'F0C63E'
-        }
-        if (row.revised_risk_category === 'Low') {
-          return '3BD135'
-        }
-      }
-      return ''
-    },
+    // customClass(row, opt) {
+    //   if (opt === 'risk_category') {
+    //     if (row.risk_category === 'High') {
+    //       return 'DD2C2C'
+    //     } if (row.risk_category === 'Medium') {
+    //       return 'F0C63E'
+    //     }
+    //     if (row.risk_category === 'Low') {
+    //       return '3BD135'
+    //     }
+    //   }
+    //   if (opt === 'revised_risk_category') {
+    //     if (row.revised_risk_category === 'High') {
+    //       return 'DD2C2C'
+    //     } if (row.revised_risk_category === 'Medium') {
+    //       return 'F0C63E'
+    //     }
+    //     if (row.revised_risk_category === 'Low') {
+    //       return '3BD135'
+    //     }
+    //   }
+    //   return ''
+    // },
     fetchRiskAssessments(load = true) {
       const app = this
       app.loading = load

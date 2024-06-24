@@ -18,15 +18,17 @@
             rules="required"
           >
             <el-select
-              v-model="form.business_process_id"
+              v-model="selectedBusinessProcess"
               placeholder="Select Business process"
+              value-key="id"
               style="width: 100%;"
               filterable
+              @input="setTeams()"
             >
               <el-option
                 v-for="(business_process, index) in business_processes"
                 :key="index"
-                :value="business_process.id"
+                :value="business_process"
                 :label="business_process.name"
               />
             </el-select>
@@ -140,6 +142,33 @@
             </b-col>
             <b-col md="6">
               <b-form-group
+                label="Sub Unit (L3)"
+                label-for="sub_unit"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="sub_unit"
+                  rules="required"
+                >
+                  <el-select
+                    v-model="form.sub_unit"
+                    placeholder="Select Sub Unit"
+                    style="width: 100%"
+                    @input="setRiskSubCategory()"
+                  >
+                    <el-option
+                      v-for="(team, team_index) in teams"
+                      :key="team_index"
+                      :value="team"
+                      :label="team"
+                    />
+                  </el-select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
                 label="Risk Owner"
                 label-for="risk_owner"
               >
@@ -181,30 +210,37 @@
                       :label="risk_type.name"
                     />
                   </el-select>
+                  <a
+                    style="color: #409EFF"
+                    @click="showRiskCategoryForm = true; isEdit = false"
+                  > <i class="el-icon-plus" /> Click to add new Risk Category</a>
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
-            <b-col
-              v-if="selectedRiskCategory !== null"
-              md="6"
-            >
+            <b-col md="6">
               <b-form-group
                 label="Risk Sub-Category"
                 label-for="sub_category"
               >
-                <el-select
-                  v-model="selectedRiskCategory"
+                <select
+                  v-model="form.sub_type"
                   placeholder="Risk Sub Category"
-                  style="width: 100%"
+                  class="form-control"
+                  :disabled="selectedRiskCategory.name === ''"
                 >
-                  <el-option
+                  <option
                     v-for="(sub_type, subtype_index) in selectedRiskCategory.sub_categories"
                     :key="subtype_index"
                     :value="sub_type.name"
                     :label="sub_type.name"
                   />
-                </el-select>
+                </select>
+                <a
+                  v-if="selectedRiskCategory.name !== ''"
+                  style="color: #409EFF"
+                  @click=" isEdit = true; showRiskCategoryForm = true;"
+                > <i class="el-icon-plus" /> Add sub-categories</a>
               </b-form-group>
             </b-col>
 
@@ -623,6 +659,20 @@
         </validation-observer>
       </tab-content>
     </form-wizard>
+    <b-modal
+      v-model="showRiskCategoryForm"
+      title="Risk Category"
+      centered
+      size="md"
+      hide-footer
+    >
+      <create-risk-category
+        :client-id="clientId"
+        :selected-data="selectedRiskCategory"
+        :is-edit="isEdit"
+        @saved="refreshCategorySelection()"
+      />
+    </b-modal>
   </div>
 </template>
 <script>
@@ -637,6 +687,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
+import CreateRiskCategory from './CreateRiskCategory.vue'
 
 export default {
   components: {
@@ -648,6 +699,7 @@ export default {
     BCol,
     BFormGroup,
     BFormInput,
+    CreateRiskCategory,
     // BButton,
   },
   directives: {
@@ -665,6 +717,8 @@ export default {
   },
   data() {
     return {
+      showRiskCategoryForm: false,
+      isEdit: false,
       activeName: '1',
       editor: ClassicEditor,
       editorConfig: {
@@ -682,6 +736,7 @@ export default {
         client_id: '',
         business_unit_id: '',
         business_process_id: '',
+        sub_unit: '',
         risk_unique_id: '',
         type: '',
         vulnerability_description: '',
@@ -712,6 +767,7 @@ export default {
         client_id: '',
         business_unit_id: '',
         business_process_id: '',
+        sub_unit: '',
         risk_unique_id: '',
         type: '',
         sub_type: '',
@@ -741,9 +797,11 @@ export default {
       },
       control_frequencies: ['Per Transaction', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Biannually', 'Annually', 'N/A', 'Per Merchant', 'Per Terminal Request'],
       loading: false,
-      selectedClient: {},
+      selectedBusinessProcess: {},
       uploadableFile: null,
-      selectedRiskCategory: null,
+      selectedRiskCategory: { name: '', sub_categories: [] },
+      selectedCategoryIndex: null,
+      teams: [],
     }
   },
   created() {
@@ -753,9 +811,22 @@ export default {
     this.fetchBusinessProcesses()
   },
   methods: {
+    setTeams() {
+      const app = this
+      app.form.business_process_id = app.selectedBusinessProcess.id
+      app.teams = app.selectedBusinessProcess.teams
+    },
+    refreshCategorySelection() {
+      const app = this
+      app.showRiskCategoryForm = false
+      app.fetchRiskCategories()
+      app.setRiskSubCategory()
+    },
     setRiskSubCategory() {
       const app = this
+      app.selectedCategoryIndex = app.risk_types.indexOf(app.selectedRiskCategory)
       app.form.type = app.selectedRiskCategory.name
+      app.form.sub_type = ''
     },
     onImageChange(e) {
       const app = this
@@ -768,6 +839,9 @@ export default {
       fetchEntryResource.list({ client_id: app.form.client_id })
         .then(response => {
           app.risk_types = response.categories
+          if (app.selectedRiskCategory.name !== '') {
+            app.selectedRiskCategory = app.risk_types[app.selectedCategoryIndex]
+          }
           app.loading = false
         })
         .catch(error => {

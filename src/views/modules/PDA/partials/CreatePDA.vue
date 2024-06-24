@@ -538,6 +538,7 @@ export default {
       saveRisksResource.store(app.form)
         .then(() => {
           app.loading = false
+          app.$emit('submit')
           app.form = {
             personal_data_item: '',
             description: '',

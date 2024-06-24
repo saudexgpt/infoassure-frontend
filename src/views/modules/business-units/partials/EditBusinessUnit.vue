@@ -35,12 +35,12 @@
               cols="12"
             >
               <b-form-group
-                label="Group Name"
+                label="Department (L1)"
                 label-for="v-business-unit"
               >
                 <el-input
                   v-model="form.group_name"
-                  placeholder="Group Name"
+                  placeholder="Department name"
                   style="width: 100%;"
                 />
               </b-form-group>
@@ -50,7 +50,7 @@
               cols="12"
             >
               <b-form-group
-                label="Unit Name"
+                label="Unit (L2)"
                 label-for="v-business-unit"
               >
                 <el-input
@@ -61,19 +61,42 @@
               </b-form-group>
             </b-col>
             <b-col
-
               cols="12"
             >
               <b-form-group
-                label="Teams"
+                label="Sub Units"
                 label-for="v-teams"
               >
-                <el-input
-                  v-model="form.teams"
-                  placeholder="Example: Engineering, Backend, etc"
-                  style="width: 100%;"
-                />
-                <small>Separate multiple entries by a comma <code>,</code></small>
+                <div>
+                  <el-tag
+                    v-for="team in teams"
+                    :key="team"
+                    closable
+                    type="success"
+                    :disable-transitions="false"
+                    @close="handleClose(team)"
+                  >
+                    {{ team }}
+                  </el-tag>
+                  <el-input
+                    v-if="inputVisible"
+                    ref="saveTagInput"
+                    v-model="inputValue"
+                    class="input-new-tag"
+                    placeholder="Type Sub-Unit"
+                    size="mini"
+                    style="width: 70%"
+                    @keyup.enter.native="handleInputConfirm"
+                    @blur="handleInputConfirm"
+                  />
+                  <a
+                    v-else
+                    style="color: #409EFF"
+                    @click="showInput"
+                  >
+                    + Add New
+                  </a>
+                </div>
               </b-form-group>
             </b-col>
             <b-col
@@ -170,22 +193,45 @@ export default {
         unit_name: '',
         function_performed: '',
         contact_phone: '',
-        teams: '',
+        teams: [],
       },
       loading: false,
-      consultings: [],
-      selectedConsulting: {},
+      inputVisible: false,
+      inputValue: '',
+      teams: [],
     }
   },
   created() {
     this.form = this.businessUnit
+    this.teams = (this.businessUnit.teams !== null) ? this.businessUnit.teams : []
   },
   methods: {
+    handleClose(tag) {
+      this.teams.splice(this.teams.indexOf(tag), 1)
+    },
+
+    showInput() {
+      this.inputVisible = true
+      this.$nextTick(() => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+
+    handleInputConfirm() {
+      const { inputValue } = this
+      if (inputValue) {
+        this.teams.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
+    },
     update() {
       const app = this
       app.loading = true
+      const param = app.form
+      param.teams = app.teams
       const saveBusinessUnitsResource = new Resource('business-units/update-business-unit')
-      saveBusinessUnitsResource.update(app.form.id, app.form)
+      saveBusinessUnitsResource.update(param.id, param)
         .then(() => {
           app.loading = false
           // app.$message('Action Successful')

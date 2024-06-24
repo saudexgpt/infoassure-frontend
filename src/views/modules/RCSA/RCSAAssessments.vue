@@ -78,7 +78,7 @@
 
       <el-container>
 
-        <el-main>
+        <el-main v-loading="loadView">
           <div v-if="isEdit">
             <edit-r-c-s-a-entry
               :selected-data="selectedData"
@@ -153,6 +153,7 @@ export default {
       inputValue: '',
       filterText: '',
       isEdit: false,
+      loadView: false,
     }
   },
   computed: {
@@ -174,10 +175,12 @@ export default {
     viewDetails(data) {
       if (data.id) {
         const app = this
+        app.loadView = true
         app.isEdit = false
         setTimeout(() => {
           app.selectedData = data
           app.isEdit = true
+          app.loadView = false
         }, 10)
       }
     },

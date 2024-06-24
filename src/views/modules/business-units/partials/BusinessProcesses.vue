@@ -32,6 +32,19 @@
         :options="options"
       >
         <div
+          slot="teams"
+          slot-scope="{row}"
+        >
+          <ol>
+            <li
+              v-for="team in row.teams"
+              :key="team"
+            >
+              {{ team }}
+            </li>
+          </ol>
+        </div>
+        <div
           slot="status"
           slot-scope="{row}"
         >

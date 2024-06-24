@@ -91,6 +91,7 @@
         :client-id="selectedClient.id"
         :standard-id="standardId"
         :countries="countries"
+        @submit="fetchPDA"
       />
     </div>
   </el-card>

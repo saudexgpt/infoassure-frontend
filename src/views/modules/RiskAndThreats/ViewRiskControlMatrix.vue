@@ -27,7 +27,7 @@
     <div v-if="form.business_unit_id !== ''">
       <el-container style="height: 100%; border: 1px solid #eee">
         <el-aside
-          width="200px"
+          width="250px"
           style="background-color: #fcfcfc;"
         >
           <div style="text-align: center; background-color: #000000; color: #ffffff; border-top-left-radius: 5px; border-top-right-radius: 5px;">

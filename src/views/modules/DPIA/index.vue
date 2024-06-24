@@ -1,5 +1,23 @@
 <!-- eslint-disable vue/html-indent -->
 <template>
+  <el-card>
+    <div slot="header">
+      <span
+        v-if="isEdit"
+        class="pull-right"
+      >
+        <el-button
+          type="primary"
+          size="mini"
+          :loading="downloading"
+          @click="isEdit= false"
+        >
+          View Summary Sheet
+        </el-button>
+      </span>
+      <h4>Data Privacy Impact Assessment</h4>
+    </div>
+
     <el-container style="height: 100%; border: 1px solid #eee; background: #fff;">
       <el-aside
         width="300px"
@@ -16,6 +34,7 @@
         </aside>
         <el-tree
             ref="tree"
+            v-loading="loading"
             class="filter-tree"
             :highlight-current="true"
             :accordion="true"
@@ -26,41 +45,39 @@
         />
       </el-aside>
 
-      <el-container
-        v-loading="loading"
-      >
-        <el-header
-          style="font-size: 12px; padding: 10px;"
-        >
-        <h4>
-          Data Privacy Impact Assessment
-        </h4>
-        </el-header>
+      <el-container>
 
-        <el-main>
+        <el-main v-loading="loadView">
           <div v-if="isEdit">
             <edit-d-p-i-a
             :impacts="impacts"
             :likelihoods="likelihoods"
             :selected-data="selectedData"
             :risk-appetite="risk_appetite"
-            @updated="fetchDPIA(false); $notify({title: 'Entry Updated', type: 'success'})"
+            @updated="renderViewAgain"
             />
           </div>
           <div v-else>
-            <h4>Click on the menu for an assessment</h4>
+            <view-details
+              :selected-client="selectedClient"
+              :impacts="impacts"
+              :likelihoods="likelihoods"
+            />
           </div>
         </el-main>
       </el-container>
     </el-container>
-  </template>
+  </el-card>
+</template>
 <script>
 import Resource from '@/api/resource'
 import EditDPIA from './partials/EditDPIA.vue'
+import ViewDetails from './partials/Details.vue'
 
 export default {
   components: {
     EditDPIA,
+    ViewDetails,
   },
   props: {
     selectedClient: {
@@ -81,6 +98,7 @@ export default {
       inputValue: '',
       filterText: '',
       isEdit: false,
+      loadView: false,
       impacts: [],
       likelihoods: [],
       risk_appetite: null,
@@ -99,7 +117,7 @@ export default {
     filterNode(value, data) {
       if (!value) return true
       const valLowercase = value.toLowerCase()
-      const dataLowercase = data.name.toLowerCase()
+      const dataLowercase = data.label.toLowerCase()
       return dataLowercase.indexOf(valLowercase) !== -1
     },
     handleClose(tag) {
@@ -114,14 +132,20 @@ export default {
     viewDetails(data) {
       if (data.id) {
         const app = this
-        app.selectedData = data
-        app.isEdit = true
+        app.loadView = true
+        app.isEdit = false
+        setTimeout(() => {
+          app.selectedData = data
+          app.isEdit = true
+          app.loadView = false
+        }, 10)
       }
     },
-    fetchDPIA(load) {
+    fetchDPIA(load = true) {
       const app = this
       const fetchEntryResource = new Resource('dpia')
       app.loading = load
+      app.dpia_data = []
       fetchEntryResource.list({ client_id: app.selectedClient.id })
         .then(response => {
           app.dpia_data = response.dpia_data
@@ -165,6 +189,10 @@ export default {
           // console.log(error.response)
           app.$message.error(error.response.data.error)
         })
+    },
+    renderViewAgain() {
+      this.fetchDPIA()
+      this.$notify({ title: 'Entry Updated', type: 'success' })
     },
   },
 }
