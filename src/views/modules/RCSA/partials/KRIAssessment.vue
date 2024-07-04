@@ -30,19 +30,17 @@
               </p>
               <el-row
                 v-if="row.frequency_of_assessment !== null && row.unit_of_measurement !== null && row.risk_trigger_threshold !== null"
-                :gutter="20"
+                :gutter="5"
               >
                 <el-col
                   v-for="(no_of_assessment, assess_index) in number_of_assessments[row.frequency_of_assessment]"
                   :key="assess_index"
-                  :md="6"
+                  :md="2"
                 >
                   <label for="">{{ row.frequency_of_assessment.substring(0, row.frequency_of_assessment.length - 2) }} {{ no_of_assessment }}</label>
-                  <div :style="`padding: 20px; background: ${row.assessments[no_of_assessment][1]};`">
+                  <div :style="`padding: 10px; background: ${row.assessments[no_of_assessment][1]};`">
                     <input
                       v-model="row.assessments[no_of_assessment][0]"
-                      type="number"
-                      placeholder="Enter Value"
                       class="form-control"
                       @blur="updateAssessmentValue($event.target.value, no_of_assessment, row)"
                     >
@@ -144,7 +142,12 @@
               :key="index"
             >
               <td>
-                <el-color-picker v-model="data.color" />
+                <!-- <el-color-picker v-model="data.color" /> -->
+                <v-swatches
+                  v-model="data.color"
+                  popover-x="right"
+                  swatches="text-advanced"
+                />
               </td>
               <td>
                 <el-select
@@ -347,6 +350,7 @@
 import {
   BModal,
 } from 'bootstrap-vue'
+import VSwatches from 'vue-swatches'
 import TableToExcel from '@linways/table-to-excel'
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
@@ -355,6 +359,7 @@ import Resource from '@/api/resource'
 export default {
   components: {
     BModal,
+    VSwatches,
   },
   directives: {
     Ripple,
@@ -552,6 +557,12 @@ export default {
   },
 }
 </script>
-    <style lang="scss" >
-    @import '@core/scss/vue/libs/vue-good-table.scss';
-    </style>
+<style scoped>
+.form-control {
+  padding: 0.2rem 0.2rem !important;
+  background-color: #fff !important;
+  background-clip: padding-box !important;
+  border: 1px solid #d8d6de !important;
+  border-radius: 0.357rem !important;
+}
+</style>

@@ -39,13 +39,14 @@
     </b-row>
     <form-wizard
       v-if="form.business_process_id !== ''"
-      color="#1e52b3"
+      color="#0b173d"
       title="CREATE NEW ENTRY"
       :subtitle="null"
       shape="tab"
       step-size="xs"
       finish-button-text="Done"
       back-button-text="Previous"
+      next-button-text="Save and Continue"
       class="wizard-vertical mb-3"
       @on-complete="formSubmitted"
     >
@@ -98,94 +99,6 @@
           tag="form"
         >
           <b-row>
-            <b-col md="6">
-              <b-form-group
-                label="Risk Description"
-                label-for="risk_description"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="risk_description"
-                  rules="required"
-                >
-                  <textarea
-                    id="risk_description"
-                    v-model="form.vulnerability_description"
-                    class="form-control"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="Describe Risk"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Impact/Outcome"
-                label-for="impact"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="outcome"
-                  rules="required"
-                >
-                  <textarea
-                    id="outcome"
-                    v-model="form.outcome"
-                    class="form-control"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="State the outcome of the risk"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Sub Unit (L3)"
-                label-for="sub_unit"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="sub_unit"
-                  rules="required"
-                >
-                  <el-select
-                    v-model="form.sub_unit"
-                    placeholder="Select Sub Unit"
-                    style="width: 100%"
-                    @input="setRiskSubCategory()"
-                  >
-                    <el-option
-                      v-for="(team, team_index) in teams"
-                      :key="team_index"
-                      :value="team"
-                      :label="team"
-                    />
-                  </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Risk Owner"
-                label-for="risk_owner"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="risk_owner"
-                  rules="required"
-                >
-                  <b-form-input
-                    v-model="form.risk_owner"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="Risk Owner"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
             <b-col md="6">
               <b-form-group
                 label="Risk Category"
@@ -243,6 +156,99 @@
                 > <i class="el-icon-plus" /> Add sub-categories</a>
               </b-form-group>
             </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Risk Description"
+                label-for="risk_description"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="risk_description"
+                  rules="required"
+                >
+                  <textarea
+                    id="risk_description"
+                    v-model="form.vulnerability_description"
+                    class="form-control"
+                    :state="errors.length > 0 ? false:null"
+                    placeholder="Describe Risk"
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Impact/Outcome"
+                label-for="impact"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="outcome"
+                  rules="required"
+                >
+                  <ckeditor
+                    id="outcome"
+                    v-model="form.outcome"
+                    :editor="editor"
+                    :config="editorConfig"
+                    placeholder="State the outcome of the risk"
+                  />
+                  <!-- <textarea
+                    id="outcome"
+                    v-model="form.outcome"
+                    class="form-control"
+                    :state="errors.length > 0 ? false:null"
+                    placeholder="State the outcome of the risk"
+                  /> -->
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Sub Unit (L3)"
+                label-for="sub_unit"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="sub_unit"
+                >
+                  <select
+                    v-model="form.sub_unit"
+                    placeholder="Select Sub Unit"
+                    class="form-control"
+                  >
+                    <option
+                      v-for="(team, team_index) in teams"
+                      :key="team_index"
+                      :value="team"
+                      :label="team"
+                    />
+                  </select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Risk Owner"
+                label-for="risk_owner"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="risk_owner"
+                  rules="required"
+                >
+                  <b-form-input
+                    v-model="form.risk_owner"
+                    :state="errors.length > 0 ? false:null"
+                    placeholder="Risk Owner"
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
 
           </b-row>
         </validation-observer>
@@ -256,6 +262,63 @@
           tag="form"
         >
           <b-row>
+            <b-col md="6">
+              <b-form-group
+                label="Nature of Control"
+                label-for="nature_of_control"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="nature_of_control"
+                >
+                  <el-select
+                    v-model="form.nature_of_control"
+                    placeholder="Select"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      label="Automated"
+                      value="Automated"
+                    />
+                    <el-option
+                      label="Hybrid"
+                      value="Hybrid"
+                    />
+                    <el-option
+                      label="Manual"
+                      value="Manual"
+                    />
+                    <el-option
+                      label="N/A"
+                      value="N/A"
+                    />
+                  </el-select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+            <b-col
+              md="6"
+            >
+              <b-form-group
+                label="Name the application system used for execution of the control."
+                label-for="application_used_for_control"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="application_used_for_control"
+                >
+                  <b-form-input
+                    id="email"
+                    v-model="form.application_used_for_control"
+                    :state="errors.length > 0 ? false:null"
+                    placeholder="Enter application name"
+                    :disabled="form.nature_of_control !== 'Automated' && form.nature_of_control !== 'Hybrid'"
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
             <b-col md="6">
               <b-form-group
                 label="Where is the control performed"
@@ -295,6 +358,7 @@
                 <validation-provider
                   #default="{ errors }"
                   name="control_description"
+                  rules="required"
                 >
                   <textarea
                     id="control_description"
@@ -378,63 +442,6 @@
                       value="N/A"
                     />
                   </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Nature of Control"
-                label-for="nature_of_control"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="nature_of_control"
-                >
-                  <el-select
-                    v-model="form.nature_of_control"
-                    placeholder="Select"
-                    style="width: 100%;"
-                  >
-                    <el-option
-                      label="Automated"
-                      value="Automated"
-                    />
-                    <el-option
-                      label="Hybrid"
-                      value="Hybrid"
-                    />
-                    <el-option
-                      label="Manual"
-                      value="Manual"
-                    />
-                    <el-option
-                      label="N/A"
-                      value="N/A"
-                    />
-                  </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col
-              v-if="form.nature_of_control == 'Automated' || form.nature_of_control == 'Hybrid'"
-              md="6"
-            >
-              <b-form-group
-                label="Name the application system used for execution of the control."
-                label-for="application_used_for_control"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="application_used_for_control"
-                >
-                  <b-form-input
-                    id="email"
-                    v-model="form.application_used_for_control"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="Enter application name"
-                  />
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
@@ -733,6 +740,7 @@ export default {
       risk_types: [],
       required,
       form: {
+        id: '',
         client_id: '',
         business_unit_id: '',
         business_process_id: '',
@@ -764,6 +772,7 @@ export default {
         tod_gap_status: '',
       },
       empty_form: {
+        id: '',
         client_id: '',
         business_unit_id: '',
         business_process_id: '',
@@ -874,6 +883,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$refs.selectionRule.validate().then(success => {
           if (success) {
+            this.saveAndContinue()
             resolve(true)
           } else {
             reject()
@@ -885,6 +895,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$refs.riskRule.validate().then(success => {
           if (success) {
+            this.saveAndContinue()
             resolve(true)
           } else {
             reject()
@@ -896,6 +907,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$refs.controlRule.validate().then(success => {
           if (success) {
+            this.saveAndContinue()
             resolve(true)
           } else {
             reject()
@@ -907,6 +919,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$refs.testRules.validate().then(success => {
           if (success) {
+            this.saveAndContinue()
             resolve(true)
           } else {
             reject()
@@ -918,6 +931,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$refs.gapRules.validate().then(success => {
           if (success) {
+            // we dont ned to save and continue here since this is the last part. Just submit outrightly
             resolve(true)
           } else {
             reject()
@@ -925,11 +939,10 @@ export default {
         })
       })
     },
-
-    formSubmitted() {
+    setFormVariables() {
       const app = this
-      app.loading = true
       const formData = new FormData()
+      formData.append('id', app.form.id)
       formData.append('client_id', app.form.client_id)
       formData.append('business_unit_id', app.form.business_unit_id)
       formData.append('business_process_id', app.form.business_process_id)
@@ -959,6 +972,27 @@ export default {
       formData.append('timeline', app.form.timeline)
       formData.append('tod_gap_status', app.form.tod_gap_status)
       formData.append('link_to_evidence', app.uploadableFile)
+
+      return formData
+    },
+    saveAndContinue() {
+      const app = this
+      const formData = app.setFormVariables()
+      formData.append('submit_mode', 'temporal')
+      const saveRisksResource = new Resource('store-risk-registers')
+      saveRisksResource.store(formData)
+        .then(response => {
+          app.form.id = response.id
+        }).catch(error => {
+          app.loading = false
+          app.$message(error.response.data.error)
+        })
+    },
+    formSubmitted() {
+      const app = this
+      app.loading = true
+      const formData = app.setFormVariables()
+      formData.append('submit_mode', 'final')
       const saveRisksResource = new Resource('store-risk-registers')
       saveRisksResource.store(formData)
         .then(() => {

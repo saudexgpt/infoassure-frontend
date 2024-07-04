@@ -44,14 +44,14 @@ export default [
       modules: ['rcsa'],
     },
   },
-  // {
-  //   path: '/manage-rcsa',
-  //   name: 'manage-rcsa',
-  //   component: () => import('@/views/modules/RCSA/RCSAAssessments.vue'),
-  //   meta: {
-  //     modules: ['rcsa'],
-  //   },
-  // },
+  {
+    path: '/risk-library',
+    name: 'risk-library',
+    component: () => import('@/views/modules/RiskLibrary/index.vue'),
+    // meta: {
+    //   modules: ['rcsa'],
+    // },
+  },
   {
     path: '/risk-log',
     name: 'risk-log',
@@ -77,8 +77,8 @@ export default [
   //   // },
   // },
   {
-    path: '/risk-and-threats',
-    name: 'risk-and-threats',
+    path: '/risk-management',
+    name: 'risk-management',
     component: () => import('@/views/modules/RiskAndThreats/index.vue'),
     // meta: {
     //   except: ['client'],

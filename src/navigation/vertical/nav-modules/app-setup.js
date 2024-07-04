@@ -31,8 +31,8 @@ export default [
       //   route: 'risk-setup',
       // },
       {
-        title: 'Risk & Threats',
-        route: 'risk-and-threats',
+        title: 'Risk Management',
+        route: 'risk-management',
       },
     ],
   },

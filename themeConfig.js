@@ -31,7 +31,7 @@ export const $themeConfig = {
       backgroundColor: 'primary', // BS color options [primary, success, etc]
     },
     footer: {
-      type: 'sticky', // static, sticky, hidden
+      type: 'static', // static, sticky, hidden
     },
     customizer: true,
     enableScrollToTop: true,

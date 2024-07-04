@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Risks & Threats Setup</h3>
+    <h3>Risks Management</h3>
     <el-row :gutter="10">
       <el-col
         :xs="24"

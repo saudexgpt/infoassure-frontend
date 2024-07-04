@@ -120,21 +120,25 @@
 
             <b-row>
               <b-col md="12">
+
                 <b-form-group
                   label="Self Assessment of Control"
                 >
-                  <select
-                    v-model="form.self_assessment_control"
-                    class="form-control"
-                    @change="updateField($event, 'self_assessment_control', form)"
-                  >
-                    <option
-                      v-for="(control, control_index) in control_assessments"
-                      :key="control_index"
-                      :label="control"
-                      :value="control"
-                    />
-                  </select>
+                  <div :style="`background-color: #${setControlBgColor(form.self_assessment_control)}; padding: 10px;`">
+                    <select
+                      v-model="form.self_assessment_control"
+                      class="form-control"
+                      @change="updateField($event, 'self_assessment_control', form)"
+                    >
+                      <option
+                        v-for="(control, control_index) in control_assessments"
+                        :key="control_index"
+                        :label="control"
+                        :value="control"
+                      />
+                    </select>
+
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col md="12">
@@ -147,6 +151,7 @@
                     class="form-control"
                     disabled
                   >
+
                 </b-form-group>
               </b-col>
               <b-col md="12">
@@ -174,18 +179,20 @@
                   label="RM Rating of Control"
                 >
 
-                  <select
-                    v-model="form.rm_rating_of_control"
-                    class="form-control"
-                    @change="updateField($event, 'rm_rating_of_control', form)"
-                  >
-                    <option
-                      v-for="(control, control_index) in control_assessments"
-                      :key="control_index"
-                      :label="control"
-                      :value="control"
-                    />
-                  </select>
+                  <div :style="`background-color: #${setControlBgColor(form.rm_rating_of_control)}; padding: 10px;`">
+                    <select
+                      v-model="form.rm_rating_of_control"
+                      class="form-control"
+                      @change="updateField($event, 'rm_rating_of_control', form)"
+                    >
+                      <option
+                        v-for="(control, control_index) in control_assessments"
+                        :key="control_index"
+                        :label="control"
+                        :value="control"
+                      />
+                    </select>
+                  </div>
                 </b-form-group>
                 <hr>
               </b-col>
@@ -223,27 +230,34 @@
 
             <b-row>
               <b-col md="12">
+
                 <b-form-group
                   label="Self Assessment of Process Level Risk"
                 >
-                  <input
-                    id="self_assessment_of_process_level_risk"
-                    v-model="form.self_assessment_of_process_level_risk"
-                    class="form-control"
-                    disabled
-                  >
+
+                  <div :style="`background-color: #${setRiskBgColor(form.self_assessment_of_process_level_risk)}; padding: 10px;`">
+                    <input
+                      id="self_assessment_of_process_level_risk"
+                      v-model="form.self_assessment_of_process_level_risk"
+                      class="form-control"
+                      disabled
+                    >
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col md="12">
                 <b-form-group
                   label="RM Validated Process Level Risk"
                 >
-                  <input
-                    id="rm_validated_process_level_risk"
-                    v-model="form.rm_validated_process_level_risk"
-                    class="form-control"
-                    disabled
-                  >
+
+                  <div :style="`background-color: #${setRiskBgColor(form.rm_validated_process_level_risk)}; padding: 10px;`">
+                    <input
+                      id="rm_validated_process_level_risk"
+                      v-model="form.rm_validated_process_level_risk"
+                      class="form-control"
+                      disabled
+                    >
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -257,35 +271,32 @@
           Update
         </el-button>
       </b-col>
-      <!-- <b-col
+      <b-col
         md="4"
       >
-        <aside>
-          <div align="center">
-            <h4>Pre-Treatment Values</h4>
-            <img
-              :src="changeImpactImage(form.risk_level)"
-            >
-          </div>
-          <p>
-            Risk Score: <strong>{{ form.risk_score }}</strong><br>
-            Risk Level: <strong>{{ form.risk_level }}</strong>
-          </p>
-        </aside>
+        <h3>Summary</h3>
         <hr>
-        <aside>
-          <div align="center">
-            <h4>Post-Treatment Values</h4>
-            <img
-              :src="changeImpactImage(form.revised_risk_level)"
-            >
-          </div>
-          <p>
-            Risk Score: <strong>{{ form.revised_risk_score }}</strong><br>
-            Risk Level: <strong>{{ form.revised_risk_level }}</strong>
-          </p>
-        </aside>
-      </b-col> -->
+        <strong>Self Assessment of Control</strong>
+        <div :style="`background-color: #${setControlBgColor(form.self_assessment_control)}; padding: 10px;`">
+          {{ form.self_assessment_control }}
+        </div>
+        <hr>
+        <strong>RM Rating of Control</strong>
+        <div :style="`background-color: #${setControlBgColor(form.rm_rating_of_control)}; padding: 10px;`">
+          {{ form.rm_rating_of_control }}
+        </div>
+        <hr>
+        <strong>Self Assessment of Process Level Risk</strong>
+        <div :style="`background-color: #${setRiskBgColor(form.self_assessment_of_process_level_risk)}; padding: 10px;`">
+          {{ form.self_assessment_of_process_level_risk }}
+        </div>
+        <hr>
+        <strong>RM Validated Process Level Risk</strong>
+        <div :style="`background-color: #${setRiskBgColor(form.rm_validated_process_level_risk)}; padding: 10px;`">
+          {{ form.rm_validated_process_level_risk }}
+        </div>
+        <hr>
+      </b-col>
     </b-row>
   </div>
 </template>
@@ -373,22 +384,7 @@ export default {
       const updateResource = new Resource('rcsa/update-fields')
       updateResource.update(assessment.id, params)
         .then(response => {
-          app.rcsa_data = response.rcsa_data
-          app.total_scores = response.total_scores
-          app.category_details = response.category_details
-        })
-    },
-    updateOverallRating(event, category) {
-      const app = this
-      const params = {
-        category, value: event.target.value, client_id: app.form.client_id, business_unit_id: app.form.business_unit_id,
-      }
-      const updateResource = new Resource('rcsa/update-overall-control-rating')
-      updateResource.store(params)
-        .then(response => {
-          app.rcsa_data = response.rcsa_data
-          app.total_scores = response.total_scores
-          app.category_details = response.category_details
+          app.form = response.rcsa
         })
     },
     setControlBgColor(value) {
@@ -409,13 +405,13 @@ export default {
       return color
     },
     setRiskBgColor(value) {
-      let color = 'c9004d'
+      let color = 'ff0000'
       switch (value) {
         case 'Medium':
-          color = 'ebaf41'
+          color = 'ffa500'
           break
         case 'Low':
-          color = '056b16'
+          color = '008000'
           break
         default:
           break

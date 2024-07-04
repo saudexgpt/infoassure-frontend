@@ -49,10 +49,10 @@ export default [
           permissions: ['read-gap assessment'],
         },
       },
-      // {
-      //   title: 'Risk Assessment',
-      //   route: 'risk-assessment',
-      // },
+      {
+        title: 'Threat Library',
+        route: 'risk-library',
+      },
       {
         title: 'SOA',
         route: 'soa',

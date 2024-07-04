@@ -30,16 +30,17 @@
           width="250px"
           style="background-color: #fcfcfc;"
         >
-          <div style="text-align: center; background-color: #000000; color: #ffffff; border-top-left-radius: 5px; border-top-right-radius: 5px;">
-            <span>Risk IDs</span>
+          <div style="text-align: center; background-color: rgb(210, 162, 4); color: #000000; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+            <span>Grouped By Risk Category</span>
           </div>
-          <aside>
+          <!-- <aside>
             <el-input
               v-model="filterText"
               placeholder="Filter keyword"
+              @input="filterNode"
             />
-          </aside>
-          <el-tree
+          </aside> -->
+          <!-- <el-tree
             ref="tree"
             class="filter-tree"
             :highlight-current="true"
@@ -48,20 +49,51 @@
             :props="{label: 'risk_id'}"
             :filter-node-method="filterNode"
             @node-click="viewDetails"
-          />
-          <!-- <el-menu
-        background-color="#fcfcfc"
-        text-color="#00000"
-      >
-        <el-menu-item
-          v-for="(category, index) in categories"
-          :key="index"
-          :index="index"
-          @click="viewDetails(category)"
-        >
-          <span slot="title">{{ category.name }}</span>
-        </el-menu-item>
-      </el-menu> -->
+          /> -->
+          <el-menu
+            background-color="#fcfcfc"
+            text-color="#00000"
+          >
+            <el-menu-item
+              v-for="(detail, detail_index) in unsubmitted_risk_registers"
+              :key="detail_index"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="detail.vulnerability_description"
+                placement="top-start"
+              >
+                <span
+                  style="color: brown"
+                  @click="viewDetails(detail)"
+                ><i class="el-icon-warning-outline" /> Unsaved Entry</span>
+              </el-tooltip>
+            </el-menu-item>
+            <el-submenu
+              v-for="(risk_register, index) in grouped_risk_registers"
+              :key="index"
+              :index="index"
+            >
+              <template slot="title">
+                {{ index }}
+              </template>
+              <el-menu-item
+                v-for="(detail, detail_index) in risk_register"
+                :key="detail_index"
+                :index="`${index}-${detail_index}`"
+              >
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="detail.vulnerability_description"
+                  placement="top-start"
+                >
+                  <span @click="viewDetails(detail)">{{ detail.risk_id }} - {{ detail.vulnerability_description.substring(0,20) }}...</span>
+                </el-tooltip>
+              </el-menu-item>
+            </el-submenu>
+          </el-menu>
         </el-aside>
 
         <el-container
@@ -101,7 +133,7 @@
                 :client-id="clientId"
                 :business-unit-id="form.business_unit_id"
                 :selected-risk-register="selectedRiskRegister"
-                @done="viewType = 'tabular'"
+                @done="viewType = 'tabular'; fetchRisks()"
               />
               <create-r-c-m
                 v-if="viewType === 'create'"
@@ -156,6 +188,8 @@ export default {
       control_frequencies: ['Per Transaction', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Biannually', 'Annually', 'N/A', 'Per Merchant', 'Per Terminal Request'],
       risk_types: [],
       risk_registers: [],
+      grouped_risk_registers: {},
+      unsubmitted_risk_registers: {},
       selectedRiskRegister: null,
       clients: [],
       business_units: [],
@@ -176,11 +210,6 @@ export default {
       return this.$store.getters.baseServerUrl
     },
   },
-  watch: {
-    filterText(val) {
-      this.$refs.tree.filter(val)
-    },
-  },
   created() {
     this.form.client_id = this.clientId
     this.fetchRiskCategories()
@@ -188,10 +217,12 @@ export default {
   },
   methods: {
     checkPermission,
-    filterNode(value, data) {
+    filterNode(value) {
       if (!value) return true
+      const data = this.grouped_risk_registers
+      console.log(data)
       const valLowercase = value.toLowerCase()
-      const dataLowercase = data.risk_id.toLowerCase()
+      const dataLowercase = data.vulnerability_description.toLowerCase()
       return dataLowercase.indexOf(valLowercase) !== -1
     },
     viewDetails(riskRegister) {
@@ -235,6 +266,8 @@ export default {
       fetchRisksResource.list({ client_id: app.form.client_id, business_unit_id: app.form.business_unit_id })
         .then(response => {
           app.risk_registers = response.risk_registers
+          app.grouped_risk_registers = response.grouped_risk_registers
+          app.unsubmitted_risk_registers = response.unsubmitted_risk_registers
           app.loading = false
         }).catch(() => { app.loading = false })
     },
@@ -271,6 +304,3 @@ export default {
   },
 }
 </script>
-    <style lang="scss" >
-    @import '@core/scss/vue/libs/vue-good-table.scss';
-    </style>

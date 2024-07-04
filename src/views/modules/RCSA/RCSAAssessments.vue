@@ -56,13 +56,41 @@
         <div style="text-align: center; background-color: #333333; color: #ffffff; border-top-left-radius: 5px; border-top-right-radius: 5px;">
           <span>RCSA By Category</span>
         </div>
-        <aside>
+        <!-- <aside>
           <el-input
             v-model="filterText"
             placeholder="Filter keyword"
           />
-        </aside>
-        <el-tree
+        </aside> -->
+        <el-menu
+          background-color="#fcfcfc"
+          text-color="#00000"
+        >
+          <el-submenu
+            v-for="(rcsa, index) in rcsa_data"
+            :key="index"
+            :index="index"
+          >
+            <template slot="title">
+              {{ index.substring(0,20) }}
+            </template>
+            <el-menu-item
+              v-for="(detail, detail_index) in rcsa"
+              :key="detail_index"
+              :index="`${index}-${detail_index}`"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="detail.key_process"
+                placement="top-start"
+              >
+                <span @click="viewDetails(detail)">{{ detail.key_process.substring(0,20) }}...</span>
+              </el-tooltip>
+            </el-menu-item>
+          </el-submenu>
+        </el-menu>
+        <!-- <el-tree
           ref="tree"
           v-loading="loading"
           style="overflow: auto;"
@@ -73,20 +101,30 @@
           :data="rcsa_data"
           :filter-node-method="filterNode"
           @node-click="viewDetails"
-        />
+        /> -->
       </el-aside>
 
       <el-container>
 
         <el-main v-loading="loadView">
           <div v-if="isEdit">
+            <el-button
+              size="mini"
+              type="danger"
+              @click="isEdit = false"
+            >
+              Tabular View
+            </el-button>
             <edit-r-c-s-a-entry
               :selected-data="selectedData"
               @updated="renderViewAgain"
             />
           </div>
           <div v-else>
-            <h4>Click on the menu for an assessment</h4>
+            <r-c-s-a-assessment-table
+              :client-id="form.client_id"
+              :business-unit-id="form.business_unit_id"
+            />
           </div>
         </el-main>
       </el-container>
@@ -116,13 +154,13 @@ import TableToExcel from '@linways/table-to-excel'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
-import CreateRCSACategory from './partials/CreateRCSACategory.vue'
 import EditRCSAEntry from './partials/EditRCSAEntry.vue'
+import RCSAAssessmentTable from './partials/RCSAAssessmentTable.vue'
 
 export default {
   components: {
-    CreateRCSACategory,
     EditRCSAEntry,
+    RCSAAssessmentTable,
   },
   directives: {
     Ripple,
@@ -234,6 +272,7 @@ export default {
     renderViewAgain() {
       this.createRCSA()
       this.$notify({ title: 'Entry Updated', type: 'success' })
+      this.isEdit = false
     },
     exportToExcel(id1, id2) {
       const app = this

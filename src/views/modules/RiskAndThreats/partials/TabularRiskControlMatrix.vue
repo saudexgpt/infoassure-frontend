@@ -691,7 +691,8 @@
                   {{ report.vulnerability_description }}
                 </td>
                 <td>
-                  {{ report.outcome }}
+                  <!-- eslint-disable-next-line vue/no-v-html-->
+                  <span v-html="report.outcome" />
                 </td>
                 <td>{{ report.control_no }}</td>
                 <td>
@@ -728,7 +729,10 @@
                   {{ report.data_required }}
                 </td>
                 <td>
-                  {{ baseServerUrl+'storage/'+report.link_to_evidence }}
+                  <a
+                    v-if="report.link_to_evidence !== null"
+                    :href="baseServerUrl+'storage/'+report.link_to_evidence"
+                  >{{ baseServerUrl+'storage/'+report.link_to_evidence }}</a>
                 </td>
                 <td>
                   {{ report.test_conclusion }}

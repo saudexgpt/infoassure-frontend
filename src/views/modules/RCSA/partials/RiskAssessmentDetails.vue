@@ -15,6 +15,15 @@
           <span class="align-middle">Create</span>
         </el-button>
       </span>
+      <!-- CREATE NEW RISK ASSESSMENT-->
+      <create-risk-assessment
+        v-if="isCreateSidebarActive"
+        v-model="isCreateSidebarActive"
+        :standard-id="standardId"
+        :selected-client="selectedClient"
+        :assessment-module="assessmentModule"
+        @submit="fetchRiskAssessments"
+      />
     </div>
     <p />
     <div
@@ -183,7 +192,8 @@
             </td>
             <td>
               <div style="width: 250px">
-                {{ assessment.outcome }}
+                <!-- eslint-disable-next-line vue/no-v-html-->
+                <span v-html="assessment.outcome" />
               </div>
             </td>
             <td
@@ -371,7 +381,8 @@
             </td>
             <td>
               <div style="width: 250px">
-                {{ assessment.outcome }}
+                <!-- eslint-disable-next-line vue/no-v-html-->
+                <span v-html="assessment.outcome" />
               </div>
             </td>
             <td
@@ -482,9 +493,11 @@
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
+import CreateRiskAssessment from './CreateRiskAssessment.vue'
 
 export default {
   components: {
+    CreateRiskAssessment,
   },
   directives: {
     Ripple,

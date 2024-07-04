@@ -1,15 +1,14 @@
 <template>
   <form-wizard
-    color="#1e52b3"
+    color="#0b173d"
     title="UPDATE ENTRY"
     :subtitle="null"
     shape="tab"
     step-size="xs"
     finish-button-text="Submit"
     back-button-text="Previous"
-    next-button-text="Save & Continue"
     class="wizard-vertical mb-3"
-    @on-complete="$emit('done')"
+    @on-complete="formSubmitted"
   >
     <tab-content
       title="Risk"
@@ -34,46 +33,6 @@
                 :label="business_process.name"
               />
             </el-select>
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Risk Description"
-            label-for="risk_description"
-          >
-            <textarea
-              id="risk_description"
-              v-model="form.vulnerability_description"
-              class="form-control"
-              placeholder="Describe Risk"
-              @blur="updateField($event.target.value, 'vulnerability_description', form)"
-            />
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Impact/Outcome"
-            label-for="impact"
-          >
-            <textarea
-              id="outcome"
-              v-model="form.outcome"
-              class="form-control"
-              placeholder="State the outcome of the risk"
-              @blur="updateField($event.target.value, 'outcome', form)"
-            />
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Risk Owner"
-            label-for="risk_owner"
-          >
-            <el-input
-              v-model="form.risk_owner"
-              placeholder="Risk Owner"
-              @blur="updateField($event, 'risk_owner', form)"
-            />
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -118,6 +77,55 @@
             </el-select>
           </b-form-group>
         </b-col>
+        <b-col md="6">
+          <b-form-group
+            label="Risk Description"
+            label-for="risk_description"
+          >
+            <textarea
+              id="risk_description"
+              v-model="form.vulnerability_description"
+              class="form-control"
+              placeholder="Describe Risk"
+              @blur="updateField($event.target.value, 'vulnerability_description', form)"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col md="6">
+          <b-form-group
+            label="Impact/Outcome"
+            label-for="impact"
+          >
+            <ckeditor
+              id="outcome"
+              v-model="form.outcome"
+              :editor="editor"
+              :config="editorConfig"
+              placeholder="State the outcome of the risk"
+              @blur="updateField(form.outcome, 'outcome', form)"
+            />
+            <!-- <textarea
+              id="outcome"
+              v-model="form.outcome"
+              class="form-control"
+              placeholder="State the outcome of the risk"
+              @blur="updateField($event.target.value, 'outcome', form)"
+            /> -->
+          </b-form-group>
+        </b-col>
+        <b-col md="6">
+          <b-form-group
+            label="Risk Owner"
+            label-for="risk_owner"
+          >
+            <input
+              v-model="form.risk_owner"
+              placeholder="Risk Owner"
+              class="form-control"
+              @blur="updateField($event.target.value, 'risk_owner', form)"
+            >
+          </b-form-group>
+        </b-col>
 
       </b-row>
     </tab-content>
@@ -125,6 +133,53 @@
       title="Control"
     >
       <b-row>
+
+        <b-col md="6">
+          <b-form-group
+            label="Nature of Control"
+            label-for="nature_of_control"
+          >
+            <el-select
+              v-model="form.nature_of_control"
+              placeholder="Select"
+              style="width: 100%;"
+            >
+              <el-option
+                label="Automated"
+                value="Automated"
+              />
+              <el-option
+                label="Hybrid"
+                value="Hybrid"
+              />
+              <el-option
+                label="Manual"
+                value="Manual"
+              />
+              <el-option
+                label="N/A"
+                value="N/A"
+              />
+            </el-select>
+          </b-form-group>
+        </b-col>
+        <b-col
+          md="6"
+        >
+          <b-form-group
+            label="Name the application system used for execution of the control."
+            label-for="application_used_for_control"
+          >
+            <input
+              id="application_used_for_control"
+              v-model="form.application_used_for_control"
+              class="form-control"
+              placeholder="Enter application name"
+              :disabled="form.nature_of_control !== 'Automated' && form.nature_of_control !== 'Hybrid'"
+              @blur="updateField($event.target.value, 'application_used_for_control', form)"
+            >
+          </b-form-group>
+        </b-col>
         <b-col md="6">
           <b-form-group
             label="Where is the control performed"
@@ -190,12 +245,13 @@
             label="Control Owner"
             label-for="control_owner"
           >
-            <el-input
+            <input
               id="email"
               v-model="form.control_owner"
               placeholder="Control Owner"
-              @blur="updateField($event, 'control_owner', form)"
-            />
+              class="form-control"
+              @blur="updateField($event.target.value, 'control_owner', form)"
+            >
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -222,51 +278,6 @@
                 value="N/A"
               />
             </el-select>
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Nature of Control"
-            label-for="nature_of_control"
-          >
-            <el-select
-              v-model="form.nature_of_control"
-              placeholder="Select"
-              style="width: 100%;"
-              @change="updateField($event, 'nature_of_control', form)"
-            >
-              <el-option
-                label="Automated"
-                value="Automated"
-              />
-              <el-option
-                label="Hybrid"
-                value="Hybrid"
-              />
-              <el-option
-                label="Manual"
-                value="Manual"
-              />
-              <el-option
-                label="N/A"
-                value="N/A"
-              />
-            </el-select>
-          </b-form-group>
-        </b-col>
-        <b-col
-          v-if="form.nature_of_control === 'Automated' || form.nature_of_control === 'Hybrid'"
-          md="6"
-        >
-          <b-form-group
-            label="Name the application system used for execution of the control."
-            label-for="application_used_for_control"
-          >
-            <el-input
-              v-model="form.application_used_for_control"
-              placeholder="Enter application name"
-              @blur="updateField($event, 'application_used_for_control', form)"
-            />
           </b-form-group>
         </b-col>
         <b-col
@@ -308,14 +319,15 @@
             label="Sample Size"
             label-for="sample_size"
           >
-            <el-input
+            <input
               id="sample_size"
               v-model="form.sample_size"
               type="number"
+              class="form-control"
               :min="1"
               placeholder="Sample Size"
               @blur="updateField($event, 'sample_size', form)"
-            />
+            >
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -341,12 +353,12 @@
               target="_blank"
               style="color: #409EFF;"
             >Click link to evidence</a>
-            <!-- <input
-                class="form-control"
-                type="file"
-                placeholder="Link to Evidence & Report"
-                @change="onImageChange"
-              > -->
+            <input
+              class="form-control"
+              type="file"
+              placeholder="Change Link to Evidence"
+              @change="onImageChange"
+            >
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -428,12 +440,13 @@
             label="Responsibility"
             label-for="responsibility"
           >
-            <el-input
+            <input
               id="responsibility"
               v-model="form.responsibility"
               placeholder="Responsibility"
-              @blur="updateField($event, 'responsibility', form)"
-            />
+              class="form-control"
+              @blur="updateField($event.target.value, 'responsibility', form)"
+            >
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -441,12 +454,13 @@
             label="Timeline"
             label-for="timeline"
           >
-            <el-input
+            <input
               id="timeline"
               v-model="form.timeline"
               placeholder="Timeline"
-              @blur="updateField($event, 'timeline', form)"
-            />
+              class="form-control"
+              @blur="updateField($event.target.value, 'timeline', form)"
+            >
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -454,12 +468,13 @@
             label="TOD Gap Status"
             label-for="tod_gap_status"
           >
-            <el-input
+            <input
               id="tod_gap_status"
               v-model="form.tod_gap_status"
               placeholder="TOD Gap Status"
-              @blur="updateField($event, 'tod_gap_status', form)"
-            />
+              class="form-control"
+              @blur="updateField($event.target.value, 'tod_gap_status', form)"
+            >
           </b-form-group>
         </b-col>
       </b-row>
@@ -538,7 +553,7 @@ export default {
         application_used_for_control: '',
         compensating_control: '',
         test_procedures: '',
-        sample_size: '',
+        sample_size: null,
         data_required: '',
         link_to_evidence: '',
         test_conclusion: '',
@@ -570,7 +585,7 @@ export default {
         application_used_for_control: '',
         compensating_control: '',
         test_procedures: '',
-        sample_size: '',
+        sample_size: null,
         data_required: '',
         link_to_evidence: '',
         test_conclusion: '',
@@ -595,7 +610,6 @@ export default {
     this.form = this.selectedRiskRegister
     this.fetchRiskCategories()
     this.fetchBusinessProcesses()
-    this.setRiskSubCategory()
   },
   methods: {
     setRiskSubCategory() {
@@ -620,6 +634,7 @@ export default {
       fetchEntryResource.list({ client_id: app.clientId })
         .then(response => {
           app.risk_types = response.categories
+          app.setRiskSubCategory()
           app.loading = false
         })
         .catch(error => {
@@ -655,6 +670,63 @@ export default {
       updateResource.update(assessment.id, params)
         .then(() => {
           app.$emit('reload')
+        })
+    },
+    setFormVariables() {
+      const app = this
+      const formData = new FormData()
+      formData.append('id', app.form.id)
+      formData.append('client_id', app.form.client_id)
+      formData.append('business_unit_id', app.form.business_unit_id)
+      formData.append('business_process_id', app.form.business_process_id)
+      formData.append('risk_unique_id', app.form.risk_unique_id)
+      formData.append('type', app.form.type)
+      formData.append('sub_type', app.form.sub_type)
+      formData.append('vulnerability_description', app.form.vulnerability_description)
+      formData.append('outcome', app.form.outcome)
+      formData.append('risk_owner', app.form.risk_owner)
+      formData.append('control_no', app.form.control_no)
+      formData.append('control_location', app.form.control_location)
+      formData.append('control_description', app.form.control_description)
+      formData.append('control_frequency', app.form.control_frequency)
+      formData.append('control_owner', app.form.control_owner)
+      formData.append('control_type', app.form.control_type)
+      formData.append('nature_of_control', app.form.nature_of_control)
+      formData.append('application_used_for_control', app.form.application_used_for_control)
+      formData.append('compensating_control', app.form.compensating_control)
+      formData.append('test_procedures', app.form.test_procedures)
+      formData.append('sample_size', app.form.sample_size)
+      formData.append('data_required', app.form.data_required)
+      formData.append('test_conclusion', app.form.test_conclusion)
+      formData.append('gap_description', app.form.gap_description)
+      formData.append('tod_improvement_opportunity', app.form.tod_improvement_opportunity)
+      formData.append('recommendation', app.form.recommendation)
+      formData.append('responsibility', app.form.responsibility)
+      formData.append('timeline', app.form.timeline)
+      formData.append('tod_gap_status', app.form.tod_gap_status)
+      formData.append('link_to_evidence', app.uploadableFile)
+
+      return formData
+    },
+    formSubmitted() {
+      const app = this
+      app.loading = true
+      const formData = app.setFormVariables()
+      formData.append('submit_mode', 'final')
+      const saveRisksResource = new Resource('store-risk-registers')
+      saveRisksResource.store(formData)
+        .then(() => {
+          app.loading = false
+          // app.$message('Action Successful')
+          app.$notify({
+            title: 'Updated Successfully',
+            type: 'success',
+          })
+          app.$emit('done')
+          // app.$emit('update:is-create-business-process-sidebar-active', false)
+        }).catch(error => {
+          app.loading = false
+          app.$message(error.response.data.error)
         })
     },
   },

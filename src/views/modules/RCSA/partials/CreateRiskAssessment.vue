@@ -41,7 +41,7 @@
                   placeholder="Select Business Unit"
                   style="width: 100%;"
                   filterable
-                  @input="fetchBusinessProcesses(); fetchRiskRegister()"
+                  @input="fetchBusinessProcesses()"
                 >
                   <el-option
                     v-for="(business_unit, index) in business_units"
@@ -53,18 +53,44 @@
               </b-form-group>
             </b-col>
             <b-col
-              v-if="business_unit_id !== ''"
               cols="12"
             >
               <b-form-group
-                label="Select Risk"
+                label="Select Business Process"
+              >
+                <el-select
+                  v-model="business_process_id"
+                  placeholder="Select Business process"
+                  value-key="id"
+                  style="width: 100%;"
+                  filterable
+                  :disabled="business_unit_id === ''"
+                  @input="fetchRiskRegister()"
+                >
+                  <el-option
+                    v-for="(business_process, index) in business_processes"
+                    :key="index"
+                    :value="business_process.id"
+                    :label="business_process.name"
+                  />
+                </el-select>
+              </b-form-group>
+            </b-col>
+            <b-col
+              cols="12"
+            >
+              <b-form-group
+                label="Select Risk(s)"
                 label-for="v-level_group"
               >
                 <el-select
-                  v-model="selected_risk_register"
+                  v-model="selected_risk_registers"
                   placeholder="Select Risk"
                   value-key="id"
+                  multiple
+                  collapse-tags
                   style="width: 100%;"
+                  :disabled="business_process_id === ''"
                   filterable
                 >
                   <el-option
@@ -72,31 +98,6 @@
                     :key="index"
                     :value="risk_register"
                     :label="`(${risk_register.risk_id}) - ${risk_register.vulnerability_description}`"
-                  />
-                </el-select>
-              </b-form-group>
-            </b-col>
-            <b-col
-              v-if="business_unit_id !== ''"
-              cols="12"
-            >
-              <b-form-group
-                label="Select Business Process(es)"
-              >
-                <el-select
-                  v-model="selected_business_processes"
-                  placeholder="Select Business process"
-                  value-key="id"
-                  style="width: 100%;"
-                  multiple
-                  collapse-tags
-                  filterable
-                >
-                  <el-option
-                    v-for="(business_process, index) in business_processes"
-                    :key="index"
-                    :value="business_process"
-                    :label="business_process.name"
                   />
                 </el-select>
                 <small>Multiple selection enabled</small>
@@ -109,7 +110,7 @@
                 type="submit"
                 variant="primary"
                 class="mr-1"
-                :disabled="business_unit_id === '' || selected_risk_register === '' || selected_business_processes.length < 1"
+                :disabled="business_unit_id === '' || selected_risk_registers.length < 1 || business_process_id === ''"
                 @click="addEntry()"
               >
                 Continue
@@ -168,8 +169,8 @@ export default {
       business_unit_id: '',
       business_processes: [],
       risk_registers: [],
-      selected_business_processes: [],
-      selected_risk_register: '',
+      business_process_id: '',
+      selected_risk_registers: [],
       entries: [],
       loading: false,
     }
@@ -188,16 +189,6 @@ export default {
           app.loading = false
         }).catch(() => { app.loading = false })
     },
-    fetchRiskRegister() {
-      const app = this
-      app.loading = true
-      const fetchRisksResource = new Resource('fetch-risk-registers')
-      fetchRisksResource.list({ client_id: app.selectedClient.id, business_unit_id: app.business_unit_id })
-        .then(response => {
-          app.risk_registers = response.risk_registers
-          app.loading = false
-        }).catch(() => { app.loading = false })
-    },
     fetchBusinessProcesses() {
       const app = this
       app.business_processes = []
@@ -208,13 +199,23 @@ export default {
           app.loading = false
         }).catch(() => { app.loading = false })
     },
+    fetchRiskRegister() {
+      const app = this
+      app.loading = true
+      const fetchRisksResource = new Resource('fetch-risk-registers')
+      fetchRisksResource.list({ client_id: app.selectedClient.id, business_unit_id: app.business_unit_id, business_process_id: app.business_process_id })
+        .then(response => {
+          app.risk_registers = response.risk_registers
+          app.loading = false
+        }).catch(() => { app.loading = false })
+    },
     addEntry() {
-      const selectedRiskRegister = this.selected_risk_register
-      this.selected_business_processes.forEach(businessProcess => {
+      const businessProcessId = this.business_process_id
+      this.selected_risk_registers.forEach(riskRegister => {
         this.entries.push({
-          risk_id: selectedRiskRegister.risk_id,
-          risk_register_id: selectedRiskRegister.id,
-          business_process_id: businessProcess.id,
+          risk_id: riskRegister.risk_id,
+          risk_register_id: riskRegister.id,
+          business_process_id: businessProcessId,
         })
       })
       this.submit()
@@ -223,7 +224,7 @@ export default {
       const app = this
       if (app.entries.length > 0) {
         app.loading = true
-        const submitResource = new Resource('risk-assessment/store-risk-assessment')
+        const submitResource = new Resource('rcsa/store-risk-assessment')
         submitResource.store({
           module: app.assessmentModule,
           standard_id: app.standardId,

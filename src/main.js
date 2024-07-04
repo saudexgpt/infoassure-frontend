@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import '@/permission'
-import '@/styles/element-variables.scss'
-import '@/styles/index.scss' // global css
 
 // Import the styles too, globally
 import 'vue-swatches/dist/vue-swatches.css'
 // Import stylesheet
 import ElementUI from 'element-ui'
+import '@/styles/element-variables.scss'
+import '@/styles/index.scss' // global css
 // import { DocumentEditorPlugin } from '@syncfusion/ej2-vue-documenteditor'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { registerLicense } from '@syncfusion/ej2-base'

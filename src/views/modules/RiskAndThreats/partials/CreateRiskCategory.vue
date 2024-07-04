@@ -159,7 +159,10 @@ export default {
         .then(() => {
           app.$emit('saved')
           app.loading = false
-          app.$notify('Saved')
+          app.$notify({
+            title: 'Saved',
+            type: 'success',
+          })
           app.form = { name: '', sub_categories: [] }
         })
         .catch(error => {
@@ -177,7 +180,10 @@ export default {
       form.sub_categories = app.sub_categories
       saveEntryResource.update(id, form)
         .then(() => {
-          app.$notify('Updated')
+          app.$notify({
+            title: 'Updated',
+            type: 'success',
+          })
           app.$emit('saved')
           app.loading = false
         })

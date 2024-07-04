@@ -23,10 +23,10 @@
         <tr>
           <th />
           <th>Key Process</th>
+          <th>Risk Description</th>
           <th>Control Activities</th>
           <th>Control Owner</th>
           <th>Control Type</th>
-          <th>Risk Description</th>
           <th />
         </tr>
       </thead>
@@ -75,6 +75,13 @@
           </td>
           <td>
             <textarea
+              v-model="entry.risk_description"
+              placeholder=""
+              type="textarea"
+            />
+          </td>
+          <td>
+            <textarea
               v-model="entry.control_activities"
               placeholder=""
               type="textarea"
@@ -105,13 +112,6 @@
                 value="N/A"
               />
             </select>
-          </td>
-          <td>
-            <textarea
-              v-model="entry.risk_description"
-              placeholder=""
-              type="textarea"
-            />
           </td>
           <td>
             <div style="width: 100px">

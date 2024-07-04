@@ -204,3 +204,20 @@
     }
   }
 }
+
+.el-submenu__title {
+  padding-left: 10px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  position: relative;
+  -webkit-box-sizing: border-box;
+  white-space: nowrap;
+  list-style: none;
+}
+
+.el-menu-item {
+  padding-left: 20px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+  min-width: 200px !important;
+}
