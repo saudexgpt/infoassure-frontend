@@ -80,7 +80,6 @@
       />
 
       <!-- main menu content-->
-
       <vertical-nav-menu-items
         :items="navMenuItems"
         class="navigation navigation-main"
@@ -96,7 +95,7 @@ import { BLink } from 'bootstrap-vue'
 import { provide, computed, ref } from '@vue/composition-api'
 import useAppConfig from '@core/app-config/useAppConfig'
 import { $themeConfig } from '@themeConfig'
-import navMenuItems from '@/navigation/vertical'
+// import navMenuItems from '@/navigation/vertical'
 import VerticalNavMenuItems from './components/vertical-nav-menu-items/VerticalNavMenuItems.vue'
 import useVerticalNavMenu from './useVerticalNavMenu'
 
@@ -146,7 +145,6 @@ export default {
 
     return {
       dialogVisible,
-      navMenuItems,
       perfectScrollbarSettings,
       isVerticalMenuCollapsed,
       collapseTogglerIcon,
@@ -172,6 +170,9 @@ export default {
     },
     logo() {
       return this.$store.getters.userData.logo
+    },
+    navMenuItems() {
+      return this.$store.getters.navMenuItems
     },
   },
   methods: {

@@ -9,26 +9,6 @@
           :md="8"
         >
           <el-select
-            v-model="form.client_id"
-            placeholder="Select Client"
-            style="width: 100%;"
-            filterable
-            @input="fetchBusinessUnits()"
-          >
-            <el-option
-              v-for="(client, index) in clients"
-              :key="index"
-              :value="client.id"
-              :label="client.name"
-            />
-          </el-select>
-        </el-col>
-        <el-col
-          :xs="24"
-          :sm="8"
-          :md="8"
-        >
-          <el-select
             v-model="form.business_unit_id"
             placeholder="Select Business Unit"
             style="width: 100%;"
@@ -50,7 +30,8 @@
       style="height: 100%; border: 1px solid #eee; background: #fff;"
     >
       <el-aside
-        width="300px"
+        v-if="showMenu"
+        width="400px"
         style="background-color: #ffffff;"
       >
         <div style="text-align: center; background-color: #333333; color: #ffffff; border-top-left-radius: 5px; border-top-right-radius: 5px;">
@@ -62,59 +43,75 @@
             placeholder="Filter keyword"
           />
         </aside> -->
-        <el-menu
-          background-color="#fcfcfc"
-          text-color="#00000"
+        <div
+          style="max-height: 250px; overflow: auto;"
         >
-          <el-submenu
-            v-for="(rcsa, index) in rcsa_data"
-            :key="index"
-            :index="index"
-          >
-            <template slot="title">
-              {{ index.substring(0,20) }}
-            </template>
-            <el-menu-item
-              v-for="(detail, detail_index) in rcsa"
-              :key="detail_index"
-              :index="`${index}-${detail_index}`"
+          <el-menu>
+            <el-submenu
+              v-for="(rcsa, index) in rcsa_data"
+              :key="index"
+              :index="index"
             >
-              <el-tooltip
-                class="item"
-                effect="dark"
-                :content="detail.key_process"
-                placement="top-start"
+              <template slot="title">
+                {{ index.substring(0,35) }}
+              </template>
+              <el-menu-item
+                v-for="(detail, detail_index) in rcsa"
+                :key="detail_index"
+                :index="`${index}-${detail_index}`"
+                @click="viewDetails(detail)"
               >
-                <span @click="viewDetails(detail)">{{ detail.key_process.substring(0,20) }}...</span>
-              </el-tooltip>
-            </el-menu-item>
-          </el-submenu>
-        </el-menu>
-        <!-- <el-tree
-          ref="tree"
-          v-loading="loading"
-          style="overflow: auto;"
-          class="filter-tree"
-          :highlight-current="true"
-          :accordion="true"
-          :indent="1"
-          :data="rcsa_data"
-          :filter-node-method="filterNode"
-          @node-click="viewDetails"
-        /> -->
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="detail.control_activities"
+                  placement="right-start"
+                  :open-delay="500"
+                >
+                  <template slot="content">
+                    <!-- eslint-disable-next-line vue/no-v-html-->
+                    <span v-html="detail.control_activities" />
+                  </template>
+                  <span v-if="detail.risk_description.length > 50">
+                    {{ detail.risk_description.substring(0,50) }}...
+                  </span>
+                  <span v-else>
+                    {{ detail.risk_description }}
+                  </span>
+                </el-tooltip>
+              </el-menu-item>
+            </el-submenu>
+          </el-menu>
+        </div>
       </el-aside>
 
       <el-container>
-
+        <h1>
+          <el-tooltip
+            effect="dark"
+            content="Toggle Menu"
+            placement="right"
+          >
+            <a
+              v-if="showMenu"
+              style="cursor: pointer"
+              @click="toggleMenu"
+            ><i class="el-icon-s-fold" /></a>
+            <a
+              v-else
+              style="cursor: pointer"
+              @click="toggleMenu"
+            ><i class="el-icon-s-unfold" /></a>
+          </el-tooltip>
+        </h1>
         <el-main v-loading="loadView">
           <div v-if="isEdit">
-            <el-button
-              size="mini"
-              type="danger"
+            <b-button
+              variant="primary"
               @click="isEdit = false"
             >
               Tabular View
-            </el-button>
+            </b-button>
             <edit-r-c-s-a-entry
               :selected-data="selectedData"
               @updated="renderViewAgain"
@@ -146,9 +143,9 @@
 </template>
 
 <script>
-// import {
-//   BButton,
-// } from 'bootstrap-vue'
+import {
+  BButton,
+} from 'bootstrap-vue'
 // import { VueGoodTable } from 'vue-good-table'
 import TableToExcel from '@linways/table-to-excel'
 import Ripple from 'vue-ripple-directive'
@@ -159,6 +156,7 @@ import RCSAAssessmentTable from './partials/RCSAAssessmentTable.vue'
 
 export default {
   components: {
+    BButton,
     EditRCSAEntry,
     RCSAAssessmentTable,
   },
@@ -192,15 +190,29 @@ export default {
       filterText: '',
       isEdit: false,
       loadView: false,
+      showMenu: true,
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
+    clientId() {
+      return this.$store.getters.selectedClient.id
+    },
+  },
+  watch: {
+    clientId() {
+      this.form.client_id = this.clientId
+      this.fetchBusinessUnits()
+    },
+    filterText(val) {
+      this.$refs.tree.filter(val)
+    },
   },
   created() {
-    this.fetchClients()
+    this.form.client_id = this.clientId
+    this.fetchBusinessUnits()
   },
   methods: {
     checkPermission,
@@ -209,6 +221,10 @@ export default {
       const valLowercase = value.toLowerCase()
       const dataLowercase = data.name.toLowerCase()
       return dataLowercase.indexOf(valLowercase) !== -1
+    },
+    toggleMenu() {
+      const app = this
+      app.showMenu = !app.showMenu
     },
     viewDetails(data) {
       if (data.id) {
@@ -224,16 +240,7 @@ export default {
     },
     fetchClients() {
       const app = this
-      const fetchCriteriaResource = new Resource('clients')
-      fetchCriteriaResource.list({ option: 'all' })
-        .then(response => {
-          app.clients = response.clients
-          if (app.clients.length === 1) {
-            // eslint-disable-next-line prefer-destructuring
-            app.form.client_id = app.clients[0].id
-            app.fetchBusinessUnits()
-          }
-        })
+      app.$store.dispatch('clients/fetchClients')
     },
     fetchBusinessUnits() {
       const app = this

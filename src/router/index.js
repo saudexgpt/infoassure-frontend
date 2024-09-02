@@ -34,6 +34,17 @@ import Router from 'vue-router'
 import pages from './modules/pages'
 import riskAssessment from './modules/risk-assessment'
 import soa from './modules/soa'
+import asv from './modules/asv'
+import isms from './modules/isms'
+import ndpa from './modules/ndpa'
+import bcms from './modules/bcms'
+import dueDiligence from './modules/due-diligence'
+import lms from './modules/lms'
+import sms from './modules/sms'
+import vapt from './modules/vapt'
+import soc2 from './modules/soc2'
+import pciDss from './modules/pci-dss'
+import rcsa from './modules/rcsa'
 
 Vue.use(Router)
 export const constantRoutes = [
@@ -167,6 +178,17 @@ export const asyncRoutes = [
   ...pages,
   ...riskAssessment,
   ...soa,
+  ...asv,
+  ...bcms,
+  ...isms,
+  ...ndpa,
+  ...pciDss,
+  ...lms,
+  ...rcsa,
+  ...soc2,
+  ...sms,
+  ...vapt,
+  ...dueDiligence,
   // ...parent,
   {
     path: '*',

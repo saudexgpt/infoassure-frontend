@@ -1,6 +1,6 @@
 export default [
   {
-    title: 'Dashboard',
+    title: 'Overview',
     icon: 'HomeIcon',
     route: 'dashboard',
     // tag: '2',

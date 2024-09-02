@@ -5,7 +5,7 @@
         <span class="pull-right">
           <b-button
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="gradient-success"
+            variant="gradient-primary"
             @click="createModal = true"
           >
             <feather-icon

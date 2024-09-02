@@ -133,9 +133,8 @@
 import BusinessUnit from '@/views/modules/business-units/SetUp.vue'
 import RCM from '@/views/modules/RCSA/RCM.vue'
 import RCSA from '@/views/modules/RCSA/RCSAAssessments.vue'
-import RiskRegister from '@/views/modules/RCSA/RiskRegister.vue'
 import EnterpriseRiskRegister from '@/views/modules/RCSA/EnterpriseRiskRegister.vue'
-// import ProjectPlanDetails from './ProjectPlanDetails.vue'
+import RiskRegister from '@/views/modules/RCSA/RiskRegister.vue'
 import checkPermission from '@/utils/permission'
 
 export default {

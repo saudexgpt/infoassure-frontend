@@ -20,6 +20,7 @@
             <b-button
               variant="gradient-danger"
               class="btn-icon"
+              size="small"
               @click="hide"
             >
               <feather-icon
@@ -30,26 +31,6 @@
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
           <b-row v-loading="loading">
-
-            <b-col cols="12">
-              <b-form-group
-                label="Select Client"
-                label-for="v-business-unit"
-              >
-                <el-select
-                  v-model="form.client_id"
-                  placeholder="Select Client"
-                  style="width: 100%;"
-                >
-                  <el-option
-                    v-for="(client, index) in clients"
-                    :key="index"
-                    :value="client.id"
-                    :label="client.name"
-                  />
-                </el-select>
-              </b-form-group>
-            </b-col>
             <b-col
               v-if="form.client_id !== ''"
               cols="12"
@@ -202,8 +183,8 @@ export default {
       type: Boolean,
       required: true,
     },
-    clients: {
-      type: Array,
+    selectedClient: {
+      type: Object,
       required: true,
     },
     // registeredBusinessUnits: {
@@ -227,10 +208,7 @@ export default {
     }
   },
   created() {
-    if (this.clients.length === 1) {
-      // eslint-disable-next-line prefer-destructuring
-      this.form.client_id = this.clients[0].id
-    }
+    this.form.client_id = this.selectedClient.id
   },
   methods: {
     handleClose(tag) {

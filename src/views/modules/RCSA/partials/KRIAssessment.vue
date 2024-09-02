@@ -365,17 +365,13 @@ export default {
     Ripple,
   },
   props: {
-    selectedClient: {
-      type: Object,
-      default: () => ({}),
-    },
-    assessmentModule: {
-      type: String,
-      default: () => ('rcsa'),
-    },
     mode: {
       type: String,
       default: () => ('manage'),
+    },
+    riskAssessments: {
+      type: Array,
+      default: () => ([]),
     },
   },
   data() {
@@ -406,8 +402,8 @@ export default {
         // filterable: false,
         filterable: [],
       },
-      dir: false,
       assessments: [],
+      dir: false,
       frequencies: ['Weekly', 'Monthly', 'Quarterly'],
       measurements: ['Percentage', 'Count/Number'],
       operators: [
@@ -430,9 +426,19 @@ export default {
     }
   },
   created() {
-    this.fetchAssessments()
+    this.assessments = this.riskAssessments
   },
   methods: {
+    fetchRiskAssessments(load = true) {
+      const app = this
+      app.loading = load
+      const fetchRiskAssessmentsResource = new Resource('rcsa/fetch-risk-assessments')
+      fetchRiskAssessmentsResource.list({ client_id: app.selectedClient.id, standard_id: app.standardId, module: app.assessmentModule })
+        .then(response => {
+          app.assessments = response.risk_assessments
+          app.loading = false
+        }).catch(() => { app.loading = false })
+    },
     setRiskTriggerThreshold(row) {
       const app = this
       app.threshold.id = row.id
@@ -491,16 +497,6 @@ export default {
           app.loading = false
           app.showThresholdForm = false
         })
-    },
-    fetchAssessments(load = true) {
-      const app = this
-      app.loading = load
-      const fetchRiskAssessmentsResource = new Resource('rcsa/fetch-risk-indicator-assessments')
-      fetchRiskAssessmentsResource.list({ client_id: app.selectedClient.id, module: app.assessmentModule })
-        .then(response => {
-          app.assessments = response.assessments
-          app.loading = false
-        }).catch(() => { app.loading = false })
     },
     updateField(value, field, assessment, subField = '') {
       const app = this

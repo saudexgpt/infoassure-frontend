@@ -6,7 +6,7 @@
       </h3>
     </div> -->
 
-    <b-row>
+    <b-row v-if="form.business_unit_id !== 0">
       <b-col md="6">
         <b-form-group
           label="Select Business Process"
@@ -36,9 +36,34 @@
           </validation-provider>
         </b-form-group>
       </b-col>
+      <b-col md="6">
+        <b-form-group
+          label="Sub Unit (L3)"
+          label-for="sub_unit"
+        >
+          <validation-provider
+            #default="{ errors }"
+            name="sub_unit"
+          >
+            <select
+              v-model="form.sub_unit"
+              placeholder="Select Sub Unit"
+              class="form-control"
+            >
+              <option
+                v-for="(team, team_index) in teams"
+                :key="team_index"
+                :value="team"
+                :label="team"
+              />
+            </select>
+            <small class="text-danger">{{ errors[0] }}</small>
+          </validation-provider>
+        </b-form-group>
+      </b-col>
     </b-row>
     <form-wizard
-      v-if="form.business_process_id !== ''"
+      v-if="(form.business_unit_id !== 0 && form.business_process_id !== null) || form.business_unit_id === 0"
       color="#0b173d"
       title="CREATE NEW ENTRY"
       :subtitle="null"
@@ -50,46 +75,6 @@
       class="wizard-vertical mb-3"
       @on-complete="formSubmitted"
     >
-      <!-- personal details tab -->
-      <!-- <tab-content
-        title="General Selection"
-        :before-change="validateSelection"
-      >
-        <validation-observer
-          ref="selectionRule"
-          tag="form"
-        >
-          <b-row>
-            <b-col md="6">
-              <b-form-group
-                label="Select Business Process"
-                label-for="business_process"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="business_process"
-                  rules="required"
-                >
-                  <el-select
-                    v-model="form.business_process_id"
-                    placeholder="Select Business process"
-                    style="width: 100%;"
-                    filterable
-                  >
-                    <el-option
-                      v-for="(business_process, index) in business_processes"
-                      :key="index"
-                      :value="business_process.id"
-                      :label="business_process.name"
-                    />
-                  </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-          </b-row>
-        </validation-observer>
-      </tab-content> -->
       <tab-content
         title="Risk"
         :before-change="validateRisk"
@@ -98,6 +83,60 @@
           ref="riskRule"
           tag="form"
         >
+          <b-row v-if="form.business_unit_id === 0">
+            <b-col md="6">
+              <b-form-group
+                label="Asset Type"
+                label-for="asset_type"
+              >
+                <el-select
+                  v-model="selectedAssetType"
+                  placeholder="Select Asset Type"
+                  value-key="id"
+                  style="width: 100%"
+                  filterable
+                  @change="setAssets();"
+                >
+                  <el-option
+                    v-for="(asset_type, type_index) in asset_types"
+                    :key="type_index"
+                    :label="asset_type.name"
+                    :value="asset_type"
+                  />
+                </el-select>
+                <a
+                  style="color: #409EFF"
+                  @click="createAssetTypeModal = true"
+                > <i class="el-icon-plus" /> Click to add new Asset Type</a>
+              </b-form-group>
+            </b-col>
+            <b-col md="6">
+              <b-form-group
+                label="Asset"
+                label-for="asset"
+              >
+                <el-select
+                  v-model="form.asset_id"
+                  placeholder="Select Asset"
+                  filterable
+                  style="width: 100%"
+                  :disabled="selectedAssetType === null"
+                >
+                  <el-option
+                    v-for="(asset, asset_index) in assets"
+                    :key="asset_index"
+                    :label="asset.name"
+                    :value="asset.id"
+                  />
+                </el-select>
+                <a
+                  v-if="selectedAssetType !== null"
+                  style="color: #409EFF"
+                  @click="createAssetModal = true"
+                > <i class="el-icon-plus" /> Click to add new Asset</a>
+              </b-form-group>
+            </b-col>
+          </b-row>
           <b-row>
             <b-col md="6">
               <b-form-group
@@ -158,74 +197,41 @@
             </b-col>
             <b-col md="6">
               <b-form-group
-                label="Risk Description"
-                label-for="risk_description"
+                label="Threat (Search Applicable Threat)"
+                label-for="threat"
               >
                 <validation-provider
                   #default="{ errors }"
-                  name="risk_description"
-                  rules="required"
+                  name="threat"
                 >
-                  <textarea
-                    id="risk_description"
-                    v-model="form.vulnerability_description"
-                    class="form-control"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="Describe Risk"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Impact/Outcome"
-                label-for="impact"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="outcome"
-                  rules="required"
-                >
-                  <ckeditor
-                    id="outcome"
-                    v-model="form.outcome"
-                    :editor="editor"
-                    :config="editorConfig"
-                    placeholder="State the outcome of the risk"
-                  />
-                  <!-- <textarea
-                    id="outcome"
-                    v-model="form.outcome"
-                    class="form-control"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="State the outcome of the risk"
-                  /> -->
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Sub Unit (L3)"
-                label-for="sub_unit"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="sub_unit"
-                >
-                  <select
-                    v-model="form.sub_unit"
-                    placeholder="Select Sub Unit"
+                  <el-select
+                    v-model="form.threat"
+                    filterable
+                    allow-create
+                    default-first-option
+                    placeholder="Enter a keyword"
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="(threat, threat_index) in threats"
+                      :key="threat_index"
+                      :value="threat.threats"
+                      :label="threat.threats"
+                    />
+                  </el-select>
+                  <!-- <select
+                    v-model="form.threat"
+                    placeholder="Select Threat"
+                    filterable
                     class="form-control"
                   >
                     <option
-                      v-for="(team, team_index) in teams"
-                      :key="team_index"
-                      :value="team"
-                      :label="team"
+                      v-for="(threat, threat_index) in threats"
+                      :key="threat_index"
+                      :value="threat.threats"
+                      :label="threat.threats"
                     />
-                  </select>
+                  </select> -->
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
@@ -249,6 +255,55 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
+            <b-col md="12">
+              <b-form-group
+                label="Vulnerability/Risk Description"
+                label-for="risk_description"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="risk_description"
+                  rules="required"
+                >
+                  <textarea
+                    id="risk_description"
+                    v-model="form.vulnerability_description"
+                    class="form-control"
+                    :state="errors.length > 0 ? false:null"
+                    placeholder="Describe Risk"
+                  />
+                  <!-- <ckeditor
+                    id="vulnerability_description"
+                    v-model="form.vulnerability_description"
+                    :editor="editor"
+                    :config="editorConfig"
+                    placeholder="Describe the risk/vulnerability"
+                  /> -->
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+            <!-- <b-col md="6">
+              <b-form-group
+                label="Impact/Outcome"
+                label-for="impact"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="outcome"
+                  rules="required"
+                >
+                  <ckeditor
+                    id="outcome"
+                    v-model="form.outcome"
+                    :editor="editor"
+                    :config="editorConfig"
+                    placeholder="State the outcome of the risk"
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col> -->
 
           </b-row>
         </validation-observer>
@@ -319,6 +374,35 @@
                 </validation-provider>
               </b-form-group>
             </b-col>
+            <b-col md="12">
+              <b-form-group
+                label="Describe Existing Control"
+                label-for="control_description"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="control_description"
+                  rules="required"
+                >
+                  <ckeditor
+                    id="control_description"
+                    v-model="form.control_description"
+                    :editor="editor"
+                    :config="editorConfig"
+                    :state="errors.length > 0 ? false:null"
+                    placeholder="Describe Control"
+                  />
+                  <!-- <textarea
+                    id="control_description"
+                    v-model="form.control_description"
+                    class="form-control"
+                    :state="errors.length > 0 ? false:null"
+                    placeholder="Describe Control"
+                  /> -->
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
             <b-col md="6">
               <b-form-group
                 label="Where is the control performed"
@@ -346,27 +430,6 @@
                       value="N/A"
                     />
                   </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
-                label="Control Description"
-                label-for="control_description"
-              >
-                <validation-provider
-                  #default="{ errors }"
-                  name="control_description"
-                  rules="required"
-                >
-                  <textarea
-                    id="control_description"
-                    v-model="form.control_description"
-                    class="form-control"
-                    :state="errors.length > 0 ? false:null"
-                    placeholder="Describe Control"
-                  />
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
@@ -680,6 +743,33 @@
         @saved="refreshCategorySelection()"
       />
     </b-modal>
+    <!-- CREATE ASSET TYPES BEGINS-->
+    <b-modal
+      v-model="createAssetTypeModal"
+      title="Asset Type"
+      centered
+      size="lg"
+      hide-footer
+    >
+      <create-asset-type
+        :client-id="clientId"
+        @save="fetchAssetTypes"
+      />
+    </b-modal>
+    <!-- CREATE ASSET TYPES ENDS-->
+    <b-modal
+      v-model="createAssetModal"
+      title="Asset"
+      centered
+      size="lg"
+      hide-footer
+    >
+      <create-asset
+        :asset-type-id="form.asset_type_id"
+        :client-id="clientId"
+        @save="fetchAssets(form.asset_type_id)"
+      />
+    </b-modal>
   </div>
 </template>
 <script>
@@ -695,6 +785,8 @@ import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import CreateRiskCategory from './CreateRiskCategory.vue'
+import CreateAssetType from '@/views/modules/ManageAssets/CreateAssetType.vue'
+import CreateAsset from '@/views/modules/ManageAssets/CreateAsset.vue'
 
 export default {
   components: {
@@ -707,6 +799,8 @@ export default {
     BFormGroup,
     BFormInput,
     CreateRiskCategory,
+    CreateAssetType,
+    CreateAsset,
     // BButton,
   },
   directives: {
@@ -721,10 +815,16 @@ export default {
       type: Number,
       default: null,
     },
+    module: {
+      type: String,
+      default: 'isms',
+    },
   },
   data() {
     return {
       showRiskCategoryForm: false,
+      createAssetModal: false,
+      createAssetTypeModal: false,
       isEdit: false,
       activeName: '1',
       editor: ClassicEditor,
@@ -738,14 +838,19 @@ export default {
       unitTeams: [],
       team_members: [],
       risk_types: [],
+      threats: [],
       required,
       form: {
         id: '',
         client_id: '',
+        risk_group: '',
         business_unit_id: '',
         business_process_id: '',
         sub_unit: '',
         risk_unique_id: '',
+        asset_type_id: '',
+        asset_id: '',
+        threat: '',
         type: '',
         vulnerability_description: '',
         outcome: '',
@@ -774,10 +879,14 @@ export default {
       empty_form: {
         id: '',
         client_id: '',
+        risk_group: '',
         business_unit_id: '',
         business_process_id: '',
         sub_unit: '',
         risk_unique_id: '',
+        asset_type_id: '',
+        asset_id: '',
+        threat: '',
         type: '',
         sub_type: '',
         vulnerability_description: '',
@@ -806,16 +915,35 @@ export default {
       },
       control_frequencies: ['Per Transaction', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Biannually', 'Annually', 'N/A', 'Per Merchant', 'Per Terminal Request'],
       loading: false,
+      loadSearch: false,
       selectedBusinessProcess: {},
       uploadableFile: null,
       selectedRiskCategory: { name: '', sub_categories: [] },
       selectedCategoryIndex: null,
       teams: [],
+      asset_types: [],
+      selectedAssetType: null,
+      assets: [],
     }
   },
+  watch: {
+    clientId() {
+      this.form.client_id = this.clientId
+      this.fetchRiskCategories()
+      this.fetchBusinessProcesses()
+      this.this.fetchAssetTypes()
+    },
+    businessUnitId() {
+      this.form.business_unit_id = this.businessUnitId
+      this.fetchBusinessProcesses()
+    },
+  },
   created() {
+    this.fetchThreats()
+    this.fetchAssetTypes()
     this.form.client_id = this.clientId
     this.form.business_unit_id = this.businessUnitId
+    this.form.module = this.module
     this.fetchRiskCategories()
     this.fetchBusinessProcesses()
   },
@@ -841,6 +969,54 @@ export default {
       const app = this
       // eslint-disable-next-line prefer-destructuring
       app.uploadableFile = e.target.files[0]
+    },
+    fetchAssetTypes() {
+      const app = this
+      const fetchEntryResource = new Resource('risk-assessment/fetch-asset-types')
+      app.loading = true
+      fetchEntryResource.list({ client_id: app.clientId })
+        .then(response => {
+          app.asset_types = response.asset_types
+          app.loading = false
+        })
+        .catch(error => {
+          // console.log(error.response)
+          app.$message.error(error.response.data.error)
+          app.loading = false
+        })
+    },
+    fetchAssets(assetTypeId) {
+      const app = this
+      // const assetTypeId = event.target.value
+      const fetchAssetsResource = new Resource('risk-assessment/fetch-assets')
+      fetchAssetsResource.list({ client_id: app.clientId, asset_type_id: assetTypeId })
+        .then(response => {
+          app.assets = response.assets
+          app.loading = false
+        }).catch(() => { app.loading = false })
+    },
+    setAssets() {
+      const app = this
+      app.form.asset_id = ''
+      if (app.selectedAssetType !== null) {
+        app.form.asset_type_id = app.selectedAssetType.id
+        app.assets = app.selectedAssetType.assets
+      }
+    },
+    fetchThreats() {
+      const app = this
+      app.loadSearch = true
+      const fetchEntryResource = new Resource('risk-library/fetch-threats')
+      fetchEntryResource.list()
+        .then(response => {
+          app.threats = response.threats
+          app.loadSearch = false
+        })
+        .catch(error => {
+          // console.log(error.response)
+          app.console.log(error.response.data.error)
+          app.loadSearch = false
+        })
     },
     fetchRiskCategories() {
       const app = this
@@ -944,11 +1120,15 @@ export default {
       const formData = new FormData()
       formData.append('id', app.form.id)
       formData.append('client_id', app.form.client_id)
+      formData.append('module', app.form.module)
       formData.append('business_unit_id', app.form.business_unit_id)
       formData.append('business_process_id', app.form.business_process_id)
       formData.append('risk_unique_id', app.form.risk_unique_id)
       formData.append('type', app.form.type)
       formData.append('sub_type', app.form.sub_type)
+      formData.append('asset_type_id', app.form.asset_type_id)
+      formData.append('asset_id', app.form.asset_id)
+      formData.append('threat', app.form.threat)
       formData.append('vulnerability_description', app.form.vulnerability_description)
       formData.append('outcome', app.form.outcome)
       formData.append('risk_owner', app.form.risk_owner)
@@ -1002,7 +1182,7 @@ export default {
             title: 'Submitted Successfully',
           })
           app.form = app.empty_form
-          // app.$emit('update:is-create-business-process-sidebar-active', false)
+          app.$emit('submitted')
         }).catch(error => {
           app.loading = false
           app.$message(error.response.data.error)

@@ -1,29 +1,5 @@
 <template>
   <el-card>
-    <aside>
-      <el-row :gutter="10">
-        <el-col
-          :xs="24"
-          :sm="12"
-          :md="12"
-        >
-          <el-select
-            v-model="selectedClient"
-            value-key="id"
-            placeholder="Select Client"
-            style="width: 100%;"
-            @input="fetchProjects()"
-          >
-            <el-option
-              v-for="(client, index) in clients"
-              :key="index"
-              :value="client"
-              :label="client.name"
-            />
-          </el-select>
-        </el-col>
-      </el-row>
-    </aside>
     <v-client-table
       v-model="certificates"
       v-loading="loading"
@@ -179,26 +155,25 @@ export default {
       searchTerm: '',
       selected_project: '',
       showManageProject: false,
-      selectedClient: null,
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
+    selectedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
+  watch: {
+    selectedClient() {
+      this.fetchProjects()
+    },
   },
   created() {
-    this.fetchClients()
+    this.fetchProjects()
   },
   methods: {
-    fetchClients() {
-      const app = this
-      const fetchProjectsResource = new Resource('clients')
-      fetchProjectsResource.list({ option: 'all' })
-        .then(response => {
-          app.clients = response.clients
-        })
-    },
     fetchProjects() {
       const app = this
       app.loading = true

@@ -14,7 +14,7 @@
       <template #default="{ hide }">
         <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
           <h5 class="mb-0">
-            Create Client Projects
+            Create Projects for {{ selectedClient.name }}
           </h5>
           <div>
             <b-button
@@ -30,25 +30,6 @@
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
           <b-row v-loading="loading">
-
-            <b-col cols="12">
-              <b-form-group
-                label-for="v-standard"
-              >
-                <el-select
-                  v-model="form.client_id"
-                  placeholder="Select Client"
-                  style="width: 100%;"
-                >
-                  <el-option
-                    v-for="(client, index) in clients"
-                    :key="index"
-                    :value="client.id"
-                    :label="client.name"
-                  />
-                </el-select>
-              </b-form-group>
-            </b-col>
             <b-col
               v-if="form.client_id !== ''"
               cols="12"
@@ -57,23 +38,23 @@
                 label-for="v-standard"
               >
                 <el-select
-                  v-model="selectedConsulting"
-                  placeholder="Select Consulting"
+                  v-model="selectedModule"
+                  placeholder="Select Activated Module"
                   filterable
                   value-key="id"
                   style="width: 100%"
                 >
                   <el-option
-                    v-for="(consulting, index) in consultings"
+                    v-for="(module, index) in clientActivatedModules"
                     :key="index"
-                    :value="consulting"
-                    :label="consulting.name"
+                    :value="module"
+                    :label="module.name"
                   />
                 </el-select>
               </b-form-group>
             </b-col>
             <b-col
-              v-if="form.client_id !== ''"
+              v-if="selectedModule.standards.length > 0"
               cols="12"
             >
               <b-form-group
@@ -81,13 +62,13 @@
               >
                 <el-select
                   v-model="form.standards"
-                  placeholder="Select Projects"
+                  placeholder="Select Project Standard"
                   filterable
                   multiple
                   style="width: 100%"
                 >
                   <el-option
-                    v-for="(standard, index) in selectedConsulting.standards"
+                    v-for="(standard, index) in selectedModule.standards"
                     :key="index"
                     :value="standard.id"
                     :label="standard.name"
@@ -109,7 +90,7 @@
                 type="submit"
                 variant="primary"
                 class="mr-1"
-                :disabled="form.standards.length < 1"
+                :disabled="(selectedModule.id === '') || (selectedModule.standards.length > 0 && form.standards.length < 1 && selectedModule.id !== '')"
                 @click="submit()"
               >
                 Submit
@@ -149,10 +130,6 @@ export default {
       type: Boolean,
       required: true,
     },
-    clients: {
-      type: Array,
-      required: true,
-    },
     // registeredStandards: {
     //   type: Array,
     //   required: true,
@@ -162,34 +139,45 @@ export default {
     return {
       form: {
         standards: [],
-        consulting_id: '',
+        available_module_id: '',
         client_id: '',
       },
       loading: false,
       consultings: [],
-      selectedConsulting: {},
+      selectedModule: {
+        id: '',
+        standards: [],
+      },
     }
   },
+  computed: {
+    selectedClient() {
+      return this.$store.getters.selectedClient
+    },
+    clientActivatedModules() {
+      return this.$store.getters.clientActivatedModules
+    },
+  },
   created() {
-    this.fetchConsulting()
+    this.form.client_id = this.selectedClient.id
   },
   methods: {
-    fetchConsulting() {
-      const app = this
-      app.loading = true
-      const fetchConsultingsResource = new Resource('consultings')
-      fetchConsultingsResource.list()
-        .then(response => {
-          app.consultings = response.consultings
-          app.loading = false
-        })
-    },
+    // fetchConsulting() {
+    //   const app = this
+    //   app.loading = true
+    //   const fetchConsultingsResource = new Resource('consultings')
+    //   fetchConsultingsResource.list()
+    //     .then(response => {
+    //       app.consultings = response.consultings
+    //       app.loading = false
+    //     })
+    // },
     submit() {
       const app = this
       app.loading = true
       const saveCurriculumSetupResource = new Resource('projects/save')
       const param = app.form
-      param.consulting_id = app.selectedConsulting.id
+      param.available_module_id = app.selectedModule.id
       saveCurriculumSetupResource.store(param)
         .then(() => {
           app.loading = false
@@ -200,7 +188,7 @@ export default {
           })
           app.form = {
             standards: [],
-            consulting_id: '',
+            available_module_id: '',
             client_id: '',
           }
           app.$emit('save')

@@ -24,31 +24,6 @@
     />
   </div>
   <div v-else>
-    <aside>
-      <el-row :gutter="10">
-        <el-col
-          :xs="24"
-          :sm="8"
-          :md="8"
-        >
-          <el-select
-            v-model="selectedClient"
-            value-key="id"
-            placeholder="Select Client/Vendor"
-            style="width: 100%;"
-            filterable
-            @input="setDueDiligenceResponses()"
-          >
-            <el-option
-              v-for="(client, clientIndex) in clients"
-              :key="clientIndex"
-              :value="client"
-              :label="client.name"
-            />
-          </el-select>
-        </el-col>
-      </el-row>
-    </aside>
     <b-tabs
       v-if="selectedClient !== null"
       content-class="mt-1"
@@ -407,7 +382,6 @@ export default {
   data() {
     return {
       domains: [],
-      selectedClient: null,
       clients: [],
       currenctQuestions: {},
       currentQuestionsAreSet: false,
@@ -433,9 +407,17 @@ export default {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
+    selectedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
+  watch: {
+    selectedClient() {
+      this.setDueDiligenceResponses()
+    },
   },
   created() {
-    this.fetchClients()
+    this.setDueDiligenceResponses()
   },
   methods: {
     setCurrentQuestions(domains) {
@@ -450,14 +432,6 @@ export default {
         // app.currenctQuestions[key] = 0
       }
       app.currentQuestionsAreSet = true
-    },
-    fetchClients() {
-      const app = this
-      const fetchProjectsResource = new Resource('clients')
-      fetchProjectsResource.list({ option: 'all' })
-        .then(response => {
-          app.clients = response.clients
-        })
     },
     openRemarkModal(selectedAnswer) {
       const app = this

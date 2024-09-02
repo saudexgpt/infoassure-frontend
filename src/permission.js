@@ -12,7 +12,6 @@ function setRoutes(userData) {
     router.addRoutes(response)
   })
 }
-
 const whiteList = ['/login', '/login-as', '/bia', '/rcsa', '/account/suspended', /* '/register', */ '/forgot-password', '/maintenance'] // no redirect whitelist
 router.beforeEach(async (to, from, next) => {
   if (to.path === '/bia' || to.path === '/rcsa') {
@@ -44,6 +43,7 @@ router.beforeEach(async (to, from, next) => {
             const hasRoles = userData.roles && userData.roles.length > 0
             // eslint-disable-next-line no-lonely-if
             if (hasRoles) {
+              store.dispatch('clients/fetchClients')
               next()
             } else {
               try {

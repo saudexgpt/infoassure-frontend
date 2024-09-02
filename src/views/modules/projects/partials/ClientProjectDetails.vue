@@ -112,13 +112,8 @@
         :selected-client="selectedClient"
         :standard-id="selectedProject.standard_id"
       />
-      <d-p-i-a
+      <!-- <d-p-i-a
         v-if="current_view === 'dpia'"
-        :selected-client="selectedClient"
-        :standard-id="selectedProject.standard_id"
-      />
-      <s-o-a
-        v-if="current_view === 'soa'"
         :selected-client="selectedClient"
         :standard-id="selectedProject.standard_id"
       />
@@ -129,6 +124,11 @@
       />
       <p-d-a
         v-if="current_view === 'pda'"
+        :selected-client="selectedClient"
+        :standard-id="selectedProject.standard_id"
+      /> -->
+      <s-o-a
+        v-if="current_view === 'soa'"
         :selected-client="selectedClient"
         :standard-id="selectedProject.standard_id"
       />
@@ -166,10 +166,11 @@
 //   BTabs, BTab,
 // } from 'bootstrap-vue'
 import GapAssessment from './GapAssessment.vue'
-import DPIA from '@/views/modules/DPIA/index.vue'
+// import DPIA from '@/views/modules/DPIA/index.vue'
 import SOA from '@/views/modules/statement-of-applicability/StatementOfApplicability.vue'
-import RoPA from '@/views/modules/RoPA/index.vue'
-import PDA from '@/views/modules/PDA/index.vue'
+// import RoPA from '@/views/modules/RoPA/index.vue'
+// import PDA from '@/views/modules/PDA/index.vue'
+import RiskAssessment from '@/views/modules/risk-assessment/ViewRiskAssessment.vue'
 // import ProjectPlanDetails from './ProjectPlanDetails.vue'
 import checkPermission from '@/utils/permission'
 
@@ -178,10 +179,11 @@ export default {
     // BTabs,
     // BTab,
     GapAssessment,
-    DPIA,
+    // DPIA,
+    // RoPA,
+    // PDA,
+    RiskAssessment,
     SOA,
-    RoPA,
-    PDA,
     // ProjectPlanDetails,
   },
   props: {

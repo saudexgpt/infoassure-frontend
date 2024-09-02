@@ -12,7 +12,7 @@
             <b-button
               v-if="checkPermission(['create-client project'])"
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="gradient-success"
+              variant="gradient-primary"
               @click="showModal = true"
             >
               <feather-icon

@@ -11,7 +11,7 @@
           <span class="pull-right">
             <b-button
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="gradient-success"
+              variant="gradient-primary"
               @click="isCreateBusinessUnitSidebarActive = true"
             >
               <feather-icon
@@ -24,32 +24,6 @@
         </b-col>
       </b-row>
     </div>
-
-    <aside>
-      <el-row :gutter="10">
-        <el-col
-          :xs="24"
-          :sm="8"
-          :md="8"
-        >
-          <el-select
-            v-model="selectedClient"
-            value-key="id"
-            placeholder="Select Client"
-            style="width: 100%;"
-            filterable
-            @input="fetchBusinessUnits()"
-          >
-            <el-option
-              v-for="(client, index) in clients"
-              :key="index"
-              :value="client"
-              :label="client.name"
-            />
-          </el-select>
-        </el-col>
-      </el-row>
-    </aside>
     <p>Click on the <code>+</code> sign to manage business processes</p>
     <v-client-table
       v-model="business_units"
@@ -115,13 +89,13 @@
     <create-business-unit
       v-if="isCreateBusinessUnitSidebarActive"
       v-model="isCreateBusinessUnitSidebarActive"
-      :clients="clients"
+      :selected-client="selectedClient"
       @save="fetchBusinessUnits"
     />
     <edit-business-unit
       v-if="isEditBusinessUnitSidebarActive"
       v-model="isEditBusinessUnitSidebarActive"
-      :clients="clients"
+      :selected-client="selectedClient"
       :business-unit="selectedBusinessUnit"
       @update="fetchBusinessUnits"
     />
@@ -199,7 +173,6 @@ export default {
       },
       business_units: [],
       selectedBusinessUnit: null,
-      clients: [],
       staff: [],
       clientUsers: [],
       searchTerm: '',
@@ -210,23 +183,30 @@ export default {
       showAssignConsultantModal: false,
     }
   },
+  computed: {
+    clients() {
+      return this.$store.getters.clients
+    },
+    storedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
+  watch: {
+    storedClient() {
+      this.selectedClient = this.storedClient
+      this.fetchBusinessUnits()
+    },
+  },
   created() {
     this.fetchClients()
+    this.selectedClient = this.storedClient
+    this.fetchBusinessUnits()
   },
   methods: {
     checkPermission,
     fetchClients() {
       const app = this
-      const fetchBusinessUnitsResource = new Resource('clients')
-      fetchBusinessUnitsResource.list({ option: 'all' })
-        .then(response => {
-          app.clients = response.clients
-          if (app.clients.length === 1) {
-            // eslint-disable-next-line prefer-destructuring
-            app.selectedClient = app.clients[0]
-            app.fetchBusinessUnits()
-          }
-        })
+      app.$store.dispatch('clients/fetchClients')
     },
     fetchBusinessUnits() {
       const app = this

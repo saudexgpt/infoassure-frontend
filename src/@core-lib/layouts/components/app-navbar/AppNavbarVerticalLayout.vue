@@ -1,4 +1,8 @@
 <template>
+  <!-- <div
+    class="navbar-container d-flex content align-items-center"
+    :style="'background: ' + navbar_bg"
+  > -->
   <div
     class="navbar-container d-flex content align-items-center"
     :style="'background: ' + navbar_bg"
@@ -17,20 +21,8 @@
         </b-link>
       </li>
     </ul>
+    <select-client-component />
     <b-navbar-nav class="nav align-items-center ml-auto">
-      <!-- <b-nav-item to="/apps/email">
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="In-App Messaging"
-          placement="top-start"
-        >
-          <feather-icon
-            icon="MailIcon"
-            size="21"
-          />
-        </el-tooltip>
-      </b-nav-item> -->
       <el-tooltip
         class="item"
         effect="dark"
@@ -70,11 +62,13 @@ import {
 // import CartDropdown from './components/CartDropdown.vue'
 import NotificationDropdown from './components/NotificationDropdown.vue'
 import UserDropdown from './components/UserDropdown.vue'
+import SelectClientComponent from '@/views/modules/components/Clients.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
     BLink,
+    SelectClientComponent,
 
     // Navbar Components
     BNavbarNav,

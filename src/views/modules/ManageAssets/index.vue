@@ -20,28 +20,6 @@
       </span>
       <h3>Asset Types</h3>
     </div>
-    <el-row :gutter="10">
-      <el-col
-        :xs="24"
-        :sm="8"
-        :md="8"
-      >
-        <el-select
-          v-model="form.client_id"
-          placeholder="Select Client"
-          style="width: 100%;"
-          filterable
-          @input="fetchAssetTypes()"
-        >
-          <el-option
-            v-for="(client, index) in clients"
-            :key="index"
-            :value="client.id"
-            :label="client.name"
-          />
-        </el-select>
-      </el-col>
-    </el-row>
     <div v-if="form.client_id !== ''">
       <create-asset-type
         v-if="showCreate"
@@ -112,7 +90,6 @@ export default {
     return {
       form: { client_id: '', names: [] },
       asset_types: [],
-      clients: [],
       loading: false,
       showCreate: false,
       columns: [
@@ -127,22 +104,29 @@ export default {
       },
     }
   },
+  computed: {
+    clients() {
+      return this.$store.getters.clients
+    },
+    storedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
+  watch: {
+    storedClient() {
+      this.form.client_id = this.storedClient.id
+      this.fetchAssetTypes()
+    },
+  },
   created() {
     this.fetchClients()
+    this.form.client_id = this.storedClient.id
+    this.fetchAssetTypes()
   },
   methods: {
     fetchClients() {
       const app = this
-      const fetchBusinessUnitsResource = new Resource('clients')
-      fetchBusinessUnitsResource.list({ option: 'all' })
-        .then(response => {
-          app.clients = response.clients
-          if (app.clients.length === 1) {
-            // eslint-disable-next-line prefer-destructuring
-            app.form.client_id = app.clients[0].id
-            app.fetchAssetTypes()
-          }
-        })
+      app.$store.dispatch('clients/fetchClients')
     },
     fetchAssetTypes() {
       const app = this

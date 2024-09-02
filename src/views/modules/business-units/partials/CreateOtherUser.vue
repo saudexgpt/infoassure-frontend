@@ -30,26 +30,6 @@
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
           <b-row v-loading="loading">
-
-            <b-col cols="12">
-              <b-form-group
-                label-for="v-business-unit"
-              >
-                <el-select
-                  v-model="form.client_id"
-                  placeholder="Select Client"
-                  style="width: 100%;"
-                  @input="fetchBusinessUnits()"
-                >
-                  <el-option
-                    v-for="(client, index) in clients"
-                    :key="index"
-                    :value="client.id"
-                    :label="client.name"
-                  />
-                </el-select>
-              </b-form-group>
-            </b-col>
             <b-col cols="12">
               <b-form-group
                 label-for="v-business-unit"
@@ -60,7 +40,7 @@
                   style="width: 100%;"
                 >
                   <el-option
-                    v-for="(business_unit, index) in business_units"
+                    v-for="(business_unit, index) in businessUnits"
                     :key="index"
                     :value="business_unit.id"
                     :label="business_unit.unit_name"
@@ -145,14 +125,14 @@ export default {
       type: Boolean,
       required: true,
     },
-    clients: {
+    selectedClient: {
+      type: Object,
+      required: true,
+    },
+    businessUnits: {
       type: Array,
       required: true,
     },
-    // registeredBusinessUnits: {
-    //   type: Array,
-    //   required: true,
-    // },
   },
   data() {
     return {
@@ -169,23 +149,9 @@ export default {
     }
   },
   created() {
-    if (this.clients.length === 1) {
-      // eslint-disable-next-line prefer-destructuring
-      this.form.client_id = this.clients[0].id
-      this.fetchBusinessUnits()
-    }
+    this.form.client_id = this.selectedClient.id
   },
   methods: {
-    fetchBusinessUnits() {
-      const app = this
-      app.form.business_unit_id = ''
-      const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')
-      fetchBusinessUnitsResource.list({ client_id: app.form.client_id })
-        .then(response => {
-          app.business_units = response.business_units
-          app.loading = false
-        }).catch(() => { app.loading = false })
-    },
     submit() {
       const app = this
       app.loading = true

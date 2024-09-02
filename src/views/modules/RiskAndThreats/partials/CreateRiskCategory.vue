@@ -105,17 +105,13 @@ export default {
   },
   watch: {
     isEdit() {
-      if (this.isEdit) {
-        this.form = this.selectedData
-        this.setSubCategories()
-      }
+      this.form = this.selectedData
+      this.setSubCategories()
     },
   },
   created() {
-    if (this.isEdit) {
-      this.form = this.selectedData
-      this.setSubCategories()
-    }
+    this.form = this.selectedData
+    this.setSubCategories()
   },
   methods: {
     setSubCategories() {
@@ -201,7 +197,6 @@ export default {
         app.loading = true
         saveEntryResource.destroy(row.id)
           .then(() => {
-            app.fetchCategory()
             app.loading = false
           })
           .catch(error => {

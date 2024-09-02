@@ -30,10 +30,6 @@ export default [
       //   title: 'Risk & Control Matrix',
       //   route: 'risk-setup',
       // },
-      {
-        title: 'Risk Management',
-        route: 'risk-management',
-      },
     ],
   },
 ]

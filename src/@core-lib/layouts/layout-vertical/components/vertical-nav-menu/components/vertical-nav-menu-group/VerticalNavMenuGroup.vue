@@ -12,7 +12,14 @@
       class="d-flex align-items-center"
       @click="() => updateGroupOpen(!isOpen)"
     >
-      <feather-icon :icon="item.icon || 'TargetIcon'" />
+      <i
+        v-if="item.icon === 'HomeIcon'"
+        class="el-icon-odometer"
+      />
+      <feather-icon
+        v-else
+        :icon="item.icon || 'TargetIcon'"
+      />
       <span class="menu-title text-truncate">{{ t(item.title) }}</span>
       <b-badge
         v-if="item.tag"

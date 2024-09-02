@@ -40,7 +40,7 @@
                   style="width: 100%;"
                 >
                   <el-option
-                    v-for="(business_unit, index) in business_units"
+                    v-for="(business_unit, index) in businessUnits"
                     :key="index"
                     :value="business_unit.id"
                     :label="business_unit.unit_name"
@@ -123,7 +123,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    clients: {
+    businessUnits: {
       type: Array,
       required: true,
     },
@@ -148,18 +148,8 @@ export default {
   },
   created() {
     this.form = this.selectedUser
-    this.fetchBusinessUnits()
   },
   methods: {
-    fetchBusinessUnits() {
-      const app = this
-      const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')
-      fetchBusinessUnitsResource.list({ client_id: app.form.client_id })
-        .then(response => {
-          app.business_units = response.business_units
-          app.loading = false
-        }).catch(() => { app.loading = false })
-    },
     update() {
       const app = this
       app.loading = true

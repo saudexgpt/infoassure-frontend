@@ -1,12 +1,4 @@
 export default [
-  {
-    title: 'Due Diligence Assessment',
-    icon: 'SearchIcon',
-    route: 'due-diligence',
-    acl: {
-      modules: ['due-diligence'],
-    },
-  },
   // {
   //   title: 'BIA Setup',
   //   icon: 'BriefcaseIcon',
@@ -21,7 +13,7 @@ export default [
     icon: 'CheckIcon',
     route: 'ActivatedModules',
     acl: {
-      modules: ['due-diligence', 'bia'],
+      modules: ['due-diligence', 'bcms', 'rcsa', 'asv', 'vapt', 'pci-dss', 'isms', 'ndpa', 'lms', 'soc2', 'sms'],
       // except: ['client'],
       roles: ['partner'],
     },

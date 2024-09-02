@@ -76,23 +76,27 @@
           :sm="8"
           :md="8"
         >
-          <strong>Set your Risk Appetite here</strong>
-          <el-select
-            v-model="risk_appetite"
-            style="width: 100%"
-            @change="setRiskAppetite(risk_matrix.id)"
+          <div
+            style="background: #f7f0da; padding: 10px; border-radius: 5px; border-radius: 5px; text-align: center"
           >
-            <el-option
-              v-for="(appetite, index) in fetchRiskAppetite(matrix)"
-              :key="index"
-              :value="appetite.value"
-              :label="appetite.label"
-            />
-          </el-select>
-          <!-- <highcharts :options="riskAppetiteAnalytics" /> -->
-          <img
-            :src="changeImpactImage(risk_appetite)"
-          >
+            <strong>Set your Risk Appetite here</strong>
+            <el-select
+              v-model="risk_appetite"
+              style="width: 100%"
+              @change="setRiskAppetite(risk_matrix.id)"
+            >
+              <el-option
+                v-for="(appetite, index) in fetchRiskAppetite(matrix)"
+                :key="index"
+                :value="appetite.value"
+                :label="appetite.label"
+              />
+            </el-select>
+            <!-- <highcharts :options="riskAppetiteAnalytics" /> -->
+            <img
+              :src="changeImpactImage(risk_appetite)"
+            >
+          </div>
         </el-col>
       </el-row>
       <el-tabs
@@ -230,314 +234,19 @@
           :lazy="true"
         >
 
-          <div>
-            <div v-if="matrix === '3x3'">
-              <table class="table table-bordered">
-                <tbody>
-                  <tr>
-                    <td rowspan="5">
-                      Likelihood
-                    </td>
-                    <td rowspan="2" />
-                    <td colspan="3">
-                      Impact
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td style="color: #000000; background: yellow">
-                      3
-                    </td>
-                    <td style="color: #000000; background: red">
-                      6
-                    </td>
-                    <td style="color: #000000; background: red">
-                      9
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td style="color: #000000; background: green">
-                      2
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      4
-                    </td>
-                    <td style="color: #000000; background: red">
-                      6
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td style="color: #000000; background: green">
-                      1
-                    </td>
-                    <td style="color: #000000; background: green">
-                      2
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      3
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <table class="table table-bordered">
-                <tbody>
-                  <tr>
-                    <td>
-                      Risk Rating Scale
-                    </td>
-                    <td>
-                      Description
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="color: #000000; background: red">
-                      High
-                    </td>
-                    <td>All risk value &gt; 5 (Management Action/decision required for risk treatment)</td>
-                  </tr>
-                  <tr>
-                    <td style="color: #000000; background: yellow">
-                      Medium
-                    </td>
-                    <td> All risk values &gt;= 3 but &lt;= 5 (Line Manager action/decision required)</td>
-                  </tr>
-                  <tr>
-                    <td style="color: #000000; background: green">
-                      Low
-                    </td>
-                    <!-- eslint-disable-next-line vue/no-parsing-error -->
-                    <td>All risk values &gt;=1 but &lt;= 2 (no action required however recommended for improvement to Line Manager)</td>
-                  </tr>
-                </tbody>
-              </table>
-
-            </div>
-            <div v-if="matrix === '5x5'">
-              <table class="table table-bordered">
-                <tbody>
-                  <tr>
-                    <td rowspan="7">
-                      Likelihood
-                    </td>
-                    <td rowspan="2" />
-                    <td colspan="5">
-                      Impact
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
-                  </tr>
-                  <tr>
-                    <td>5</td>
-                    <td style="color: #000000; background: yellow">
-                      5
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      10
-                    </td>
-                    <td style="color: #000000; background: red">
-                      15
-                    </td>
-                    <td style="color: #000000; background: red">
-                      20
-                    </td>
-                    <td style="color: #000000; background: red">
-                      25
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td style="color: #000000; background: green">
-                      4
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      8
-                    </td>
-                    <td style="color: #000000; background: red">
-                      12
-                    </td>
-                    <td style="color: #000000; background: red">
-                      16
-                    </td>
-                    <td style="color: #000000; background: red">
-                      20
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td style="color: #000000; background: green">
-                      3
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      6
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      9
-                    </td>
-                    <td style="color: #000000; background: red">
-                      12
-                    </td>
-                    <td style="color: #000000; background: red">
-                      15
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td style="color: #000000; background: green">
-                      2
-                    </td>
-                    <td style="color: #000000; background: green">
-                      4
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      6
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      8
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      10
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td style="color: #000000; background: green">
-                      1
-                    </td>
-                    <td style="color: #000000; background: green">
-                      2
-                    </td>
-                    <td style="color: #000000; background: green">
-                      3
-                    </td>
-                    <td style="color: #000000; background: green">
-                      4
-                    </td>
-                    <td style="color: #000000; background: yellow">
-                      5
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <table class="table table-bordered">
-                <tbody>
-                  <tr>
-                    <td>
-                      Risk Rating Scale
-                    </td>
-                    <td>
-                      Description
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="color: #000000; background: red">
-                      High
-                    </td>
-                    <td>All risk value &gt;= 12 (Management Action/decision required for risk treatment)</td>
-                  </tr>
-                  <tr>
-                    <td style="color: #000000; background: yellow">
-                      Medium
-                    </td>
-                    <td> All risk values &gt;= 5 but &lt;= 11 (Line Manager action/decision required)</td>
-                  </tr>
-                  <tr>
-                    <td style="color: #000000; background: green">
-                      Low
-                    </td>
-                    <!-- eslint-disable-next-line vue/no-parsing-error -->
-                    <td>All risk values &gt;=1 but &lt;= 4 (no action required however recommended for improvement to Line Manager)</td>
-                  </tr>
-                </tbody>
-              </table>
-
-            </div>
-            <table class="table table-bordered">
-              <tbody>
-                <tr>
-                  <td colspan="3">
-                    Confidentiality Requirement Level
-                  </td>
-                </tr>
-                <tr>
-                  <td>Value</td>
-                  <td>Ranking</td>
-                  <td>Guideline/Description</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>Low</td>
-                  <td>The impact of unauthorized disclosure of such information shall not harm organisation in anyway.</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Medium</td>
-                  <td>The unauthorized disclosure of information here can cause a limited harm to the organization.</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>High</td>
-                  <td>The unauthorized disclosure of such information can cause severe harm (e.g. legal or financial liability, adverse competitive impact, loss of brand name).</td>
-                </tr>
-              </tbody>
-            </table>
-            <table class="table table-bordered">
-              <tbody>
-                <tr>
-                  <td colspan="3">
-                    Integrity Requirement Level
-                  </td>
-                </tr>
-                <tr>
-                  <td>Value</td>
-                  <td>Ranking</td>
-                  <td>Guideline/Description</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>Low</td>
-                  <td>There is no impact on business if the accuracy and completeness of data is degraded</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Medium</td>
-                  <td>There is minimal impact on the business if the accuracy and completeness of data is degraded.</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>High</td>
-                  <td>There is severe impact on business if the asset if the accuracy and completeness of data is degraded.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <risk-ranking-matrix :matrix="matrix" />
         </el-tab-pane>
       </el-tabs>
     </div>
   </div>
 </template>
 <script>
+import RiskRankingMatrix from './partials/RiskRankingMatrix.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-  },
-  props: {
-    selectedClient: {
-      type: Object,
-      default: null,
-    },
+    RiskRankingMatrix,
   },
   data() {
     return {
@@ -640,6 +349,16 @@ export default {
       loader: false,
       loading: false,
     }
+  },
+  computed: {
+    selectedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
+  watch: {
+    selectedClient() {
+      this.loadFunctions()
+    },
   },
   created() {
     this.loadFunctions()

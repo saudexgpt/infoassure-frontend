@@ -75,17 +75,11 @@ export default {
   components: {
     CreateRiskCategory,
   },
-  props: {
-    selectedClient: {
-      type: Object,
-      default: null,
-    },
-  },
   data() {
     return {
       categories: [],
       form: { name: '', sub_categories: [] },
-      selectedRiskCategory: null,
+      selectedRiskCategory: { name: '', sub_categories: [] },
       loading: false,
       isEdit: false,
       treeProps: {
@@ -97,13 +91,21 @@ export default {
       filterText: '',
     }
   },
+  computed: {
+    selectedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
   watch: {
+    selectedClient() {
+      this.fetchCategory()
+    },
     filterText(val) {
       this.$refs.tree.filter(val)
     },
   },
   created() {
-    this.fetchCategory()
+    // this.fetchCategory()
   },
   methods: {
     filterNode(value, data) {
@@ -133,8 +135,8 @@ export default {
     },
     createNew() {
       const app = this
-      app.isEdit = false
       app.selectedRiskCategory = app.form
+      app.isEdit = false
     },
     viewDetails(category) {
       if (category.id) {
@@ -157,8 +159,8 @@ export default {
           app.loading = false
         })
         .catch(error => {
-          // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          console.log(error.response)
+          // app.$message.error(error.response.data.error)
           app.loading = false
         })
     },

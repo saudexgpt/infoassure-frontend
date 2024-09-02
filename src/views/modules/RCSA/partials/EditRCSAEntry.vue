@@ -1,5 +1,9 @@
 <template>
   <div>
+    <!-- <div>
+      <a @click="showRCMDetails"><i class="el-icon-view" /> View RCM Details</a>
+      <br><br>
+    </div> -->
     <b-row class="match-height">
       <b-col md="8">
         <app-collapse
@@ -16,22 +20,50 @@
                 <b-form-group
                   label="Key Process"
                 >
-                  <textarea
+                  <input
                     v-model="form.key_process"
                     class="form-control"
-                    @blur="updateField($event, 'key_process', form)"
+                    @blur="updateField($event.target.value, 'key_process', form)"
+                  >
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
+                <b-form-group
+                  label="Risk Description"
+                >
+                  <b-tooltip
+                    target="risk_description"
                   />
+                  <textarea
+                    v-model="form.risk_description"
+                    class="form-control"
+                    @blur="updateField($event.target.value, 'risk_description', form)"
+                  />
+                  <!-- <ckeditor
+                    id="risk_description"
+                    v-model="form.risk_description"
+                    :editor="editor"
+                    :config="editorConfig"
+                    @blur="updateField(form.risk_description, 'risk_description', form)"
+                  /> -->
                 </b-form-group>
               </b-col>
               <b-col md="12">
                 <b-form-group
                   label="Control Activities"
                 >
-                  <textarea
+                  <ckeditor
+                    id="control_activities"
+                    v-model="form.control_activities"
+                    :editor="editor"
+                    :config="editorConfig"
+                    @blur="updateField(form.control_activities, 'control_activities', form)"
+                  />
+                  <!-- <textarea
                     v-model="form.control_activities"
                     class="form-control"
-                    @blur="updateField($event, 'control_activities', form)"
-                  />
+                    @blur="updateField($event.target.value, 'control_activities', form)"
+                  /> -->
                 </b-form-group>
               </b-col>
               <b-col md="12">
@@ -42,7 +74,7 @@
                     id="control_owner"
                     v-model="form.control_owner"
                     class="form-control"
-                    @blur="updateField($event, 'control_owner', form)"
+                    @blur="updateField($event.target.value, 'control_owner', form)"
                   >
                 </b-form-group>
               </b-col>
@@ -54,7 +86,7 @@
                     v-model="form.source"
                     type="text"
                     class="form-control"
-                    @blur="updateField($event, 'source', form)"
+                    @blur="updateField($event.target.value, 'source', form)"
                   >
                 </b-form-group>
               </b-col>
@@ -74,28 +106,12 @@
               </b-col>
               <b-col md="12">
                 <b-form-group
-                  label="Risk Description"
-                >
-                  <b-tooltip
-                    target="risk_description"
-                  />
-                  <ckeditor
-                    id="risk_description"
-                    v-model="form.risk_description"
-                    :editor="editor"
-                    :config="editorConfig"
-                    @blur="updateField($event.target.value, 'risk_description', form)"
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
                   label="Risk Rating"
                 >
                   <select
                     v-model="form.risk_rating"
                     class="form-control"
-                    @change="updateField($event, 'risk_rating', form)"
+                    @change="updateField($event.target.value, 'risk_rating', form)"
                   >
                     <option
                       label="High"
@@ -128,7 +144,7 @@
                     <select
                       v-model="form.self_assessment_control"
                       class="form-control"
-                      @change="updateField($event, 'self_assessment_control', form)"
+                      @change="updateField($event.target.value, 'self_assessment_control', form)"
                     >
                       <option
                         v-for="(control, control_index) in control_assessments"
@@ -163,7 +179,7 @@
                     v-model="form.comment_on_status"
                     :editor="editor"
                     :config="editorConfig"
-                    @blur="updateField($event, 'comment_on_status', form)"
+                    @blur="updateField(form.comment_on_status, 'comment_on_status', form)"
                   />
                 </b-form-group>
               </b-col>
@@ -175,6 +191,14 @@
 
             <b-row>
               <b-col md="12">
+                <b-form-group label="Test Procedure (from RCM)">
+                  <aside>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <span v-html="form.test_procedures" />
+                  </aside>
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
                 <b-form-group
                   label="RM Rating of Control"
                 >
@@ -183,7 +207,7 @@
                     <select
                       v-model="form.rm_rating_of_control"
                       class="form-control"
-                      @change="updateField($event, 'rm_rating_of_control', form)"
+                      @change="updateField($event.target.value, 'rm_rating_of_control', form)"
                     >
                       <option
                         v-for="(control, control_index) in control_assessments"
@@ -218,13 +242,13 @@
                     v-model="form.basis_of_rm_rating"
                     :editor="editor"
                     :config="editorConfig"
-                    @blur="updateField($event, 'basis_of_rm_rating', form)"
+                    @blur="updateField(form.basis_of_rm_rating, 'basis_of_rm_rating', form)"
                   />
                 </b-form-group>
               </b-col>
             </b-row>
           </app-collapse-item>
-          <app-collapse-item
+          <!-- <app-collapse-item
             title="PROCESS LEVEL RISK ASSESSMENT"
           >
 
@@ -261,7 +285,7 @@
                 </b-form-group>
               </b-col>
             </b-row>
-          </app-collapse-item>
+          </app-collapse-item> -->
         </app-collapse>
         <P />
         <el-button
@@ -274,25 +298,44 @@
       <b-col
         md="4"
       >
+        <div
+          v-if="selectedData !== null"
+        >
+          <div
+            style="background: #f7f0da; padding: 10px; border-radius: 5px; border: 2px solid #d2a204; border-radius: 5px;"
+          >
+            <p>
+              <strong>Risk Description:</strong><br>
+              <!-- eslint-disable-next-line vue/no-v-html-->
+              <span v-html="selectedData.risk_description" />
+            </p>
+            <p>
+              <strong>Control Activities:</strong><br>
+              <!-- eslint-disable-next-line vue/no-v-html-->
+              <span v-html="selectedData.control_activities" />
+            </p>
+          </div>
+        </div>
+        <hr>
         <h3>Summary</h3>
         <hr>
-        <strong>Self Assessment of Control</strong>
-        <div :style="`background-color: #${setControlBgColor(form.self_assessment_control)}; padding: 10px;`">
+        <label>Self Assessment of Control</label>
+        <div :style="`background-color: #${setControlBgColor(form.self_assessment_control)}; padding: 10px; border-radius: 5px`">
           {{ form.self_assessment_control }}
         </div>
         <hr>
-        <strong>RM Rating of Control</strong>
-        <div :style="`background-color: #${setControlBgColor(form.rm_rating_of_control)}; padding: 10px;`">
+        <label>RM Rating of Control</label>
+        <div :style="`background-color: #${setControlBgColor(form.rm_rating_of_control)}; padding: 10px; border-radius: 5px`">
           {{ form.rm_rating_of_control }}
         </div>
         <hr>
-        <strong>Self Assessment of Process Level Risk</strong>
-        <div :style="`background-color: #${setRiskBgColor(form.self_assessment_of_process_level_risk)}; padding: 10px;`">
+        <label>Self Assessment of Process Level Risk</label>
+        <div :style="`background-color: #${setRiskBgColor(form.self_assessment_of_process_level_risk)}; padding: 10px; border-radius: 5px`">
           {{ form.self_assessment_of_process_level_risk }}
         </div>
         <hr>
-        <strong>RM Validated Process Level Risk</strong>
-        <div :style="`background-color: #${setRiskBgColor(form.rm_validated_process_level_risk)}; padding: 10px;`">
+        <label>RM Validated Process Level Risk</label>
+        <div :style="`background-color: #${setRiskBgColor(form.rm_validated_process_level_risk)}; padding: 10px; border-radius: 5px`">
           {{ form.rm_validated_process_level_risk }}
         </div>
         <hr>
@@ -332,6 +375,7 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
+      showRCMDetails: false,
       editorConfig: {
         // The configuration of the editor.
       },
@@ -376,10 +420,10 @@ export default {
   },
   methods: {
 
-    updateField(event, field, assessment) {
+    updateField(value, field, assessment) {
       const app = this
       const params = {
-        field, value: event.target.value, client_id: app.form.client_id, business_unit_id: app.form.business_unit_id,
+        field, value, client_id: app.form.client_id, business_unit_id: app.form.business_unit_id,
       }
       const updateResource = new Resource('rcsa/update-fields')
       updateResource.update(assessment.id, params)

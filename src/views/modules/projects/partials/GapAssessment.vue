@@ -166,11 +166,21 @@ export default {
   },
   data() {
     return {
-      showAnalysis: false,
+      showAnalysis: true,
       statistics: [],
       dashboardData: {},
       evidence: '',
     }
+  },
+  watch: {
+    selectedClient() {
+      this.createProjectAnswers()
+      this.createProjectUploads()
+    },
+    selectedProject() {
+      this.createProjectAnswers()
+      this.createProjectUploads()
+    },
   },
   created() {
     this.createProjectAnswers()

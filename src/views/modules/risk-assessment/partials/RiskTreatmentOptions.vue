@@ -7,15 +7,18 @@
       {{ treatment_comment }}
     </el-alert>
 
-    <div v-if="!showTreatmentOption">
+    <div v-if="!showTreatmentOption && selectedData.treatment_option === null">
+      <hr>
       <el-button
         type="success"
+        size="mini"
         @click="setTreatmentQuestions('Accept')"
       >
         Accept
       </el-button>
       <el-button
         type="default"
+        size="mini"
         @click="showTreatmentOption = true"
       >
         I want to explore other options
@@ -56,15 +59,14 @@
           </b-form-group>
         </b-col>
         <b-col>
-          <el-button
+          <b-button
             :loading="loading"
-            type="warning"
-            plain
-            size="mini"
+            variant="outline-primary"
+            size="sm"
             @click="saveTreatmentOptionDetails()"
           >
             Save Response
-          </el-button>
+          </b-button>
         </b-col>
       </b-row>
     </div>
@@ -72,7 +74,7 @@
 </template>
 <script>
 import {
-  BRow, BCol, BFormGroup,
+  BRow, BCol, BFormGroup, BButton,
 } from 'bootstrap-vue'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import Ripple from 'vue-ripple-directive'
@@ -80,7 +82,7 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
-    BRow, BCol, BFormGroup,
+    BRow, BCol, BFormGroup, BButton,
   },
   directives: {
     Ripple,
@@ -90,12 +92,12 @@ export default {
       type: Object,
       required: true,
     },
+    riskScore: {
+      type: Number,
+      default: () => null,
+    },
     riskAppetite: {
       type: Number,
-      required: true,
-    },
-    table: {
-      type: String,
       required: true,
     },
   },
@@ -136,6 +138,12 @@ export default {
       active_treatment_option: '',
     }
   },
+  watch: {
+    riskScore() {
+      this.setSavedTreatmentOption()
+      this.treatRisk()
+    },
+  },
   created() {
     this.setSavedTreatmentOption()
     this.treatRisk()
@@ -148,11 +156,10 @@ export default {
     },
     treatRisk() {
       const app = this
-      const assessment = app.selectedData
-      const riskValue = assessment.risk_score
+      const riskValue = app.riskScore
       const { riskAppetite } = app
       if (riskValue <= riskAppetite) {
-        app.treatment_comment = `Risk Score of ${riskValue} satisfies your Risk Appetite of ${riskAppetite}. You might want to Accept the risk, it's up to you.`
+        app.treatment_comment = `Risk Score of ${riskValue} satisfies your Risk Appetite of ${riskAppetite}. You might want to Accept the risk. It's up to you.`
         app.treatment_alert_type = 'success'
         app.showTreatmentOption = false
       } else {
@@ -179,26 +186,14 @@ export default {
       const params = {
         treatment_option: app.selectedData.treatment_option,
         treatment_option_details: app.treatment_option_details,
-        table: app.table,
 
       }
-      const updateResources = new Resource('save-risk-assessment-treatment-details')
+      const updateResources = new Resource('risk-assessment/save-risk-assessment-treatment-details')
       updateResources.update(app.selectedData.id, params)
         .then(response => {
           app.loading = false
-          app.$message('Saved')
+          app.$message('Option Saved')
           app.$emit('selected', response)
-          // app.form = response.dpia
-        }).catch()
-    },
-    updateField(value, field) {
-      const app = this
-      const params = {
-        field, value,
-      }
-      const updateResources = new Resource('dpia/update')
-      updateResources.update(app.selectedData.id, params)
-        .then(() => {
           // app.form = response.dpia
         }).catch()
     },

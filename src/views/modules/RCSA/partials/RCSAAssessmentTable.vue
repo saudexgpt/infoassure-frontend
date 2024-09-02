@@ -1,7 +1,10 @@
 <template>
   <el-card>
     <el-tabs type="card">
-      <el-tab-pane label="Assessment Details">
+      <el-tab-pane
+        label="Assessment Details"
+        lazy
+      >
         <div v-if="showNewCategoryForm">
           <span class="pull-right">
             <el-button
@@ -30,13 +33,13 @@
             >
               Export
             </el-button>
-            <el-button
+            <!-- <el-button
               type="primary"
 
               @click="showNewCategoryForm = true"
             >
               Create New Category
-            </el-button>
+            </el-button> -->
           </span>
           <div class="table-responsive">
             <p />
@@ -383,7 +386,10 @@
                   >
 
                     <td>{{ report.key_process }}</td>
-                    <td>{{ report.control_activities }}</td>
+                    <td>
+                      <!-- eslint-disable-next-line vue/no-v-html -->
+                      <span v-html="report.control_activities" />
+                    </td>
                     <td>{{ report.control_owner }}</td>
                     <td>
                       {{ report.source }}
@@ -465,7 +471,10 @@
           <br>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="Process Score">
+      <el-tab-pane
+        label="Process Score"
+        lazy
+      >
         <table
           id="ProcessScoreDetails"
           class="table table-bordered"
@@ -587,6 +596,11 @@ export default {
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
+    },
+  },
+  watch: {
+    businessUnitId() {
+      this.fetchRCSA()
     },
   },
   created() {

@@ -1,157 +1,239 @@
 <template>
-  <div>
-    <aside>
-      <el-row :gutter="10">
-        <el-col
-          :xs="24"
-          :sm="8"
-          :md="8"
+  <el-card>
+    <div slot="header">
+      <span
+        class="pull-right"
+      >
+        <b-button
+          variant="outline-secondary"
+          @click="viewType='tabular'"
+        ><i class="el-icon-menu" /> Tabular View</b-button>
+      </span>
+      <h3>Risk and Control Matrix</h3>
+    </div>
+    <el-container style="height: 100%; border: 1px solid #eee">
+      <el-aside
+        v-if="showMenu"
+        v-loading="loading"
+        width="400px"
+        style="background-color: #fcfcfc;"
+      >
+        <el-menu
+          v-if="activatedModules.includes('isms') && (viewOnly === 'isms' || viewOnly === 'all')"
         >
-          <el-select
-            v-model="form.business_unit_id"
-            placeholder="Select Business Unit"
-            style="width: 100%;"
-            filterable
-            @input="fetchRisks()"
-          >
-            <el-option
-              v-for="(business_unit, index) in business_units"
-              :key="index"
-              :value="business_unit.id"
-              :label="business_unit.unit_name"
-            />
-          </el-select>
-        </el-col>
-      </el-row>
-    </aside>
-    <div v-if="form.business_unit_id !== ''">
-      <el-container style="height: 100%; border: 1px solid #eee">
-        <el-aside
-          width="250px"
-          style="background-color: #fcfcfc;"
-        >
-          <div style="text-align: center; background-color: rgb(210, 162, 4); color: #000000; border-top-left-radius: 5px; border-top-right-radius: 5px;">
-            <span>Grouped By Risk Category</span>
-          </div>
-          <!-- <aside>
-            <el-input
-              v-model="filterText"
-              placeholder="Filter keyword"
-              @input="filterNode"
-            />
-          </aside> -->
-          <!-- <el-tree
-            ref="tree"
-            class="filter-tree"
-            :highlight-current="true"
-            :accordion="true"
-            :data="risk_registers"
-            :props="{label: 'risk_id'}"
-            :filter-node-method="filterNode"
-            @node-click="viewDetails"
-          /> -->
-          <el-menu
-            background-color="#fcfcfc"
-            text-color="#00000"
-          >
-            <el-menu-item
-              v-for="(detail, detail_index) in unsubmitted_risk_registers"
-              :key="detail_index"
+          <div style="background: #cccccc; color: #000000; padding: 10px;">
+            Grouped by Assets
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="Create New Asset Risk Library"
+              placement="right"
             >
-              <el-tooltip
-                class="item"
-                effect="dark"
-                :content="detail.vulnerability_description"
-                placement="top-start"
+              <b-button
+                variant="secondary"
+                size="sm"
+                class="pull-right"
+                @click="createNewRiskRegister('isms')"
               >
-                <span
-                  style="color: brown"
-                  @click="viewDetails(detail)"
-                ><i class="el-icon-warning-outline" /> Unsaved Entry</span>
-              </el-tooltip>
-            </el-menu-item>
+                <i class="el-icon-plus" />
+              </b-button>
+            </el-tooltip>
+          </div>
+          <el-submenu
+            v-for="(asset_type, index) in asset_types"
+            :key="index"
+            :index="`${index}`"
+          >
+            <template slot="title">
+              <strong>{{ asset_type.name }}</strong>
+            </template>
+
             <el-submenu
-              v-for="(risk_register, index) in grouped_risk_registers"
-              :key="index"
-              :index="index"
+              v-for="(asset, asset_index) in asset_type.assets"
+              :key="asset_index"
+              :index="`${index}-${asset_index}`"
             >
               <template slot="title">
-                {{ index }}
+                <span style="padding-left: 13px !important;">
+                  {{ asset.name }}
+                </span>
               </template>
               <el-menu-item
-                v-for="(detail, detail_index) in risk_register"
-                :key="detail_index"
-                :index="`${index}-${detail_index}`"
+                v-for="(risk_register, ra_index) in asset.risk_registers"
+                :key="ra_index"
+                :index="`${index}-${asset_index}-${ra_index}`"
+                @click="viewDetails(risk_register)"
               >
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  :content="detail.vulnerability_description"
-                  placement="top-start"
-                >
-                  <span @click="viewDetails(detail)">{{ detail.risk_id }} - {{ detail.vulnerability_description.substring(0,20) }}...</span>
-                </el-tooltip>
+                <div>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="risk_register.vulnerability_description"
+                    placement="right"
+                    :open-delay="500"
+                  >
+                    <small style="padding-left: 13px !important;">{{ risk_register.risk_id }}-{{ risk_register.threat }}</small>
+                  </el-tooltip>
+                </div>
               </el-menu-item>
             </el-submenu>
-          </el-menu>
-        </el-aside>
-
-        <el-container
-          v-loading="loading"
+          </el-submenu>
+        </el-menu>
+        <el-menu
+          v-if="(viewOnly !== 'isms' || viewOnly === 'all') && (activatedModules.includes('rcsa') || activatedModules.includes('bcms') || activatedModules.includes('ndpa'))"
         >
-          <el-header
-            style="text-align: right; font-size: 12px; padding: 10px"
+          <div style="background: #cccccc; color: #000000; padding: 10px;">
+            Grouped by Business Unit/Process
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="Create New Risk Library"
+              placement="right"
+            >
+              <b-button
+                v-if="viewOnly === 'rcsa' || viewOnly === 'bcms' || viewOnly === 'all'"
+                variant="secondary"
+                size="sm"
+                class="pull-right"
+                @click="createNewRiskRegister(module)"
+              >
+                <i class="el-icon-plus" />
+              </b-button>
+            </el-tooltip>
+          </div>
+          <el-submenu
+            v-for="(business_unit, index) in business_units"
+            :key="index"
+            :index="`${index}`"
           >
-            <el-button
-              type="info"
-              plain
-              size="mini"
-              @click="viewType='tabular'"
-            >
-              Tabular View
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="viewType = 'create'"
-            >
-              Create New
-            </el-button>
-          </el-header>
+            <template slot="title">
+              <strong>{{ business_unit.unit_name }}</strong>
+            </template>
 
-          <el-main>
-            <div>
-              <tabular-r-c-m
-                v-if="viewType === 'tabular'"
-                :client-id="clientId"
-                :assessment-module="assessmentModule"
-                :business-unit-id="form.business_unit_id"
-              />
-              <edit-r-c-m
-                v-if="viewType === 'edit'"
-                :client-id="clientId"
-                :business-unit-id="form.business_unit_id"
-                :selected-risk-register="selectedRiskRegister"
-                @done="viewType = 'tabular'; fetchRisks()"
-              />
+            <el-submenu
+              v-for="(business_process, business_process_index) in business_unit.business_processes"
+              :key="business_process_index"
+              :index="`${index}-${business_process_index}`"
+            >
+              <template slot="title">
+                <small style="padding-left: 5px !important;">{{ business_process.generated_process_id }} {{ business_process.name }}</small>
+              </template>
+              <el-menu-item
+                v-for="(risk_register, ra_index) in business_process.risk_registers"
+                :key="ra_index"
+                :index="`${index}-${business_process_index}-${ra_index}`"
+                @click="viewDetails(risk_register)"
+              >
+                <div>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="risk_register.vulnerability_description"
+                    placement="right"
+                    :open-delay="500"
+                  >
+                    <small style="padding-left: 13px !important;">{{ risk_register.risk_id }}-{{ (risk_register.asset_name) ? risk_register.asset_name : risk_register.threat }}</small>
+                  </el-tooltip>
+                </div>
+              </el-menu-item>
+            </el-submenu>
+          </el-submenu>
+        </el-menu>
+      </el-aside>
+
+      <el-container v-loading="loadNew">
+        <h1>
+          <el-tooltip
+            effect="dark"
+            content="Toggle Menu"
+            placement="right"
+          >
+            <a
+              v-if="showMenu"
+              style="cursor: pointer"
+              @click="toggleMenu"
+            ><i class="el-icon-s-fold" /></a>
+            <a
+              v-else
+              style="cursor: pointer"
+              @click="toggleMenu"
+            ><i class="el-icon-s-unfold" /></a>
+          </el-tooltip>
+        </h1>
+        <el-main>
+          <div>
+            <div
+              v-if="viewType === 'welcome'"
+              align="center"
+            >
+              <img
+                src="/images/project-icons/risk_library-large.png"
+                width="200"
+              >
+              <h3>Manage your Risk & Control Matrix</h3>
+              <span
+                align="center"
+              >
+                <p>Use the left navigation to perform your tasks </p>
+              </span>
+            </div>
+            <tabular-r-c-m
+              v-if="viewType === 'tabular'"
+              :client-id="clientId"
+              :assessment-module="module"
+            />
+            <edit-r-c-m
+              v-if="viewType === 'edit'"
+              :client-id="clientId"
+              :selected-risk-register="selectedRiskRegister"
+              @done="viewType = 'tabular'; fetchRisks()"
+            />
+            <div v-if="viewType === 'create'">
+              <div v-if="module !== 'isms'">
+                <label>Select Business Unit</label>
+                <el-select
+                  v-model="form.business_unit_id"
+                  placeholder="Select Business Unit"
+                  style="width: 100%;"
+                  filterable
+                  @input="fetchRisks()"
+                >
+                  <el-option
+                    v-for="(business_unit, index) in business_units"
+                    :key="index"
+                    :value="business_unit.id"
+                    :label="business_unit.unit_name"
+                  />
+                </el-select>
+                <p />
+                <create-r-c-m
+                  v-if="form.business_unit_id !== null"
+                  :client-id="clientId"
+                  :business-unit-id="form.business_unit_id"
+                  :module="module"
+                  @submitted="loadData"
+                />
+              </div>
               <create-r-c-m
-                v-if="viewType === 'create'"
+                v-else
                 :client-id="clientId"
                 :business-unit-id="form.business_unit_id"
+                :module="module"
+                @submitted="loadData"
               />
             </div>
-          </el-main>
-        </el-container>
+
+          </div>
+        </el-main>
       </el-container>
-    </div>
-  </div>
+    </el-container>
+  </el-card>
 </template>
 
 <script>
-// import {
-//   BButton,
-// } from 'bootstrap-vue'
+import {
+  BButton,
+} from 'bootstrap-vue'
 // import { VueGoodTable } from 'vue-good-table'
 import TableToExcel from '@linways/table-to-excel'
 import Ripple from 'vue-ripple-directive'
@@ -163,6 +245,7 @@ import checkPermission from '@/utils/permission'
 
 export default {
   components: {
+    BButton,
     CreateRCM,
     EditRCM,
     TabularRCM,
@@ -171,22 +254,21 @@ export default {
     Ripple,
   },
   props: {
-    clientId: {
-      type: Number,
-      default: null,
-    },
-    assessmentModule: {
+    module: {
       type: String,
-      default: () => { 'ra' },
+      default: () => 'isms',
+    },
+    viewOnly: {
+      type: String,
+      default: () => 'all',
     },
   },
   data() {
     return {
-      viewType: 'tabular',
+      viewType: 'welcome',
       loading: false,
+      loadNew: false,
       downloading: false,
-      control_frequencies: ['Per Transaction', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Biannually', 'Annually', 'N/A', 'Per Merchant', 'Per Terminal Request'],
-      risk_types: [],
       risk_registers: [],
       grouped_risk_registers: {},
       unsubmitted_risk_registers: {},
@@ -197,26 +279,62 @@ export default {
       selectedClient: null,
       showAssignModal: false,
       showAssignConsultantModal: false,
+      showMenu: true,
       form: {
         client_id: '',
-        business_unit_id: '',
+        business_unit_id: null,
       },
-      selectedRisk: null,
+      ndpa_risk_registers: null,
       filterText: '',
+      asset_types: [],
+      activatedModules: [],
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
+    clientId() {
+      return this.$store.getters.selectedClient.id
+    },
+    clientActivatedProjects() {
+      return this.$store.getters.clientActivatedProjects
+    },
+  },
+  watch: {
+    clientId() {
+      this.loadData()
+    },
+    filterText(val) {
+      this.$refs.tree.filter(val)
+    },
   },
   created() {
-    this.form.client_id = this.clientId
-    this.fetchRiskCategories()
-    this.fetchBusinessUnits()
+    this.loadData()
   },
   methods: {
     checkPermission,
+    loadData() {
+      const app = this
+      app.form.client_id = app.clientId
+      app.setModuleSlug()
+      app.fetchBusinessUnits()
+      app.fetchAssetTypes()
+    },
+    setModuleSlug() {
+      const app = this
+      const moduleSlug = []
+      app.clientActivatedProjects.forEach(project => {
+        if (project.available_module) {
+          moduleSlug.push(project.available_module.slug)
+        }
+      })
+      app.activatedModules = moduleSlug
+    },
+    toggleMenu() {
+      const app = this
+      app.showMenu = !app.showMenu
+    },
     filterNode(value) {
       if (!value) return true
       const data = this.grouped_risk_registers
@@ -225,6 +343,16 @@ export default {
       const dataLowercase = data.vulnerability_description.toLowerCase()
       return dataLowercase.indexOf(valLowercase) !== -1
     },
+    createNewRiskRegister(module) {
+      const app = this
+      app.module = module
+      app.form.business_unit_id = null
+      if (app.module === 'isms') {
+        app.form.business_unit_id = 0
+        app.fetchRisks()
+      }
+      app.viewType = 'create'
+    },
     viewDetails(riskRegister) {
       // if (riskRegister.id) {
       const app = this
@@ -232,44 +360,46 @@ export default {
       setTimeout(() => {
         app.selectedRiskRegister = riskRegister
         app.viewType = 'edit'
-      }, 100)
+      }, 10)
 
       // }
     },
-    fetchRiskCategories() {
+    fetchAssetTypes() {
       const app = this
-      const fetchEntryResource = new Resource('risk-assessment/fetch-categories')
-      fetchEntryResource.list({ client_id: app.form.client_id })
+      app.loading = true
+      const param = { client_id: app.clientId }
+      const fetchAssetResource = new Resource('risk-assessment/fetch-asset-types-with-risk-registers')
+      fetchAssetResource.list(param)
         .then(response => {
-          app.risk_types = response.categories
+          app.asset_types = response.asset_types
           app.loading = false
         })
         .catch(error => {
+          app.loading = false
           // console.log(error.response)
           app.$message.error(error.response.data.error)
-          app.loading = false
         })
     },
     fetchBusinessUnits() {
       const app = this
       app.form.business_unit_id = ''
-      const fetchCriteriaResource = new Resource('business-units/fetch-business-units')
-      fetchCriteriaResource.list({ client_id: app.form.client_id })
+      const fetchCriteriaResource = new Resource('fetch-business-units-with-risk-registers')
+      fetchCriteriaResource.list({ client_id: app.clientId })
         .then(response => {
           app.business_units = response.business_units
+          app.loading = false
         }).catch(() => { app.loading = false })
     },
     fetchRisks() {
       const app = this
-      app.loading = true
       const fetchRisksResource = new Resource('fetch-risk-registers')
       fetchRisksResource.list({ client_id: app.form.client_id, business_unit_id: app.form.business_unit_id })
         .then(response => {
           app.risk_registers = response.risk_registers
           app.grouped_risk_registers = response.grouped_risk_registers
           app.unsubmitted_risk_registers = response.unsubmitted_risk_registers
-          app.loading = false
-        }).catch(() => { app.loading = false })
+          app.loadNew = false
+        }).catch(() => { app.loadNew = false })
     },
     exportToExcel(id) {
       const app = this

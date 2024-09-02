@@ -24,7 +24,7 @@
         </el-col>
       </el-row>
     </aside> -->
-    <div v-if="form.business_unit_id !== ''">
+    <div>
       <el-button
         type="primary"
         @click="exportToExcel('RCMReport')"
@@ -33,6 +33,7 @@
       </el-button>
       <p />
       <div class="table-responsive">
+        <h3>Risk and Control Matrix for {{ assessmentModule.toUpperCase() }}</h3>
         <table
           id="RCMReport"
           v-loading="loading"
@@ -75,37 +76,62 @@
                   </div>
                 </th>
               </template>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  PROCESS ID
-                </div>
-              </th>
-              <th
+              <template v-if="assessmentModule !== 'isms'">
+                <th
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                >
+                  <div style="width: 50px">
+                    PROCESS ID
+                  </div>
+                </th>
+                <th
 
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 150px">
-                  DEPARTMENT/BUSINESS UNIT
-                </div>
-              </th>
-              <th
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  PROCESS
-                </div>
-              </th>
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                >
+                  <div style="width: 150px">
+                    DEPARTMENT/BUSINESS UNIT
+                  </div>
+                </th>
+                <th
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                >
+                  <div style="width: 250px">
+                    PROCESS
+                  </div>
+                </th>
+              </template>
+              <template v-if="assessmentModule === 'isms' || assessmentModule === 'ndpa'">
+                <th
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                >
+                  <div style="width: 250px">
+                    Asset Type
+                  </div>
+                </th>
+                <th
+
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                >
+                  <div style="width: 150px">
+                    Asset
+                  </div>
+                </th>
+              </template>
               <th
 
                 data-fill-color="333333"
@@ -117,28 +143,31 @@
                   RISK NO.
                 </div>
               </th>
-              <th
+              <template v-if="assessmentModule === 'rcsa'">
 
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  RISK CATEGORY
-                </div>
-              </th>
-              <th
+                <th
 
-                data-fill-color="333333"
-                data-f-color="ffffff"
-                style="font-size: 14px;"
-                data-f-sz="14"
-              >
-                <div style="width: 250px">
-                  RISK SUB-CATEGORY
-                </div>
-              </th>
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                >
+                  <div style="width: 250px">
+                    RISK CATEGORY
+                  </div>
+                </th>
+                <th
+
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
+                  style="font-size: 14px;"
+                  data-f-sz="14"
+                >
+                  <div style="width: 250px">
+                    RISK SUB-CATEGORY
+                  </div>
+                </th>
+              </template>
               <th
 
                 data-fill-color="333333"
@@ -161,7 +190,7 @@
                   RISK DESCRIPTION
                 </div>
               </th>
-              <th
+              <!-- <th
 
                 data-fill-color="333333"
                 data-f-color="ffffff"
@@ -171,7 +200,7 @@
                 <div style="width: 250px">
                   IMPACT/OUTCOME
                 </div>
-              </th>
+              </th> -->
               <th
                 data-fill-color="333333"
                 data-f-color="ffffff"
@@ -387,276 +416,6 @@
               </th>
             </tr>
           </thead>
-          <!-- <tbody v-if="!downloading">
-            <template
-              v-for="(report, index) in risk_registers"
-            >
-
-              <tr :key="index">
-                <template v-if="assessmentModule === 'rcsa'">
-                  <td>
-                    {{ (report.teams.split(',').length > 0) ? report.teams.split(',')[0] : '' }}
-                  </td>
-                  <td>
-                    {{ (report.teams.split(',').length > 1) ? report.teams.split(',')[1] : '' }}
-                  </td>
-                  <td>
-                    {{ (report.teams.split(',').length > 2) ? report.teams.split(',')[2] : '' }}
-                  </td>
-                </template>
-                <td>
-                  {{ report.generated_process_id }}
-                </td>
-                <td>
-                  {{ report.business_unit }}
-                </td>
-                <td>{{ report.business_process }}</td>
-                <td>{{ report.risk_id }}</td>
-                <td>
-                  {{ report.type }}
-                </td>
-                <td>
-                  {{ report.sub_type }}
-                </td>
-                <td>
-                  <input
-                    v-model="report.risk_owner"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'risk_owner', report)"
-                  >
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.vulnerability_description"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'vulnerability_description', report)"
-                  />
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.outcome"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'outcome', report)"
-                  />
-                </td>
-                <td>{{ report.control_no }}</td>
-                <td>
-                  <select
-                    v-model="report.control_location"
-                    class="form-control"
-                    @change="updateField($event, 'control_location', report)"
-                  >
-                    <option
-                      label="Business Unit"
-                      value="Business Unit"
-                    />
-                    <option
-                      label="Centralised"
-                      value="Centralised"
-                    />
-                    <option
-                      label="N/A"
-                      value="N/A"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.control_description"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'control_description', report)"
-                  />
-                </td>
-                <td>
-                  <input
-                    v-model="report.control_owner"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'control_owner', report)"
-                  >
-                </td>
-                <td>
-                  <select
-                    v-model="report.control_frequency"
-                    class="form-control"
-                    @change="updateField($event, 'control_frequency', report)"
-                  >
-                    <option
-                      v-for="(frequency, freg_index) in control_frequencies"
-                      :key="freg_index"
-                      :value="frequency"
-                      :label="frequency"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <select
-                    v-model="report.control_type"
-                    placeholder="Select Type"
-                    class="form-control"
-                    @change="updateField($event, 'control_type', report)"
-                  >
-                    <option
-                      label="Preventive"
-                      value="Preventive"
-                    />
-                    <option
-                      label="Detective"
-                      value="Detective"
-                    />
-                    <option
-                      label="N/A"
-                      value="N/A"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <select
-                    v-model="report.nature_of_control"
-                    class="form-control"
-                    @change="updateField($event, 'nature_of_control', report)"
-                  >
-                    <option
-                      label="Automated"
-                      value="Automated"
-                    />
-                    <option
-                      label="Hybrid"
-                      value="Hybrid"
-                    />
-                    <option
-                      label="Manual"
-                      value="Manual"
-                    />
-                    <option
-                      label="N/A"
-                      value="N/A"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <input
-                    v-model="report.application_used_for_control"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'application_used_for_control', report)"
-                  >
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.compensating_control"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'compensating_control', report)"
-                  />
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.test_procedures"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'test_procedures', report)"
-                  />
-                </td>
-                <td>
-                  <input
-                    v-model="report.sample_size"
-                    type="number"
-                    min="1"
-                    @blur="updateField($event, 'sample_size', report)"
-                  >
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.data_required"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'data_required', report)"
-                  />
-                </td>
-                <td>
-                  <a
-                    :href="baseServerUrl+'storage/'+report.link_to_evidence"
-                    target="_blank"
-                    style="color: #409EFF;"
-                  >Click link to evidence</a></td>
-                <td>
-                  <select
-                    v-model="report.test_conclusion"
-                    placeholder="Select"
-                    class="form-control"
-                    @change="updateField($event, 'test_conclusion', report)"
-                  >
-                    <option
-                      label="Adequate"
-                      value="Adequate"
-                    />
-                    <option
-                      label="Inadequate"
-                      value="Inadequate"
-                    />
-                    <option
-                      label="Sub-optimal"
-                      value="Sub-optimal"
-                    />
-                  </select>
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.gap_description"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'gap_description', report)"
-                  />
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.tod_improvement_opportunity"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'tod_improvement_opportunity', report)"
-                  />
-                </td>
-                <td>
-                  <textarea
-                    v-model="report.recommendation"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'recommendation', report)"
-                  />
-                </td>
-                <td>
-                  <input
-                    v-model="report.responsibility"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'responsibility', report)"
-                  >
-                </td>
-                <td>
-                  <input
-                    v-model="report.timeline"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'timeline', report)"
-                  >
-                </td>
-                <td>
-                  <input
-                    v-model="report.tod_gap_status"
-                    type="text"
-                    class="form-control"
-                    @blur="updateField($event, 'tod_gap_status', report)"
-                  >
-                </td>
-              </tr>
-            </template>
-
-          </tbody> -->
           <tbody>
             <template
               v-for="(report, index) in risk_registers"
@@ -674,32 +433,45 @@
                     {{ report.sub_unit }}
                   </td>
                 </template>
-                <td>
-                  {{ report.generated_process_id }}
-                </td>
-                <td>
-                  {{ report.business_unit }}
-                </td>
-                <td>{{ report.business_process }}</td>
+                <template v-if="assessmentModule !== 'isms'">
+                  <td>
+                    {{ report.generated_process_id }}
+                  </td>
+                  <td>
+                    {{ report.business_unit }}
+                  </td>
+                  <td>{{ report.business_process }}</td>
+                </template>
+                <template v-if="assessmentModule === 'isms' || assessmentModule === 'ndpa'">
+                  <td>
+                    {{ report.asset_type_name }}
+                  </td>
+                  <td>
+                    {{ report.asset_name }}
+                  </td>
+                </template>
                 <td>{{ report.risk_id }}</td>
-                <td>{{ report.type }}</td>
-                <td>{{ report.sub_type }}</td>
+                <template v-if="assessmentModule === 'rcsa'">
+                  <td>{{ report.type }}</td>
+                  <td>{{ report.sub_type }}</td>
+                </template>
                 <td>
                   {{ report.risk_owner }}
                 </td>
                 <td>
-                  {{ report.vulnerability_description }}
-                </td>
-                <td>
                   <!-- eslint-disable-next-line vue/no-v-html-->
-                  <span v-html="report.outcome" />
+                  <span v-html="report.vulnerability_description" />
                 </td>
+                <!-- <td>
+                  <span v-html="report.outcome" />
+                </td> -->
                 <td>{{ report.control_no }}</td>
                 <td>
                   {{ report.control_location }}
                 </td>
                 <td>
-                  {{ report.control_description }}
+                  <!-- eslint-disable-next-line vue/no-v-html-->
+                  <span v-html="report.control_description" />
                 </td>
                 <td>
                   {{ report.control_owner }}
@@ -787,13 +559,13 @@ export default {
       type: Number,
       default: null,
     },
-    businessUnitId: {
-      type: Number,
-      default: null,
-    },
+    // businessUnitId: {
+    //   type: Number,
+    //   default: null,
+    // },
     assessmentModule: {
       type: String,
-      default: () => { 'ra' },
+      default: () => null,
     },
   },
   data() {
@@ -862,8 +634,8 @@ export default {
     fetchRisks() {
       const app = this
       app.loading = true
-      const fetchRisksResource = new Resource('fetch-risk-registers')
-      fetchRisksResource.list({ client_id: app.form.client_id, business_unit_id: app.form.business_unit_id })
+      const fetchRisksResource = new Resource('fetch-module-risk-registers')
+      fetchRisksResource.list({ client_id: app.form.client_id, module: app.assessmentModule })
         .then(response => {
           app.risk_registers = response.risk_registers
           app.loading = false

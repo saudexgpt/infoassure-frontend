@@ -11,7 +11,7 @@
           <span class="pull-right">
             <b-button
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="gradient-success"
+              variant="gradient-primary"
               @click="isCreateActive = true"
             >
               <feather-icon
@@ -27,27 +27,6 @@
 
     <aside>
       <el-row :gutter="10">
-        <el-col
-          :xs="24"
-          :sm="8"
-          :md="8"
-        >
-          <el-select
-            v-model="selectedClient"
-            value-key="id"
-            placeholder="Select Client"
-            style="width: 100%;"
-            filterable
-            @input="fetchBusinessUnits()"
-          >
-            <el-option
-              v-for="(client, index) in clients"
-              :key="index"
-              :value="client"
-              :label="client.name"
-            />
-          </el-select>
-        </el-col>
         <el-col
           :xs="24"
           :sm="8"
@@ -122,13 +101,14 @@
     <create-other-user
       v-if="isCreateActive"
       v-model="isCreateActive"
-      :clients="clients"
+      :selected-client="selectedClient"
+      :business-units="business_units"
       @save="fetchOtherUsers"
     />
     <edit-other-user
       v-if="isEditActive"
       v-model="isEditActive"
-      :clients="clients"
+      :business-units="business_units"
       :selected-user="selectedUser"
       @update="fetchOtherUsers"
     />
@@ -163,7 +143,6 @@ export default {
       pageLength: 10,
       dir: false,
       users: [],
-      clients: [],
       business_units: [],
       business_unit_id: '',
       selectedBusinessUnit: null,
@@ -174,23 +153,30 @@ export default {
       loadCode: false,
     }
   },
+  computed: {
+    clients() {
+      return this.$store.getters.clients
+    },
+    storedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
+  watch: {
+    storedClient() {
+      this.selectedClient = this.storedClient
+      this.fetchBusinessUnits()
+    },
+  },
   created() {
     this.fetchClients()
+    this.selectedClient = this.storedClient
+    this.fetchBusinessUnits()
   },
   methods: {
     checkPermission,
     fetchClients() {
       const app = this
-      const fetchClientsResource = new Resource('clients')
-      fetchClientsResource.list({ option: 'all' })
-        .then(response => {
-          app.clients = response.clients
-          if (app.clients.length === 1) {
-            // eslint-disable-next-line prefer-destructuring
-            app.selectedClient = app.clients[0]
-            app.fetchBusinessUnits()
-          }
-        })
+      app.$store.dispatch('clients/fetchClients')
     },
     fetchBusinessUnits() {
       const app = this

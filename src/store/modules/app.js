@@ -33,5 +33,6 @@ export default {
       state.shallShowOverlay = val !== undefined ? val : !state.shallShowOverlay
     },
   },
-  actions: {},
+  actions: {
+  },
 }

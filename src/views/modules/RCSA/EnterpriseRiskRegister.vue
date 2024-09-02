@@ -119,27 +119,27 @@
                     </td>
                     <td>
                       <div style="width: 250px">
-                        {{ assessment.outcome }}
+                        <!-- eslint-disable-next-line vue/no-v-html -->
+                        <span v-html="(assessment.revised_impact_rationale) ? assessment.revised_impact_rationale : assessment.impact_rationale" />
                       </div>
                     </td>
                     <td>
 
-                      {{ assessment.revised_impact_of_occurence }}
+                      {{ (assessment.revised_impact_of_occurence) ? assessment.revised_impact_of_occurence : assessment.impact_of_occurence }}
 
                     </td>
                     <td>
                       <div style="width: 300px">
-                        {{ assessment.recommended_control }}
+                        <!-- eslint-disable-next-line vue/no-v-html -->
+                        <span v-html="assessment.recommended_control" />
                       </div>
                     </td>
                     <td>
-
-                      {{ assessment.revised_likelihood_of_occurence }}
+                      {{ (assessment.revised_likelihood_of_occurence) ? assessment.revised_likelihood_of_occurence : assessment.likelihood_of_occurence }}
 
                     </td>
-                    <td>
-
-                      {{ assessment.revised_overall_risk_rating }}
+                    <td :style="`background: #${(assessment.revised_risk_level_color) ? assessment.revised_risk_level_color : assessment.risk_level_color}`">
+                      {{ (assessment.revised_risk_level) ? assessment.revised_risk_level : assessment.risk_level }}
 
                     </td>
                     <td>
@@ -210,10 +210,6 @@ export default {
     Ripple,
   },
   props: {
-    selectedClient: {
-      type: Object,
-      default: () => ({}),
-    },
     assessmentModule: {
       type: String,
       default: () => ('rcsa'),
@@ -244,6 +240,19 @@ export default {
       columnChartData: [],
       pieChartData: [],
     }
+  },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
+    selectedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
+  watch: {
+    selectedClient() {
+      this.fetchRiskAssessments()
+    },
   },
   created() {
     this.fetchRiskAssessments()

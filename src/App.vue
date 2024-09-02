@@ -48,8 +48,21 @@ export default {
     contentLayoutType() {
       return this.$store.state.appConfig.layout.type
     },
+    selectedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
+  watch: {
+    selectedClient() {
+      this.$store.dispatch('navItems/fetchActivatedModules', this.selectedClient).then(() => {
+        // update the navigation link
+        this.$store.dispatch('navItems/setNavItems')
+      })
+    },
   },
   beforeCreate() {
+    // We need to fetch all modules navigations from Vuex storage
+    this.$store.dispatch('navItems/setNavItems')
     // Set colors in theme
     const colors = ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark']
 

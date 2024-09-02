@@ -1,0 +1,260 @@
+<template>
+  <div
+    style="min-height: 200px"
+  >
+    <el-row :gutter="10">
+      <el-col
+        :xs="24"
+        :sm="12"
+        :md="12"
+      >
+        <aside>
+          <el-select
+            v-model="business_unit_id"
+            placeholder="Select Business Unit"
+            style="width: 100%;"
+            filterable
+            @input="fetchReportSummary()"
+          >
+            <el-option
+              v-for="(business_unit, index) in business_units"
+              :key="index"
+              :value="business_unit.id"
+              :label="business_unit.unit_name"
+            />
+          </el-select>
+        </aside>
+      </el-col>
+    </el-row>
+    <b-row
+      v-if="business_unit_id !== null"
+      v-loading="loading"
+      class="match-height"
+    >
+      <b-col lg="8">
+        <aside>
+          <highcharts
+            :options="chart_report"
+          />
+        </aside>
+      </b-col>
+      <b-col lg="4">
+        <aside>
+          <highcharts
+            :options="riskSeverityChart"
+          />
+        </aside>
+      </b-col>
+    </b-row>
+  </div>
+</template>
+<script>
+import {
+  BRow, BCol,
+} from 'bootstrap-vue'
+import Resource from '@/api/resource'
+
+export default {
+  components: {
+    BRow,
+    BCol,
+  },
+  props: {
+    selectedClient: {
+      type: Object,
+      default: () => (null),
+    },
+  },
+  data() {
+    return {
+      loading: false,
+      chart_report: {
+        chart: {
+          // type: 'column',
+          inverted: false,
+          options3d: {
+            enabled: false,
+            alpha: 0,
+            beta: 0,
+            depth: 100,
+            viewDistance: 25,
+          },
+          events: {
+            drilldown(e) {
+              this.setTitle({ text: e.point.name }, { text: 'Data Showing Time-Bound Disruption for each Impact Area' })
+            },
+            drillup() {
+              this.setTitle({ text: 'BIA Data Analysis for each Business Process' }, { text: 'Drilldown to view Time-Bound Disruption to Process' })
+            },
+          },
+        },
+        title: {
+          text: 'BIA Data Analysis for each Business Process',
+        },
+        subtitle: {
+          text: 'Drilldown to view Time-Bound Disruption to Process',
+        },
+        accessibility: {
+          announceNewData: {
+            enabled: true,
+          },
+        },
+        xAxis: {
+          type: 'category', // categories: [],
+          labels: {
+            skew3d: false,
+            style: {
+              fontSize: '14px',
+            },
+          },
+          title: {
+            text: 'Business Process',
+          },
+          scrollbar: {
+            enabled: true,
+          },
+        },
+        yAxis: {
+          min: 0,
+          max: 5,
+          tickInterval: 1,
+          title: {
+            text: 'Impact Level',
+          },
+        },
+        plotOptions: {
+        //   column: {
+        //     pointPadding: 0.2,
+        //     borderWidth: 0,
+        //   },
+          series: {
+            dataLabels: {
+              enabled: false,
+              // rotation: 180,
+            },
+            // borderRadius: 7,
+          },
+        },
+        series: [],
+        drilldown: {
+          allowPointDrilldown: true,
+          series: [],
+        },
+
+        // colors: ['#063', '#910000'],
+        credits: {
+          enabled: false,
+        },
+      },
+      riskSeverityChart: {
+        chart: {
+          type: 'pie',
+          options3d: {
+            enabled: false,
+            alpha: 10,
+            beta: 0,
+          },
+        },
+        title: {
+          text: 'Priority Count',
+          align: 'center',
+        },
+        subtitle: {
+          text: '',
+        },
+        tooltip: {
+          pointFormat: '{series.name}:<b>{point.y}</b><br>{point.percentage:.1f}%',
+          // pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
+        },
+        accessibility: {
+          announceNewData: {
+            enabled: true,
+          },
+          point: {
+            // valueSuffix: '%',
+          },
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            depth: 50,
+            // innerSize: 100, // what makes it donut
+            dataLabels: {
+              enabled: false,
+              // format: '<b>{point.name}:</b> {point.y}<br>{point.percentage:.1f} %',
+              // format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+            },
+            showInLegend: true,
+          },
+        },
+        series: [],
+        credits: {
+          enabled: false,
+        },
+      },
+      risk_level: '',
+      risk_score: 0,
+      showChart: false,
+      matrix: '3x3',
+      business_units: [],
+      business_unit_id: null,
+    }
+  },
+  watch: {
+    selectedClient() {
+      this.business_unit_id = null
+      this.fetchBusinessUnits()
+    },
+  },
+  mounted() {
+    if (this.selectedClient.id !== null) {
+      this.fetchBusinessUnits()
+    }
+  },
+  methods: {
+    fetchBusinessUnits() {
+      const app = this
+      app.business_unit_id = null
+      const fetchBUResource = new Resource('business-units/fetch-business-units')
+      fetchBUResource.list({ client_id: app.selectedClient.id })
+        .then(response => {
+          app.business_units = response.business_units
+          if (app.business_units.length > 0) {
+            app.business_unit_id = app.business_units[0].id
+            app.fetchReportSummary()
+          }
+        }).catch(() => { app.loading = false })
+    },
+    changeImpactImage(str) {
+      if (str) {
+        return `images/project-icons/${str.toLowerCase()}-impact-level.png`
+      }
+      return 'images/project-icons/no-impact-level.png'
+    },
+    fetchReportSummary() {
+      const app = this
+      app.loading = true
+      app.showChart = false
+      const param = { client_id: app.selectedClient.id, business_unit_id: app.business_unit_id }
+      const fetchConsultingsResource = new Resource('reports/bia-data-analysis')
+      fetchConsultingsResource.list(param)
+        .then(response => {
+          app.matrix = response.matrix
+          app.chart_report.series = response.series
+          app.chart_report.drilldown.series = response.drilldown_series
+          // app.chart_report.xAxis.categories = response.categories
+          // app.chart_report.subtitle.text = response.subtitle
+          //  app.chart_report.title.text = response.title
+
+          app.risk_level = response.risk_level
+          app.risk_score = response.risk_score
+          app.riskSeverityChart.series = response.pie_chart_series
+          app.loading = false
+          app.showChart = true
+        }).catch()
+    },
+  },
+
+}
+</script>

@@ -7,4 +7,12 @@ export default [
     //   roles: ['super'],
     // },
   },
+  {
+    path: '/risk-management-setup',
+    name: 'risk-management-setup',
+    component: () => import('@/views/modules/RiskAndThreats/index.vue'),
+    // meta: {
+    //   except: ['client'],
+    // },
+  },
 ]

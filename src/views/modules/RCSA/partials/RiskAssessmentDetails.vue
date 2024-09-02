@@ -3,6 +3,18 @@
     <div slot="header">
       <span>
         <el-button
+          :loading="downloading"
+          type="primary"
+
+          @click="exportTableToExcel('riskAssessmentTable', 'KRIAssessmentTable')"
+        >
+          <feather-icon
+            icon="DownloadIcon"
+            class="mr-50"
+          />
+          <span class="align-middle">Export</span>
+        </el-button>
+        <!-- <el-button
           size="mini"
           type="success"
 
@@ -13,474 +25,408 @@
             class="mr-50"
           />
           <span class="align-middle">Create</span>
-        </el-button>
+        </el-button> -->
       </span>
-      <!-- CREATE NEW RISK ASSESSMENT-->
-      <create-risk-assessment
+      <!-- <create-risk-assessment
         v-if="isCreateSidebarActive"
         v-model="isCreateSidebarActive"
         :standard-id="standardId"
         :selected-client="selectedClient"
         :assessment-module="assessmentModule"
         @submit="fetchRiskAssessments"
-      />
+      /> -->
     </div>
     <p />
     <div
       v-if="riskAssessments.length > 0"
       class="table-responsive"
     >
-      <table
-        id="riskAssessmentTable"
-        class="table table-bordered table-striped"
+      <b-tabs
+        content-class="mt-1"
       >
-        <thead>
-          <tr>
-            <th
+        <b-tab
+          lazy
+        >
+          <template #title>
+            <feather-icon icon="ListIcon" />
+            <span>Process Level Risk Universe</span>
+          </template>
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Business Unit</th>
-            <th
+          <table
+            id="riskAssessmentTable"
+            class="table table-bordered table-striped"
+          >
+            <thead>
+              <tr>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Business Process</th>
-            <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Business Unit</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >RISK ID</th>
-            <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Business Process</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >RISK TYPE</th>
-            <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >RISK ID</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >RISK DESCRIPTION</th>
-            <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >RISK TYPE</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Impact/Outcome</th>
-            <th
-              v-for="impact_data in riskAssessments[0].impact_data"
-              :key="`${impact_data.slug}_pre`"
-              div
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >RISK DESCRIPTION</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            > {{ impact_data.name }}</th>
-            <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Impact/Outcome</th>
+                <th
+                  v-for="impact_data in riskAssessments[0].impact_data"
+                  :key="`${impact_data.slug}_pre`"
+                  div
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Impact of Occurence</th>
-            <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                > {{ impact_data.name }}</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Likelihood of Occurence</th>
-            <!-- <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Impact of Occurence</th>
+                <th
+
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Likelihood of Occurence</th>
+                <!-- <th
 
               data-fill-color="333333"
               data-b-a-s="thin" data-f-color="ffffff"
             >Impact Rationale</th> -->
-            <th
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Overall Rating</th>
-            <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Overall Rating</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Inherent Risk Rating</th>
-            <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Inherent Risk Rating</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Control/Mitigating Actions</th>
-            <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Control/Mitigating Actions</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Control Effectiveness Level</th>
-            <th
-              v-for="impact_data in riskAssessments[0].revised_impact_data"
-              :key="`${impact_data.slug}_post`"
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Control Effectiveness Level</th>
+                <th
+                  v-for="impact_data in riskAssessments[0].revised_impact_data"
+                  :key="`${impact_data.slug}_post`"
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            > {{ impact_data.name }}</th>
-            <th
-              data-fill-color="45058d"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Impact of Occurence</th>
-            <th
-              data-fill-color="45058d"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Likelihood of Occurence</th>
-            <!-- <th
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                > {{ impact_data.name }}</th>
+                <th
+                  data-fill-color="45058d"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Impact of Occurence</th>
+                <th
+                  data-fill-color="45058d"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Likelihood of Occurence</th>
+                <!-- <th
 
               data-fill-color="333333"
               data-b-a-s="thin" data-f-color="ffffff"
             >Impact Rationale</th> -->
-            <th
-              data-fill-color="45058d"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Overall Rating</th>
-            <th
-              data-fill-color="45058d"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Residual Risk Rating</th>
-            <th
+                <th
+                  data-fill-color="45058d"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Overall Rating</th>
+                <th
+                  data-fill-color="45058d"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Residual Risk Rating</th>
+                <th
 
-              data-fill-color="333333"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Primary Risk Owners</th>
-            <th
-              data-fill-color="46035a"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >Key Risk Indicator</th>
-          </tr>
-        </thead>
-        <tbody v-if="!downloading">
-          <tr
-            v-for="(assessment, index) in riskAssessments"
-            :key="index"
+                  data-fill-color="333333"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Primary Risk Owners</th>
+                <th
+                  data-fill-color="46035a"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >Key Risk Indicator</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(assessment, index) in riskAssessments"
+                :key="index"
+              >
+                <td>
+                  <div style="width: 250px">
+                    {{ assessment.business_unit }}
+                  </div>
+                </td>
+                <td>
+                  <div style="width: 250px">
+                    {{ assessment.business_process }}
+                  </div>
+                </td>
+                <td>{{ assessment.risk_id }}</td>
+                <td>{{ assessment.type }}</td>
+                <td>
+                  <div style="width: 300px">
+                    {{ assessment.vulnerability_description }}
+                  </div>
+                </td>
+                <td>
+                  <div style="width: 300px">
+                    <!-- eslint-disable-next-line vue/no-v-html-->
+                    <span v-html="assessment.outcome" />
+                  </div>
+                </td>
+                <td
+                  v-for="(impact_data, impact_data_index) in assessment.impact_data"
+                  :key="impact_data_index"
+                >
+
+                  {{ formatImpactValue(impact_data.impact_value) }}
+
+                </td>
+                <td>
+
+                  {{ assessment.impact_of_occurence }}
+
+                </td>
+                <td>
+
+                  {{ assessment.likelihood_of_occurence }}
+
+                </td>
+                <td>
+
+                  {{ assessment.overall_risk_rating }}
+
+                </td>
+                <td
+                  :style="`background: #${assessment.level_color}`"
+                  :data-fill-color="assessment.level_color"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >
+                  {{ assessment.risk_category }}
+                </td>
+                <td>
+                  <div style="width: 300px">
+
+                    <!--eslint-disable-next-line vue/no-v-html -->
+                    <span v-html="assessment.recommended_control" />
+                  </div>
+                </td>
+                <td>
+                  {{ assessment.control_effectiveness_level }}
+
+                </td>
+                <td
+                  v-for="(impact_data, revised_impact_data_index) in assessment.revised_impact_data"
+                  :key="`${revised_impact_data_index}_post`"
+                >
+                  {{ formatImpactValue(impact_data.impact_value) }}
+
+                </td>
+                <td>
+                  {{ assessment.revised_impact_of_occurence }}
+                </td>
+                <td>
+                  {{ assessment.revised_likelihood_of_occurence }}
+                </td>
+                <td>
+                  {{ assessment.revised_overall_risk_rating }}
+                </td>
+                <td
+                  :style="`background: #${assessment.revised_level_color}`"
+                  :data-fill-color="assessment.revised_level_color"
+                  data-b-a-s="thin"
+                  data-f-color="ffffff"
+                >
+                  <div>{{ assessment.revised_risk_category }}
+                  </div>
+                </td>
+                <td>
+                  {{ assessment.risk_owner }}
+                </td>
+                <td>
+                  <div style="width: 300px">
+                    <!--eslint-disable-next-line vue/no-v-html -->
+                    <span v-html="assessment.key_risk_indicator" />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </b-tab>
+        <b-tab
+          lazy
+        >
+          <template #title>
+            <feather-icon icon="AlertTriangleIcon" />
+            <span>Key Risk Indicator Assessment</span>
+          </template>
+
+          <div
+            v-if="downloading"
           >
-            <td>
-              <div style="width: 250px">
-                {{ assessment.business_unit }}
-              </div>
-            </td>
-            <td>
-              <div style="width: 250px">
-                {{ assessment.business_process }}
-              </div>
-            </td>
-            <td>{{ assessment.risk_id }}</td>
-            <td>{{ assessment.type }}</td>
-            <td>
-              <div style="width: 300px">
-                {{ assessment.vulnerability_description }}
-              </div>
-            </td>
-            <td>
-              <div style="width: 250px">
-                <!-- eslint-disable-next-line vue/no-v-html-->
-                <span v-html="assessment.outcome" />
-              </div>
-            </td>
-            <td
-              v-for="(impact_data, impact_data_index) in assessment.impact_data"
-              :key="impact_data_index"
+            <table
+              id="KRIAssessmentTable"
+              class="table table-bordered table-striped"
             >
+              <thead>
+                <tr>
+                  <th
+                    data-fill-color="333333"
+                    data-f-color="ffffff"
+                    data-b-a-s="thin"
+                    :rowspan="2"
+                    colspan="4"
+                  />
+                  <th
+                    v-for="quarterCount in 4"
+                    :key="quarterCount"
+                    data-fill-color="3A61C2"
+                    data-f-color="ffffff"
+                    data-a-h="center"
+                    data-b-a-s="thin"
+                    :colspan="12"
+                    style="text-align: center;"
+                  >Quater {{ quarterCount }}</th>
+                </tr>
+                <tr>
+                  <th
+                    v-for="monthCount in 12"
+                    :key="monthCount"
+                    data-fill-color="673AC2"
+                    data-f-color="ffffff"
+                    data-a-h="center"
+                    data-b-a-s="thin"
+                    :colspan="4"
+                    style="text-align: center;"
+                  >Month {{ monthCount }}</th>
+                </tr>
+                <tr>
+                  <th
 
-              <select
-                v-model="impact_data.impact_value"
-                placeholder="Select Impact Value"
-                @change="updateField($event.target.value, 'impact_data', assessment, impact_data.slug)"
-              >
-                <option
-                  v-for="(impact, c_index) in impacts"
-                  :key="c_index + index"
-                  :label="`${impact.value}-${impact.name}`"
-                  :value="impact.value"
-                />
-              </select>
+                    data-fill-color="333333"
+                    data-f-color="ffffff"
+                    data-b-a-s="thin"
+                  >KRI</th>
+                  <th
 
-            </td>
-            <td>
+                    data-fill-color="333333"
+                    data-f-color="ffffff"
+                    data-b-a-s="thin"
+                  >Frequency of Assessment</th>
+                  <th
 
-              <span v-loading="assessment.loader">{{ assessment.impact_of_occurence }}</span>
+                    data-fill-color="333333"
+                    data-f-color="ffffff"
+                    data-b-a-s="thin"
+                  >Unit of Measurement</th>
+                  <th
 
-            </td>
-            <td>
-
-              <select
-                v-model="assessment.likelihood_of_occurence"
-                placeholder="Select Likelihood Value"
-                @change="updateField($event.target.value, 'likelihood_of_occurence', assessment)"
-              >
-                <option
-                  v-for="(likelihood, l_index1) in likelihoods"
-                  :key="l_index1"
-                  :label="`${likelihood.value}-${likelihood.name}`"
-                  :value="likelihood.value"
-                />
-              </select>
-
-            </td>
-            <!-- <td>
-
-              <div style="width: 300px">
-                <span v-html="assessment.impact_rationale" />
-              </div>
-            </td> -->
-            <td>
-
-              <span v-loading="assessment.loader">{{ assessment.overall_risk_rating }}</span>
-
-            </td>
-            <td :style="`background: #${assessment.level_color}`">
-              <div
-                v-loading="assessment.loader"
-              >{{ assessment.risk_category }}
-              </div>
-            </td>
-            <td
-              width="250"
-            >
-              <textarea
-                v-model="assessment.recommended_control"
-                placeholder="Recommend control"
-                type="text"
-                @blur="updateField($event.target.value, 'recommended_control', assessment)"
-              />
-            </td>
-            <td>
-
-              <!-- <el-button
-                v-if="assessment.overall_risk_rating !== null && assessment.overall_risk_rating > 0"
-                size="mini"
-                type="danger"
-                plain
-                @click="treatRisk(assessment)"
-              >
-                Treat
-              </el-button> -->
-              <select
-                v-model="assessment.control_effectiveness_level"
-                placeholder="Select"
-                @change="updateField($event.target.value, 'control_effectiveness_level', assessment)"
-              >
-                <option
-                  v-for="(assessment_option, option_index) in assessment_options"
-                  :key="option_index"
-                  :label="assessment_option"
-                  :value="assessment_option"
-                />
-              </select>
-
-            </td>
-            <td
-              v-for="(impact_data, revised_impact_data_index) in assessment.revised_impact_data"
-              :key="`${revised_impact_data_index}_post`"
-            >
-              <select
-                v-model="impact_data.impact_value"
-                placeholder="Select Impact Value"
-                @change="updateField($event.target.value, 'revised_impact_data', assessment, impact_data.slug )"
-              >
-                <option
-                  v-for="(impact, r_index) in impacts"
-                  :key="r_index + index"
-                  :label="`${impact.value}-${impact.name}`"
-                  :value="impact.value"
-                />
-              </select>
-
-            </td>
-            <td>
-              <span v-loading="assessment.loader">{{ assessment.revised_impact_of_occurence }}</span>
-
-            </td>
-            <td>
-              <select
-                v-model="assessment.revised_likelihood_of_occurence"
-                placeholder="Select"
-                @change="updateField($event.target.value, 'revised_likelihood_of_occurence', assessment)"
-              >
-                <option
-                  v-for="(likelihood, l_index) in likelihoods"
-                  :key="l_index"
-                  :label="`${likelihood.value}-${likelihood.name}`"
-                  :value="likelihood.value"
-                />
-                <option
-                  value="0"
-                  label="N/A"
-                />
-              </select>
-            </td>
-            <!-- <td>
-
-              <div style="width: 300px">
-                <span v-html="assessment.revised_impact_rationale" />
-              </div>
-            </td> -->
-            <td>
-              <span v-loading="assessment.loader">{{ assessment.revised_overall_risk_rating }}</span>
-
-            </td>
-            <td :style="`background: #${assessment.revised_level_color}`">
-              <div
-                v-loading="assessment.loader"
-              >{{ assessment.revised_risk_category }}
-              </div>
-            </td>
-            <td>
-              {{ assessment.risk_owner }}
-            </td>
-            <td>
-              <textarea
-                v-model="assessment.key_risk_indicator"
-                placeholder=""
-                type="text"
-                @blur="updateField($event.target.value, 'key_risk_indicator', assessment)"
-              />
-            </td>
-          </tr>
-        </tbody>
-        <tbody v-else>
-          <tr
-            v-for="(assessment, index) in riskAssessments"
-            :key="index"
-          >
-            <td>
-              <div style="width: 250px">
-                {{ assessment.business_unit }}
-              </div>
-            </td>
-            <td>
-              <div style="width: 250px">
-                {{ assessment.business_process }}
-              </div>
-            </td>
-            <td>{{ assessment.risk_id }}</td>
-            <td>{{ assessment.type }}</td>
-            <td>
-              <div style="width: 300px">
-                {{ assessment.vulnerability_description }}
-              </div>
-            </td>
-            <td>
-              <div style="width: 250px">
-                <!-- eslint-disable-next-line vue/no-v-html-->
-                <span v-html="assessment.outcome" />
-              </div>
-            </td>
-            <td
-              v-for="(impact_data, impact_data_index) in assessment.impact_data"
-              :key="impact_data_index"
-            >
-
-              {{ impact_data.impact_value }}
-
-            </td>
-            <td>
-
-              {{ assessment.impact_of_occurence }}
-
-            </td>
-            <td>
-
-              {{ assessment.likelihood_of_occurence }}
-
-            </td>
-            <!-- <td>
-
-              <div style="width: 300px">
-                <span v-html="assessment.impact_rationale" />
-              </div>
-            </td> -->
-            <td>
-
-              {{ assessment.overall_risk_rating }}
-
-            </td>
-            <td
-              :data-fill-color="assessment.level_color"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >
-              {{ assessment.risk_category }}
-            </td>
-            <td
-              width="250"
-            >
-              {{ assessment.recommended_control }}
-            </td>
-            <td>
-
-              <!-- <el-button
-                v-if="assessment.overall_risk_rating !== null && assessment.overall_risk_rating > 0"
-                size="mini"
-                type="danger"
-                plain
-                @click="treatRisk(assessment)"
-              >
-                Treat
-              </el-button> -->
-              {{ assessment.assessment_option }}
-
-            </td>
-            <td
-              v-for="(impact_data, revised_impact_data_index) in assessment.revised_impact_data"
-              :key="`${revised_impact_data_index}_post`"
-            >
-              {{ impact_data.impact_value }}
-
-            </td>
-            <td>
-              {{ assessment.revised_impact_of_occurence }}
-            </td>
-            <td>
-              {{ assessment.revised_likelihood_of_occurence }}
-            </td>
-            <!-- <td>
-
-              <div style="width: 300px">
-                <span v-html="assessment.revised_impact_rationale" />
-              </div>
-            </td> -->
-            <td>
-              {{ assessment.revised_overall_risk_rating }}
-            </td>
-            <td
-              :data-fill-color="assessment.revised_level_color"
-              data-b-a-s="thin"
-              data-f-color="ffffff"
-            >
-              <div
-                v-loading="assessment.loader"
-              >{{ assessment.revised_risk_category }}
-              </div>
-            </td>
-            <td>
-              {{ assessment.risk_owner }}
-            </td>
-            <td>
-              {{ assessment.key_risk_indicator }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                    data-fill-color="333333"
+                    data-f-color="ffffff"
+                    data-b-a-s="thin"
+                  >Comment</th>
+                  <th
+                    v-for="weekCount in 48"
+                    :key="weekCount"
+                    data-fill-color="333333"
+                    data-f-color="ffffff"
+                    data-a-h="center"
+                    data-b-a-s="thin"
+                    style="text-align: center;"
+                  >Week {{ weekCount }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(assessment, index) in riskAssessments"
+                  :key="index"
+                >
+                  <td data-b-a-s="thin">
+                    <div style="width: 250px">
+                      {{ assessment.kri }}
+                    </div>
+                  </td>
+                  <td data-b-a-s="thin">
+                    <div style="width: 250px">
+                      {{ assessment.frequency_of_assessment }}
+                    </div>
+                  </td>
+                  <td data-b-a-s="thin">
+                    {{ assessment.unit_of_measurement }}
+                  </td>
+                  <td data-b-a-s="thin">
+                    <div style="width: 300px">
+                      {{ assessment.comment }}
+                    </div>
+                  </td>
+                  <td
+                    v-for="(no_of_assessment, assess_index) in number_of_assessments[assessment.frequency_of_assessment]"
+                    :key="assess_index"
+                    :colspan="parseInt(48 / number_of_assessments[assessment.frequency_of_assessment])"
+                    :data-fill-color="assessment.assessments[no_of_assessment][1].slice(1)"
+                    data-f-color="000000"
+                    data-a-h="center"
+                    data-b-a-s="thin"
+                    :style="`padding: 20px; background: ${assessment.assessments[no_of_assessment][1]}; color: #000000;`"
+                  >
+                    {{ assessment.assessments[no_of_assessment][0] }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <k-r-i-assessment
+            v-else
+            :risk-assessments="riskAssessments"
+            mode="manage"
+          />
+        </b-tab>
+      </b-tabs>
     </div>
     <div v-else>
       <el-empty />
@@ -489,15 +435,20 @@
 </template>
 
 <script>
-// import { VueGoodTable } from 'vue-good-table'
+import {
+  BTabs, BTab,
+} from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import TableToExcel from '@linways/table-to-excel'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
-import CreateRiskAssessment from './CreateRiskAssessment.vue'
+import KRIAssessment from './KRIAssessment.vue'
 
 export default {
   components: {
-    CreateRiskAssessment,
+    KRIAssessment,
+    BTabs,
+    BTab,
   },
   directives: {
     Ripple,
@@ -530,6 +481,7 @@ export default {
       createAssetTypeModal: false,
       showTreatmentModal: false,
       loading: false,
+      downloading: false,
       isCreateSidebarActive: false,
       pageLength: 10,
       dir: false,
@@ -538,7 +490,6 @@ export default {
       searchTerm: '',
       categories: [],
       assessment_options: ['Effective', 'Ineffective', 'Sub-optimal'],
-      downloading: false,
       selectedAssetTypeId: '',
       selectedAssessment: '',
       treatment_comment: '',
@@ -576,14 +527,16 @@ export default {
       }
       return ''
     },
-    createAsset(asseTypeId) {
+    formatImpactValue(value) {
       const app = this
-      if (asseTypeId === '' || asseTypeId === null) {
-        app.$alert('Please select an asset type')
-      } else {
-        app.selectedAssetTypeId = asseTypeId
-        app.createAssetModal = true
-      }
+      let valueStr = ''
+      app.impacts.forEach(impact => {
+        // eslint-disable-next-line radix
+        if (parseInt(value) === parseInt(impact.value)) {
+          valueStr = impact.name
+        }
+      })
+      return valueStr
     },
     // customClass(row, opt) {
     //   if (opt === 'risk_category') {
@@ -674,6 +627,21 @@ export default {
         })
       }
       return val
+    },
+    exportTableToExcel(id1, id2) {
+      const app = this
+      app.downloading = true
+      setTimeout(() => {
+        const table1 = document.getElementById(id1)
+        const table2 = document.getElementById(id2)
+        const book = TableToExcel.tableToBook(table1, { sheet: { name: 'Risk Universe - User Engagement' } })
+        TableToExcel.tableToSheet(book, table2, { sheet: { name: 'Key Risk Indicator Assessment' } })
+        TableToExcel.save(book, 'Risk-Register.xlsx')
+      }, 1000)
+
+      setTimeout(() => {
+        app.downloading = false
+      }, 30000)
     },
   },
 }

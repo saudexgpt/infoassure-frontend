@@ -13,28 +13,12 @@ export default [
     },
   },
   {
-    path: '/due-diligence',
-    name: 'due-diligence',
-    component: () => import('@/views/modules/due-diligence/index.vue'),
-    meta: {
-      modules: ['due-diligence'],
-    },
-  },
-  {
     path: '/business-unit',
     name: 'business-unit',
     component: () => import('@/views/modules/business-units/SetUp.vue'),
     // meta: {
     //   except: ['client'],
     // },
-  },
-  {
-    path: '/manage-rcsa',
-    name: 'manage-rcsa',
-    component: () => import('@/views/modules/RCSA/index.vue'),
-    meta: {
-      modules: ['rcsa'],
-    },
   },
   {
     path: '/manage-rcm',
@@ -76,14 +60,6 @@ export default [
   //   //   except: ['client'],
   //   // },
   // },
-  {
-    path: '/risk-management',
-    name: 'risk-management',
-    component: () => import('@/views/modules/RiskAndThreats/index.vue'),
-    // meta: {
-    //   except: ['client'],
-    // },
-  },
   // {
   //   path: '/bia-setup',
   //   name: 'bia-setup',

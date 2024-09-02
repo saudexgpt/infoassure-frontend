@@ -30,23 +30,18 @@ tag
 tagVariant
 
 */
+/// //////////////////// THIS CODE STRUCTURE HAS BEEN MOVED TO ENABLE VUEX STORAGE VIA store/navItems.js and initiated from APP.vue ///////////////////////
+
 // import appsAndPages from './apps-and-pages'
-import dashboard from './nav-modules/dashboard'
-import appSetup from './nav-modules/app-setup'
-// import accessControl from './nav-modules/access-control'
-import links from './nav-modules/links'
-import adminSettings from './nav-modules/admin-settings'
+// import dashboard from './nav-modules/dashboard'
+// import appSetup from './nav-modules/app-setup'
+// import links from './nav-modules/links'
+// import adminSettings from './nav-modules/admin-settings'
 // import riskAssessment from './nav-modules/risk-assessment'
-// import soa from './nav-modules/soa'
-import rcsa from './nav-modules/rcsa'
-import userManagement from './nav-modules/user-management'
-// import uiElements from './ui-elements'
-// import formAndTable from './forms-and-table'
+// import availableModules from './nav-modules/available-modules'
+// import userManagement from './nav-modules/user-management'
 
-// Array of sections
-export default [...dashboard, ...appSetup, ...rcsa, ...links, ...userManagement, ...adminSettings]
+// // Array of sections
+// export default [...dashboard, ...appSetup, ...availableModules, ...riskAssessment, ...links, ...userManagement, ...adminSettings]
 
-// import store from '@/store'
-
-// const Router = store.getters.permissionRoutes
-// export default Router
+/// //////////////////// THIS CODE STRUCTURE HAS BEEN MOVED TO ENABLE VUEX STORAGE VIA store/navItems.js and accessed from APP.vue ///////////////////////

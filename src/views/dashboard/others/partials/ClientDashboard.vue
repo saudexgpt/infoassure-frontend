@@ -1,20 +1,18 @@
 <template>
-  <div v-loading="load">
-    <div v-if="dashboardData !== null">
-
-      <data-analysis
-        :dashboard-data="dashboardData"
-      />
-    </div>
+  <div>
+    <statistics />
+    <enterprise-risk-assessment-analysis title="Enterprise Risk Analysis" /><p />
+    <project-data-analysis />
   </div>
 </template>
 
 <script>
-import DataAnalysis from './DataAnalysis.vue'
-import Resource from '@/api/resource'
+import Statistics from './Statistics.vue'
+import ProjectDataAnalysis from './ProjectDataAnalysis.vue'
+import EnterpriseRiskAssessmentAnalysis from './EnterpriseRiskAssessmentAnalysis.vue'
 
 export default {
-  components: { DataAnalysis },
+  components: { Statistics, ProjectDataAnalysis, EnterpriseRiskAssessmentAnalysis },
   data() {
     return {
       style: {
@@ -26,21 +24,8 @@ export default {
     }
   },
   created() {
-    this.fetchDashboardData()
   },
   methods: {
-    fetchDashboardData() {
-      const app = this
-      app.load = true
-      const dashboardDataResource = new Resource('reports/client-data-analysis-dashboard')
-      dashboardDataResource.list().then(response => {
-        app.dashboardData = response
-        app.load = false
-      }).catch(error => {
-        console.log(error)
-        app.load = false
-      })
-    },
 
   },
 }

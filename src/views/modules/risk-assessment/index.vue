@@ -1,231 +1,331 @@
+<!-- eslint-disable vue/html-indent -->
 <template>
   <el-card>
-    <b-tabs
-      content-class="mt-1"
-      pills
-    >
-      <b-tab
-        v-if="checkPermission(['manage-risk-assessment-settings'])"
-        lazy
+    <div slot="header">
+      <span
+        class="pull-right"
       >
-        <template #title>
-          <feather-icon icon="ToolIcon" />
-          <span>Setup</span>
-        </template>
-        <setup />
-      </b-tab>
-      <!-- <b-tab
-        lazy
+        <b-button
+          variant="primary"
+          @click="viewType='tabular'"
+        ><i class="el-icon-menu" /> Tabular View</b-button>
+      </span>
+      <h3>Risk Assessment</h3>
+    </div>
+    <el-container style="height: 100%; border: 1px solid #eee; background: #fff;">
+      <el-aside
+        v-if="showMenu"
+        v-loading="loading"
+        element-loading-text="loading assessment, please wait..."
+        width="400px"
       >
-        <template #title>
-          <feather-icon icon="SearchIcon" />
-          <span>Assess Risk(s)</span>
-        </template>
-
-        <aside>
-          <el-row :gutter="10">
-            <el-col
-              :xs="24"
-              :sm="10"
-              :md="10"
-            >
-              <el-select
-                v-model="selectedClient"
-                value-key="id"
-                placeholder="Select Client"
-                style="width: 100%;"
-                @input="fetchRiskAssessments(); fetchRiskAssessmentSummary();"
-              >
-                <el-option
-                  v-for="(client, index) in clients"
-                  :key="index"
-                  :value="client"
-                  :label="client.name"
-                />
-              </el-select>
-            </el-col>
-            <el-col
-              :xs="24"
-              :sm="10"
-              :md="10"
-            >
-              <el-select
-                v-model="matrix"
-                placeholder="Select Matrix"
-                style="width: 100%;"
-                @input="setMatrix()"
-              >
-                <el-option
-                  value="3x3"
-                  label="3x3 Matrix"
-                />
-                <el-option
-                  value="5x5"
-                  label="5x5 Matrix"
-                />
-              </el-select>
-            </el-col>
-          </el-row>
-        </aside>
-        <div v-if="selectedClient !== ''">
-          <b-tabs
-            content-class="mt-1"
+        <!-- <aside>
+          <el-input
+            v-model="filterText"
+            placeholder="Filter keyword"
+          />
+        </aside> -->
+        <h3>Risk Library</h3>
+        <div>
+          <el-menu
+            v-if="activatedModules.includes('isms') && (viewOnly === 'isms' || viewOnly === 'all')"
           >
-            <b-tab
-              lazy
+            <div style="background: #cccccc; color: #000000; padding: 10px;">
+              Grouped by Assets
+            </div>
+            <el-submenu
+              v-for="(assessments, index) in asset_types"
+              :key="index"
+              :index="`${index}`"
             >
-              <template #title>
-                <feather-icon icon="ListIcon" />
-                <span>Risk Assessment Details</span>
+              <template slot="title">
+                <strong>{{ index }}</strong>
               </template>
 
-              <assessment
+              <el-menu-item
+                v-for="(risk_assessment, assessments_index) in assessments"
+                :key="assessments_index"
+                :index="`${index}-${assessments_index}`"
+                @click="viewDetails(risk_assessment)"
+              >
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="risk_assessment.vulnerability_description"
+                  placement="right"
+                  :open-delay="500"
+                >
+                  <small>{{ risk_assessment.risk_id }} - {{ risk_assessment.threat }}</small>
+                </el-tooltip>
+              </el-menu-item>
+            </el-submenu>
+          </el-menu>
+          <el-menu
+            v-if="(viewOnly !== 'isms' || viewOnly === 'all') && (activatedModules.includes('rcsa') || activatedModules.includes('bcms') || activatedModules.includes('ndpa'))"
+          >
+            <div style="background: #cccccc; color: #000000; padding: 10px;">
+              Grouped by Business Process
+            </div>
+            <el-submenu
+              v-for="(assessments, index) in business_units"
+              :key="index"
+              :index="`${index}`"
+            >
+              <template slot="title">
+                <strong>{{ index }}</strong>
+              </template>
 
-                v-loading="loading"
-                :selected-client="selectedClient"
-                :impacts="impacts"
-                :likelihoods="likelihoods"
-                :matrix="matrix"
-                @submit="fetchRiskAssessments(false)"
-              />
-              <view-risk-assessment
-                v-loading="loading"
-                :selected-client="selectedClient"
-                :risk-assessments="risk_assessments"
-                :impacts="impacts"
-                :likelihoods="likelihoods"
-                :matrix="matrix"
-                @reload="fetchRiskAssessments(false)"
-              />
-            </b-tab>
-            <b-tab
-              lazy
-            >
-              <template #title>
-                <feather-icon icon="EyeIcon" />
-                <span>Risk Assessment Summary</span>
-              </template>
-              <risk-assessment-summary
-                :data="summary"
-                :selected-client="selectedClient"
-              />
-            </b-tab>
-            <b-tab
-              lazy
-            >
-              <template #title>
-                <feather-icon icon="EyeIcon" />
-                <span>Risk Ranking Matrix</span>
-              </template>
-              <risk-ranking-matrix :matrix="matrix" />
-            </b-tab>
-          </b-tabs>
+              <el-menu-item
+                v-for="(risk_assessment, assessments_index) in assessments"
+                :key="assessments_index"
+                :index="`${index}-${assessments_index}`"
+                @click="viewDetails(risk_assessment)"
+              >
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="risk_assessment.vulnerability_description"
+                  placement="right"
+                  :open-delay="500"
+                >
+                  <small>{{ risk_assessment.risk_id }}-{{ risk_assessment.threat }}</small>
+                </el-tooltip>
+              </el-menu-item>
+            </el-submenu>
+          </el-menu>
         </div>
-      </b-tab> -->
-    </b-tabs>
+      </el-aside>
+
+      <el-container>
+        <h1>
+          <el-tooltip
+            effect="dark"
+            content="Toggle Menu"
+            placement="right"
+          >
+            <a
+              v-if="showMenu"
+              style="cursor: pointer"
+              @click="toggleMenu"
+            ><i class="el-icon-s-fold" /></a>
+            <a
+              v-else
+              style="cursor: pointer"
+              @click="toggleMenu"
+            ><i class="el-icon-s-unfold" /></a>
+          </el-tooltip>
+        </h1>
+
+        <el-main v-loading="loadView">
+          <div v-if="viewType === 'edit'">
+            <edit-risk-assessment
+            :impacts="impacts"
+            :likelihoods="likelihoods"
+            :selected-data="selectedData"
+            :risk-appetite="risk_appetite"
+            @updated="renderViewAgain"
+            />
+          </div>
+          <div v-if="viewType === 'tabular'">
+            <risk-assessment-table
+              :selected-client="selectedClient"
+              :assessment-module="module"
+              :risk-assessments="risk_assessments"
+              :impacts="impacts"
+              :likelihoods="likelihoods"
+            />
+          </div>
+          <div
+            v-if="viewType === 'welcome'"
+            align="center"
+          >
+            <img
+              src="/images/project-icons/assessment.png"
+              width="250"
+            >
+            <h3>Perform your Risk Assessment Here</h3>
+            <span
+              align="center"
+            >
+              <p>Use the Risk Library Navigation to perform your assessment </p>
+            </span>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
   </el-card>
 </template>
-
 <script>
 import {
-  BTabs, BTab,
+  BButton,
 } from 'bootstrap-vue'
-import checkPermission from '@/utils/permission'
-import Setup from './partials/Setup.vue'
-// import Assessment from './partials/Assessment.vue'
-// import ViewRiskAssessment from './ViewRiskAssessment.vue'
-// import RiskRankingMatrix from './RiskRankingMatrix.vue'
-// import RiskAssessmentSummary from './partials/Summary.vue'
 import Resource from '@/api/resource'
+import EditRiskAssessment from './partials/EditRiskAssessment.vue'
+import RiskAssessmentTable from './partials/RiskAssessmentTable.vue'
 
 export default {
   components: {
-    BTabs,
-    BTab,
-    Setup,
-    // Assessment,
-    // ViewRiskAssessment,
-    // RiskRankingMatrix,
-    // RiskAssessmentSummary,
+    BButton,
+    // CreateRiskAssessment,
+    EditRiskAssessment,
+    RiskAssessmentTable,
+  },
+  props: {
+    module: {
+      type: String,
+      default: () => ('all'), // this is the general risk assessment
+    },
+    viewOnly: {
+      type: String,
+      default: () => 'all',
+    },
   },
   data() {
     return {
-      clients: [],
-      selectedClient: '',
-      matrix: '3x3',
+      showMenu: true,
+      asset_types: [],
+      business_units: [],
+      selectedData: null,
+      loading: false,
+      inputVisible: false,
+      inputValue: '',
+      filterText: '',
+      isEdit: false,
+      isCreateNew: false,
+      loadView: false,
       impacts: [],
       likelihoods: [],
+      risk_appetite: null,
       risk_assessments: [],
-      summary: [],
-      loading: false,
+      viewType: 'welcome',
+      response: {},
+      activatedModules: [],
     }
   },
+  computed: {
+    selectedClient() {
+      return this.$store.getters.selectedClient
+    },
+    clientActivatedProjects() {
+      return this.$store.getters.clientActivatedProjects
+    },
+  },
+  watch: {
+    selectedClient() {
+      this.viewType = 'welcome'
+      this.setMatrix()
+    },
+    filterText(val) {
+      this.$refs.tree.filter(val)
+    },
+  },
   created() {
-    this.fetchClients()
-    this.setMatrix()
+    if (this.selectedClient.id !== null) {
+      this.setMatrix()
+    } else {
+      this.$alert('Please select a client to continue')
+    }
   },
   methods: {
-    checkPermission,
-    fetchClients() {
+    toggleMenu() {
       const app = this
-      const fetchClientsResource = new Resource('clients')
-      fetchClientsResource.list({ option: 'all' })
-        .then(response => {
-          app.clients = response.clients
-        })
+      app.showMenu = !app.showMenu
     },
-    fetchRiskAssessments(load = true) {
+    setMatrix() {
+      this.setModuleSlug()
+      this.fetchImpacts()
+      this.fetchLikelihoods()
+      this.fetchAllRiskAssessments(true)
+    },
+    setModuleSlug() {
+      const app = this
+      const moduleSlug = []
+      app.clientActivatedProjects.forEach(project => {
+        if (project.available_module) {
+          moduleSlug.push(project.available_module.slug)
+        }
+      })
+      app.activatedModules = moduleSlug
+    },
+    filterNode(value, data) {
+      if (!value) return true
+      const valLowercase = value.toLowerCase()
+      const dataLowercase = data.label.toLowerCase()
+      return dataLowercase.indexOf(valLowercase) !== -1
+    },
+    handleClose(tag) {
+      this.sub_dpias.splice(this.sub_dpias.indexOf(tag), 1)
+    },
+    viewDetails(data) {
+      if (data.id) {
+        const app = this
+        app.selectedData = data
+        app.viewType = 'edit'
+        app.showMenu = false
+      }
+    },
+    fetchAllRiskAssessments(load) {
       const app = this
       app.loading = load
-      const fetchRiskAssessmentsResource = new Resource('risk-assessment/fetch-risk_assessments')
-      fetchRiskAssessmentsResource.list({ client_id: app.selectedClient.id })
+      const fetchCriteriaResource = new Resource('risk-assessment/fetch-risk-assessments')
+      fetchCriteriaResource.list({ client_id: app.selectedClient.id, module: app.module })
         .then(response => {
+          app.business_units = response.business_units
+          app.asset_types = response.asset_types
           app.risk_assessments = response.risk_assessments
+          app.risk_appetite = response.risk_appetite
           app.loading = false
         }).catch(() => { app.loading = false })
     },
-    fetchRiskAssessmentSummary() {
-      const app = this
-      const param = { client_id: app.selectedClient.id }
-      const fetchConsultingsResource = new Resource('reports/risk-assessment-summary')
-      fetchConsultingsResource.list(param)
-        .then(response => {
-          app.summary = response.summary
-        })
-    },
-    setMatrix() {
-      this.fetchImpacts()
-      this.fetchLikelihoods()
-    },
     fetchImpacts() {
       const app = this
-      app.loading = true
-      const param = { matrix: app.matrix }
+      const param = { client_id: app.selectedClient.id }
       const fetchEntryResource = new Resource('risk-assessment/fetch-impacts')
       fetchEntryResource.list(param)
         .then(response => {
-          app.loading = false
           app.impacts = response.impacts
         })
         .catch(error => {
           app.loading = false
-          // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          console.log(error.response)
+          // app.$message.error(error.response.data.error)
         })
     },
     fetchLikelihoods() {
       const app = this
-      const param = { matrix: app.matrix }
+      const param = { client_id: app.selectedClient.id }
       const fetchEntryResource = new Resource('risk-assessment/fetch-likelihoods')
       fetchEntryResource.list(param)
         .then(response => {
           app.likelihoods = response.likelihoods
         })
         .catch(error => {
-          // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          console.log(error.response)
+          // app.$message.error(error.response.data.error)
         })
+    },
+    renderViewAgain() {
+      this.viewType = 'tabular'
+      this.fetchAllRiskAssessments(false)
+      this.$notify({ title: 'Entry Saved', type: 'success' })
     },
   },
 }
 </script>
+  <style>
+    .el-tag + .el-tag {
+      margin-left: 10px;
+    }
+    .button-new-tag {
+      margin-left: 10px;
+      height: 32px;
+      line-height: 30px;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .input-new-tag {
+      width: 90px;
+      margin-left: 10px;
+      vertical-align: bottom;
+    }
+  </style>

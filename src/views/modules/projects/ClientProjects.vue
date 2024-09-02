@@ -47,7 +47,7 @@
             <b-button
               v-if="checkPermission(['create-client project'])"
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="gradient-success"
+              variant="gradient-primary"
               @click="isCreateProjectSidebarActive = true"
             >
               <feather-icon
@@ -61,67 +61,32 @@
       </b-row>
     </div>
 
-    <aside>
-      <el-row :gutter="10">
-        <el-col
-          :xs="24"
-          :sm="8"
-          :md="8"
-        >
-          <el-select
-            v-model="selectedClient"
-            value-key="id"
-            placeholder="Select Client"
-            filterable
-            style="width: 100%;"
-            @input="fetchProjects()"
-          >
-            <el-option
-              v-for="(client, index) in clients"
-              :key="index"
-              :value="client"
-              :label="client.name"
-            />
-          </el-select>
-        </el-col>
-        <el-col
-          v-if="clientUsers.length > 0 && projects.length > 0"
-          :xs="24"
-          :sm="8"
-          :md="8"
-        >
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="gradient-danger"
-            @click="showAssignModal = true"
-          >
-            <feather-icon
-              icon="UsersIcon"
-              class="mr-50"
-            />
-            <span class="align-middle">Assign Projects To Personnel</span>
-          </b-button>
-        </el-col>
-        <el-col
-          v-if="projects.length > 0"
-          :xs="24"
-          :sm="8"
-          :md="8"
-        >
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="gradient-dark"
-            @click="showAssignConsultantModal = true"
-          >
-            <feather-icon
-              icon="UsersIcon"
-              class="mr-50"
-            />
-            <span class="align-middle">Assign Projects To Consultant</span>
-          </b-button>
-        </el-col>
-      </el-row>
-    </aside>
+    <div class="demo-inline-spacing">
+      <b-button
+        v-if="clientUsers.length > 0 && projects.length > 0"
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="outline-primary"
+        @click="showAssignModal = true"
+      >
+        <feather-icon
+          icon="UsersIcon"
+          class="mr-50"
+        />
+        <span class="align-middle">Assign Projects To Personnel</span>
+      </b-button>
+      <b-button
+        v-if="projects.length > 0"
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="outline-dark"
+        @click="showAssignConsultantModal = true"
+      >
+        <feather-icon
+          icon="UsersIcon"
+          class="mr-50"
+        />
+        <span class="align-middle">Assign Projects To Consultant</span>
+      </b-button>
+    </div>
     <v-client-table
       v-model="projects"
       v-loading="loading"
@@ -129,7 +94,7 @@
       :options="options"
     >
 
-      <div
+      <!-- <div
         slot="allow_document_uploads"
         slot-scope="{row}"
       >
@@ -146,7 +111,7 @@
             label="Enabled"
           />
         </select>
-      </div>
+      </div> -->
       <div
         slot="assigned_staff"
         slot-scope="{row}"
@@ -244,50 +209,23 @@
         slot="action"
         slot-scope="props"
       >
-        <el-tooltip
-          :content="`Project Settings`"
-          placement="top"
+        <b-dropdown
+          text="Action"
+          class="m-2"
         >
-          <b-button
-            variant="gradient-dark"
-            class="btn-icon rounded-circle"
-            @click="showProjectSettings(props.row)"
-          >
-            <feather-icon icon="ToolIcon" />
-          </b-button>
-        </el-tooltip>
-        <el-tooltip
-          :content="`Activate project plan`"
-          placement="top"
-        >
-          <b-button
-            variant="gradient-success"
-            class="btn-icon rounded-circle"
-            @click="setupProjectPlan(props.row)"
-          >
-            <feather-icon icon="LayersIcon" />
-          </b-button>
-        </el-tooltip>
-        <el-tooltip
-          :content="`View details of ${props.row.standard.name}`"
-          placement="top"
-        >
-          <b-button
-            variant="gradient-primary"
-            class="btn-icon rounded-circle"
-            @click="manageProject(props.row)"
-          >
-            <feather-icon icon="EyeIcon" />
-          </b-button>
-        </el-tooltip>
-        <b-button
-          v-if="checkPermission(['delete-client project'])"
-          variant="gradient-danger"
-          class="btn-icon rounded-circle"
-          @click="destroyRow(props.row)"
-        >
-          <feather-icon icon="TrashIcon" />
-        </b-button>
+          <b-dropdown-item @click="manageProject(props.row)">
+            <feather-icon icon="CheckSquareIcon" /> View Project Details
+          </b-dropdown-item>
+          <b-dropdown-item @click="showProjectSettings(props.row)">
+            <feather-icon icon="ToolIcon" /> Project Settings
+          </b-dropdown-item>
+          <b-dropdown-item @click="setupProjectPlan(props.row)">
+            <feather-icon icon="CheckSquareIcon" /> Activate project Plan
+          </b-dropdown-item>
+          <b-dropdown-item @click="destroyRow(props.row)">
+            <feather-icon icon="TrashIcon" /> Delete Project
+          </b-dropdown-item>
+        </b-dropdown>
       </div>
     </v-client-table>
     <b-modal
@@ -312,8 +250,11 @@
               v-for="(project, project_index) in projects"
               :key="project_index"
               :value="project.id"
-              :label="project.standard.name"
-            />
+              :label="project.title"
+            >
+              <span style="float: left">{{ project.title }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ (project.available_module) ? project.available_module.name : '' }}</span>
+            </el-option>
           </el-select>
           <br>
           <br>
@@ -338,7 +279,7 @@
         <el-col :xs="24">
           <b-button
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="gradient-success"
+            variant="gradient-primary"
             @click="submitProjectAssignment()"
           >
             <feather-icon
@@ -374,8 +315,11 @@
               v-for="(project, project_index) in projects"
               :key="project_index"
               :value="project.id"
-              :label="project.standard.name"
-            />
+              :label="project.title"
+            >
+              <span style="float: left">{{ project.title }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ (project.available_module) ? project.available_module.name : '' }}</span>
+            </el-option>
           </el-select>
           <br>
           <br>
@@ -392,15 +336,18 @@
               v-for="(user, user_index) in staff"
               :key="user_index"
               :value="user.id"
-              :label="`${user.name} [${user.designation}]`"
-            />
+              :label="user.name"
+            >
+              <span style="float: left">{{ user.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ (user.designation) ? user.designation : '' }}</span>
+            </el-option>
           </el-select>
           <hr>
         </el-col>
         <el-col :xs="24">
           <b-button
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="gradient-success"
+            variant="gradient-primary"
             @click="assignProjectsToConsultant()"
           >
             <feather-icon
@@ -429,7 +376,7 @@
 
 <script>
 import {
-  BButton, BRow, BCol, BModal,
+  BButton, BRow, BCol, BModal, BDropdown, BDropdownItem,
 } from 'bootstrap-vue'
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
@@ -441,6 +388,8 @@ import ClientProjectDetails from './partials/ClientProjectDetails.vue'
 
 export default {
   components: {
+    BDropdown,
+    BDropdownItem,
     AddProject,
     ClientProjectSettings,
     ClientProjectDetails,
@@ -472,7 +421,9 @@ export default {
       columns: [
         'assigned_staff',
         'assigned_consultant',
-        'standard.name',
+        'title',
+        // 'available_module.name',
+        // 'standard.name',
         // 'allow_document_uploads',
         'progress',
         // 'id',
@@ -484,7 +435,9 @@ export default {
       ],
       options: {
         headings: {
-          'standard.name': 'Project',
+          title: 'Project',
+          'available_module.name': 'Module',
+          'standard.name': 'Standard',
           allow_document_uploads: 'Can Upload Documents',
           assigned_staff: 'Assigned Personnel',
           assigned_consultant: 'Assigned Consultant',
@@ -500,11 +453,11 @@ export default {
           filter: 'Search:',
         },
         sortable: [
-          'standard.name',
+          'title',
         ],
         // filterable: false,
         filterable: [
-          'standard.name',
+          'title',
         ],
       },
       projects: [],
@@ -514,7 +467,6 @@ export default {
       searchTerm: '',
       selected_project: '',
       showManageProject: false,
-      selectedClient: null,
       showAssignModal: false,
       showAssignConsultantModal: false,
       consultantForm: {
@@ -527,9 +479,20 @@ export default {
       },
     }
   },
+  computed: {
+    selectedClient() {
+      return this.$store.getters.selectedClient
+    },
+  },
+  watch: {
+    selectedClient() {
+      this.fetchProjects()
+      this.fetchStaff()
+    },
+  },
   created() {
-    this.fetchClients()
     this.fetchStaff()
+    this.fetchProjects()
   },
   methods: {
     checkPermission,
@@ -547,14 +510,6 @@ export default {
         return '#6f7ad3'
       }
       return '#5cb87a'
-    },
-    fetchClients() {
-      const app = this
-      const fetchProjectsResource = new Resource('clients')
-      fetchProjectsResource.list({ option: 'all' })
-        .then(response => {
-          app.clients = response.clients
-        })
     },
     fetchStaff() {
       const app = this
@@ -610,6 +565,7 @@ export default {
             projectId: [],
             userIds: [],
           }
+          app.$message('Action Successful')
           app.fetchProjects()
           app.loading = false
         }).catch(() => { app.loading = false })

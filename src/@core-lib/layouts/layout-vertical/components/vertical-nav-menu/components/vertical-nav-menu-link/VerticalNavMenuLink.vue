@@ -14,7 +14,15 @@
       :style="`background: ${sidebar_bg}; border: ${navbar_bg}; box-shadow: 0 0 1px 1px ${navbar_bg}; border-radius: 5px; padding: 5px 10px 5px 20px;`"
     >
       <!-- <feather-icon :icon="item.icon || 'TargetIcon'" /> -->
-      <feather-icon :icon="item.icon || ''" />
+      <i
+        v-if="item.icon === 'HomeIcon'"
+        class="el-icon-odometer"
+      />
+      <feather-icon
+        v-else
+        :icon="item.icon || ''"
+      />
+
       <span class="menu-title text-truncate">{{ t(item.title) }}</span>
       <b-badge
         v-if="item.tag"
@@ -31,7 +39,14 @@
       class="d-flex align-items-center"
     >
       <!-- <feather-icon :icon="item.icon || 'TargetIcon'" /> -->
-      <feather-icon :icon="item.icon || ''" />
+      <i
+        v-if="item.icon === 'HomeIcon'"
+        class="el-icon-odometer"
+      />
+      <feather-icon
+        v-else
+        :icon="item.icon || ''"
+      />
       <span class="menu-title text-truncate">{{ t(item.title) }}</span>
       <b-badge
         v-if="item.tag"

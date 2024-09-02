@@ -1,10 +1,25 @@
 export default [
   {
-    title: 'Risk Assessment',
-    icon: 'SearchIcon',
-    route: 'risk-assessment',
+    title: 'Risk Management',
+    icon: 'AlertTriangleIcon',
+    // tag: '2',
+    // tagVariant: 'light-warning',
     // acl: {
-    //   permissions: ['manage-projects'],
+    //   roles: ['super'],
     // },
+    children: [
+      {
+        title: 'Setup',
+        route: 'risk-management-setup',
+      },
+      {
+        title: 'Risk Assessment',
+        route: 'risk-assessment',
+        acl: {
+          // modules: ['bia'],
+          // except: ['client'],
+        },
+      },
+    ],
   },
 ]

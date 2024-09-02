@@ -366,11 +366,10 @@ export default {
     fetchRiskAssessments(load = true) {
       const app = this
       app.loading = load
-      const fetchRiskAssessmentsResource = new Resource('risk-assessment/fetch-risk_assessments')
+      const fetchRiskAssessmentsResource = new Resource('rcsa/fetch-risk-assessments')
       fetchRiskAssessmentsResource.list({ client_id: app.selectedClient.id, standard_id: app.standardId, module: app.assessmentModule })
         .then(response => {
           app.riskAssessments = response.risk_assessments
-          app.risk_appetite = response.risk_appetite
           app.loading = false
         }).catch(() => { app.loading = false })
     },
