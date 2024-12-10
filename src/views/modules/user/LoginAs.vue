@@ -56,7 +56,7 @@
               v-model="selectedPartner"
               style="width: 100%;"
               placeholder="Select Company"
-              @input="loginAs('partner')"
+              @input="loginAs()"
             >
               <el-option
                 v-for="(partner, index) in partners"
@@ -74,7 +74,7 @@
               v-model="selectedClient"
               style="width: 100%;"
               placeholder="Select Company"
-              @input="loginAs('client')"
+              @input="loginAs()"
             >
               <el-option
                 v-for="(client, index) in clients"
@@ -143,10 +143,11 @@ export default {
       const { selectedRole } = app
       switch (selectedRole) {
         case 'super':
-          app.loginAs('super')
+          app.loginAs()
           break
         case 'admin':
-          app.loginAs('admin')
+          // app.loginAs('admin')
+          app.fetchUserClients()
           break
         case 'partner':
           app.fetchUserPartners()
@@ -158,12 +159,12 @@ export default {
           break
       }
     },
-    loginAs(role) {
+    loginAs() {
       const app = this
       app.load = true
       const userResource = new Resource('auth/login-as')
       userResource
-        .store({ partner_id: app.selectedPartner, client_id: app.selectedClient, role })
+        .store({ partner_id: app.selectedPartner, client_id: app.selectedClient, role: app.selectedRole })
         .then(response => {
           app.$store.dispatch('user/updateUserData', response.data)
           app.$toast({

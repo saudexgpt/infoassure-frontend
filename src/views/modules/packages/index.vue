@@ -64,21 +64,22 @@
       <div
         slot="action"
         slot-scope="props"
+        class="demo-inline-spacing"
       >
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="Add Partners"
-          placement="top-start"
+        <b-button
+          variant="outline-primary"
+          class="btn-icon"
+          @click="addModule(props.row)"
         >
-          <b-button
-            variant="gradient-primary"
-            class="btn-icon"
-            @click="addModule(props.row)"
-          >
-            <feather-icon icon="PlusIcon" /> Add Partner
-          </b-button>
-        </el-tooltip>
+          <feather-icon icon="PlusIcon" /> Add Partner
+        </b-button>
+        <b-button
+          variant="outline-secondary"
+          class="btn-icon"
+          @click="setupModule(props.row)"
+        >
+          <feather-icon icon="ToolIcon" /> Configure
+        </b-button>
       </div>
     </v-client-table>
     <add-partners-to-module
@@ -179,6 +180,11 @@ export default {
       // const editableRow = selected_row;
       app.selectedPackage = selectedRow
       app.isCreatePackageModuleSidebarActive = true
+    },
+    setupModule(row) {
+      const moduleSlug = row.slug
+      const { id } = row
+      this.$router.push({ name: 'ModuleSetup', params: { id, module: moduleSlug } }).catch(() => {})
     },
     removePartnerModule(id) {
       // console.log(props)

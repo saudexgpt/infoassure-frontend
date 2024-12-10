@@ -168,7 +168,7 @@
         </b-row>
       </div>
     </b-tab>
-    <b-tab
+    <!-- <b-tab
       lazy
     >
       <template #title>
@@ -226,7 +226,7 @@
           </b-col>
         </b-row>
       </div>
-    </b-tab>
+    </b-tab> -->
   </b-tabs>
 </template>
 
@@ -288,6 +288,8 @@ export default {
         admin_email: '',
         admin_phone: '',
         designation: '',
+        role: 'client',
+        login_as: 'client',
         required,
       },
       empty_clientUserform: {
@@ -297,6 +299,8 @@ export default {
         admin_email: '',
         admin_phone: '',
         designation: '',
+        role: 'client',
+        login_as: 'client',
         required,
       },
       users: [],

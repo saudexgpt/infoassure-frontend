@@ -27,7 +27,7 @@
         <el-row :gutter="5">
           <el-col :md="24">
             <b-button-group>
-              <!-- <b-button
+              <b-button
                 id="gap_assessment"
 
                 variant="outline-secondary"
@@ -38,7 +38,7 @@
                   width="30"
                 >
                 Gap Assessment
-              </b-button> -->
+              </b-button>
               <b-button
                 id="risk_library"
 

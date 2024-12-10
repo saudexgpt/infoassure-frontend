@@ -74,7 +74,7 @@
         />
         <span class="align-middle">Assign Projects To Personnel</span>
       </b-button>
-      <b-button
+      <!-- <b-button
         v-if="projects.length > 0"
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="outline-dark"
@@ -85,7 +85,7 @@
           class="mr-50"
         />
         <span class="align-middle">Assign Projects To Consultant</span>
-      </b-button>
+      </b-button> -->
     </div>
     <v-client-table
       v-model="projects"
@@ -419,8 +419,7 @@ export default {
       pageLength: 10,
       dir: false,
       columns: [
-        'assigned_staff',
-        'assigned_consultant',
+        // 'assigned_consultant',
         'title',
         // 'available_module.name',
         // 'standard.name',
@@ -431,6 +430,7 @@ export default {
         // 'deadline',
         // 'date_completed',
         'is_completed',
+        'assigned_staff',
         'action',
       ],
       options: {

@@ -1,6 +1,7 @@
 <template>
-  <el-card>
-    <div slot="header">
+  <div>
+
+    <!-- <div slot="header">
       <span class="pull-right">
         <b-button
           v-if="!showAnalysis"
@@ -16,7 +17,7 @@
         >Hide Analysis</b-button>
       </span>
       <h4>Manage Gap Assessment</h4>
-    </div>
+    </div> -->
     <div
       v-if="showAnalysis"
     >
@@ -65,41 +66,42 @@
         </el-col>
       </el-row>
     </div>
-    <b-tabs
-      variant="danger"
-    >
-      <b-tab
-        title="AUDIT QUESTIONS"
-        lazy
+    <el-card>
+      <b-tabs
+        variant="danger"
       >
-        <audit-questions
-          :selected-project="selectedProject"
-          :is-admin="isAdmin"
-          @reloadAnalytics="fetchAnalystics"
-        />
-      </b-tab>
-      <b-tab
-        v-if="selectedProject.allow_document_uploads === 1"
-        title="DOCUMENTS"
-        lazy
-      >
-        <documents
-          :selected-project="selectedProject"
-          :is-admin="isAdmin"
-          @reloadAnalytics="fetchAnalystics"
-        />
-      </b-tab>
-      <b-tab
-        title="EXCLUSIONS"
-        lazy
-      >
-        <exceptions
-          :selected-project="selectedProject"
-          :is-admin="isAdmin"
-          @reloadAnalytics="fetchAnalystics"
-        />
-      </b-tab>
-      <!-- <b-tab
+        <b-tab
+          title="AUDIT QUESTIONS"
+          lazy
+        >
+          <audit-questions
+            :selected-project="selectedProject"
+            :is-admin="isAdmin"
+            @reloadAnalytics="fetchAnalystics"
+          />
+        </b-tab>
+        <b-tab
+          v-if="selectedProject.allow_document_uploads === 1"
+          title="DOCUMENTS"
+          lazy
+        >
+          <documents
+            :selected-project="selectedProject"
+            :is-admin="isAdmin"
+            @reloadAnalytics="fetchAnalystics"
+          />
+        </b-tab>
+        <b-tab
+          title="EXCLUSIONS"
+          lazy
+        >
+          <exceptions
+            :selected-project="selectedProject"
+            :is-admin="isAdmin"
+            @reloadAnalytics="fetchAnalystics"
+          />
+        </b-tab>
+        <!-- <b-tab
         title="CERTIFICATE"
         lazy
       >
@@ -109,23 +111,24 @@
           @reloadAnalytics="fetchAnalystics"
         />
       </b-tab> -->
-      <b-tab
-        v-if="isAdmin"
-        title="ASSESSMENT REPORTS"
-        lazy
-      >
-        <reports
-          :selected-project="selectedProject"
-          :is-admin="isAdmin"
-          @reloadAnalytics="fetchAnalystics"
-        />
-      </b-tab>
-    </b-tabs>
-  </el-card>
+        <b-tab
+          v-if="isAdmin"
+          title="ASSESSMENT REPORTS"
+          lazy
+        >
+          <reports
+            :selected-project="selectedProject"
+            :is-admin="isAdmin"
+            @reloadAnalytics="fetchAnalystics"
+          />
+        </b-tab>
+      </b-tabs>
+    </el-card>
+  </div>
 </template>
 <script>
 import {
-  BCard, BCardFooter, BCardBody, BAvatar, BTabs, BTab, BButton,
+  BCard, BCardFooter, BCardBody, BAvatar, BTabs, BTab,
 } from 'bootstrap-vue'
 import Documents from './Documents.vue'
 import AuditQuestions from './AuditQuestions.vue'
@@ -143,7 +146,7 @@ export default {
     BCardFooter,
     BCardBody,
     BAvatar,
-    BButton,
+    // BButton,
     Documents,
     AuditQuestions,
     Exceptions,
@@ -191,7 +194,7 @@ export default {
       const app = this
       const data = [
         {
-          color: 'success', icon: 'HelpCircleIcon', statistic: app.dashboardData.all_questions, label: 'Gap Assessment', title2: 'Responses', statistic2: app.dashboardData.answered_questions, footer: true, show: true,
+          color: 'success', icon: 'HelpCircleIcon', statistic: app.dashboardData.all_questions, label: 'Questions', title2: 'Responses', statistic2: app.dashboardData.answered_questions, footer: true, show: true,
         },
         {
           color: 'primary', icon: 'UploadIcon', statistic: app.dashboardData.expected_documents, label: 'Expected Documents', title2: 'Uploaded Documents', statistic2: app.dashboardData.uploaded_documents, footer: true, show: app.selectedProject.allow_document_uploads === 1,

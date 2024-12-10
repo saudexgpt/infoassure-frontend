@@ -66,7 +66,7 @@ export const constantRoutes = [
     hidden: true,
     path: '/register',
     name: 'UserRegistration',
-    component: () => import('@/views/pages/authentication/UserRegistration.vue'),
+    component: () => import('@/views/pages/authentication/Register.vue'),
     meta: {
       layout: 'full',
       // redirectIfLoggedIn: true,

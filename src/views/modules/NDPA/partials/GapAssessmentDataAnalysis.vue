@@ -113,7 +113,7 @@ export default {
         project_id: app.selectedProject.id,
         client_id: app.selectedClient.id,
       }
-      const dashboardDataResource = new Resource('reports/client-project-data-analysis')
+      const dashboardDataResource = new Resource('ndpa/reports/client-project-data-analysis')
       dashboardDataResource.list(param).then(response => {
         app.dashboardData = response
         app.setData()

@@ -8,22 +8,23 @@ export default [
   //   },
   // },
 
-  {
-    title: 'Activated Modules',
-    icon: 'CheckIcon',
-    route: 'ActivatedModules',
-    acl: {
-      modules: ['due-diligence', 'bcms', 'rcsa', 'asv', 'vapt', 'pci-dss', 'isms', 'ndpa', 'lms', 'soc2', 'sms'],
-      // except: ['client'],
-      roles: ['partner'],
-    },
-  },
+  // {
+  //   title: 'Activated Modules',
+  //   icon: 'CheckIcon',
+  //   route: 'ActivatedModules',
+  //   acl: {
+  //     modules: ['due-diligence', 'bcms', 'rcsa', 'asv', 'vapt', 'pci-dss', 'isms', 'ndpa', 'lms', 'soc2', 'sms'],
+  //     // except: ['client'],
+  //     roles: ['partner', 'admin'],
+  //   },
+  // },
   {
     title: 'Manage Projects',
     icon: 'CpuIcon',
     route: 'manage-projects',
     acl: {
-      permissions: ['manage-client-projects', 'manage-project-plan', 'manage-project-phases'],
+      roles: ['admin'],
+      // permissions: ['manage-client-projects'],
     },
   },
 

@@ -56,16 +56,16 @@
                 <span
                   class="pull-right"
                 >
-                  <el-button
+                  <b-button
                     size="mini"
-                    type="primary"
+                    variant="outline-danger"
                     @click="openRemarkModal(question.answer)"
                   >
                     <feather-icon
                       icon="MessageSquareIcon"
                     />
                     Consultant Remark
-                  </el-button>
+                  </b-button>&nbsp;
                   <!-- <el-popover
                   v-if="isAdmin"
                   placement="right"
@@ -100,15 +100,15 @@
                     Give Remark
                   </el-button>
                 </el-popover> -->
-                  <button
+                  <b-button
                     v-if="isAdmin"
-                    class="btn btn-success  btn-sm"
+                    variant="success"
                     @click="allowModification(clause.questions);"
                   ><feather-icon
                     icon="ThumbsUpIcon"
                   />
                     Enable Modification
-                  </button>
+                  </b-button>
                 </span>
                 <strong style="color: red">
                   Question {{ question_index + 1 }}  of  {{ clause.questions.length }}
@@ -125,7 +125,8 @@
                   </button>
                   <button
                     v-if="parseInt(question_index + 1) < clause.questions.length"
-                    class="btn btn-primary  btn-sm"
+                    class="btn btn-primary btn-sm"
+                    style="margin-left: 1px"
                     @click="change(question_index+1, index);"
                   > Next
                     <feather-icon
@@ -133,7 +134,7 @@
                     />
                   </button>
                   <button
-                    v-if="!isAdmin && parseInt(question_index + 1) === clause.questions.length && question.answer.is_submitted === 0 && selectedProject.is_completed === 0"
+                    v-if="parseInt(question_index + 1) === clause.questions.length && question.answer.is_submitted === 0 && selectedProject.is_completed === 0"
                     class="btn btn-success  btn-sm"
                     @click="submitAnswers(clause.questions);"
                   ><feather-icon
@@ -142,6 +143,16 @@
                     Submit
                   </button>
 
+                </div>
+                <div>
+                  <button
+                    v-for="(quest_count, q_index) in clause.questions.length"
+                    :key="q_index"
+                    :class="`btn ${(parseInt(question_index) === q_index) ? 'btn-primary' : 'btn-dark'} btn-dark btn-sm`"
+                    style="margin: 1px 1px 0 0"
+                    @click="change(q_index, index);"
+                  > {{ quest_count }}
+                  </button>
                 </div>
               </div>
               <hr>
@@ -175,7 +186,7 @@
                           v-model="question.id"
                           type="hidden"
                         >
-                        <div v-if="!isAdmin">
+                        <div>
 
                           <div v-if="question.answer.is_submitted === 0">
                             <div v-if="question.answer_type === 'yes-no'">
@@ -242,15 +253,15 @@
                           </div>
 
                         </div>
-                        <div v-else>
+                        <!-- <div v-else>
                           <strong>Response:</strong>&nbsp;{{ question.answer.yes_or_no }}<br><br>
                           {{ question.answer.open_ended_answer }}
-                        </div>
+                        </div> -->
                       </div>
                     </div>
 
                     <el-popover
-                      v-if="!isAdmin && question.answer.is_exception === 0 && selectedProject.is_completed === 0 && question.can_have_exception === 1"
+                      v-if="question.answer.is_exception === 0 && selectedProject.is_completed === 0 && question.can_have_exception === 1"
                       placement="right"
                       width="400"
                       trigger="click"
@@ -284,19 +295,18 @@
                   </div>
                   <div v-else>
                     <el-alert
-                      v-if="!isAdmin"
                       type="error"
                       :closable="false"
                     >
                       <strong>Not Applicable</strong>. To undo, click on the <code>EXCLUSIONS</code> tab and reverse it
                     </el-alert>
-                    <el-alert
+                    <!-- <el-alert
                       v-else
                       type="error"
                       :closable="false"
                     >
                       <strong>Not Applicable</strong>
-                    </el-alert>
+                    </el-alert> -->
                   </div>
                 <!-- <div>
                   <div
@@ -327,15 +337,14 @@
                     style="height: 300px; overflow: auto; background: #fcfcfc; padding: 10px;"
                   >
                     <b-button
-                      v-if="!isAdmin"
-                      variant="success"
+                      v-if="question.answer.is_submitted === 0"
+                      variant="outline-secondary"
                       block
                       @click="addEvidence(question.answer.id)"
                     >
                       <feather-icon icon="UploadIcon" />
                       Click to upload evidence
                     </b-button>
-                    <br>
                     <small>
                       Uploaded Evidences
                     </small>
@@ -383,9 +392,7 @@
                                 >Download
                                 </a>
                               </el-dropdown-item>
-                              <el-dropdown-item
-                                v-if="!isAdmin"
-                              >
+                              <el-dropdown-item>
                                 <span @click="destroyGapAssessmentEvidence(evidence.id)">Delete</span>
                               </el-dropdown-item>
                             </el-dropdown-menu>
@@ -401,13 +408,22 @@
           </div>
         </template>
       </app-collapse-item>
-      <give-gap-assessment-remarks
-        v-if="showRemarkModal"
+      <b-modal
         v-model="showRemarkModal"
-        :answer="selectedAnswerForRemark"
-        :is-admin="isAdmin"
-        @reload="fetchClausesWithQuestions"
-      />
+        title="Consultant Remarks"
+        centered
+        size="md"
+        hide-footer
+      >
+
+        <give-gap-assessment-remarks
+          v-model="showRemarkModal"
+          :answer="selectedAnswerForRemark"
+          :is-admin="isAdmin"
+          @reload="fetchClausesWithQuestions"
+        />
+
+      </b-modal>
       <b-modal
         v-model="showModal"
         title="Upload Evidence"
@@ -514,7 +530,7 @@ export default {
     openRemarkModal(selectedAnswer) {
       const app = this
       app.selectedAnswerForRemark = selectedAnswer
-      app.showRemarkModal = true
+      app.showRemarkModal = !app.showRemarkModal
     },
     addEvidence(answerId) {
       const app = this
@@ -550,9 +566,11 @@ export default {
         .then(() => {})
     },
     submitAnswers(questions) {
+      const app = this
       const message = 'Click OK to confirm submit action. You will not be able to modify responses once you submit'
       // eslint-disable-next-line no-alert
       if (window.confirm(message)) {
+        app.$message('Response Submitted. Background assessment is on going.')
         const answerIds = []
         questions.forEach(question => {
           answerIds.push(question.answer.id)

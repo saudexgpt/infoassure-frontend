@@ -12,7 +12,7 @@
           <img
             src="/images/logo/logo.png"
             alt="logo"
-            width="100"
+            width="300"
             class="mx-auto"
           >
         </b-link>

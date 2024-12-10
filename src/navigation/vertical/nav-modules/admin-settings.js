@@ -11,7 +11,7 @@ export default [
     // tag: '2',
     // tagVariant: 'light-warning',
     acl: {
-      roles: ['admin', 'super'],
+      roles: ['super'],
     },
     children: [
       {

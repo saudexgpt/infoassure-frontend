@@ -43,6 +43,7 @@ const state = {
     introduction: '',
     modules: [],
     roles: [],
+    all_roles: [],
     permissions: [],
     p_status: '',
     notifications: [],
@@ -248,9 +249,9 @@ const actions = {
   },
   // user logout
   logout({ commit }) {
-    commit('SET_USER_DATA', '')
-    removeToken()
-    resetRouter()
+    // commit('SET_USER_DATA', '')
+    // removeToken()
+    // resetRouter()
     return new Promise((resolve, reject) => {
       logout(state.token)
         .then(() => {

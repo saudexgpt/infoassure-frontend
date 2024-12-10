@@ -61,7 +61,7 @@ const actions = {
                 },
                 children: [
                   {
-                    title: 'Dashboard',
+                    title: 'Overview',
                     route: `${availableModule.slug}-dashboard`,
                   },
                   {
@@ -72,6 +72,10 @@ const actions = {
                     title: 'Reports',
                     route: `${availableModule.slug}-report`,
                   },
+                  // {
+                  //   title: 'Setup',
+                  //   route: `module-setup/${availableModule.slug}`,
+                  // },
                 ],
               })
             }

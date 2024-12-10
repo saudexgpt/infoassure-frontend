@@ -1,233 +1,209 @@
 <template>
-  <div class="auth-wrapper auth-v2">
-    <b-row class="auth-inner m-0">
-
-      <!-- Left Text-->
-      <b-col
-        lg="8"
-        class="d-none d-lg-flex no-padding"
-      >
-        <div class="w-100 d-lg-flex">
-          <b-img
-            fluid
-            :src="imgUrl"
-            alt="Login"
-          />
-        </div>
-      </b-col>
-      <!-- /Left Text-->
+  <div class="auth-wrapper auth-v1 px-2">
+    <div class="auth-inner py-2">
 
       <!-- Login-->
-      <b-col
-        lg="4"
-        class="d-flex align-items-center auth-bg px-2 p-lg-2"
+      <b-card
+        class="mb-0"
       >
-        <b-col
-          sm="8"
-          md="6"
-          lg="12"
-          class="px-xl-2 mx-auto"
+
+        <b-card-title
+          class="mb-1 font-weight-bold"
+          title-tag="h2"
+          align="center"
         >
-
-          <b-card-title
-            class="mb-1 font-weight-bold"
-            title-tag="h2"
-            align="center"
+          <img
+            src="/images/logo/logo.png"
+            alt="logo"
+            width="300"
+            class="mx-auto"
           >
-            <img
-              src="/images/logo/logo.png"
-              alt="logo"
-              width="150"
-              class="mx-auto"
-            >
-          </b-card-title>
-
+        </b-card-title>
+        <div v-if="confirm_otp">
           <confirm-o-t-p
-            v-if="confirm_otp"
             :user-id="userId"
           />
-          <div v-else>
-            <el-alert
-              v-if="password_updated"
-              title="Login with your updated password"
-              type="primary"
-            />
+        </div>
+        <div v-else>
+          <el-alert
+            v-if="password_updated"
+            title="Login with your updated password"
+            type="primary"
+          />
+          <b-form
+            v-if="!reset_password"
+            v-loading="loading"
+            class="auth-login-form mt-2"
+            @submit.prevent="login"
+          >
+            <!-- email -->
+            <b-form-group
+              label-for="login-email"
+            >
+              <div
+                class="form-label-group"
+              >
+                <b-form-input
+                  id="login-email"
+                  v-model="userEmail"
+                  name="login-email"
+                  placeholder="Email or Phone"
+                />
+                <label for="login-email">Email or Phone</label>
+
+              </div>
+            </b-form-group>
+
+            <!-- forgot password -->
+            <b-form-group>
+              <b-input-group
+                class="form-label-group"
+              >
+                <b-form-input
+                  id="login-password"
+                  v-model="password"
+                  class="form-control-merge"
+                  :type="passwordFieldType"
+                  name="login-password"
+                  placeholder="Password"
+                />
+                <b-input-group-append is-text>
+                  <feather-icon
+                    class="cursor-pointer"
+                    :icon="passwordToggleIcon"
+                    @click="togglePasswordVisibility"
+                  />
+                </b-input-group-append>
+              </b-input-group>
+              <div class="d-flex justify-content-between">
+                <b-link :to="{name:'ForgotPassword'}">
+                  <small>Forgot Password?</small>
+                </b-link>
+              </div>
+            </b-form-group>
+            <b-button
+              variant="primary"
+              block
+              @click="login"
+            >
+              Log in
+            </b-button>
+            <b-card-text class="text-center mt-2">
+              <br>
+              <span>Don't have an account? </span>
+              <b-link :to="{name:'UserRegistration'}">
+                <span>&nbsp;Sign Up</span>
+              </b-link>
+            </b-card-text>
+            <!-- <b-card-text class="text-center mt-2">
+                <span>Want to be a marketing partner? </span>
+                <b-link to="register-partner">
+                  <span>&nbsp;Click Here</span>
+                </b-link>
+              </b-card-text> -->
+          </b-form>
+          <el-alert
+            v-if="reset_password"
+            :title="title"
+            type="error"
+            :closable="false"
+          />
+          <validation-observer>
             <b-form
-              v-if="!reset_password"
+              v-if="reset_password"
               v-loading="loading"
+              method="POST"
               class="auth-login-form mt-2"
-              @submit.prevent="login"
+              @submit.prevent="updatePassword"
             >
               <!-- email -->
               <b-form-group
                 label-for="login-email"
               >
-                <div
-                  class="form-label-group"
-                >
-                  <b-form-input
-                    id="login-email"
-                    v-model="userEmail"
-                    class="round"
-                    name="login-email"
-                    placeholder="Email or Phone"
-                  />
-                  <label for="login-email">Email or Phone</label>
+                <b-form-input
+                  id="login-email"
+                  v-model="form.email"
 
-                </div>
+                  name="login-email"
+                  placeholder="Enter username"
+                  disabled
+                />
               </b-form-group>
 
               <!-- forgot password -->
               <b-form-group>
-                <b-input-group
-                  class="form-label-group"
+                <validation-provider
+                  #default="{ errors }"
+                  name="Password"
+                  vid="Password"
+                  rules="required|password|min:9"
                 >
-                  <b-form-input
-                    id="login-password"
-                    v-model="password"
-                    class="form-control-merge round"
-                    :type="passwordFieldType"
-                    name="login-password"
-                    placeholder="Password"
-                  />
-                  <b-input-group-append is-text>
-                    <feather-icon
-                      class="cursor-pointer"
-                      :icon="passwordToggleIcon"
-                      @click="togglePasswordVisibility"
+                  <b-input-group
+                    class="input-group-merge"
+                  >
+                    <b-form-input
+                      v-model="form.new_password"
+                      class="form-control-merge"
+                      :type="passwordFieldType"
+                      name="login-password"
+                      placeholder="New Password"
                     />
-                  </b-input-group-append>
-                </b-input-group>
-                <div class="d-flex justify-content-between">
-                  <b-link :to="{name:'ForgotPassword'}">
-                    <small>Forgot Password?</small>
-                  </b-link>
-                </div>
+                    <b-input-group-append is-text>
+                      <feather-icon
+                        class="cursor-pointer"
+                        :icon="passwordToggleIcon"
+                        @click="togglePasswordVisibility"
+                      />
+                    </b-input-group-append>
+                  </b-input-group>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+
+              <b-form-group>
+                <validation-provider
+                  #default="{ errors }"
+                  name="Confirm Password"
+                  rules="required|confirmed:Password"
+                >
+                  <b-input-group
+                    class="input-group-merge"
+                  >
+                    <b-form-input
+                      v-model="form.confirm_password"
+                      class="form-control-merge"
+                      :type="passwordFieldType"
+                      name="login-password"
+                      placeholder="Confirm Password"
+                    />
+                    <b-input-group-append is-text>
+                      <feather-icon
+                        class="cursor-pointer"
+                        :icon="passwordToggleIcon"
+                        @click="togglePasswordVisibility"
+                      />
+                    </b-input-group-append>
+                  </b-input-group>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
               </b-form-group>
               <b-button
-                pill
-                variant="gradient-primary"
+                variant="secondary"
                 block
-                @click="login"
+                @click="updatePassword"
               >
-                Log in
+                Update Password
               </b-button>
-            <!-- <b-card-text class="text-center mt-2">
-              <span>Don't have an account? </span>
-              <b-link :to="{name:'UserRegistration'}">
-                <span>&nbsp;Register</span>
-              </b-link>
-            </b-card-text> -->
-            <!-- <b-card-text class="text-center mt-2">
-              <span>Want to be a marketing partner? </span>
-              <b-link to="register-partner">
-                <span>&nbsp;Click Here</span>
-              </b-link>
-            </b-card-text> -->
-            </b-form>
-            <el-alert
-              v-if="reset_password"
-              :title="title"
-              type="error"
-            />
-            <validation-observer>
-              <b-form
-                v-if="reset_password"
-                v-loading="loading"
-                method="POST"
-                class="auth-login-form mt-2"
-                @submit.prevent="updatePassword"
-              >
-                <!-- email -->
-                <b-form-group
-                  label-for="login-email"
-                >
-                  <b-form-input
-                    id="login-email"
-                    v-model="form.email"
-                    class="round"
-                    name="login-email"
-                    placeholder="Enter username"
-                    disabled
-                  />
-                </b-form-group>
-
-                <!-- forgot password -->
-                <b-form-group>
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Password"
-                    vid="Password"
-                    rules="required|password|min:9"
-                  >
-                    <b-input-group
-                      class="input-group-merge round"
-                    >
-                      <b-form-input
-                        v-model="form.new_password"
-                        class="form-control-merge"
-                        :type="passwordFieldType"
-                        name="login-password"
-                        placeholder="New Password"
-                      />
-                      <b-input-group-append is-text>
-                        <feather-icon
-                          class="cursor-pointer"
-                          :icon="passwordToggleIcon"
-                          @click="togglePasswordVisibility"
-                        />
-                      </b-input-group-append>
-                    </b-input-group>
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-
-                <b-form-group>
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Confirm Password"
-                    rules="required|confirmed:Password"
-                  >
-                    <b-input-group
-                      class="input-group-merge round"
-                    >
-                      <b-form-input
-                        v-model="form.confirm_password"
-                        class="form-control-merge"
-                        :type="passwordFieldType"
-                        name="login-password"
-                        placeholder="Confirm Password"
-                      />
-                      <b-input-group-append is-text>
-                        <feather-icon
-                          class="cursor-pointer"
-                          :icon="passwordToggleIcon"
-                          @click="togglePasswordVisibility"
-                        />
-                      </b-input-group-append>
-                    </b-input-group>
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-                <b-button
-                  pill
-                  variant="gradient-warning"
-                  block
-                  @click="updatePassword"
-                >
-                  Update Password
-                </b-button>
-                <br>
+              <br>
               <!-- <a href="/dashboard">
-                I will do that later from my profile
-              </a> -->
-              </b-form>
-            </validation-observer>
-          </div>
-        </b-col>
-      </b-col>
-    <!-- /Login-->
-    </b-row>
+                  I will do that later from my profile
+                </a> -->
+            </b-form>
+          </validation-observer>
+        </div>
+      </b-card>
+      <!-- /Login-->
+    </div>
   </div>
 </template>
 
@@ -235,9 +211,9 @@
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BRow, BCol, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BCardTitle, BImg, BForm, BButton, BLink, VBTooltip,
+  BCard, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BCardTitle, BForm, BButton, BLink, VBTooltip, BCardText,
 } from 'bootstrap-vue'
-// import useJwt from '@/auth/jwt/useJwt'
+  // import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -251,16 +227,15 @@ export default {
     'b-tooltip': VBTooltip,
   },
   components: {
-    BRow,
-    BCol,
+    BCard,
     BLink,
     BFormGroup,
     BFormInput,
     BInputGroupAppend,
     BInputGroup,
+    BCardText,
     // BFormCheckbox,
     BCardTitle,
-    BImg,
     BForm,
     BButton,
     ConfirmOTP,
@@ -449,11 +424,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
-@import '@core/scss/vue/pages/page-auth.scss';
-</style>
-<style scoped>
-.no-padding {
-  padding: 0 !important;
-}
-</style>
+  <style lang="scss">
+  @import '@core/scss/vue/pages/page-auth.scss';
+  </style>
+  <style scoped>
+  .no-padding {
+    padding: 0 !important;
+  }
+  .card {
+    border-top-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+  }
+  </style>

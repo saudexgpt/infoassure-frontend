@@ -81,7 +81,8 @@ export default [
     name: 'manage-projects',
     component: () => import('@/views/modules/projects/ManageProjects.vue'),
     meta: {
-      permissions: ['manage-client-projects', 'manage-project-plan', 'manage-project-phases'],
+      // permissions: ['manage-client-projects'],
+      roles: ['admin'],
     },
   },
   {
@@ -222,8 +223,24 @@ export default [
     },
   },
   {
+    path: '/manage-client-users',
+    name: 'manage-client-users',
+    component: () => import('@/views/modules/user/ClientUsers.vue'),
+    meta: {
+      roles: ['admin'],
+    },
+  },
+  {
     path: '/profile',
     component: () => import('@/views/modules/user/Profile.vue'),
     name: 'UserProfile',
+  },
+  {
+    path: '/module-setup/:id/:module',
+    component: () => import('@/views/modules/packages/Setup.vue'),
+    name: 'ModuleSetup',
+    meta: {
+      roles: ['super'],
+    },
   },
 ]

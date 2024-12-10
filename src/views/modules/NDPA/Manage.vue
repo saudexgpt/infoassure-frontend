@@ -14,10 +14,10 @@
               v-for="(project, project_index) in projects"
               :key="project_index"
               :value="project"
-              :label="project.standard.name"
+              :label="project.title"
             >
-              <span style="float: left">{{ project.standard.name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ (project.available_module) ? project.available_module.name : '' }}</span>
+              <span style="float: left">{{ project.title }}</span>
+              <span style="float: right; color: #8492a6;">{{ project.year }}</span>
             </el-option>
           </el-select>
         </el-col>
@@ -27,7 +27,7 @@
         <el-row :gutter="5">
           <el-col :md="24">
             <b-button-group>
-              <b-button
+              <!-- <b-button
                 id="business_unit"
 
                 variant="outline-secondary"
@@ -38,8 +38,8 @@
                   width="30"
                 >
                 Business Units
-              </b-button>
-              <!-- <b-button
+              </b-button> -->
+              <b-button
                 id="gap_assessment"
 
                 variant="outline-secondary"
@@ -49,8 +49,8 @@
                   src="images/project-icons/gap-assessment.png"
                   width="30"
                 >
-                Gap Assessment
-              </b-button> -->
+                Compliance Assessment
+              </b-button>
               <b-button
                 id="pda"
 
@@ -165,7 +165,7 @@ import {
   BButtonGroup, BButton,
 } from 'bootstrap-vue'
 import BusinessUnit from '@/views/modules/business-units/SetUp.vue'
-import GapAssessment from '@/views/modules/projects/partials/GapAssessment.vue'
+import GapAssessment from './partials/GapAssessment.vue'
 import RiskLibrary from '@/views/modules/RiskAndThreats/ViewRiskControlMatrix.vue'
 // import RiskLibrary from '@/views/modules/RiskAndThreats/ViewRiskControlMatrix.vue'
 import RiskAssessment from '@/views/modules/risk-assessment/index.vue'
@@ -196,7 +196,7 @@ export default {
   },
   data() {
     return {
-      current_view: 'business_unit',
+      current_view: 'gap_assessment',
       assessment_activities_array: [],
       moduleIsActive: false,
       projects: [],
@@ -223,9 +223,9 @@ export default {
     if (this.selectedClient.id !== null) {
       this.checkIfProjectIsActive()
     }
-  },
-  mounted() {
-    this.setView(this.current_view)
+    setTimeout(() => {
+      this.setView('gap_assessment')
+    }, 5000)
   },
   methods: {
     checkPermission,
