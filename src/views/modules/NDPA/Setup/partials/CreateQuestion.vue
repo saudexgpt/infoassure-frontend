@@ -112,17 +112,36 @@
             </b-col>
             <b-col cols="12">
               <b-form-group
-                label="Hint"
+                label="Expected Evidence for upload"
                 label-for="v-hint"
               >
-                <el-input
-                  v-model="form.hint"
-                  type="textarea"
-                  placeholder="Give hint for further insight to questions"
-                />
+                <el-select
+                  v-model="form.expected_document_template_ids"
+                  placeholder="Select Applicable Evidences"
+                  filterable
+                  multiple
+                  collapse-tags
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(template, index) in templates"
+                    :key="index"
+                    :value="template.id"
+                    :label="template.title"
+                  />
+                </el-select>
+                <!-- <a
+                  href="#"
+                  @click="showDocumentTemplateModal = true"
+                >
+                  <feather-icon
+                    icon="UploadIcon"
+                  />
+                  Click to select expected evidences
+                </a> -->
               </b-form-group>
             </b-col>
-            <b-col cols="12">
+            <!-- <b-col cols="12">
               <b-form-group
                 label="Needs evidence/reference document upload?"
                 label-for="v-upload_evidence"
@@ -139,7 +158,7 @@
                   :inactive-value="0"
                 />
               </b-form-group>
-            </b-col>
+            </b-col> -->
             <b-col cols="12">
               <b-form-group
                 label="Can have exceptions?"
@@ -174,12 +193,56 @@
         </div>
       </template>
     </b-sidebar>
+    <b-modal
+      v-if="showDocumentTemplateModal"
+      v-model="showDocumentTemplateModal"
+      title="Select the Relevant Evidence"
+      centered
+      size="lg"
+      ok-only
+      ok-title="Done"
+    >
+      <v-client-table
+        v-model="templates"
+        :columns="columns"
+        :options="options"
+      >
+        <div
+          slot="select"
+          slot-scope="{row}"
+        >
+          <el-checkbox
+            v-model="form.expected_document_template_ids"
+            :label="row.id"
+            border
+          />
+        </div>
+        <div
+          slot="title"
+          slot-scope="{row}"
+        >
+          <strong>{{ row.title }}</strong>
+        </div>
+        <div
+          slot="link"
+          slot-scope="{row}"
+        >
+          <a
+            :href="`${baseServerUrl}storage/${row.link}`"
+            target="_blank"
+          >
+            Download Template
+          </a>
+        </div>
+      </v-client-table>
+
+    </b-modal>
   </div>
 </template>
 
 <script>
 import {
-  BSidebar, BRow, BCol, BFormGroup, BButton,
+  BSidebar, BRow, BCol, BFormGroup, BButton, BModal,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
@@ -188,6 +251,7 @@ import Resource from '@/api/resource'
 export default {
   components: {
     BSidebar,
+    BModal,
     BRow,
     BCol,
     BFormGroup,
@@ -206,13 +270,38 @@ export default {
       type: Boolean,
       required: true,
     },
-    clauses: {
-      type: Array,
-      required: true,
-    },
+    // clauses: {
+    //   type: Array,
+    //   required: true,
+    // },
   },
   data() {
     return {
+      showDocumentTemplateModal: false,
+      columns: [
+        'select', 'title', 'link',
+      ],
+      options: {
+        headings: {
+          link: 'Link to Sample',
+        },
+        pagination: {
+          dropdown: true,
+          chunk: 10,
+        },
+        perPage: 10,
+        filterByColumn: true,
+        texts: {
+          filter: 'Search:',
+        },
+        sortable: [
+          'title',
+        ],
+        // filterable: false,
+        filterable: [
+          'title',
+        ],
+      },
       form: {
         name: '',
         section_id: '',
@@ -223,7 +312,9 @@ export default {
         answer_type: '',
         upload_evidence: 1,
         can_have_exception: 1,
+        expected_document_template_ids: [],
       },
+      clauses: [],
       sections: [],
       selectedClause: {},
       loading: false,
@@ -231,9 +322,39 @@ export default {
       editorConfig: {
         // The configuration of the editor.
       },
+      templates: [],
     }
   },
+  computed: {
+    baseServerUrl() {
+      return this.$store.getters.baseServerUrl
+    },
+  },
+  created() {
+    this.fetchClauses()
+    this.fetchDocumentTemplates()
+  },
   methods: {
+    fetchClauses() {
+      const app = this
+      app.loading = true
+      const fetchClausesResource = new Resource('ndpa/clauses')
+      fetchClausesResource.list(this.query)
+        .then(response => {
+          app.clauses = response.clauses
+          app.loading = false
+        })
+    },
+    fetchDocumentTemplates() {
+      const app = this
+      app.loading = true
+      const fetchTemplateResource = new Resource('document-templates/fetch')
+      fetchTemplateResource.list(this.query)
+        .then(response => {
+          app.templates = response.document_templates
+          app.loading = false
+        })
+    },
     setSection() {
       const app = this
       app.form.clause_id = app.selectedClause.id

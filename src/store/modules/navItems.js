@@ -12,6 +12,7 @@ import Resource from '@/api/resource'
 
 const state = {
   navMenuItems: [],
+  allModules: [],
   availableModules: [],
   clientActivatedProjects: [],
   clientActivatedModules: [],
@@ -25,6 +26,10 @@ const mutations = {
   // eslint-disable-next-line no-shadow
   SET_MODULES(state, modules) {
     state.availableModules = modules
+  },
+  // eslint-disable-next-line no-shadow
+  SET_ALL_MODULES(state, modules) {
+    state.allModules = modules
   },
   // eslint-disable-next-line no-shadow
   SET_CLIENT_ACTIVATED_PROJECTS(state, projects) {
@@ -49,6 +54,7 @@ const actions = {
         .then(response => {
           commit('SET_CLIENT_ACTIVATED_PROJECTS', response.projects)
           commit('SET_CLIENT_ACTIVATED_MODULES', response.activated_modules)
+          commit('SET_ALL_MODULES', response.all_modules)
           const modules = []
           response.projects.forEach(project => {
             const availableModule = project.available_module

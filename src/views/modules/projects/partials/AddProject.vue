@@ -45,7 +45,7 @@
                   style="width: 100%"
                 >
                   <el-option
-                    v-for="(module, index) in clientActivatedModules"
+                    v-for="(module, index) in allModules"
                     :key="index"
                     :value="module"
                     :label="module.name"
@@ -154,8 +154,8 @@ export default {
     selectedClient() {
       return this.$store.getters.selectedClient
     },
-    clientActivatedModules() {
-      return this.$store.getters.clientActivatedModules
+    allModules() {
+      return this.$store.getters.allModules
     },
   },
   created() {

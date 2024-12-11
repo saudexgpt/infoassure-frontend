@@ -38,7 +38,7 @@
     <div slot="header">
       <b-row>
         <b-col cols="6">
-          <h4>Manage Client Projects</h4>
+          <h4>Manage Projects</h4>
         </b-col>
         <b-col
           cols="6"

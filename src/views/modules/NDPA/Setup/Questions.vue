@@ -158,13 +158,11 @@
       <create-question
         v-if="isCreateQuestionSidebarActive"
         v-model="isCreateQuestionSidebarActive"
-        :clauses="clauses"
         @save="updateTable"
       />
       <edit-question
         v-if="isEditQuestionSidebarActive"
         v-model="isEditQuestionSidebarActive"
-        :clauses="clauses"
         :selected-question="editable_row"
         @update="updateEditedTableRow"
       />

@@ -111,6 +111,37 @@
             </b-col>
             <b-col cols="12">
               <b-form-group
+                label="Expected Evidence for upload"
+                label-for="v-hint"
+              >
+                <el-select
+                  v-model="form.expected_document_template_ids"
+                  placeholder="Select Applicable Evidences"
+                  filterable
+                  multiple
+                  collapse-tags
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(template, index) in templates"
+                    :key="index"
+                    :value="template.id"
+                    :label="template.title"
+                  />
+                </el-select>
+                <!-- <a
+                  href="#"
+                  @click="showDocumentTemplateModal = true"
+                >
+                  <feather-icon
+                    icon="UploadIcon"
+                  />
+                  Click to select expected evidences
+                </a> -->
+              </b-form-group>
+            </b-col>
+            <!-- <b-col cols="12">
+              <b-form-group
                 label="Hint"
                 label-for="v-hint"
               >
@@ -120,8 +151,8 @@
                   placeholder="Give hint for further insight to questions"
                 />
               </b-form-group>
-            </b-col>
-            <b-col cols="12">
+            </b-col> -->
+            <!-- <b-col cols="12">
               <b-form-group
                 label="Needs evidence/reference document upload?"
                 label-for="v-upload_evidence"
@@ -138,7 +169,7 @@
                   :inactive-value="0"
                 />
               </b-form-group>
-            </b-col>
+            </b-col> -->
             <b-col cols="12">
               <b-form-group
                 label="Can have exceptions?"
@@ -209,10 +240,10 @@ export default {
       type: Object,
       default: () => (null),
     },
-    clauses: {
-      type: Array,
-      required: true,
-    },
+    // clauses: {
+    //   type: Array,
+    //   required: true,
+    // },
   },
   data() {
     return {
@@ -224,9 +255,12 @@ export default {
         hint: '',
         question_type: '',
         answer_type: '',
-        upload_evidence: 0,
+        upload_evidence: 1,
         can_have_exception: 1,
+        expected_document_template_ids: [],
       },
+      clauses: [],
+      templates: [],
       selectedClause: {},
       sections: [],
       loading: false,
@@ -239,12 +273,35 @@ export default {
     }
   },
   created() {
-    this.form = this.selectedQuestion
-    const index = this.clauses.map(object => object.id).indexOf(this.form.clause_id)
-    this.selectedClause = this.clauses[index]
-    this.setSection()
+    this.fetchClauses()
+    this.fetchDocumentTemplates()
   },
   methods: {
+    fetchClauses() {
+      const app = this
+      app.loading = true
+      const fetchClausesResource = new Resource('ndpa/clauses')
+      fetchClausesResource.list(this.query)
+        .then(response => {
+          app.clauses = response.clauses
+
+          app.form = app.selectedQuestion
+          const index = app.clauses.map(object => object.id).indexOf(app.form.clause_id)
+          app.selectedClause = app.clauses[index]
+          app.setSection()
+          app.loading = false
+        })
+    },
+    fetchDocumentTemplates() {
+      const app = this
+      app.loading = true
+      const fetchTemplateResource = new Resource('document-templates/fetch')
+      fetchTemplateResource.list(this.query)
+        .then(response => {
+          app.templates = response.document_templates
+          app.loading = false
+        })
+    },
     setSection() {
       const app = this
       app.form.clause_id = app.selectedClause.id

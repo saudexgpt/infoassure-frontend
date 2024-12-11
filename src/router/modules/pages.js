@@ -79,12 +79,21 @@ export default [
   {
     path: '/manage-projects',
     name: 'manage-projects',
-    component: () => import('@/views/modules/projects/ManageProjects.vue'),
+    component: () => import('@/views/modules/projects/ClientProjects.vue'),
     meta: {
       // permissions: ['manage-client-projects'],
       roles: ['admin'],
     },
   },
+  // {
+  //   path: '/manage-projects',
+  //   name: 'manage-projects',
+  //   component: () => import('@/views/modules/projects/ManageProjects.vue'),
+  //   meta: {
+  //     // permissions: ['manage-client-projects'],
+  //     roles: ['admin'],
+  //   },
+  // },
   {
     path: '/standards',
     name: 'standards',

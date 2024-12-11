@@ -30,6 +30,7 @@ const getters = {
   clients: state => state.clients.allClients,
   selectedClient: state => state.clients.selectedClient,
   partnerWithClients: state => state.clients.partnerWithClients,
+  allModules: state => state.navItems.allModules,
   availableModules: state => state.navItems.availableModules,
   navMenuItems: state => state.navItems.navMenuItems,
   clientActivatedProjects: state => state.navItems.clientActivatedProjects,

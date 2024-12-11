@@ -14,7 +14,7 @@
           shape="circle"
           step-size="xs"
           finish-button-text="Submit"
-          back-button-text="Previous"
+          back-button-text="Back"
           next-button-text="Continue"
           class="wizard-vertical mb-3"
           @on-complete="formSubmitted"
@@ -158,7 +158,7 @@
                 </b-col>
                 <b-col md="12">
                   <b-form-group
-                    label="Valid Email"
+                    label="Official Email"
                     label-for="email"
                   >
                     <validation-provider
@@ -173,7 +173,7 @@
                         :state="errors.length > 0 ? false:null"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
-                      <small class="text-primary"><strong>On successful registration a notification will be sent to this e-mail</strong></small>
+                      <small class="text-primary"><strong>On successful registration, a notification will be sent to this e-mail</strong></small>
                     </validation-provider>
                   </b-form-group>
                 </b-col>

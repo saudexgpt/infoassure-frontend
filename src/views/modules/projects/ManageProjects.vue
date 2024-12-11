@@ -5,7 +5,6 @@
       lazy
     >
       <template slot="label">
-        <!-- <feather-icon icon="BarChartIcon" /> -->
         <span>Manage Project Phases</span>
       </template>
       <project-phases />
@@ -15,7 +14,6 @@
       lazy
     >
       <template slot="label">
-        <!-- <feather-icon icon="LayersIcon" /> -->
         <span>Manage Project Plan</span>
       </template>
       <project-plan />
@@ -25,8 +23,7 @@
       lazy
     >
       <template slot="label">
-        <!-- <feather-icon icon="ListIcon" /> -->
-        <span>Manage Client Projects</span>
+        <span>Manage Projects</span>
       </template>
       <client-projects />
     </el-tab-pane>
