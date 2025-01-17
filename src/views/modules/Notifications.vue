@@ -15,7 +15,7 @@
             color="#0bbd87"
           >
             <el-card>
-              <label>{{ activity_log.data.title }}</label>
+              <p>{{ activity_log.data.title }}</p>
               <!-- eslint-disable-next-line vue/no-v-html-->
               <span v-html="activity_log.data.description" />
             </el-card>

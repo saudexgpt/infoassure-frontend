@@ -111,6 +111,17 @@
             </b-col>
             <b-col cols="12">
               <b-form-group
+                label="Give extra hint to question"
+                label-for="v-hint"
+              >
+                <b-form-textarea
+                  v-model="form.hint"
+                  placeholder="Type hint here..."
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
                 label="Expected Evidence for upload"
                 label-for="v-hint"
               >
@@ -209,7 +220,7 @@
 
 <script>
 import {
-  BSidebar, BRow, BCol, BFormGroup, BButton,
+  BSidebar, BRow, BCol, BFormGroup, BButton, BFormTextarea,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
@@ -217,7 +228,7 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
-    // BFormTextarea,
+    BFormTextarea,
     BSidebar,
     BRow,
     BCol,

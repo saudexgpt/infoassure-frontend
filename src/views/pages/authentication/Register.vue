@@ -7,6 +7,18 @@
         v-loading="loader"
         class="mb-0"
       >
+        <b-card-title
+          class="mb-0 font-weight-bold"
+          title-tag="h2"
+          align="center"
+        >
+          <img
+            src="/images/logo/logo.png"
+            alt="logo"
+            width="200"
+            class="mx-auto"
+          >
+        </b-card-title>
         <form-wizard
           color="#bb9002"
           title="SIGN UP FORM"
@@ -21,7 +33,7 @@
         >
           <!-- personal details tab -->
           <tab-content
-            title="Company Information"
+            title="Organization"
             icon="feather icon-home"
             :before-change="validationFormInfo"
           >
@@ -309,6 +321,7 @@ import {
   BCardText,
   BFormInput,
   BCard,
+  BCardTitle,
   BLink,
   // BInputGroupAppend,
   // BInputGroup,
@@ -330,6 +343,7 @@ export default {
     BFormGroup,
     BFormInput,
     BCard,
+    BCardTitle,
     BLink,
     // BInputGroupAppend,
     // BInputGroup,

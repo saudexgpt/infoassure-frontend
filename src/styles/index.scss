@@ -105,7 +105,11 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+.el-card {
+  margin-bottom: 10px !important;
+}
 .el-card__body {
+  background-color: #fafafa !important;
   padding: 10px !important;
 }
 .el-card__header {
@@ -265,3 +269,21 @@ border: 1px solid #f0f0f0!important;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
+
+.el-loading-mask {
+  background-color: rgba(255, 255, 255, 0.229);
+  margin: 0;
+  -webkit-transition: opacity 0.3s;
+}
+.no-margin {
+  margin: -30px
+}
+
+/* this is customized to ensure the hyperlink form in a ckeditoris visible on a modal*/
+.ck.ck-link-form {
+  z-index: 10000;
+}
+.b-sidebar-outer {
+ z-index: 100 !important;
+}
+/* customization of hyperlink visibility ends */

@@ -7,9 +7,9 @@
       :key="index"
       :xs="24"
       :sm="24"
-      :md="8"
-      :lg="8"
-      :xl="8"
+      :md="24"
+      :lg="24"
+      :xl="24"
     >
       <el-skeleton
         :loading="load"
@@ -72,6 +72,15 @@ export default {
       type: Object,
       default: () => (null),
     },
+    filterBy: {
+      type: Object,
+      default: () => ({
+        group_by: 'clause_id',
+        clause_id: '',
+        assignee_id: '',
+        date: '',
+      }),
+    },
   },
   data() {
     return {
@@ -112,6 +121,10 @@ export default {
       const param = {
         project_id: app.selectedProject.id,
         client_id: app.selectedClient.id,
+        group_by: app.filterBy.group_by,
+        clause_id: app.filterBy.clause_id,
+        assignee_id: app.filterBy.assignee_id,
+        date: app.filterBy.date,
       }
       const dashboardDataResource = new Resource('ndpa/reports/client-project-data-analysis')
       dashboardDataResource.list(param).then(response => {

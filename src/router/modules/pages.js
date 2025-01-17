@@ -77,11 +77,17 @@ export default [
   //   },
   // },
   {
+    path: '/modules',
+    name: 'modules',
+    component: () => import('@/views/modules/Index.vue'),
+  },
+
+  {
     path: '/manage-projects',
     name: 'manage-projects',
     component: () => import('@/views/modules/projects/ClientProjects.vue'),
     meta: {
-      // permissions: ['manage-client-projects'],
+      permissions: ['manage-client-projects'],
       roles: ['admin'],
     },
   },
@@ -116,6 +122,14 @@ export default [
     component: () => import('@/views/modules/app-setup/Evidence.vue'),
     meta: {
       permissions: ['read-evidence'],
+    },
+  },
+  {
+    path: '/document-templates',
+    name: 'document-templates',
+    component: () => import('@/views/modules/app-setup/DocumentTemplates.vue'),
+    meta: {
+      // permissions: ['read-evidence'],
     },
   },
   {

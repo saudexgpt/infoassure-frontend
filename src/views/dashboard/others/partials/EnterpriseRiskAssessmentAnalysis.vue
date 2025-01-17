@@ -1,5 +1,5 @@
 <template>
-  <el-card
+  <div
     style="min-height: 200px"
   >
     <div
@@ -9,44 +9,42 @@
 
       <h3>{{ title }}</h3>
     </div>
-    <aside>
-      <el-row :gutter="5">
-        <el-col :md="12">
-          <highcharts
-            v-if="showChart"
-            :options="chart_report"
-          />
-        </el-col>
-        <el-col :md="6">
-          <highcharts
-            v-if="showChart"
-            :options="riskSeverityChart"
-          />
-        <!-- <hr>
-        <risk-ranking-matrix :matrix="matrix" /> -->
-        </el-col>
-        <el-col :md="6">
-          <highcharts
-            v-if="showChart"
-            :options="controlEffectivenessChart"
-          />
-          <!-- <el-card>
+    <el-row :gutter="5">
+      <el-col :md="12">
+        <highcharts
+          v-if="showChart"
+          :options="chart_report"
+        />
+      </el-col>
+      <el-col :md="6">
+        <highcharts
+          v-if="showChart"
+          :options="riskSeverityChart"
+        />
+      <!-- <hr>
+      <risk-ranking-matrix :matrix="matrix" /> -->
+      </el-col>
+      <el-col :md="6">
+        <highcharts
+          v-if="showChart"
+          :options="controlEffectivenessChart"
+        />
+        <!-- <el-card>
 
-            <div align="center">
-              <h4>Average Compliance Rating</h4>
-              <img
-                :src="changeImpactImage(risk_level)"
-              >
-            </div>
-            <p>
-              Risk Score: <strong>{{ risk_score }}</strong><br>
-              Risk Level: <strong>{{ risk_level }}</strong>
-            </p>
-          </el-card> -->
-        </el-col>
-      </el-row>
-    </aside>
-  </el-card>
+          <div align="center">
+            <h4>Average Compliance Rating</h4>
+            <img
+              :src="changeImpactImage(risk_level)"
+            >
+          </div>
+          <p>
+            Risk Score: <strong>{{ risk_score }}</strong><br>
+            Risk Level: <strong>{{ risk_level }}</strong>
+          </p>
+        </el-card> -->
+      </el-col>
+    </el-row>
+  </div>
 </template>
 <script>
 import {

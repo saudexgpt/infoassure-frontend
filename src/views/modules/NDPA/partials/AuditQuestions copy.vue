@@ -108,33 +108,24 @@
                       <strong>{{ section.name }}</strong>
                     </el-tooltip>
                   </template>
-                  <el-button
-                    v-if="userData.all_roles.includes('admin')"
-                    type="text"
-                    @click="assignQuestions(section.questions)"
-                  >
-                    <i class="el-icon-s-promotion" />
-                    Assign Tasks
-                  </el-button>
-                  <template
-                    v-for="(selectedQuestion, quest_index) in section.questions"
+
+                  <el-menu-item
+                    v-for="(question, quest_index) in section.questions"
+                    :key="quest_index"
+                    :index="`${index}-${section_index}-${quest_index}`"
+                    style="cursor: pointer;"
+                    @click="viewQuestions(section, section_index, clause.id, index)"
                   >
 
-                    <el-menu-item
-                      v-if="(userData.id === selectedQuestion.answer.assignee_id) || userData.all_roles.includes('admin') || isAdmin"
-                      :key="quest_index"
-                      :index="`${index}-${section_index}-${quest_index}`"
-                      style="cursor: pointer;"
-                      @click="viewQuestions(selectedQuestion, section, section_index, clause.id, index)"
-                    >
+                    <strong>
+                      <feather-icon
+                        align="right"
+                        icon="ChevronsRightIcon"
+                      />
 
-                      <strong>
-                        <i class="el-icon-caret-right" />
-
-                        {{ `Question - #${selectedQuestion.id}` }}
-                      </strong>
-                    </el-menu-item>
-                  </template>
+                      {{ `Question - #${question.id}` }}
+                    </strong>
+                  </el-menu-item>
                 </el-submenu>
 
               </el-menu>
@@ -162,18 +153,35 @@
                 v-if="viewType === 'load'"
                 align="center"
               >
-                <h3>Question loading...</h3>
+                <h3>Questions loading...</h3>
               </div>
               <div v-if="selectedClauseId === clause.id">
-                <div v-if="question !== null">
-                  <div>
-                    <div>
-                      <em><h5>{{ selectedSection.name }} - {{ selectedSection.description }}</h5></em>
-                    </div>
+                <div>
+                  <span
+                    v-if="userData.all_roles.includes('admin')"
+                    class="pull-right"
+                  >
 
+                    <b-button
+                      variant="outline-secondary"
+                      size="sm"
+                      @click="assignSection()"
+                    >
+                      Assign Task
+                    </b-button>
+                  </span>
+                  <div>
+                    <em><h5>{{ selectedSection.name }} - {{ selectedSection.description }}</h5></em>
                   </div>
-                  <div v-if="(userData.id === question.answer.assignee_id) || userData.all_roles.includes('admin') || isAdmin">
+
+                </div>
+                <div
+                  v-for="(question, question_index) in questions"
+                  :key="question_index"
+                >
+                  <div v-if="(userData.id === question.answer.assignee_id) || userData.all_roles.includes('admin')">
                     <div
+                      v-if="currenctQuestions[index] === question_index"
                       class="col-lg-12 col-md-12 col-sm-12 col-xs-12 "
                       style="margin-top: 15px; padding: 5px; border: 5px double #c0c0c0; border-radius: 8px;"
                     >
@@ -181,7 +189,7 @@
                       <span
                         v-if="userData.all_roles.includes('admin')"
                         style="cursor: pointer;"
-                        @click="assignQuestions([question])"
+                        @click="assignQuestion(question.answer)"
                       >
                         <el-alert
                           v-if="question.answer.assignee !== null"
@@ -225,17 +233,7 @@
                         <span
                           class="pull-right"
                         >
-                          <b-button
-                            v-if="userData.all_roles.includes('admin') && question.answer.is_submitted === 1"
-                            variant="outline-success"
-                            size="sm"
-                            @click="allowModification([question]);"
-                          ><feather-icon
-                            icon="ThumbsUpIcon"
-                          />
-                            Enable Modification
-                          </b-button>
-                          <!-- <el-dropdown>
+                          <el-dropdown>
                             <b-button
                               variant="flat"
                               class="btn-icon rounded-circle"
@@ -249,33 +247,93 @@
                               <el-dropdown-item>
                                 <span @click="openRemarkModal(question.answer)"><feather-icon icon="MessageSquareIcon" /> View Remarks</span>
                               </el-dropdown-item>
+                              <!-- <el-dropdown-item v-if="userData.all_roles.includes('admin')">
+                                <span @click="assignQuestion(question.answer)"><feather-icon icon="UserCheckIcon" /> Assign Task</span>
+                              </el-dropdown-item> -->
                               <el-dropdown-item v-if="userData.all_roles.includes('admin') && question.answer.is_submitted === 1">
                                 <span @click="allowModification(questions);"><feather-icon icon="ThumbsUpIcon" /> Enable Modification</span>
                               </el-dropdown-item>
                             </el-dropdown-menu>
-                          </el-dropdown> -->
+                          </el-dropdown>
+                        <!-- <el-popover
+                  v-if="isAdmin"
+                  placement="right"
+                  width="400"
+                  trigger="click"
+                >
+                  <div>
+                    <el-input
+                      v-model="adminRemark"
+                      placeholder="Give remark here..."
+                      type="textarea"
+                    />
+                    <br>
+                    <el-button
+                      :loading="loadButton"
+                      size="mini"
+                      type="success"
+                      :disabled="adminRemark === ''"
+                      @click="saveRemark(question.answer.id, index, question_index)"
+                    >
+                      Submit
+                    </el-button>
+                  </div>
+                  <el-button
+                    slot="reference"
+                    size="mini"
+                    type="primary"
+                  >
+                    <feather-icon
+                      icon="MessageSquareIcon"
+                    />
+                    Give Remark
+                  </el-button>
+                </el-popover> -->
+                        <!-- <b-button
+                    v-if="isAdmin"
+                    variant="success"
+                    @click="allowModification(questions);"
+                  ><feather-icon
+                    icon="ThumbsUpIcon"
+                  />
+                    Enable Modification
+                  </b-button> -->
                         </span>
+                        <strong style="color: red">
+                          Question {{ question_index + 1 }}  of  {{ questions.length }}
+                        </strong>
 
-                        <div v-if="(userData.id === question.answer.assignee_id)">
+                        <div>
                           <b-button
-                            v-if="question.answer.is_submitted === 0 && selectedProject.is_completed === 0"
-                            variant="primary"
-                            size="sm"
-                            @click="submitAnswers([question]);"
-                          ><feather-icon
-                            icon="SaveIcon"
-                          />
-                            Submit
-                          </b-button>
-                          <b-button
-                            v-else
+                            v-if="question_index !== 0"
                             variant="outline-secondary"
                             size="sm"
+                            @click="change(question_index-1, index);"
+                          > <feather-icon
+                            icon="ChevronLeftIcon"
+                          />
+                          </b-button>
+                          <b-button
+                            v-if="parseInt(question_index + 1) < questions.length"
+                            variant="outline-secondary"
+                            size="sm"
+                            style="margin-left: 2px"
+                            @click="change(question_index+1, index);"
+                          >
+                            <feather-icon
+                              icon="ChevronRightIcon"
+                            />
+                          </b-button>
+                          <button
+                            v-if="parseInt(question_index + 1) === questions.length && question.answer.is_submitted === 0 && selectedProject.is_completed === 0"
+                            class="btn btn-success  btn-sm"
+                            style="margin-left: 2px"
+                            @click="submitAnswers(questions);"
                           ><feather-icon
                             icon="SaveIcon"
                           />
                             Submit
-                          </b-button>
+                          </button>
 
                         </div>
                       </div>
@@ -294,8 +352,7 @@
                               :editor="editor"
                               :config="editorConfig"
                               disabled
-                            />
-                          </div>
+                            /></div>
                           <div
                             v-if="question.answer.is_exception === 0"
                             style="padding:10px;"
@@ -314,6 +371,36 @@
                                 <div>
 
                                   <div v-if="question.answer.is_submitted === 0">
+                                    <!-- <div v-if="question.answer_type === 'yes-no'">
+                                <el-radio-group
+                                  v-model="question.answer.yes_or_no"
+                                  @change="saveAnswer(question.answer, 'yes_or_no')"
+                                >
+                                  <el-radio
+                                    label="YES"
+                                    border
+                                  >
+                                    YES
+                                  </el-radio>
+                                  <el-radio
+                                    label="NO"
+                                    border
+                                  >
+                                    NO
+                                  </el-radio>
+                                </el-radio-group>
+                              </div>
+                              <div v-else-if="question.answer_type === 'open_ended'">
+                                <el-input
+                                  v-model="question.answer.open_ended_answer"
+                                  type="textarea"
+                                  placeholder="Type your response here..."
+                                  style="width: 100%"
+                                  @blur="saveAnswer(question.answer, 'open_ended_answer')"
+                                />
+
+                              </div> -->
+                                    <!-- <div v-else> -->
                                     <div v-if="question.answer.assignee_id !== null">
                                       <el-radio-group
                                         v-model="question.answer.yes_or_no"
@@ -339,7 +426,7 @@
                                         trigger="click"
                                       >
                                         <div style="background: #000000; color: #ffffff; padding: 10px; text-align: left; border-radius: 5px;">
-                                          <strong>Kindly justify why it is not applicable, then click on OK</strong>
+                                          <strong>Kindly justify why it is not applicable, then click on DONE</strong>
                                           <el-input
                                             v-model="exceptionReason"
                                             placeholder="Type justification here..."
@@ -350,11 +437,10 @@
                                             :loading="loadButton"
                                             size="mini"
                                             type="primary"
-                                            plain
                                             :disabled="exceptionReason === ''"
-                                            @click="createException(clause.id, question.answer.id)"
+                                            @click="createException(clause.id, question.answer.id, index, question_index)"
                                           >
-                                            OK
+                                            Done
                                           </el-button>
                                         </div>
                                         <el-button
@@ -382,6 +468,10 @@
                                   </div>
 
                                 </div>
+                              <!-- <div v-else>
+                          <strong>Response:</strong>&nbsp;{{ question.answer.yes_or_no }}<br><br>
+                          {{ question.answer.open_ended_answer }}
+                        </div> -->
                               </div>
                             </div>
                           </div>
@@ -392,7 +482,30 @@
                             >
                               <strong>Not Applicable</strong>. To undo, click on the <code>EXCLUSIONS</code> tab and reverse it
                             </el-alert>
+                          <!-- <el-alert
+                      v-else
+                      type="error"
+                      :closable="false"
+                    >
+                      <strong>Not Applicable</strong>
+                    </el-alert> -->
                           </div>
+                        <!-- <div>
+                  <div
+                    v-if="question.answer.remark !== null"
+                  >
+
+                    <hr>
+                    <strong>Remark on this response: </strong>
+                    <div
+                      style="padding: 5px; border: 2px solid #409EFF; border-radius: 8px; margin: 5px;"
+                    >
+
+                      {{ question.answer.remark }}
+                    </div>
+                  </div>
+                  <hr>
+                </div> -->
                         </el-col>
                         <el-col
                           :lg="9"
@@ -403,7 +516,7 @@
                           <div
                             v-if="question.expected_document_template_ids.length > 0 && question.answer.assignee_id !== null"
                             v-loading="loadDelete"
-                            style="max-height: 250px; overflow: auto; background: #fcfcfc; padding: 10px; border-radius: 8px;"
+                            style="height: 300px; overflow: auto; background: #fcfcfc; padding: 10px; border-radius: 8px;"
                           >
                             <h4>Expected Evidences ({{ question.expected_document_template_ids.length }})</h4>
                             <b-list-group>
@@ -438,9 +551,9 @@
                                         class="btn-icon rounded-circle"
                                       >
                                         <i class="el-icon-more" />
-                                        <!-- <feather-icon
-                                    icon="MoreHorizontalIcon"
-                                  /> -->
+                                      <!-- <feather-icon
+                                  icon="MoreHorizontalIcon"
+                                /> -->
                                       </b-button>
                                       <el-dropdown-menu slot="dropdown">
                                         <el-dropdown-item>
@@ -450,6 +563,20 @@
                                           ><feather-icon icon="DownloadIcon" /> Download Template
                                           </a>
                                         </el-dropdown-item>
+                                        <el-dropdown-item v-if="uploads[template_id][0].link === null">
+                                          <span @click="addEvidence(uploads[template_id][0])"><feather-icon icon="UploadIcon" /> Upload Evidence</span>
+                                        </el-dropdown-item>
+                                        <el-dropdown-item
+                                          v-if="uploads[template_id][0].link !== null && (uploads[template_id][0].link.split('.').pop() === 'docx' || uploads[template_id][0].link.split('.').pop() === 'doc')"
+                                        >
+                                          <span @click="viewAndEditDocument(uploads[template_id][0], 'word')"><feather-icon icon="EditIcon" /> Update Evidence</span>
+                                        </el-dropdown-item>
+
+                                        <el-dropdown-item
+                                          v-if="uploads[template_id][0].link !== null && (uploads[template_id][0].link.split('.').pop() === 'xlsx' || uploads[template_id][0].link.split('.').pop() === 'xls')"
+                                        >
+                                          <span @click="viewAndEditDocument(uploads[template_id][0], 'spreadsheet')"><feather-icon icon="EditIcon" /> Update Evidence</span>
+                                        </el-dropdown-item>
                                         <el-dropdown-item v-if="uploads[template_id][0].link !== null">
                                           <a
                                             :href="baseServerUrl+'storage/'+uploads[template_id][0].link"
@@ -457,27 +584,9 @@
                                           ><feather-icon icon="DownloadIcon" /> Download Evidence
                                           </a>
                                         </el-dropdown-item>
-                                        <template v-if="(userData.id === question.answer.assignee_id) || userData.all_roles.includes('admin')">
-                                          <el-dropdown-item v-if="uploads[template_id][0].link === null">
-                                            <span @click="addEvidence(uploads[template_id][0])"><feather-icon icon="UploadIcon" /> Upload Evidence</span>
-                                          </el-dropdown-item>
-                                          <el-dropdown-item
-                                            v-if="uploads[template_id][0].link !== null && (uploads[template_id][0].link.split('.').pop() === 'docx' || uploads[template_id][0].link.split('.').pop() === 'doc')"
-                                          >
-                                            <span @click="viewAndEditDocument(uploads[template_id][0], 'word')"><feather-icon icon="EditIcon" /> Update Evidence</span>
-                                          </el-dropdown-item>
-
-                                          <el-dropdown-item
-                                            v-if="uploads[template_id][0].link !== null && (uploads[template_id][0].link.split('.').pop() === 'xlsx' || uploads[template_id][0].link.split('.').pop() === 'xls')"
-                                          >
-                                            <span @click="viewAndEditDocument(uploads[template_id][0], 'spreadsheet')"><feather-icon icon="EditIcon" /> Update Evidence</span>
-                                          </el-dropdown-item>
-
-                                        </template>
-
-                                        <!-- <el-dropdown-item v-if="uploads[template_id][0].link !== null">
-                                    <span @click="destroyGapAssessmentEvidence(uploads[template_id][0].id)"><feather-icon icon="TrashIcon" /> Delete Evidence</span>
-                                  </el-dropdown-item> -->
+                                      <!-- <el-dropdown-item v-if="uploads[template_id][0].link !== null">
+                                  <span @click="destroyGapAssessmentEvidence(uploads[template_id][0].id)"><feather-icon icon="TrashIcon" /> Delete Evidence</span>
+                                </el-dropdown-item> -->
                                       </el-dropdown-menu>
                                     </el-dropdown>
                                   </span>
@@ -487,16 +596,30 @@
                           </div>
                         </el-col>
                       </el-row>
-                      <el-row v-if="question.answer.is_submitted === 1">
-                        <el-col :md="24">
+                      <br>
+                      <div>
+                        <template
+                          v-for="(quest, q_index) in questions"
+                        >
 
-                          <give-gap-assessment-remarks
-                            :answer="question.answer"
-                            :is-admin="userData.all_roles.includes('admin')"
-                            @reload="fetchClausesWithQuestions"
-                          />
-                        </el-col>
-                      </el-row>
+                          <button
+                            v-if="parseInt(question_index) === q_index"
+                            :key="q_index"
+                            :class="`btn btn-dark btn-sm`"
+                            style="margin: 1px 1px 0 0"
+                            @click="change(q_index, index);"
+                          > {{ q_index + 1 }}
+                          </button>
+                          <button
+                            v-else
+                            :key="q_index"
+                            :class="`btn ${(quest.answer.yes_or_no === null && quest.answer.is_exception === 0) ? 'btn-danger' : 'btn-primary'} btn-sm`"
+                            style="margin: 1px 1px 0 0"
+                            @click="change(q_index, index);"
+                          > {{ q_index + 1 }}
+                          </button>
+                        </template>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -523,76 +646,48 @@
       </b-modal>
       <b-modal
         v-model="showAssigneeModal"
-        title="Assign Tasks To Personnel(s)"
+        title="Assign Task To"
         centered
-        size="xl"
+        size="md"
         hide-footer
       >
         <div v-loading="loadingTaskAssignment">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Task (Question)</th>
-                <th>Personnel</th>
-                <th>Deadline</th>
-                <th>Comment</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(answer, ansIndex) in selectedAnswers"
-                :key="ansIndex"
-              >
-                <td>
-                  <!-- eslint-disable-next-line vue/no-v-html -->
-                  <span v-html="answer.question" />
-                </td>
-                <td>
-                  <el-select
-                    v-model="answer.assignee_id"
-                    placeholder="Select Personnel"
-                    value-key="id"
-                    filterable
-                    style="width: 100%;"
-                  >
-                    <el-option
-                      v-for="(user, user_index) in clientUsers"
-                      :key="user_index"
-                      :value="user.id"
-                      :label="user.name"
-                    />
-                  </el-select>
-                </td>
-                <td>
-                  <el-date-picker
-                    v-model="answer.end_date"
-                    placeholder="Select Due Date"
-                    :picker-options="pickerOptions"
-                    format="yyyy-MM-dd"
-                    value-format="yyyy-MM-dd"
-                    style="width: 100%;"
-                  />
-                </td>
-                <td>
-                  <el-input
-                    v-model="answer.comment"
-                    placeholder="Give more clarification on what is expected of the assignee"
-                    type="textarea"
-                    style="width: 100%;"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td colspan="4">
-                  <b-button
-                    @click="assignUserToRespond()"
-                  >
-                    Submit
-                  </b-button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <el-col :xs="24">
+            <el-select
+              v-model="assigneeForm.userId"
+              placeholder="Select Personnel"
+              filterable
+              style="width: 100%;"
+            >
+              <el-option
+                v-for="(user, user_index) in clientUsers"
+                :key="user_index"
+                :value="user.id"
+                :label="user.name"
+              />
+            </el-select>
+            <hr>
+          </el-col>
+          <el-col :xs="24">
+            <el-date-picker
+              v-model="assigneeForm.end_date"
+              placeholder="Select Due Date"
+              :picker-options="pickerOptions"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              style="width: 100%;"
+            />
+            <hr>
+          </el-col>
+          <el-col :xs="24">
+            <b-button
+              style="width: 100%;"
+              @click="assignUserToRespond()"
+            >
+              Submit
+            </b-button>
+            <hr>
+          </el-col>
         </div>
       </b-modal>
       <b-modal
@@ -705,7 +800,6 @@ export default {
       },
       clauses: [],
       questions: [],
-      question: null,
       answer_completion_status: null,
       uploads: null,
       currenctQuestions: {},
@@ -729,12 +823,9 @@ export default {
       selectedDocument: '',
       clientUsers: [],
       assigneeForm: {
-        user: null,
         userId: '',
         end_date: '',
-        formerAssignee: '',
       },
-      selectedAnswers: [],
       selectedAnswerId: '',
       showAssigneeModal: false,
       loadingTaskAssignment: false,
@@ -763,20 +854,38 @@ export default {
   },
   methods: {
     moment,
-    viewQuestions(selectedQuestion, section, sectionIndex, clauseId, clauseIndex) {
+    viewQuestions(section, sectionIndex, clauseId, clauseIndex) {
       const app = this
-      app.viewType = 'load'
-      app.question = null
+      app.questions = []
       app.loadView = true
+      app.viewType = 'load'
       app.selectedClauseId = clauseId
       app.selectedClauseIndex = clauseIndex
       app.selectedSectionIndex = sectionIndex
       app.selectedSection = section
       setTimeout(() => {
-        app.question = selectedQuestion
+        app.questions = section.questions
         app.loadView = false
         app.viewType = 'question'
       }, 10)
+    },
+    setCurrentQuestions(clauses) {
+      const app = this
+      // eslint-disable-next-line no-plusplus
+      for (let index = 0; index < clauses.length; index++) {
+        app.currenctQuestions[index] = 0
+      }
+      app.currentQuestionsAreSet = true
+    },
+    change(value, index) {
+      const app = this
+      if (Object.hasOwnProperty.call(app.currenctQuestions, index)) {
+        app.currenctQuestions[index] = value
+      }
+      app.showQuestions = false
+      setTimeout(() => {
+        app.showQuestions = true
+      }, 5)
     },
     openRemarkModal(selectedAnswer) {
       const app = this
@@ -807,8 +916,15 @@ export default {
           }
           // we want to check for any evidence that are yet pending so that the modal will be updated
           app.checkForPendingDocumentUpload()
+          if (!app.currentQuestionsAreSet) {
+            app.setCurrentQuestions(app.clauses)
+          }
           app.loading = false
         })
+    },
+    colorButton(index, current) {
+      document.getElementById(`quest_button_${index}_${current}`).style.backgroundColor = '#ccc'
+      // }
     },
     fetchClientUsers() {
       const app = this
@@ -825,24 +941,10 @@ export default {
       fetchConsultingsResource.update(answer.id, param)
         .then(() => {})
     },
-    assignQuestions(questions) {
+    assignQuestion(answer) {
       const app = this
-      const selectedAnswers = []
-      questions.forEach(question => {
-        selectedAnswers.push({
-          question: question.question,
-          id: question.answer.id,
-          assignee_id: question.answer.assignee_id,
-          end_date: question.answer.end_date,
-          comment: '',
-
-        })
-      })
-
-      app.selectedAnswers = selectedAnswers
-      // app.assigneeForm.user = answer.assignee
-      // app.assigneeForm.userId = answer.assignee_id
-      // app.assigneeForm.formerAssignee = (answer.assignee) ? answer.assignee.name : ''
+      app.selectedAnswerId = answer.id
+      app.assigneeForm.userId = answer.assignee_id
       app.showAssigneeModal = true
     },
     assignSection() {
@@ -850,34 +952,16 @@ export default {
     assignUserToRespond() {
       const app = this
       // console.log(answer[field])
-      this.$confirm('This will unassign the previous personnel from the task. Continue?', 'Warning', {
-        confirmButtonText: 'Yes, Continue',
-        cancelButtonText: 'Cancel',
-        type: 'warning',
-      }).then(() => {
-        app.loadingTaskAssignment = true
-        const param = { answers: app.selectedAnswers }
-        const fetchConsultingsResource = new Resource('ndpa/answers/assign-user-to-respond')
-        fetchConsultingsResource.store(param)
-          .then(() => {
-            app.fetchClausesWithQuestions(false)
-            // app.question.answer.assignee = app.assigneeForm.user
-            app.$message('Task assigned successfully')
-            app.showAssigneeModal = false
-            app.loadingTaskAssignment = false
-          }).catch(() => {
-            app.loadingTaskAssignment = false
-            this.$message({
-              type: 'danger',
-              message: 'An error occured',
-            })
-          })
-      }).catch(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: 'Action canceled',
-        // })
-      })
+      app.loadingTaskAssignment = true
+      const param = { assignee_id: app.assigneeForm.userId, end_date: app.assigneeForm.end_date }
+      const fetchConsultingsResource = new Resource('ndpa/answers/assign-user-to-respond')
+      fetchConsultingsResource.update(app.selectedAnswerId, param)
+        .then(() => {
+          app.fetchClausesWithQuestions(false)
+          app.$message('Task assigned successfully')
+          app.showAssigneeModal = false
+          app.loadingTaskAssignment = false
+        })
     },
     checkForPendingDocumentUpload() {
       const app = this
@@ -916,7 +1000,7 @@ export default {
       })
 
       if (noAnswer > 0) {
-        app.$alert('Please respond to the question', 'No Response')
+        app.$alert('Please respond to all questions in this section. The RED navigation button suggests the unanswered question', 'Incomplete Response')
         return
       }
       app.selectedQuestionsforSubmission = questions
@@ -934,18 +1018,13 @@ export default {
         const param = { answer_ids: answerIds, value: 1 }
         const submitAnswersResource = new Resource('ndpa/answers/submit')
         submitAnswersResource.store(param)
-          .then(response => {
-            app.viewType = 'load'
-            // this.fetchClausesWithQuestions(false)
-            setTimeout(() => {
-              app.question = response.question
-              app.viewType = 'question'
-            }, 10)
+          .then(() => {
+            this.fetchClausesWithQuestions(false)
             this.$emit('reloadAnalytics')
           })
       }
     },
-    createException(clauseId, answerId) {
+    createException(clauseId, answerId, clauseIndex, questionIndex) {
       const app = this
       app.loadButton = true
       const param = {
@@ -954,7 +1033,7 @@ export default {
       const createExceptionResource = new Resource('ndpa/exceptions/create')
       createExceptionResource.store(param)
         .then(() => {
-          app.question.answer.is_exception = 1
+          app.questions[questionIndex].answer.is_exception = 1
           app.loadButton = false
           app.$emit('reloadAnalytics')
         })

@@ -19,12 +19,21 @@ export default [
   //   },
   // },
   {
+    title: 'Modules',
+    icon: 'PackageIcon',
+    route: 'modules',
+    acl: {
+      roles: ['admin', 'client'],
+      // permissions: ['manage-client-projects'],
+    },
+  },
+  {
     title: 'Manage Projects',
     icon: 'CpuIcon',
     route: 'manage-projects',
     acl: {
       roles: ['admin'],
-      // permissions: ['manage-client-projects'],
+      permissions: ['manage-client-projects'],
     },
   },
 

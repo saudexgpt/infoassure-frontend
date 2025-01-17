@@ -69,7 +69,11 @@
                 {{ notification.data.title }}
               </span>
             </p>
-            <small class="notification-text">{{ notification.data.description }}</small><br>
+            <p />
+            <div style="max-height: 70px; overflow: auto;">
+              <!--eslint-disable-next-line vue/no-v-html vue/max-attributes-per-line -->
+              <small class="notification-text" v-html="notification.data.description" />
+            </div>
             <small class="pull-right mt-1 whitespace-no-wrap">{{ moment(notification.created_at).fromNow() }}</small>
           </b-media>
         </b-link>
@@ -173,9 +177,9 @@ export default {
       return window.Echo.private(`App.Models.User.${currentUserId}`)
         .notification(notification => {
           // this.playAudio()
-          // console.log(this.$refs.play_audio)
+          // console.log(notification)
           document.getElementById('play_audio').click()
-          this.pushNotification(notification)
+          this.fetchUserNotifications()
           this.$toast({
             component: ToastificationContent,
             position: 'top-right',
@@ -183,7 +187,7 @@ export default {
               title: notification.title, // .response.statusText,
               icon: 'AlertTriangleIcon',
               variant: 'success',
-              text: notification.description,
+              // text: notification.description,
             },
           })
         })
@@ -198,6 +202,7 @@ export default {
       const app = this
       const userNotifications = new Resource('user-notifications')
       userNotifications.list().then(response => {
+        // console.log(response.notifications)
         app.$store.dispatch('user/setNotifications', response.notifications)
         app.$store.dispatch('user/setUnreadNotificationCount', response.unread_notifications)
         // eslint-disable-next-line no-unused-expressions

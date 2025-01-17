@@ -1,5 +1,5 @@
 <template>
-  <aside
+  <div
     style="min-height: 200px"
   >
     <el-skeleton
@@ -7,45 +7,6 @@
       :rows="6"
       animated
     />
-    <el-row :gutter="20">
-      <el-col :md="12">
-        <label for="">View By</label>
-        <el-select
-          v-model="group_by"
-          placeholder="View by"
-          style="width: 100%"
-          @change="setViewBy"
-        >
-          <el-option
-            value="clause_id"
-            label="Parts"
-          />
-          <el-option
-            value="section_id"
-            label="Sections"
-          />
-        </el-select>
-      </el-col>
-      <el-col
-        v-if="group_by === 'section_id'"
-        :md="12"
-      >
-        <label for="">Select Part</label>
-        <el-select
-          v-model="clause_id"
-          placeholder="Select Part"
-          style="width: 100%"
-          @change="fetchReportSummary"
-        >
-          <el-option
-            v-for="(clause, index) in clauses"
-            :key="index"
-            :value="clause.id"
-            :label="`${clause.name} - ${clause.description}`"
-          />
-        </el-select>
-      </el-col>
-    </el-row>
     <div
       v-if="showChart"
     >
@@ -53,7 +14,7 @@
         :options="chart_report"
       />
     </div>
-  </aside>
+  </div>
 </template>
 <script>
 import Resource from '@/api/resource'
@@ -69,6 +30,15 @@ export default {
     selectedProject: {
       type: Object,
       default: () => (null),
+    },
+    filterBy: {
+      type: Object,
+      default: () => ({
+        group_by: 'clause_id',
+        clause_id: '',
+        assignee_id: '',
+        date: '',
+      }),
     },
   },
   data() {
@@ -125,33 +95,20 @@ export default {
     selectedProject() {
       this.fetchReportSummary()
     },
+    filterBy() {
+      this.fetchReportSummary()
+    },
   },
   mounted() {
     this.fetchReportSummary()
-    this.fetchClauses()
   },
   methods: {
-    setViewBy() {
-      const app = this
-      if (app.group_by === 'clause_id') {
-        app.clause_id = ''
-        app.fetchReportSummary()
-      }
-    },
-    fetchClauses() {
-      const app = this
-      const fetchClausesResource = new Resource('ndpa/clauses')
-      fetchClausesResource.list(this.query)
-        .then(response => {
-          app.clauses = response.clauses
-        })
-    },
     fetchReportSummary() {
       const app = this
       app.load = true
       app.showChart = false
       const param = {
-        project_id: app.selectedProject.id, client_id: app.selectedClient.id, group_by: app.group_by, clause_id: app.clause_id,
+        project_id: app.selectedProject.id, client_id: app.selectedClient.id, group_by: app.filterBy.group_by, clause_id: app.filterBy.clause_id, assignee_id: app.filterBy.assignee_id, date: app.filterBy.date,
       }
       const fetchConsultingsResource = new Resource('ndpa/reports/clause-report')
       fetchConsultingsResource.list(param)

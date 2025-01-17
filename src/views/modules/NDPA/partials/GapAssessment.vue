@@ -71,7 +71,7 @@
         variant="danger"
       >
         <b-tab
-          title="AUDIT QUESTIONS"
+          title="COMPLIANCE QUESTIONS"
           lazy
         >
           <audit-questions
@@ -169,7 +169,7 @@ export default {
   },
   data() {
     return {
-      showAnalysis: true,
+      showAnalysis: false,
       statistics: [],
       dashboardData: {},
       evidence: '',

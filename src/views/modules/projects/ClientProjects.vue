@@ -5,7 +5,7 @@
         <b-col
           cols="6"
         >
-          <h4>Manage {{ selected_project.standard.name }} for {{ selectedClient.name }}</h4>
+          <h4>Manage {{ selected_project.title }} for {{ selectedClient.name }}</h4>
         </b-col>
         <b-col
           cols="6"
@@ -45,7 +45,7 @@
         >
           <span class="pull-right">
             <b-button
-              v-if="checkPermission(['create-client project'])"
+              v-if="checkPermission(['create-client project']) || checkRole(['admin'])"
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
               variant="gradient-primary"
               @click="isCreateProjectSidebarActive = true"
@@ -61,8 +61,27 @@
       </b-row>
     </div>
 
-    <div class="demo-inline-spacing">
-      <b-button
+    <div>
+      <el-row :gutter="10">
+        <el-col
+          :md="12"
+          :sm="24"
+          :xs="24"
+        >
+
+          <el-date-picker
+            v-model="year"
+            type="year"
+            :picker-options="pickerOptions"
+            format="yyyy"
+            value-format="yyyy"
+            placeholder="Pick a calendar year"
+            style="width: 100%"
+            @input="fetchProjects"
+          />
+        </el-col>
+      </el-row>
+      <!-- <b-button
         v-if="clientUsers.length > 0 && projects.length > 0"
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="outline-primary"
@@ -73,7 +92,7 @@
           class="mr-50"
         />
         <span class="align-middle">Assign Projects To Personnel</span>
-      </b-button>
+      </b-button> -->
       <!-- <b-button
         v-if="projects.length > 0"
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
@@ -87,14 +106,154 @@
         <span class="align-middle">Assign Projects To Consultant</span>
       </b-button> -->
     </div>
-    <v-client-table
+    <br>
+    <el-row
+      v-if="loading"
+      :gutter="15"
+    >
+      <el-col
+        v-for="(count, count_index) in 4"
+        :key="count_index"
+        :xs="24"
+        :sm="24"
+        :md="6"
+        :lg="6"
+        :xl="6"
+      >
+        <el-card>
+          <el-skeleton
+            :loading="loading"
+            :rows="3"
+            animated
+          />
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-row
+      v-if="projects.length > 0 && !loading"
+      :gutter="15"
+    >
+      <el-col
+        v-for="(item, index) in projects"
+        :key="index"
+        :xs="24"
+        :sm="24"
+        :md="6"
+        :lg="6"
+        :xl="6"
+      >
+        <b-card
+          style="border-top-left-radius: 1rem; border-bottom-right-radius: 1rem"
+        >
+          <b-card-header>
+            <strong>
+              <h3>{{ item.title }}</h3>
+            </strong>
+            <span class="pull-right">
+              <el-dropdown>
+                <b-button
+                  variant="flat"
+                  class="btn-icon rounded-circle"
+                >
+                  <feather-icon
+                    icon="MoreVerticalIcon"
+                    size="20"
+                  />
+                </b-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>
+                    <span @click="assignProject(item)"><feather-icon icon="UserCheckIcon" /> Assign Project</span>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <span @click="showProjectSettings(item)"><feather-icon icon="ToolIcon" /> Project Settings</span>
+
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <span @click="setupProjectPlan(item)"><feather-icon icon="CheckSquareIcon" /> Activate project Plan</span>
+
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <span @click="destroyRow(item)"><feather-icon icon="TrashIcon" /> Delete Project</span>
+
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </span>
+          </b-card-header>
+          <b-card-body class="d-flex justify-content-between align-items-center">
+            <select
+              v-model="item.is_completed"
+              @input="toggleProjectCompletion(item, $event, 'is_completed')"
+            >
+              <option
+                :value="0"
+                label="In Progress"
+              />
+              <option
+                :value="1"
+                label="Completed"
+              />
+            </select>
+            <div>
+              <el-progress
+                :text-inside="true"
+                :stroke-width="20"
+                :percentage="item.progress"
+                :color="customColorMethod"
+              />
+            </div>
+          </b-card-body>
+          <b-card-footer>
+            <el-button
+              type="text"
+              @click="manageProject(item)"
+            >
+              <feather-icon icon="EyeIcon" /> View Project Details
+
+            </el-button>
+            <el-popover
+              placement="right"
+              title="Assigned Personnel(s)"
+              width="250"
+              trigger="hover"
+            >
+              <div style="background: #f3cf58b2; color: #000000; padding: 5px; text-align: left; border-radius: 5px;">
+                <span
+                  v-for="(user, staff_index) in item.users"
+                  :key="staff_index"
+                >
+                  <el-tag
+                    type="info"
+                    effect="plain"
+                    closable
+                    style="cursor: pointer"
+                    @close="unassignUserFromProject(item, user)"
+                    @click="unassignUserFromProject(item, user)"
+                  >
+                    {{ user.name }}
+                  </el-tag>
+                </span>
+              </div>
+              <el-button
+                slot="reference"
+                type="text"
+              >
+                <feather-icon icon="UsersIcon" />
+                View Assignee(s)
+              </el-button>
+            </el-popover>
+          </b-card-footer>
+        </b-card>
+      </el-col>
+    </el-row>
+    <!-- <v-client-table
       v-model="projects"
       v-loading="loading"
       :columns="columns"
       :options="options"
     >
 
-      <!-- <div
+      <div
         slot="allow_document_uploads"
         slot-scope="{row}"
       >
@@ -111,15 +270,22 @@
             label="Enabled"
           />
         </select>
-      </div> -->
+      </div>
       <div
         slot="assigned_staff"
         slot-scope="{row}"
       >
-        <span
+        <el-tag
           v-for="(user, staff_index) in row.users"
           :key="staff_index"
-        >{{ user.name }}<br></span>
+          type="info"
+          effect="plain"
+          closable
+          @close="unassignUserFromProject(row, user)"
+          @click="unassignUserFromProject(row, user)"
+        >
+          {{ user.name }}
+        </el-tag>
       </div>
       <div
         slot="assigned_consultant"
@@ -148,7 +314,7 @@
           />
         </select>
       </div>
-      <!-- <div
+      <div
         slot="start_date"
         slot-scope="props"
       >
@@ -191,7 +357,7 @@
           :picker-options="pickerOptions"
           @input="setDate($event, props.row, 'date_completed')"
         />
-      </div> -->
+      </div>
       <div
         slot="progress"
         slot-scope="{row}"
@@ -213,8 +379,11 @@
           text="Action"
           class="m-2"
         >
+          <b-dropdown-item @click="assignProject(props.row)">
+            <feather-icon icon="UserCheckIcon" /> Assign Project
+          </b-dropdown-item>
           <b-dropdown-item @click="manageProject(props.row)">
-            <feather-icon icon="CheckSquareIcon" /> View Project Details
+            <feather-icon icon="EyeIcon" /> View Project Details
           </b-dropdown-item>
           <b-dropdown-item @click="showProjectSettings(props.row)">
             <feather-icon icon="ToolIcon" /> Project Settings
@@ -227,7 +396,7 @@
           </b-dropdown-item>
         </b-dropdown>
       </div>
-    </v-client-table>
+    </v-client-table> -->
     <b-modal
       v-model="showAssignModal"
       hide-footer
@@ -262,7 +431,7 @@
         <el-col :xs="24">
           <el-select
             v-model="form.userIds"
-            placeholder="Select Company Staff"
+            placeholder="Select Personnels"
             multiple
             filterable
             style="width: 100%;"
@@ -376,20 +545,21 @@
 
 <script>
 import {
-  BButton, BRow, BCol, BModal, BDropdown, BDropdownItem,
+  BButton, BRow, BCol, BModal, BCard, BCardFooter, BCardBody, BCardHeader,
 } from 'bootstrap-vue'
 // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
+import checkRole from '@/utils/role'
 import AddProject from './partials/AddProject.vue'
 import ClientProjectSettings from './partials/ClientProjectSettings.vue'
 import ClientProjectDetails from './partials/ClientProjectDetails.vue'
 
 export default {
   components: {
-    BDropdown,
-    BDropdownItem,
+    // BDropdown,
+    // BDropdownItem,
     AddProject,
     ClientProjectSettings,
     ClientProjectDetails,
@@ -397,6 +567,10 @@ export default {
     BRow,
     BCol,
     BModal,
+    BCard,
+    BCardFooter,
+    BCardBody,
+    BCardHeader,
   },
   directives: {
     Ripple,
@@ -477,6 +651,7 @@ export default {
         projectId: '',
         userIds: [],
       },
+      year: null,
     }
   },
   computed: {
@@ -496,6 +671,7 @@ export default {
   },
   methods: {
     checkPermission,
+    checkRole,
     customColorMethod(percentage) {
       if (percentage <= 30) {
         return '#f56c6c'
@@ -523,8 +699,9 @@ export default {
       const app = this
       app.form.projectId = ''
       app.loading = true
+      console.log(app.year)
       const fetchProjectsResource = new Resource('projects/client-projects')
-      fetchProjectsResource.list({ client_id: app.selectedClient.id })
+      fetchProjectsResource.list({ client_id: app.selectedClient.id, year: app.year })
         .then(response => {
           app.projects = response.projects
           app.clientUsers = response.users// .data
@@ -554,6 +731,12 @@ export default {
           }).catch(() => { app.loading = false })
       }
     },
+    assignProject(project) {
+      const app = this
+      app.selected_project = project
+      app.form.projectId = project.id
+      app.showAssignModal = true
+    },
     submitProjectAssignment() {
       const app = this
       // app.showAssignModal = false
@@ -569,6 +752,29 @@ export default {
           app.fetchProjects()
           app.loading = false
         }).catch(() => { app.loading = false })
+    },
+    unassignUserFromProject(project, user) {
+      const app = this
+      this.$confirm(`This will disengage ${user.name} from the ${project.title} project. Continue?`, `Disengage ${user.name}?`, {
+        confirmButtonText: 'Yes, Continue',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }).then(() => {
+        app.loading = true
+        const unassignProjectsResource = new Resource('projects/unassign-user-from-project')
+        unassignProjectsResource.update(project.id, { user_id: user.id })
+          .then(() => {
+            app.$message('Action Successful')
+            app.fetchProjects()
+            app.loading = false
+          }).catch(() => { app.loading = false })
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: 'Action canceled',
+        // })
+      })
+      // app.showAssignModal = false
     },
     assignProjectsToConsultant() {
       const app = this

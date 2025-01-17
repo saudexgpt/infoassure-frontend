@@ -43,8 +43,8 @@ router.beforeEach(async (to, from, next) => {
             const hasRoles = userData.roles && userData.roles.length > 0
             // eslint-disable-next-line no-lonely-if
             if (hasRoles) {
-              store.dispatch('clients/fetchClients')
               next()
+              store.dispatch('clients/fetchClients')
             } else {
               try {
               // get user info

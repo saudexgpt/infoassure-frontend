@@ -43,12 +43,19 @@ export default [
         },
       },
       {
-        title: 'Gap Assessment',
-        route: 'questions',
+        title: 'Document Templates',
+        route: 'document-templates',
         acl: {
-          permissions: ['read-gap assessment'],
+          // permissions: ['read-evidence'],
         },
       },
+      // {
+      //   title: 'Gap Assessment',
+      //   route: 'questions',
+      //   acl: {
+      //     permissions: ['read-gap assessment'],
+      //   },
+      // },
       {
         title: 'Threat Library',
         route: 'risk-library',

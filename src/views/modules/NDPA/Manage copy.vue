@@ -3,9 +3,6 @@
     <div v-if="moduleIsActive">
       <el-row :gutter="5">
         <el-col :md="8">
-          <p>Activities of the NDPA Module</p>
-        </el-col>
-        <el-col :md="8">
           <el-select
             v-model="selectedProject"
             placeholder="Select Project"
@@ -122,7 +119,6 @@
             view-only="ndpa"
             :selected-client="selectedClient"
             :standard-id="selectedProject.standard_id"
-            :is-admin="isAdmin"
           />
           <!-- <d-p-i-a
             v-if="current_view === 'dpia'"
@@ -133,7 +129,6 @@
             v-if="current_view === 'ropa'"
             :selected-client="selectedClient"
             :standard-id="selectedProject.standard_id"
-            :is-admin="isAdmin"
           />
           <p-d-a
             v-if="current_view === 'pda'"
@@ -144,7 +139,6 @@
             v-if="current_view === 'risk_library'"
             module="ndpa"
             view-only="ndpa"
-            :is-admin="isAdmin"
           />
         </div>
       </div>
@@ -195,10 +189,6 @@ export default {
     // ProjectPlanDetails,
   },
   props: {
-    project: {
-      type: Object,
-      default: () => (null),
-    },
     isAdmin: {
       type: Boolean,
       default: () => false,
@@ -230,7 +220,6 @@ export default {
     },
   },
   created() {
-    this.selectedProject = this.project
     if (this.selectedClient.id !== null) {
       this.checkIfProjectIsActive()
     }
@@ -242,7 +231,9 @@ export default {
     checkPermission,
     checkIfProjectIsActive() {
       const app = this
-      const projects = app.clientActivatedProjects.filter(project => project.available_module.slug === 'ndpa')
+      const routeName = app.$route.name.split('-')
+      const moduleSlug = routeName[1]
+      const projects = app.clientActivatedProjects.filter(project => project.available_module.slug === moduleSlug)
       app.moduleIsActive = false
       if (projects.length > 0) {
         app.moduleIsActive = true

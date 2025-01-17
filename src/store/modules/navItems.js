@@ -1,5 +1,5 @@
 // import navMenuItems from '@/navigation/vertical'
-import store from '@/store'
+// import store from '@/store'
 
 import dashboard from '@/navigation/vertical/nav-modules/dashboard'
 import appSetup from '@/navigation/vertical/nav-modules/app-setup'
@@ -43,8 +43,9 @@ const mutations = {
 
 const actions = {
   setNavItems({ commit }) {
-    const { availableModules } = store.getters
-    const navMenuItems = [...dashboard, ...appSetup, ...availableModules, ...riskAssessment, ...links, ...userManagement, ...adminSettings]
+    // const { availableModules } = store.getters
+    // const navMenuItems = [...dashboard, ...appSetup, ...links, ...availableModules, ...riskAssessment, ...userManagement, ...adminSettings]
+    const navMenuItems = [...dashboard, ...appSetup, ...links, ...riskAssessment, ...userManagement, ...adminSettings]
     commit('SET_NAV_ITEMS', navMenuItems)
   },
   fetchActivatedModules({ commit }, client) {
@@ -61,6 +62,7 @@ const actions = {
             if (availableModule) {
               modules.push({
                 title: availableModule.name,
+                slug: availableModule.slug,
                 icon: 'PackageIcon',
                 acl: {
                   modules: [availableModule.slug],
@@ -69,15 +71,21 @@ const actions = {
                   {
                     title: 'Overview',
                     route: `${availableModule.slug}-dashboard`,
+                    view: 'dashboard',
+                    moduleName: availableModule.slug,
                   },
                   {
                     title: 'Activities',
                     route: `manage-${availableModule.slug}`,
+                    view: 'manage',
+                    moduleName: `${availableModule.slug}`,
                   },
-                  {
-                    title: 'Reports',
-                    route: `${availableModule.slug}-report`,
-                  },
+                  // {
+                  //   title: 'Reports',
+                  //   route: `${availableModule.slug}-report`,
+                  //   view: 'report',
+                  //   moduleName: `${availableModule.slug}`,
+                  // },
                   // {
                   //   title: 'Setup',
                   //   route: `module-setup/${availableModule.slug}`,

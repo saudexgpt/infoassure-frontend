@@ -1,11 +1,17 @@
 <template>
-  <div>
+  <div style="background: #eef1f6; border-radius: 5px;">
     <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
       <h3
         v-if="isAdmin"
         class="mb-0"
       >
         Give your remarks
+      </h3>
+      <h3
+        v-else
+        class="mb-0"
+      >
+        Asessment Analysis
       </h3>
       <!-- <div>
           <b-button
@@ -193,15 +199,7 @@ export default {
   directives: {
     Ripple,
   },
-  model: {
-    prop: 'isCreateStandardSidebarActive',
-    event: 'update:is-create-standard-sidebar-active',
-  },
   props: {
-    isCreateStandardSidebarActive: {
-      type: Boolean,
-      required: true,
-    },
     answer: {
       type: Object,
       required: true,

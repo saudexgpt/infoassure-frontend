@@ -1,5 +1,5 @@
 <template>
-  <aside
+  <div
     style="min-height: 200px"
   >
     <el-skeleton
@@ -11,7 +11,7 @@
       v-if="showChart"
       :options="chart_report"
     />
-  </aside>
+  </div>
 </template>
 <script>
 import Resource from '@/api/resource'
@@ -28,6 +28,15 @@ export default {
       type: Object,
       default: () => (null),
     },
+    filterBy: {
+      type: Object,
+      default: () => ({
+        group_by: '',
+        clause_id: '',
+        assignee_id: '',
+        date: '',
+      }),
+    },
   },
   data() {
     return {
@@ -41,7 +50,7 @@ export default {
           },
         },
         title: {
-          text: 'Compliance Status',
+          text: 'Overall Status',
           align: 'center',
         },
         subtitle: {
@@ -97,8 +106,10 @@ export default {
       const app = this
       app.load = true
       app.showChart = false
-      const param = { project_id: app.selectedProject.id, client_id: app.selectedClient.id }
-      const fetchConsultingsResource = new Resource('reports/summary-report')
+      const param = {
+        project_id: app.selectedProject.id, client_id: app.selectedClient.id, group_by: app.filterBy.group_by, clause_id: app.filterBy.clause_id, assignee_id: app.filterBy.assignee_id, date: app.filterBy.date,
+      }
+      const fetchConsultingsResource = new Resource('ndpa/reports/summary-report')
       fetchConsultingsResource.list(param)
         .then(response => {
           const { reports } = response

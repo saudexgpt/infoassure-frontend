@@ -4,59 +4,20 @@
   >
 
     <el-col :md="16">
-      <aside
+      <div
         v-loading="load"
         style="min-height: 200px"
       >
-        <el-row :gutter="20">
-          <el-col :md="12">
-            <label for="">View By</label>
-            <el-select
-              v-model="group_by"
-              placeholder="View by"
-              style="width: 100%"
-              @change="setViewBy"
-            >
-              <el-option
-                value="clause_id"
-                label="Parts"
-              />
-              <el-option
-                value="section_id"
-                label="Sections"
-              />
-            </el-select>
-          </el-col>
-          <el-col
-            v-if="group_by === 'section_id'"
-            :md="12"
-          >
-            <label for="">Select Part</label>
-            <el-select
-              v-model="clause_id"
-              placeholder="Select Part"
-              style="width: 100%"
-              @change="fetchReportSummary"
-            >
-              <el-option
-                v-for="(clause, index) in clauses"
-                :key="index"
-                :value="clause.id"
-                :label="`${clause.name} - ${clause.description}`"
-              />
-            </el-select>
-          </el-col>
-        </el-row>
         <highcharts
           v-if="showChart"
           :options="chart_report"
         />
 
-      </aside>
+      </div>
     </el-col>
     <el-col :md="8">
       <hr>
-      <div style="margin-top: 70px; text-align: center">
+      <div style="text-align: center">
         <h3>Assessment Completion</h3>
         <el-progress
           type="dashboard"
@@ -84,6 +45,15 @@ export default {
     selectedProject: {
       type: Object,
       default: () => (null),
+    },
+    filterBy: {
+      type: Object,
+      default: () => ({
+        group_by: 'clause_id',
+        clause_id: '',
+        assignee_id: '',
+        date: '',
+      }),
     },
   },
   data() {
@@ -163,26 +133,20 @@ export default {
     selectedProject() {
       this.fetchReportSummary()
     },
+    filterBy() {
+      this.fetchReportSummary()
+    },
   },
   mounted() {
     this.fetchReportSummary()
-    this.fetchClauses()
   },
   methods: {
-    fetchClauses() {
-      const app = this
-      const fetchClausesResource = new Resource('ndpa/clauses')
-      fetchClausesResource.list(this.query)
-        .then(response => {
-          app.clauses = response.clauses
-        })
-    },
     fetchReportSummary() {
       const app = this
       app.load = true
       app.showChart = false
       const param = {
-        project_id: app.selectedProject.id, client_id: app.selectedClient.id, group_by: app.group_by, clause_id: app.clause_id,
+        project_id: app.selectedProject.id, client_id: app.selectedClient.id, group_by: app.filterBy.group_by, clause_id: app.filterBy.clause_id, assignee_id: app.filterBy.assignee_id, date: app.filterBy.date,
       }
       const fetchConsultingsResource = new Resource('ndpa/reports/completion-report')
       fetchConsultingsResource.list(param)

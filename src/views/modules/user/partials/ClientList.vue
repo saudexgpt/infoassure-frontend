@@ -35,14 +35,14 @@
           slot-scope="props"
         >
           <el-alert
-            type="success"
+            type="error"
             :closable="false"
           >
             Privileged users for {{ props.row.name }}
           </el-alert>
           <v-client-table
             v-model="props.row.users"
-            :columns="['name', 'action']"
+            :columns="['name', 'user_status', 'action']"
             :options="{ filterable: false }"
           >
             <div
@@ -52,6 +52,31 @@
               <strong>{{ row.name }}</strong> <br>
               {{ row.email }} <br>
               {{ row.phone }}
+            </div>
+            <div
+              slot="user_status"
+              slot-scope="{row}"
+            >
+              <el-tooltip
+                v-if="props.row.admin_user_id !== row.id"
+                :content="`Make ${row.name} the company's admin`"
+                placement="top"
+              >
+                <el-button
+                  type="info"
+                  circle
+                  @click="makeAdmin(props.row.id, row)"
+                >
+                  <feather-icon icon="UserCheckIcon" />
+                </el-button>
+              </el-tooltip>
+              <el-alert
+                v-else
+                type="success"
+                :closable="false"
+              >
+                Administrator
+              </el-alert>
             </div>
             <div
               slot="action"
@@ -87,7 +112,7 @@
               >
                 <el-button
                   circle
-                  type="warning"
+                  type="info"
                   @click="sendLoginCredentials(row)"
                 >
                   <feather-icon icon="KeyIcon" />
@@ -315,6 +340,37 @@ export default {
           app.total = response.clients.total
           app.loading = false
         })
+    },
+    makeAdmin(clientId, user) {
+      const app = this
+      app.$confirm(`Please confirm that ${user.name} is the company's new admin?`, 'Confirm Action', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        type: 'warning',
+      }).then(() => {
+        app.loading = true
+        const clientResource = new Resource('clients/assign-user-as-client-admin')
+        clientResource.update(clientId, { user_id: user.id })
+          .then(() => {
+            app.$message({
+              type: 'success',
+              message: 'Action Successfully',
+            })
+            app.loading = false
+            app.fetchClients()
+          }).catch(() => {
+            app.loading = false
+            this.$message({
+              type: 'danger',
+              message: 'An error occured. Please try again',
+            })
+          })
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: 'Delete canceled',
+        // })
+      })
     },
     toggleClientSuspension(client, value, action) {
       this.$confirm(`Are you sure you want to ${action} ${client.name}

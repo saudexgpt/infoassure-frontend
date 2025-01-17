@@ -43,7 +43,6 @@
               >
                 <div class="school-logo">
                   <img
-                    align="center"
                     :src="baseServerUrl +'storage/'+ logo"
                     alt="logo"
                   >
@@ -185,14 +184,6 @@ export default {
 </style>
 
 <style scoped>
-.main-menu .navbar-header {
-  height: 100%;
-  width: 260px;
-  height: 9rem;
-  position: relative;
-  text-align: center;
-  transition: 300ms ease all, background 0s;
-}
 .school-logo {
   width: 220px;
   height: 6rem;
