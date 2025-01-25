@@ -2,15 +2,15 @@
   <div v-if="showManageProject">
     <div slot="header">
       <b-row>
-        <b-col
+        <!-- <b-col
           cols="6"
         >
           <h4>Manage {{ selected_project.title }} for {{ selectedClient.name }}</h4>
-        </b-col>
+        </b-col> -->
         <b-col
           cols="6"
         >
-          <span class="pull-right">
+          <span>
             <b-button
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
               variant="gradient-danger"
@@ -54,7 +54,7 @@
                 icon="PlusIcon"
                 class="mr-50"
               />
-              <span class="align-middle">Create</span>
+              <span class="align-middle">Subscribe</span>
             </b-button>
           </span>
         </b-col>
@@ -129,42 +129,43 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row
-      v-if="projects.length > 0 && !loading"
-      :gutter="15"
-    >
-      <el-col
-        v-for="(item, index) in projects"
-        :key="index"
-        :xs="24"
-        :sm="24"
-        :md="6"
-        :lg="6"
-        :xl="6"
+    <div v-if="projects.length > 0">
+      <el-row
+        v-if="!loading"
+        :gutter="15"
       >
-        <b-card
-          style="border-top-left-radius: 1rem; border-bottom-right-radius: 1rem"
+        <el-col
+          v-for="(item, index) in projects"
+          :key="index"
+          :xs="24"
+          :sm="24"
+          :md="6"
+          :lg="6"
+          :xl="6"
         >
-          <b-card-header>
-            <strong>
-              <h3>{{ item.title }}</h3>
-            </strong>
-            <span class="pull-right">
-              <el-dropdown>
-                <b-button
-                  variant="flat"
-                  class="btn-icon rounded-circle"
-                >
-                  <feather-icon
-                    icon="MoreVerticalIcon"
-                    size="20"
-                  />
-                </b-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    <span @click="assignProject(item)"><feather-icon icon="UserCheckIcon" /> Assign Project</span>
-                  </el-dropdown-item>
-                  <el-dropdown-item>
+          <b-card
+            style="border-top-left-radius: 1rem; border-bottom-right-radius: 1rem"
+          >
+            <b-card-header>
+              <strong>
+                <h3>{{ item.title }}</h3>
+              </strong>
+              <span class="pull-right">
+                <el-dropdown>
+                  <b-button
+                    variant="flat"
+                    class="btn-icon rounded-circle"
+                  >
+                    <feather-icon
+                      icon="MoreVerticalIcon"
+                      size="20"
+                    />
+                  </b-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>
+                      <span @click="assignProject(item)"><feather-icon icon="UserCheckIcon" /> Assign Project</span>
+                    </el-dropdown-item>
+                  <!-- <el-dropdown-item>
                     <span @click="showProjectSettings(item)"><feather-icon icon="ToolIcon" /> Project Settings</span>
 
                   </el-dropdown-item>
@@ -175,77 +176,98 @@
                   <el-dropdown-item>
                     <span @click="destroyRow(item)"><feather-icon icon="TrashIcon" /> Delete Project</span>
 
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </span>
-          </b-card-header>
-          <b-card-body class="d-flex justify-content-between align-items-center">
-            <select
-              v-model="item.is_completed"
-              @input="toggleProjectCompletion(item, $event, 'is_completed')"
-            >
-              <option
-                :value="0"
-                label="In Progress"
-              />
-              <option
-                :value="1"
-                label="Completed"
-              />
-            </select>
-            <div>
-              <el-progress
-                :text-inside="true"
-                :stroke-width="20"
-                :percentage="item.progress"
-                :color="customColorMethod"
-              />
-            </div>
-          </b-card-body>
-          <b-card-footer>
-            <el-button
-              type="text"
-              @click="manageProject(item)"
-            >
-              <feather-icon icon="EyeIcon" /> View Project Details
-
-            </el-button>
-            <el-popover
-              placement="right"
-              title="Assigned Personnel(s)"
-              width="250"
-              trigger="hover"
-            >
-              <div style="background: #f3cf58b2; color: #000000; padding: 5px; text-align: left; border-radius: 5px;">
-                <span
-                  v-for="(user, staff_index) in item.users"
-                  :key="staff_index"
-                >
-                  <el-tag
-                    type="info"
-                    effect="plain"
-                    closable
-                    style="cursor: pointer"
-                    @close="unassignUserFromProject(item, user)"
-                    @click="unassignUserFromProject(item, user)"
-                  >
-                    {{ user.name }}
-                  </el-tag>
-                </span>
-              </div>
-              <el-button
-                slot="reference"
-                type="text"
+                  </el-dropdown-item> -->
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </span>
+            </b-card-header>
+            <b-card-body class="d-flex justify-content-between align-items-center">
+              <select
+                v-model="item.is_completed"
+                @input="toggleProjectCompletion(item, $event, 'is_completed')"
               >
-                <feather-icon icon="UsersIcon" />
-                View Assignee(s)
+                <option
+                  :value="0"
+                  label="In Progress"
+                />
+                <option
+                  :value="1"
+                  label="Completed"
+                />
+              </select>
+              <div>
+                <el-progress
+                  :text-inside="true"
+                  :stroke-width="20"
+                  :percentage="item.progress"
+                  :color="customColorMethod"
+                />
+              </div>
+            </b-card-body>
+            <b-card-footer>
+              <el-button
+                type="text"
+                @click="manageProject(item)"
+              >
+                <feather-icon icon="EyeIcon" /> View Project Details
+
               </el-button>
-            </el-popover>
-          </b-card-footer>
-        </b-card>
-      </el-col>
-    </el-row>
+              <el-popover
+                placement="right"
+                title="Assigned Personnel(s)"
+                width="250"
+                trigger="hover"
+              >
+                <div style="background: #f3cf58b2; color: #000000; padding: 5px; text-align: left; border-radius: 5px;">
+                  <span
+                    v-for="(user, staff_index) in item.users"
+                    :key="staff_index"
+                  >
+                    <el-tag
+                      type="info"
+                      effect="plain"
+                      closable
+                      style="cursor: pointer"
+                      @close="unassignUserFromProject(item, user)"
+                      @click="unassignUserFromProject(item, user)"
+                    >
+                      {{ user.name }}
+                    </el-tag>
+                  </span>
+                </div>
+                <el-button
+                  slot="reference"
+                  type="text"
+                >
+                  <feather-icon icon="UsersIcon" />
+                  View Assignee(s)
+                </el-button>
+              </el-popover>
+            </b-card-footer>
+          </b-card>
+        </el-col>
+      </el-row>
+    </div>
+    <div v-else>
+      <el-empty
+        v-if="!loading"
+        description="You have no active project"
+      >
+        <b-button
+          v-if="checkPermission(['create-client project']) || checkRole(['admin'])"
+          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+          variant="gradient-primary"
+          @click="isCreateProjectSidebarActive = true"
+        >
+          <feather-icon
+            icon="PlusIcon"
+            class="mr-50"
+          />
+          <span class="align-middle">Subscribe</span>
+        </b-button>
+      </el-empty>
+    </div>
+
     <!-- <v-client-table
       v-model="projects"
       v-loading="loading"
@@ -529,12 +551,23 @@
       </el-row>
 
     </b-modal>
-    <add-project
-      v-if="isCreateProjectSidebarActive"
-      v-model="isCreateProjectSidebarActive"
-      :clients="clients"
-      @save="updateTable"
-    />
+    <el-drawer
+      title=""
+      :visible.sync="isCreateProjectSidebarActive"
+      direction="ttb"
+      size="100%"
+      :destroy-on-close="true"
+      :before-close="updateTable"
+    >
+      <template slot="title">
+        <h2>Subscribe from the list of packages</h2>
+      </template>
+
+      <add-project
+        :clients="clients"
+        @save="updateTable"
+      />
+    </el-drawer>
     <client-project-settings
       v-if="isProjectSettingSidebarActive"
       v-model="isProjectSettingSidebarActive"
@@ -687,6 +720,9 @@ export default {
       }
       return '#5cb87a'
     },
+    handleClose() {
+      this.isCreateProjectSidebarActive = false
+    },
     fetchStaff() {
       const app = this
       const fetchUsersResource = new Resource('users/fetch-staff')
@@ -807,6 +843,7 @@ export default {
     updateTable() {
       const app = this
       app.fetchProjects()
+      app.handleClose()
     },
     manageProject(selectedRow) {
       // console.log(props)

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div v-if="moduleIsActive">
+    <div v-if="moduleIsActive || isAdmin">
       <el-row :gutter="5">
         <el-col :md="8">
           <p>Activities of the NDPA Module</p>
         </el-col>
-        <el-col :md="8">
+        <!-- <el-col :md="8">
           <el-select
             v-model="selectedProject"
             placeholder="Select Project"
@@ -14,16 +14,16 @@
             style="width: 100%;"
           >
             <el-option
-              v-for="(project, project_index) in projects"
+              v-for="(proj, project_index) in projects"
               :key="project_index"
-              :value="project"
-              :label="project.title"
+              :value="proj"
+              :label="proj.title"
             >
-              <span style="float: left">{{ project.title }}</span>
-              <span style="float: right; color: #8492a6;">{{ project.year }}</span>
+              <span style="float: left">{{ proj.title }}</span>
+              <span style="float: right; color: #8492a6;">{{ proj.year }}</span>
             </el-option>
           </el-select>
-        </el-col>
+        </el-col> -->
       </el-row>
       <p />
       <div v-if="selectedProject !== null">
@@ -43,6 +43,7 @@
                 Business Units
               </b-button> -->
               <b-button
+                v-if="selectedProject.feature_slug.includes('compliance')"
                 id="gap_assessment"
 
                 variant="outline-secondary"
@@ -55,6 +56,7 @@
                 Compliance Assessment
               </b-button>
               <b-button
+                v-if="selectedProject.feature_slug.includes('pda')"
                 id="pda"
 
                 variant="outline-secondary"
@@ -67,6 +69,7 @@
                 PDA
               </b-button>
               <b-button
+                v-if="selectedProject.feature_slug.includes('ropa')"
                 id="ropa"
 
                 variant="outline-secondary"
@@ -79,6 +82,7 @@
                 RoPA
               </b-button>
               <b-button
+                v-if="selectedProject.feature_slug.includes('dpia')"
                 id="risk_library"
 
                 variant="outline-secondary"
@@ -91,6 +95,7 @@
                 Risk & Controls
               </b-button>
               <b-button
+                v-if="selectedProject.feature_slug.includes('dpia')"
                 id="dpia"
 
                 variant="outline-secondary"

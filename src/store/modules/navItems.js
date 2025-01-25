@@ -59,11 +59,13 @@ const actions = {
           const modules = []
           response.projects.forEach(project => {
             const availableModule = project.available_module
+            const features = project.feature_slug
             if (availableModule) {
               modules.push({
                 title: availableModule.name,
                 slug: availableModule.slug,
                 icon: 'PackageIcon',
+                features,
                 acl: {
                   modules: [availableModule.slug],
                 },

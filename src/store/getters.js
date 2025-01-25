@@ -35,6 +35,7 @@ const getters = {
   navMenuItems: state => state.navItems.navMenuItems,
   clientActivatedProjects: state => state.navItems.clientActivatedProjects,
   clientActivatedModules: state => state.navItems.clientActivatedModules,
+  paystackKey: state => state.app.paystackKey,
 //   sidebar: state => state.app.sidebar,
 //   language: state => state.app.language,
 //   size: state => state.app.size,

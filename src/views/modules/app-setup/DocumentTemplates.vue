@@ -128,6 +128,7 @@
             </div>
           </div>
           <iframe
+            v-if="showDocumentEditor === 'none' && docSrc !== ''"
             :id="type"
             style="display: none; border:1px solid black;"
             width="100%"
@@ -277,11 +278,9 @@ export default {
       setTimeout(() => {
         if (app.type === 'pdf') {
           document.getElementById(app.type).style.display = 'block'
-        }
-        if (app.type === 'doc' || app.type === 'docx') {
+        } else if (app.type === 'doc' || app.type === 'docx') {
           app.showDocumentEditor = 'word'
-        }
-        if (app.type === 'csv' || app.type === 'xlsx' || app.type === 'xls') {
+        } else if (app.type === 'csv' || app.type === 'xlsx' || app.type === 'xls') {
           // app.showDocumentEditor = 'spreadsheet'
 
           document.getElementById(`${app.type}-download`).click()

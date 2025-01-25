@@ -278,6 +278,20 @@
                           </b-button>
 
                         </div>
+                        <div v-else>
+                          <el-tag
+                            v-if="question.answer.is_submitted === 0"
+                            type="danger"
+                            effect="plain"
+                            :closable="false"
+                          >Status: Not Submitted</el-tag>
+                          <el-tag
+                            v-else
+                            type="success"
+                            effect="plain"
+                            :closable="false"
+                          >Status: Submitted</el-tag>
+                        </div>
                       </div>
                       <hr>
                       <el-row :gutter="5">
@@ -313,7 +327,7 @@
                                 >
                                 <div>
 
-                                  <div v-if="question.answer.is_submitted === 0">
+                                  <div v-if="(userData.id === question.answer.assignee_id) && question.answer.is_submitted === 0">
                                     <div v-if="question.answer.assignee_id !== null">
                                       <el-radio-group
                                         v-model="question.answer.yes_or_no"
@@ -401,7 +415,7 @@
                           :xs="24"
                         >
                           <div
-                            v-if="question.expected_document_template_ids.length > 0 && question.answer.assignee_id !== null"
+                            v-if="question.expected_document_template_ids.length > 0"
                             v-loading="loadDelete"
                             style="max-height: 250px; overflow: auto; background: #fcfcfc; padding: 10px; border-radius: 8px;"
                           >
@@ -759,7 +773,9 @@ export default {
   },
   created() {
     this.fetchClausesWithQuestions()
-    this.fetchClientUsers()
+    if (this.userData.all_roles.includes('admin')) {
+      this.fetchClientUsers()
+    }
   },
   methods: {
     moment,

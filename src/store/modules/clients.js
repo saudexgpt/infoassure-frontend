@@ -31,7 +31,7 @@ const actions = {
         .then(response => {
           commit('SET_CLIENTS', response.clients)
           commit('SET_PARTNERS_CLIENTS', response.partner_with_clients)
-          if (response.clients.length === 1) {
+          if (response.clients.length > 0) {
             commit('SET_SELECTED_CLIENT', response.clients[0])
           }
           resolve(response)

@@ -14,6 +14,7 @@ export default {
       { value: 'ropa', label: 'RoPA' },
       { value: 'pda', label: 'PDA' },
     ],
+    paystackKey: process.env.VUE_APP_MIX_PAYSTACK_API_KEY,
   },
   getters: {
     currentBreakPoint: state => {
