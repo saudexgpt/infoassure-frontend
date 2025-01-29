@@ -6,7 +6,7 @@
       <b-tab lazy>
         <template #title>
           <feather-icon icon="ListIcon" />
-          <span>Client List</span>
+          <span>Users List</span>
         </template>
         <client-users-list />
       </b-tab>

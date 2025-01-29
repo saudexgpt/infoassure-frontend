@@ -37,6 +37,7 @@
       animated
     />
     <el-collapse
+      v-if="clauses.length > 0"
       accordion
       type="border"
     >

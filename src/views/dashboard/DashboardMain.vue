@@ -8,12 +8,13 @@
 <script type="text/babel">
 import { mapGetters } from 'vuex'
 import AdminDashboard from './admin/index.vue'
+import SuperAdminDashboard from './super/index.vue'
 import PartnerDashboard from './partner/index.vue'
 import OthersDashboard from './others/index.vue'
 
 export default {
   components: {
-    AdminDashboard, PartnerDashboard, OthersDashboard,
+    AdminDashboard, SuperAdminDashboard, PartnerDashboard, OthersDashboard,
   },
   data() {
     return {
@@ -30,7 +31,7 @@ export default {
     //   this.currentRole = 'AdminDashboard'
     // }
     if (this.userData.login_as === 'super') {
-      this.currentRole = 'AdminDashboard'
+      this.currentRole = 'SuperAdminDashboard'
     } else if (this.userData.login_as === 'partner') {
       this.currentRole = 'PartnerDashboard'
     } else if (this.userData.login_as === 'admin') {

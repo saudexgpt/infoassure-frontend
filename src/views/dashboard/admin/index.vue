@@ -6,13 +6,13 @@
       :gutter="15"
     >
       <el-col
-        v-for="(count, count_index) in 4"
+        v-for="(count, count_index) in 3"
         :key="count_index"
         :xs="24"
         :sm="24"
-        :md="6"
-        :lg="6"
-        :xl="6"
+        :md="8"
+        :lg="8"
+        :xl="8"
       >
         <el-card>
           <el-skeleton
@@ -31,6 +31,9 @@
       <b-col lg="12">
         <client-projects />
       </b-col>
+      <b-col lg="12">
+        <users />
+      </b-col>
     </b-row>
 
   </div>
@@ -41,6 +44,7 @@ import {
 } from 'bootstrap-vue'
 import DataAnalysis from './components/data_analysis.vue'
 import ClientProjects from '@/views/modules/projects/ClientProjects.vue'
+import Users from '@/views/modules/user/ClientUsers.vue'
 // import AdminChart from './components/admin_report_chart.vue'
 // import Revenue from './components/charts/Revenue.vue'
 // import Debtors from './components/charts/Debtors.vue'
@@ -53,6 +57,7 @@ export default {
     BCol,
     DataAnalysis,
     ClientProjects,
+    Users,
     // Revenue,
     // Debtors,
   },

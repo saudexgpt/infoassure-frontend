@@ -8,9 +8,9 @@
         :key="index"
         :xs="24"
         :sm="12"
-        :md="6"
-        :lg="6"
-        :xl="6"
+        :md="8"
+        :lg="8"
+        :xl="8"
       >
         <b-card>
           <b-card-body class="d-flex justify-content-between align-items-center">
@@ -76,11 +76,11 @@ export default {
       const app = this
       const data = [
         {
-          color: 'warning', icon: 'UsersIcon', statistic: app.dashboardData.clients, title: 'Clients',
+          color: 'warning', icon: 'UsersIcon', statistic: app.dashboardData.users, title: 'Users',
         },
-        {
-          color: 'success', icon: 'CheckIcon', statistic: app.dashboardData.standards, title: 'Standards',
-        },
+        // {
+        //   color: 'success', icon: 'CheckIcon', statistic: app.dashboardData.standards, title: 'Standards',
+        // },
         {
           color: 'primary', icon: 'BriefcaseIcon', statistic: app.dashboardData.projects, title: 'Projects',
         },
