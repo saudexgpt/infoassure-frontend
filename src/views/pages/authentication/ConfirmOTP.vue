@@ -10,7 +10,7 @@
         🔒 One Time Passkey
       </b-card-title>
       <b-card-text class="mb-2">
-        A One Time Passkey token was sent to your email. Kindly enter the token below
+        An OTP token was sent to your email. Kindly enter the token below
       </b-card-text>
 
       <b-form

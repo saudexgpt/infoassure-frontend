@@ -64,8 +64,8 @@
     <div>
       <el-row :gutter="10">
         <el-col
-          :md="12"
-          :sm="24"
+          :md="6"
+          :sm="12"
           :xs="24"
         >
 
@@ -91,7 +91,7 @@
           icon="UsersIcon"
           class="mr-50"
         />
-        <span class="align-middle">Assign Projects To Personnel</span>
+        <span class="align-middle">Assign Projects To User</span>
       </b-button> -->
       <!-- <b-button
         v-if="projects.length > 0"
@@ -143,14 +143,12 @@
           :lg="6"
           :xl="6"
         >
-          <b-card
-            style="border-top-left-radius: 1rem; border-bottom-right-radius: 1rem"
-          >
+          <b-card>
             <b-card-header>
               <strong>
-                <h3>{{ item.title }}</h3>
+                <h2>{{ item.title }}</h2>
               </strong>
-              <span class="pull-right">
+              <!-- <span class="pull-right">
                 <el-dropdown>
                   <b-button
                     variant="flat"
@@ -165,84 +163,118 @@
                     <el-dropdown-item>
                       <span @click="assignProject(item)"><feather-icon icon="UserCheckIcon" /> Assign Project</span>
                     </el-dropdown-item>
-                  <!-- <el-dropdown-item>
-                    <span @click="showProjectSettings(item)"><feather-icon icon="ToolIcon" /> Project Settings</span>
+                    <el-dropdown-item>
+                      <span @click="showProjectSettings(item)"><feather-icon icon="ToolIcon" /> Project Settings</span>
 
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <span @click="setupProjectPlan(item)"><feather-icon icon="CheckSquareIcon" /> Activate project Plan</span>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <span @click="setupProjectPlan(item)"><feather-icon icon="CheckSquareIcon" /> Activate project Plan</span>
 
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <span @click="destroyRow(item)"><feather-icon icon="TrashIcon" /> Delete Project</span>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <span @click="destroyRow(item)"><feather-icon icon="TrashIcon" /> Delete Project</span>
 
-                  </el-dropdown-item> -->
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-              </span>
+              </span> -->
             </b-card-header>
-            <b-card-body class="d-flex justify-content-between align-items-center">
-              <select
-                v-model="item.is_completed"
-                @input="toggleProjectCompletion(item, $event, 'is_completed')"
-              >
-                <option
-                  :value="0"
-                  label="In Progress"
-                />
-                <option
-                  :value="1"
-                  label="Completed"
-                />
-              </select>
-              <div>
+            <b-card-body>
+              <div class="justify-content-between align-items-center">
+
                 <el-progress
                   :text-inside="true"
                   :stroke-width="20"
                   :percentage="item.progress"
                   :color="customColorMethod"
                 />
+                <br>
+                <select
+                  v-model="item.is_completed"
+                  class="form-control"
+                  @input="toggleProjectCompletion(item, $event, 'is_completed')"
+                >
+                  <option
+                    :value="0"
+                    label="In Progress"
+                  />
+                  <option
+                    :value="1"
+                    label="Completed"
+                  />
+                </select>
               </div>
             </b-card-body>
             <b-card-footer>
-              <el-button
-                type="text"
-                @click="manageProject(item)"
-              >
-                <feather-icon icon="EyeIcon" /> View Project Details
-
-              </el-button>
-              <el-popover
-                placement="right"
-                title="Assigned Personnel(s)"
-                width="250"
-                trigger="hover"
-              >
-                <div style="background: #f3cf58b2; color: #000000; padding: 5px; text-align: left; border-radius: 5px;">
-                  <span
-                    v-for="(user, staff_index) in item.users"
-                    :key="staff_index"
-                  >
-                    <el-tag
-                      type="info"
-                      effect="plain"
-                      closable
-                      style="cursor: pointer"
-                      @close="unassignUserFromProject(item, user)"
-                      @click="unassignUserFromProject(item, user)"
+              <div>
+                <span style="margin-right: 10px;">
+                  <el-tooltip content="View Project Details">
+                    <el-button
+                      type="primary"
+                      circle
+                      plain
+                      @click="manageProject(item)"
                     >
-                      {{ user.name }}
-                    </el-tag>
-                  </span>
-                </div>
-                <el-button
-                  slot="reference"
-                  type="text"
+                      <feather-icon
+                        size="20"
+                        icon="FolderIcon"
+                      />
+                    </el-button>
+                  </el-tooltip>
+                </span>
+                <span style="margin-right: 10px;">
+                  <el-tooltip content="Assign user(s) to project">
+                    <el-button
+                      type="success"
+                      circle
+                      plain
+                      @click="assignProject(item)"
+                    >
+                      <feather-icon
+                        size="20"
+                        icon="UserPlusIcon"
+                      />
+                    </el-button>
+                  </el-tooltip>
+                </span>
+                <el-popover
+                  placement="right"
+                  title="Assigned User(s)"
+                  width="250"
+                  trigger="click"
                 >
-                  <feather-icon icon="UsersIcon" />
-                  View Assignee(s)
-                </el-button>
-              </el-popover>
+                  <div style="background: #f3cf58b2; color: #000000; padding: 5px; text-align: left; border-radius: 5px;">
+                    <span
+                      v-for="(user, staff_index) in item.users"
+                      :key="staff_index"
+                    >
+                      <el-tag
+                        type="info"
+                        effect="plain"
+                        closable
+                        style="cursor: pointer"
+                        @close="unassignUserFromProject(item, user)"
+                        @click="unassignUserFromProject(item, user)"
+                      >
+                        {{ user.name }}
+                      </el-tag>
+                    </span>
+                  </div>
+                  <el-button
+                    slot="reference"
+                    type="warning"
+                    circle
+                    plain
+                  >
+                    <el-tooltip content="View Assignees">
+                      <feather-icon
+                        size="20"
+                        icon="UsersIcon"
+                      />
+                    </el-tooltip>
+                  </el-button>
+                </el-popover>
+              </div>
             </b-card-footer>
           </b-card>
         </el-col>
@@ -268,162 +300,11 @@
       </el-empty>
     </div>
 
-    <!-- <v-client-table
-      v-model="projects"
-      v-loading="loading"
-      :columns="columns"
-      :options="options"
-    >
-
-      <div
-        slot="allow_document_uploads"
-        slot-scope="{row}"
-      >
-        <select
-          v-model="row.allow_document_uploads"
-          @change="changeDocumentUploadRestriction(row, $event, 'allow_document_uploads')"
-        >
-          <option
-            :value="0"
-            label="Disabled"
-          />
-          <option
-            :value="1"
-            label="Enabled"
-          />
-        </select>
-      </div>
-      <div
-        slot="assigned_staff"
-        slot-scope="{row}"
-      >
-        <el-tag
-          v-for="(user, staff_index) in row.users"
-          :key="staff_index"
-          type="info"
-          effect="plain"
-          closable
-          @close="unassignUserFromProject(row, user)"
-          @click="unassignUserFromProject(row, user)"
-        >
-          {{ user.name }}
-        </el-tag>
-      </div>
-      <div
-        slot="assigned_consultant"
-        slot-scope="{row}"
-      >
-        <span
-          v-for="(user, consultant_index) in row.consultants"
-          :key="consultant_index"
-        >{{ user.name }}<br></span>
-      </div>
-      <div
-        slot="is_completed"
-        slot-scope="props"
-      >
-        <select
-          v-model="props.row.is_completed"
-          @input="toggleProjectCompletion(props.row, $event, 'is_completed')"
-        >
-          <option
-            :value="0"
-            label="In Progress"
-          />
-          <option
-            :value="1"
-            label="Completed"
-          />
-        </select>
-      </div>
-      <div
-        slot="start_date"
-        slot-scope="props"
-      >
-        <el-date-picker
-          v-model="props.row.start_date"
-          type="date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          placeholder="Set start date"
-          style="width: 140px"
-          @input="setDate($event, props.row, 'start_date')"
-        />
-      </div>
-      <div
-        slot="deadline"
-        slot-scope="props"
-      >
-        <el-date-picker
-          v-model="props.row.deadline"
-          type="date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          placeholder="Set a deadline"
-          style="width: 140px"
-          :picker-options="pickerOptions2"
-          @input="setDate($event, props.row, 'deadline')"
-        />
-      </div>
-      <div
-        slot="date_completed"
-        slot-scope="props"
-      >
-        <el-date-picker
-          v-model="props.row.date_completed"
-          type="date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          placeholder="Set completion date"
-          style="width: 140px"
-          :picker-options="pickerOptions"
-          @input="setDate($event, props.row, 'date_completed')"
-        />
-      </div>
-      <div
-        slot="progress"
-        slot-scope="{row}"
-        style="width: 100%"
-      >
-
-        <el-progress
-          :text-inside="true"
-          :stroke-width="20"
-          :percentage="row.progress"
-          :color="customColorMethod"
-        />
-      </div>
-      <div
-        slot="action"
-        slot-scope="props"
-      >
-        <b-dropdown
-          text="Action"
-          class="m-2"
-        >
-          <b-dropdown-item @click="assignProject(props.row)">
-            <feather-icon icon="UserCheckIcon" /> Assign Project
-          </b-dropdown-item>
-          <b-dropdown-item @click="manageProject(props.row)">
-            <feather-icon icon="EyeIcon" /> View Project Details
-          </b-dropdown-item>
-          <b-dropdown-item @click="showProjectSettings(props.row)">
-            <feather-icon icon="ToolIcon" /> Project Settings
-          </b-dropdown-item>
-          <b-dropdown-item @click="setupProjectPlan(props.row)">
-            <feather-icon icon="CheckSquareIcon" /> Activate project Plan
-          </b-dropdown-item>
-          <b-dropdown-item @click="destroyRow(props.row)">
-            <feather-icon icon="TrashIcon" /> Delete Project
-          </b-dropdown-item>
-        </b-dropdown>
-      </div>
-    </v-client-table> -->
     <b-modal
       v-model="showAssignModal"
       hide-footer
       centered
-      title="Fill the form to assign projects"
+      title="Fill the form to assign users to project"
     >
       <el-row
         v-loading="loading"
@@ -451,9 +332,10 @@
           <br>
         </el-col>
         <el-col :xs="24">
+          <small>Select User (Multiple selection enabled)</small>
           <el-select
             v-model="form.userIds"
-            placeholder="Select Personnels"
+            placeholder="Select Users"
             multiple
             filterable
             style="width: 100%;"
@@ -465,7 +347,13 @@
               :label="user.name"
             />
           </el-select>
-          <hr>
+          <el-button
+            class="pull-right"
+            type="text"
+            @click="showUserRegistrationForm = true"
+          >
+            Click here to create new user
+          </el-button>
         </el-col>
         <el-col :xs="24">
           <b-button
@@ -551,6 +439,16 @@
       </el-row>
 
     </b-modal>
+    <b-modal
+      v-model="showUserRegistrationForm"
+      hide-footer
+      centered
+      size="lg"
+      title="Register New User"
+    >
+      <user-registration-form @saved="fetchProjects(false); showUserRegistrationForm = false;" />
+
+    </b-modal>
     <el-drawer
       title=""
       :visible.sync="isCreateProjectSidebarActive"
@@ -588,6 +486,7 @@ import checkRole from '@/utils/role'
 import AddProject from './partials/AddProject.vue'
 import ClientProjectSettings from './partials/ClientProjectSettings.vue'
 import ClientProjectDetails from './partials/ClientProjectDetails.vue'
+import UserRegistrationForm from '@/views/modules/user/partials/RegisterUserClient.vue'
 
 export default {
   components: {
@@ -596,6 +495,7 @@ export default {
     AddProject,
     ClientProjectSettings,
     ClientProjectDetails,
+    UserRegistrationForm,
     BButton,
     BRow,
     BCol,
@@ -623,6 +523,7 @@ export default {
       loading: false,
       isCreateProjectSidebarActive: false,
       isProjectSettingSidebarActive: false,
+      showUserRegistrationForm: false,
       pageLength: 10,
       dir: false,
       columns: [
@@ -646,7 +547,7 @@ export default {
           'available_module.name': 'Module',
           'standard.name': 'Standard',
           allow_document_uploads: 'Can Upload Documents',
-          assigned_staff: 'Assigned Personnel',
+          assigned_staff: 'Assigned User',
           assigned_consultant: 'Assigned Consultant',
           is_completed: 'Completion Status',
         },
@@ -731,11 +632,10 @@ export default {
           app.staff = response.staff
         })
     },
-    fetchProjects() {
+    fetchProjects(load = true) {
       const app = this
       app.form.projectId = ''
-      app.loading = true
-      console.log(app.year)
+      app.loading = load
       const fetchProjectsResource = new Resource('projects/client-projects')
       fetchProjectsResource.list({ client_id: app.selectedClient.id, year: app.year })
         .then(response => {

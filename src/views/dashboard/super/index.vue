@@ -2,19 +2,16 @@
   <div v-loading="load">
     <data-analysis :dashboard-data="dashboardData" />
 
-    <schools />
-
   </div>
 </template>
 <script>
 import DataAnalysis from './components/data_analysis.vue'
-import Schools from '@/views/modules/schools/index.vue'
 
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    DataAnalysis, Schools,
+    DataAnalysis,
   },
   data() {
     return {

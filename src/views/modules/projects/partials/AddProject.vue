@@ -143,7 +143,9 @@
                       <em>{{ `${item.moduleName} - ${item.packageName}` }}</em>
                     </div>
                   </td>
-                  <td>{{ parseFloat(item.price).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</td>
+                  <td align="right">
+                    {{ parseFloat(item.price).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+                  </td>
                 </tr>
                 <tr v-if="grandTotal > 0">
                   <td colspan="2">
@@ -154,7 +156,10 @@
                   </td>
                 </tr>
                 <tr v-if="subscription !== null">
-                  <td colspan="2">
+                  <td
+                    align="right"
+                    colspan="2"
+                  >
                     <strong>Amount Paid</strong>
                   </td>
                   <td align="right">
@@ -162,7 +167,10 @@
                   </td>
                 </tr>
                 <tr v-if="grandTotal > 0">
-                  <td colspan="2">
+                  <td
+                    align="right"
+                    colspan="2"
+                  >
                     <strong>Total Payable</strong>
                   </td>
                   <td align="right">
@@ -192,20 +200,21 @@
                       >
                     </div>
                     <div v-else>
-
-                      <label>Payment details will be sent to the email below</label>
-                      <el-input
-                        v-model="form.email"
-                        placeholder="Enter Email"
-                        type="email"
-                        style="width: 100%;"
-                      />
-                      <hr>
-                      <card-payment
-                        :form="form"
-                        :currency="currency"
-                        @paid="fetchSubscriptionDetails"
-                      />
+                      <div v-if="grandTotal > 0">
+                        <label>Payment details will be sent to the email below</label>
+                        <el-input
+                          v-model="form.email"
+                          placeholder="Enter Email"
+                          type="email"
+                          style="width: 100%;"
+                        />
+                        <hr>
+                        <card-payment
+                          :form="form"
+                          :currency="currency"
+                          @paid="fetchSubscriptionDetails"
+                        />
+                      </div>
                       <!-- <card-payment
                         v-if="validEmail(form.email)"
                         :form="form"

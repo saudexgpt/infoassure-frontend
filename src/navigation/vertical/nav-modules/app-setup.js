@@ -6,13 +6,13 @@ export default [
   //   },
   // },
   {
-    title: 'Setup',
+    title: 'Settings',
     icon: 'ToolIcon',
     // tag: '2',
     // tagVariant: 'light-warning',
-    // acl: {
-    //   roles: ['super'],
-    // },
+    acl: {
+      roles: ['admin'],
+    },
     children: [
       {
         title: 'Manage Assets',

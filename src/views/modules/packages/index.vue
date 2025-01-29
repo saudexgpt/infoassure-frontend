@@ -228,6 +228,12 @@
         </el-dialog>
       </div>
       <div
+        slot="name"
+        slot-scope="props"
+      >
+        {{ `${props.row.name} - ${props.row.full_name}` }}
+      </div>
+      <div
         slot="action"
         slot-scope="props"
         class="demo-inline-spacing"
@@ -294,7 +300,7 @@ export default {
       direction: 'ttb',
       columns: [
         'name',
-        'slug',
+        // 'slug',
         'action',
       ],
 
