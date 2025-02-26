@@ -6,4 +6,12 @@ export default [
     // tag: '2',
     tagVariant: 'light-warning',
   },
+  {
+    title: 'Mail Box',
+    route: 'apps-email',
+    icon: 'MailIcon',
+    // acl: {
+    //   roles: ['parent', 'student', 'staff'],
+    // },
+  },
 ]

@@ -5,15 +5,27 @@
     </div>
     <b-tabs
       content-class="mt-1"
-      pills
     >
       <b-tab
-        title="BCMS (ISO-22301)"
+        v-for="(project, index) in clientActivatedProjects"
+        :key="index"
+        :title="project.title"
         lazy
       >
-        <b-c-m-s-dashboard />
+        <div v-if="project.available_module.slug === 'bcms'">
+          <b-c-m-s-dashboard />
+        </div>
+        <div v-if="project.available_module.slug === 'isms'">
+          <i-s-m-s-dashboard />
+        </div>
+        <div v-if="project.available_module.slug === 'ndpa'">
+          <n-d-p-a-dashboard />
+        </div>
+        <div v-if="project.available_module.slug === 'rcsa'">
+          <r-c-s-a-dashboard />
+        </div>
       </b-tab>
-      <b-tab
+      <!-- <b-tab
         title="ISMS (ISO-27001)"
         lazy
       >
@@ -30,7 +42,7 @@
         lazy
       >
         <r-c-s-a-dashboard />
-      </b-tab>
+      </b-tab> -->
     </b-tabs>
   </el-card>
 </template>

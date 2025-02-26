@@ -17,4 +17,23 @@ export default [
       roles: ['super'],
     },
   },
+
+  // entry point of all modules
+
+  {
+    path: '/ndpa-index',
+    name: 'ndpa-index',
+    component: () => import('@/views/modules/NDPA/index.vue'),
+    acl: {
+      roles: ['admin', 'client'],
+    },
+  },
+  {
+    path: '/vdd-index',
+    name: 'vdd-index',
+    component: () => import('@/views/modules/DUE-DILIGENCE/index.vue'),
+    acl: {
+      roles: ['admin', 'client'],
+    },
+  },
 ]

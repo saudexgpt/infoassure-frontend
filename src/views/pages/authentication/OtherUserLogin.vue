@@ -12,7 +12,7 @@
           <img
             src="/images/logo/logo.png"
             alt="logo"
-            width="100"
+            width="150"
             class="mx-auto"
           >
         </b-link>
@@ -40,14 +40,15 @@
             />
           </b-form-group>
           <b-form-group
-            label="Access Code"
-            label-for="access-code"
+            label="Password"
+            label-for="password"
           >
             <b-form-input
-              id="access-code"
-              v-model="form.access_code"
-              name="access-code"
-              placeholder="XXXX-XXXX"
+              id="password"
+              v-model="form.password"
+              type="password"
+              name="password"
+              placeholder="Password"
             />
           </b-form-group>
 
@@ -87,21 +88,32 @@ export default {
     BLink,
     BFormInput,
   },
+  props: {
+    productModule: {
+      type: String,
+      default: () => (''),
+    },
+  },
   data() {
     return {
       form: {
         email: '',
-        access_code: '',
+        password: '',
+        product_module: 'vdd',
       },
       load: false,
     }
+  },
+  created() {
+    this.form.product_module = this.productModule
   },
   methods: {
     submitForm() {
       const app = this
       app.load = true
+      const { form } = app
       this.$store
-        .dispatch('user/otherUserLogin', app.form)
+        .dispatch('user/otherUserLogin', form)
         .then(response => {
           app.$message({
             message: response.message,
@@ -109,7 +121,7 @@ export default {
           })
           app.form = {
             email: '',
-            access_code: '',
+            password: '',
           }
           app.load = false
           window.location = app.$route.path

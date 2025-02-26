@@ -22,7 +22,7 @@
           <b-col
             cols="6"
           >
-            <h4>Manage Questions</h4>
+            <h4>Manage Vendor Due Diligence Questions</h4>
           </b-col>
           <b-col
             cols="6"
@@ -58,71 +58,91 @@
         </b-row>
       </div>
       <hr>
-      <!-- table -->
-      <!-- <span>Click on the <feather-icon
-        icon="PlusIcon"
-        class="mr-50"
-      /> sign to view questions</span> -->
-      <v-client-table
-        v-model="questions"
-        v-loading="loading"
-        :columns="columns"
-        :options="options"
+      <el-row
+        v-if="loading"
+        :gutter="15"
       >
-        <!-- <div
-          slot="question"
-          slot-scope="{row}"
+        <el-col
+          v-for="(count, count_index) in 5"
+          :key="count_index"
+          :xs="24"
+          :sm="24"
+          :md="24"
+          :lg="24"
+          :xl="24"
         >
-          <ckeditor
-            id="question"
-            v-model="row.question"
-            :editor="editor"
-            :config="editorConfig"
-            disabled
-          />
-        </div> -->
-        <!-- <div
-          slot="question"
-          slot-scope="{row}"
-        >
-          <el-input
-            v-model="row.question"
-            type="textarea"
-            :autosize="{ minRows: 5 }"
-            readonly
-          />
-        </div> -->
-        <div
-          slot="action"
-          slot-scope="props"
-        >
-          <b-button
-            v-if="checkPermission(['update-gap assessment'])"
-            variant="gradient-warning"
-            class="btn-icon rounded-circle"
-            @click="editThisRow(props.row)"
-          >
-            <feather-icon icon="EditIcon" />
-          </b-button>
-          <b-button
-            v-if="checkPermission(['delete-gap assessment'])"
-            variant="gradient-danger"
-            class="btn-icon rounded-circle"
-            @click="destroyRow(props.row)"
-          >
-            <feather-icon icon="TrashIcon" />
-          </b-button>
-        </div>
-      </v-client-table>
-      <el-row :gutter="20">
-        <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="query.page"
-          :limit.sync="query.limit"
-          @pagination="fetchQuestions"
-        />
+          <el-card>
+            <el-skeleton
+              :loading="loading"
+              :rows="1"
+              animated
+            />
+          </el-card>
+        </el-col>
       </el-row>
+      <el-collapse
+        v-if="!loading"
+        accordion
+      >
+        <el-collapse-item
+          v-for="(questions, index) in categorized_questions"
+          :key="index"
+          :name="index"
+        >
+          <template slot="title">
+            <strong>{{ index }}</strong>
+          </template>
+          <aside>
+            <el-table
+              :data="questions"
+              style="width: 100%"
+            >
+              <el-table-column
+                label="Action"
+                width="200"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    @click="handleEdit(scope.$index, scope.row)"
+                  >Edit</el-button>
+                  <el-button
+                    :loading="loadDelete"
+                    size="mini"
+                    type="danger"
+                    @click="handleDelete(scope.$index, scope.row)"
+                  >Delete</el-button>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="Audit Question"
+                prop="question"
+              >
+                <template slot-scope="scope">
+                  <div>
+                    <div style="background: #f0f0f0; color: #000000; padding: 10px; border-radius: 5px">
+                      <p>{{ scope.row.question }}</p>
+                    </div>
+
+                    <p v-if="scope.row.key !== null">
+                      Key/Hint: {{ scope.row.key }}
+                    </p>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="Answer Type"
+                prop="answer_type"
+                width="200"
+              />
+            </el-table>
+          </aside>
+        </el-collapse-item>
+      </el-collapse>
+      <el-empty
+        v-if="categorized_questions.length < 1"
+        description="No data available"
+      />
       <create-question
         v-if="isCreateQuestionSidebarActive"
         v-model="isCreateQuestionSidebarActive"
@@ -132,7 +152,7 @@
         v-if="isEditQuestionSidebarActive"
         v-model="isEditQuestionSidebarActive"
         :selected-question="editable_row"
-        @update="updateEditedTableRow"
+        @update="updateTable"
       />
     </div>
   </el-card>
@@ -149,13 +169,13 @@ import Resource from '@/api/resource'
 import CreateQuestion from './partials/CreateQuestion.vue'
 import EditQuestion from './partials/EditQuestion.vue'
 import CreateBulkQuestion from './partials/CreateBulkQuestion.vue'
-import Pagination from '@/views/components/Pagination-main/index.vue'
+// import Pagination from '@/views/components/Pagination-main/index.vue'
 import checkPermission from '@/utils/permission'
 
 export default {
   components: {
     // VueGoodTable,
-    Pagination,
+    // Pagination,
     CreateQuestion,
     CreateBulkQuestion,
     EditQuestion,
@@ -174,6 +194,7 @@ export default {
     return {
       uploadBulk: false,
       loading: false,
+      loadDelete: false,
       isCreateQuestionSidebarActive: false,
       isEditQuestionSidebarActive: false,
       pageLength: 10,
@@ -203,7 +224,7 @@ export default {
           'domain', 'question',
         ],
       },
-      questions: [],
+      categorized_questions: [],
       searchTerm: '',
       editable_row: '',
       selected_row_index: '',
@@ -229,48 +250,39 @@ export default {
     checkPermission,
     fetchQuestions() {
       const app = this
-      const { limit, page } = this.query
       app.loading = true
-      const fetchQuestionsResource = new Resource('due-diligence/questions')
-      fetchQuestionsResource.list(this.query)
+      const fetchQuestionsResource = new Resource('vdd/questions/fetch-default-questions')
+      fetchQuestionsResource.list()
         .then(response => {
-          app.questions = response.questions.data
-          app.questions.forEach((element, index) => {
-            // eslint-disable-next-line no-param-reassign, dot-notation
-            element['index'] = (page - 1) * limit + index + 1
-          })
-          app.total = response.questions.total
           app.loading = false
+          app.categorized_questions = response.questions
         })
     },
     updateTable() {
       const app = this
       app.fetchQuestions()
     },
-    editThisRow(selectedRow) {
-      // console.log(props)
+    handleEdit(index, row) {
       const app = this
       // const editableRow = selected_row;
-      app.editable_row = selectedRow
+      app.editable_row = row
       app.isEditQuestionSidebarActive = true
+      // console.log(index, row)
     },
-    destroyRow(row) {
+    handleDelete(index, row) {
       const app = this
 
       // eslint-disable-next-line no-alert
       if (window.confirm('Are you sure you want to delete this entry?')) {
-        app.loading = true
-        const destroyQuestionsResource = new Resource('fetchQuestions/questions/destroy')
+        app.loadDelete = true
+        const destroyQuestionsResource = new Resource('vdd/questions/destroy-default-question')
         destroyQuestionsResource.destroy(row.id)
           .then(() => {
+            app.$message('Action Successful')
             app.fetchQuestions()
-            app.loading = false
+            app.loadDelete = false
           })
       }
-    },
-    updateEditedTableRow() {
-      const app = this
-      app.fetchQuestions()
     },
   },
 }

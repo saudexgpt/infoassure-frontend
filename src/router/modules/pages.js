@@ -5,6 +5,43 @@ export default [
     component: () => import('@/views/dashboard/DashboardMain.vue'),
   },
   {
+    path: '/apps/email',
+    name: 'apps-email',
+    component: () => import('@/views/apps/email/Email.vue'),
+    meta: {
+      contentRenderer: 'sidebar-left',
+      contentClass: 'email-application',
+    },
+  },
+  {
+    path: '/apps/email/:folder',
+    name: 'apps-email-folder',
+    component: () => import('@/views/apps/email/Email.vue'),
+    meta: {
+      contentRenderer: 'sidebar-left',
+      contentClass: 'email-application',
+      navActiveLink: 'apps-email',
+    },
+    beforeEnter(to, _, next) {
+      if (['sent', 'draft', 'starred', 'spam', 'trash'].includes(to.params.folder)) next()
+      else next({ name: 'error-404' })
+    },
+  },
+  {
+    path: '/apps/email/label/:label',
+    name: 'apps-email-label',
+    component: () => import('@/views/apps/email/Email.vue'),
+    meta: {
+      contentRenderer: 'sidebar-left',
+      contentClass: 'email-application',
+      navActiveLink: 'apps-email',
+    },
+    beforeEnter(to, _, next) {
+      if (['personal', 'company', 'important', 'private'].includes(to.params.label)) next()
+      else next({ name: 'error-404' })
+    },
+  },
+  {
     path: '/my-projects',
     name: 'my-projects',
     component: () => import('@/views/modules/projects/index.vue'),
@@ -76,11 +113,6 @@ export default [
   //     permissions: ['read-client project'],
   //   },
   // },
-  {
-    path: '/modules',
-    name: 'modules',
-    component: () => import('@/views/modules/Index.vue'),
-  },
 
   {
     path: '/manage-projects',
@@ -163,6 +195,14 @@ export default [
     component: () => import('@/views/modules/app-setup/Consultings.vue'),
     meta: {
       permissions: ['read-unit'],
+    },
+  },
+  {
+    path: '/vdd-questions',
+    name: 'vdd-questions',
+    component: () => import('@/views/modules/DUE-DILIGENCE/ManageDefaultQuestions.vue'),
+    meta: {
+      roles: ['super'],
     },
   },
   // {
@@ -257,13 +297,5 @@ export default [
     path: '/profile',
     component: () => import('@/views/modules/user/Profile.vue'),
     name: 'UserProfile',
-  },
-  {
-    path: '/module-setup/:id/:module',
-    component: () => import('@/views/modules/packages/Setup.vue'),
-    name: 'ModuleSetup',
-    meta: {
-      roles: ['super'],
-    },
   },
 ]

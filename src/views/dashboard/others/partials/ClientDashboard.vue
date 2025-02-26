@@ -1,7 +1,8 @@
 <template>
   <div>
     <statistics />
-    <enterprise-risk-assessment-analysis title="Enterprise Risk Analysis" /><p />
+    <!-- <enterprise-risk-assessment-analysis title="Enterprise Risk Analysis" /> -->
+    <p />
     <project-data-analysis />
   </div>
 </template>
@@ -9,10 +10,10 @@
 <script>
 import Statistics from './Statistics.vue'
 import ProjectDataAnalysis from './ProjectDataAnalysis.vue'
-import EnterpriseRiskAssessmentAnalysis from './EnterpriseRiskAssessmentAnalysis.vue'
+// import EnterpriseRiskAssessmentAnalysis from './EnterpriseRiskAssessmentAnalysis.vue'
 
 export default {
-  components: { Statistics, ProjectDataAnalysis, EnterpriseRiskAssessmentAnalysis },
+  components: { Statistics, ProjectDataAnalysis },
   data() {
     return {
       style: {

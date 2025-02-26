@@ -8,8 +8,9 @@ export function login(data) {
   })
 }
 export function otherUserLogin(data) {
+  const productModule = data.product_module
   return request({
-    url: '/auth/other-user-login',
+    url: `/${productModule}/auth/login`,
     method: 'post',
     data,
   })

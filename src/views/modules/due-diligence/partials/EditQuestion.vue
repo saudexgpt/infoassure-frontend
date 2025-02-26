@@ -32,6 +32,19 @@
           <b-row v-loading="loading">
             <b-col cols="12">
               <b-form-group
+                label="Domain/Category"
+                label-for="v-domain"
+              >
+
+                <el-input
+                  v-model="form.domain"
+                  style="width: 100%"
+                  placeholder="Input domain"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
                 label="Type Question"
                 label-for="v-question"
               >
@@ -50,7 +63,7 @@
             </b-col>
             <b-col cols="12">
               <b-form-group
-                label="Needs evidence/reference document upload?"
+                label="Key/Hint to question for clarity"
                 label-for="v-upload_evidence"
               >
 
@@ -58,6 +71,47 @@
                   v-model="form.key"
                   style="width: 100%"
                   placeholder="Input question key/insight"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
+                label="Answer Type"
+              >
+                <el-select
+                  v-model="form.answer_type"
+                  style="width: 100%"
+                >
+                  <el-option
+                    value="open_ended"
+                    label="Open Ended"
+                  />
+                  <el-option
+                    value="yes-no"
+                    label="Yes/No Response"
+                  />
+                  <el-option
+                    value="both"
+                    label="Both"
+                  />
+                </el-select>
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <b-form-group
+                label="Does question need evidence/reference document upload?"
+                label-for="v-upload_evidence"
+              >
+
+                <el-switch
+                  v-model="form.upload_evidence"
+                  style="display: block"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  active-text="Yes"
+                  inactive-text="No"
+                  :active-value="1"
+                  :inactive-value="0"
                 />
               </b-form-group>
             </b-col>
@@ -113,10 +167,6 @@ export default {
       type: Object,
       default: () => (null),
     },
-    standards: {
-      type: Array,
-      required: true,
-    },
   },
   data() {
     return {
@@ -124,7 +174,6 @@ export default {
         question: '',
         key: '',
       },
-      selectedStandard: {},
       clauses: [],
       loading: false,
       error: false,
@@ -137,24 +186,17 @@ export default {
   },
   created() {
     this.form = this.selectedQuestion
-    const index = this.standards.map(object => object.id).indexOf(this.form.standard_id)
-    this.selectedStandard = this.standards[index]
-    this.setQuestion()
   },
   methods: {
-    setQuestion() {
-      const app = this
-      app.form.standard_id = app.selectedStandard.id
-      app.clauses = app.selectedStandard.clauses
-    },
     update() {
       const app = this
       app.loading = true
-      const updateCurriculumSetupResource = new Resource('due-diligence/questions/update')
+      const updateQuestionResource = new Resource('vdd/questions/update-default-question')
       const param = app.form
-      updateCurriculumSetupResource.update(param.id, param)
+      updateQuestionResource.update(param.id, param)
         .then(response => {
           app.loading = false
+          app.$message('Update Successful')
           app.$emit('update', response)
           app.$emit('update:is-edit-question-sidebar-active', false)
         })

@@ -9,7 +9,7 @@
             width="250px"
             style="padding: 0 !important"
         >
-            <label style="margin-left: 10px !important">Modules</label>
+            <label style="margin-left: 10px !important">My Activated Modules</label>
             <div>
                 <el-menu>
                     <el-submenu
@@ -67,6 +67,11 @@
                 </div>
                 <div v-else>
                     <div v-if="moduleName === 'ndpa'">
+                        <n-d-p-a-index />
+                        <!-- <n-d-p-a-manage v-if="view === 'manage'" />
+                        <n-d-p-a-report v-if="view === 'report'" /> -->
+                    </div>
+                    <div v-if="moduleName === 'vdd'">
                         <n-d-p-a-dashboard v-if="view === 'dashboard'" />
                         <n-d-p-a-manage v-if="view === 'manage'" />
                         <n-d-p-a-report v-if="view === 'report'" />
@@ -77,13 +82,11 @@
     </el-container>
 </template>
 <script>
-import NDPADashboard from '@/views/modules/NDPA/Dashboard.vue'
-import NDPAManage from '@/views/modules/NDPA/Manage.vue'
-import NDPAReport from '@/views/modules/NDPA/Report.vue'
+import NDPAIndex from '@/views/modules/NDPA/index.vue'
 
 export default {
   components: {
-    NDPADashboard, NDPAManage, NDPAReport,
+    NDPAIndex,
   },
   data() {
     return {

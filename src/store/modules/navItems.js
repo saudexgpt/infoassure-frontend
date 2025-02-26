@@ -1,11 +1,11 @@
 // import navMenuItems from '@/navigation/vertical'
-// import store from '@/store'
+import store from '@/store'
 
 import dashboard from '@/navigation/vertical/nav-modules/dashboard'
 import appSetup from '@/navigation/vertical/nav-modules/app-setup'
 import links from '@/navigation/vertical/nav-modules/links'
 import adminSettings from '@/navigation/vertical/nav-modules/admin-settings'
-import riskAssessment from '@/navigation/vertical/nav-modules/risk-assessment'
+// import riskAssessment from '@/navigation/vertical/nav-modules/risk-assessment'
 import userManagement from '@/navigation/vertical/nav-modules/user-management'
 
 import Resource from '@/api/resource'
@@ -43,9 +43,9 @@ const mutations = {
 
 const actions = {
   setNavItems({ commit }) {
-    // const { availableModules } = store.getters
+    const { availableModules } = store.getters
     // const navMenuItems = [...dashboard, ...appSetup, ...links, ...availableModules, ...riskAssessment, ...userManagement, ...adminSettings]
-    const navMenuItems = [...dashboard, ...appSetup, ...links, ...riskAssessment, ...userManagement, ...adminSettings]
+    const navMenuItems = [...dashboard, ...appSetup, ...availableModules, ...links, /* ...riskAssessment, */ ...userManagement, ...adminSettings]
     commit('SET_NAV_ITEMS', navMenuItems)
   },
   fetchActivatedModules({ commit }, client) {
@@ -56,53 +56,72 @@ const actions = {
           commit('SET_CLIENT_ACTIVATED_PROJECTS', response.projects)
           commit('SET_CLIENT_ACTIVATED_MODULES', response.activated_modules)
           commit('SET_ALL_MODULES', response.all_modules)
-          const modules = []
+          const modules = {
+            title: 'Modules',
+            icon: 'PackageIcon',
+            acl: {
+              roles: ['admin', 'client'],
+              // permissions: ['manage-client-projects'],
+            },
+            children: [],
+          }
+          const children = []
           response.projects.forEach(project => {
             const availableModule = project.available_module
             const features = project.feature_slug
             if (availableModule) {
-              modules.push({
+              children.push({
                 title: availableModule.name,
                 slug: availableModule.slug,
-                icon: 'PackageIcon',
+                route: `${availableModule.slug}-index`,
                 features,
                 acl: {
                   modules: [availableModule.slug],
                 },
-                children: [
-                  {
-                    title: 'Overview',
-                    route: `${availableModule.slug}-dashboard`,
-                    view: 'dashboard',
-                    moduleName: availableModule.slug,
-                  },
-                  {
-                    title: 'Activities',
-                    route: `manage-${availableModule.slug}`,
-                    view: 'manage',
-                    moduleName: `${availableModule.slug}`,
-                  },
-                  // {
-                  //   title: 'Reports',
-                  //   route: `${availableModule.slug}-report`,
-                  //   view: 'report',
-                  //   moduleName: `${availableModule.slug}`,
-                  // },
-                  // {
-                  //   title: 'Setup',
-                  //   route: `module-setup/${availableModule.slug}`,
-                  // },
-                ],
               })
+              // modules.push({
+              //   title: availableModule.name,
+              //   slug: availableModule.slug,
+              //   icon: 'PackageIcon',
+              //   features,
+              //   acl: {
+              //     modules: [availableModule.slug],
+              //   },
+              //   children: [
+              //     {
+              //       title: 'Overview',
+              //       route: `${availableModule.slug}-dashboard`,
+              //       view: 'dashboard',
+              //       moduleName: availableModule.slug,
+              //     },
+              //     {
+              //       title: 'Activities',
+              //       route: `manage-${availableModule.slug}`,
+              //       view: 'manage',
+              //       moduleName: `${availableModule.slug}`,
+              //     },
+              //     // {
+              //     //   title: 'Reports',
+              //     //   route: `${availableModule.slug}-report`,
+              //     //   view: 'report',
+              //     //   moduleName: `${availableModule.slug}`,
+              //     // },
+              //     // {
+              //     //   title: 'Setup',
+              //     //   route: `module-setup/${availableModule.slug}`,
+              //     // },
+              //   ],
+              // })
             }
           })
+          modules.children = children
           // if (modules.length === 1) {
           //   modules.unshift({ header: 'Active Module' })
           // }
           // if (modules.length > 1) {
           //   modules.unshift({ header: 'Active Modules' })
           // }
-          commit('SET_MODULES', modules)
+          commit('SET_MODULES', [modules])
           resolve(response)
         }).catch(error => {
           reject(error)

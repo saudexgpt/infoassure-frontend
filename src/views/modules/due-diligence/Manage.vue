@@ -43,7 +43,7 @@ import {
 } from 'bootstrap-vue'
 import { mapGetters } from 'vuex'
 import Create from './Create.vue'
-import ManageQuestions from './ManageQuestions.vue'
+// import ManageQuestions from './ManageQuestions-Old.vue'
 import checkPermission from '@/utils/permission'
 
 export default {
@@ -51,7 +51,7 @@ export default {
     BTabs,
     BTab,
     Create,
-    ManageQuestions,
+    // ManageQuestions,
   },
   data() {
     return {

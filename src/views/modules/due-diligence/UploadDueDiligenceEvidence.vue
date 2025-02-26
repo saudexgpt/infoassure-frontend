@@ -83,8 +83,8 @@ export default {
       formData.append('title', app.form.title)
       formData.append('file_uploaded', app.uploadableFile)
       formData.append('answer_id', app.answerId)
-      const updatePhotoResource = new Resource('due-diligence/answers/upload-due-diligence-evidence')
-      updatePhotoResource.store(formData)
+      const updatePhotoResource = new Resource('vdd/answers/upload-due-diligence-evidence')
+      updatePhotoResource.vStore(formData)
         .then(() => {
           app.load = false
           app.uploadableFile = null

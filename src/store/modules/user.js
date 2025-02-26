@@ -26,12 +26,7 @@ const state = {
   id: '',
   token: getToken(),
   other_user_token: getOtherToken(),
-  otherUserData: {
-    client_id: null,
-    business_unit_id: null,
-    name: '',
-    email: '',
-  },
+  otherUserData: {},
   userData: {
     id: '',
     name: '',
@@ -164,17 +159,23 @@ const actions = {
     })
   },
   otherUserLogin({ commit }, userInfo) {
-    const { email, access_code } = userInfo
+    const { email, password, product_module } = userInfo
     return new Promise((resolve, reject) => {
-      otherUserLogin({ email: email.trim(), access_code })
+      otherUserLogin({ email: email.trim(), password, product_module })
         .then(response => {
           if (response.token) {
+            // We need this to be able to call backend apis
+            commit('SET_USER_DATA', response.user)
+            commit('SET_TOKEN', response.token)
+            commit('SET_ID', response.user.id)
+            setToken(response.tk)
+
             commit('SET_OTHER_TOKEN', response.token)
-            commit('SET_OTHER_USER_DATA', response.other_user)
+            commit('SET_OTHER_USER_DATA', response.user)
             setOtherToken(response.token)
-            saveOtherUser(response.other_user)
+            saveOtherUser(response.user)
           }
-          resolve(response)
+          // resolve(response)
         })
         .catch(error => {
           reject(error)

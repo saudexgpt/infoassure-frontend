@@ -18,15 +18,15 @@ export default [
   //     roles: ['partner', 'admin'],
   //   },
   // },
-  {
-    title: 'Modules',
-    icon: 'PackageIcon',
-    route: 'modules',
-    acl: {
-      roles: ['admin', 'client'],
-      // permissions: ['manage-client-projects'],
-    },
-  },
+  // {
+  //   title: 'Modules',
+  //   icon: 'PackageIcon',
+  //   route: 'modules',
+  //   acl: {
+  //     roles: ['admin', 'client'],
+  //     // permissions: ['manage-client-projects'],
+  //   },
+  // },
   {
     title: 'Manage Projects',
     icon: 'CpuIcon',

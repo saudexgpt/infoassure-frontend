@@ -259,6 +259,14 @@ import Ripple from 'vue-ripple-directive'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import Resource from '@/api/resource'
 
+ClassicEditor
+  .create(document.querySelector('#question'), {
+    link: {
+      addTargetToExternalLinks: true,
+      defaultProtocol: 'http:s//',
+    },
+  }).then(/* ... */)
+  .catch(/* ... */)
 export default {
   components: {
     BSidebar,

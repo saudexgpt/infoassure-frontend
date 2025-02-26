@@ -748,9 +748,11 @@ export default {
     manageProject(selectedRow) {
       // console.log(props)
       const app = this
+      app.$router.push({ path: `/${selectedRow.available_module.slug}-index` })
+
       // const editableRow = selected_row;
-      app.selected_project = selectedRow
-      app.showManageProject = true
+      // app.selected_project = selectedRow
+      // app.showManageProject = true
     },
     setDate(event, project, field) {
       const app = this

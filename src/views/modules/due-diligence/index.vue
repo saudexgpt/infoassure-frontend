@@ -1,78 +1,73 @@
 <template>
-  <el-card>
-    <h3>Third Party Vendor Due Diligence Assessment</h3>
-    <b-tabs
-      content-class="mt-1"
+  <el-tabs
+    v-model="activeName"
+  >
+    <!-- <el-tabs
+      v-model="activeName"
+      @tab-click="handleClick"
+    > -->
+    <el-tab-pane
+      label="Vendor Onboarding"
+      name="first"
     >
-      <b-tab
-        v-if="checkPermission(['upload-due-diligence-requirements'])"
-        lazy
-      >
-        <template #title>
-          <feather-icon icon="ToolIcon" />
-          <span>Manage Requirements</span>
-        </template>
-        <manage-questions />
-      </b-tab>
-      <b-tab
-        lazy
-      >
-        <template #title>
-          <feather-icon icon="LayersIcon" />
-          <span>Perform Due Diligence Assessment</span>
-        </template>
-        <create :is-admin="isAdmin" />
-      </b-tab>
-      <!-- <b-tab
-        v-if="checkPermission(['manage-project-plan'])"
-        lazy
-      >
-        <template #title>
-          <feather-icon icon="BarChartIcon" />
-          <span>Report</span>
-        </template>
-        <create :is-admin="isAdmin" />
-      </b-tab> -->
-    </b-tabs>
-  </el-card>
+      <onboarding />
+    </el-tab-pane>
+    <el-tab-pane
+      label="Risk Management"
+      name="second"
+    >
+      <risk-assessment />
+    </el-tab-pane>
+    <el-tab-pane
+      label="Financials & Billing"
+      name="third"
+    >
+      <financials-and-billing />
+    </el-tab-pane>
+    <!-- <el-tab-pane
+      label="Audit Assessment"
+      name="fourth"
+    >
+      <div>
+        <img
+          align="center"
+          src="images/construction.jpg"
+        >
+      </div>
+    </el-tab-pane>
+    <el-tab-pane
+      label="Reports & Analytics"
+      name="fifth"
+    >
+      <div>
+        <img
+          align="center"
+          src="images/construction.jpg"
+        >
+      </div>
+    </el-tab-pane> -->
+  </el-tabs>
 </template>
-
 <script>
-import {
-  BTabs, BTab,
-} from 'bootstrap-vue'
-import { mapGetters } from 'vuex'
-import Create from './Create.vue'
-import ManageQuestions from './ManageQuestions.vue'
-import checkPermission from '@/utils/permission'
+import Onboarding from '@/views/modules/DUE-DILIGENCE/Onboarding/index.vue'
+import RiskAssessment from '@/views/modules/DUE-DILIGENCE/RiskAssessment/index.vue'
+import FinancialsAndBilling from '@/views/modules/DUE-DILIGENCE/FinancialsAndBilling/index.vue'
+// import NDPAReport from '@/views/modules/NDPA/Report.vue'
 
 export default {
   components: {
-    BTabs,
-    BTab,
-    Create,
-    ManageQuestions,
+    Onboarding, RiskAssessment, FinancialsAndBilling,
+    // NDPAReport,
   },
   data() {
     return {
-      isAdmin: false,
+      activeName: 'first',
     }
   },
-  computed: {
-    ...mapGetters([
-      'userData',
-    ]),
-  },
-  created() {
-    this.setAdmin()
-  },
   methods: {
-    setAdmin() {
-      if (!this.userData.roles.includes('client')) {
-        this.isAdmin = true
-      }
-    },
-    checkPermission,
+    // handleClick(tab, event) {
+    //   console.log(tab, event)
+    // },
   },
 }
 </script>

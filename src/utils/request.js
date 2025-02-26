@@ -12,7 +12,7 @@ service.interceptors.request.use(
     const token = getToken()
     if (token) {
       // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${getToken()}` // Set JWT token
+      config.headers.Authorization = `Bearer ${token}` // Set JWT token
     }
 
     return config

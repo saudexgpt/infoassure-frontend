@@ -37,7 +37,6 @@
       animated
     />
     <el-collapse
-      v-if="clauses.length > 0"
       accordion
       type="border"
     >
@@ -302,14 +301,20 @@
                           :sm="24"
                           :xs="24"
                         >
-                          <div v-if="showQuestions">
-                            <ckeditor
+                          <div
+                            v-if="showQuestions"
+                            style="background: #000000; color: #ffffff; padding: 10px; border-radius: 5px;"
+                          >
+                            <!-- <ckeditor
                               id="question"
                               v-model="question.question"
                               :editor="editor"
                               :config="editorConfig"
                               disabled
-                            />
+                            /> -->
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="question.question" />
+                            <em>{{ (question.hint !== null) ? `Hint: ${question.hint}` : '' }}</em>
                           </div>
                           <div
                             v-if="question.answer.is_exception === 0"

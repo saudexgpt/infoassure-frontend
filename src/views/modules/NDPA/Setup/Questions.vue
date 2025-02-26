@@ -104,12 +104,14 @@
           slot-scope="{row}"
         >
           <strong>{{ (row.section) ? `${row.section.name} - ${row.section.description}` : '' }}</strong>
-          <ckeditor
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <span v-html="row.question" />
+          <!-- <ckeditor
             v-model="row.question"
             :editor="editor"
             :config="editorConfig"
             disabled
-          />
+          /> -->
           <em>{{ (row.hint !== null) ? `Hint: ${row.hint}` : '' }}</em>
         </div>
         <div
