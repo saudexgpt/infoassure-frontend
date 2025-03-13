@@ -62,7 +62,7 @@
                 </b-form-group>
               </b-col>
             </b-row>
-            <b-row>
+            <b-row v-if="clientUserform.vendor_id !== ''">
               <b-col md="6">
                 <b-form-group
                   label="First Name"
@@ -246,7 +246,7 @@ export default {
   //     return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
   //   },
   // },
-  created() {
+  mounted() {
     this.fetchVendors()
     // this.fetchClientUsers()
   },

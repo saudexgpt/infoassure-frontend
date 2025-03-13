@@ -33,16 +33,245 @@
         </b-col>
       </b-row>
       <hr>
-      <!-- <span class="pull-right">
-          <el-button
-            v-if="invoices.length > 0"
-            :loading="downloadLoading"
-            style="margin:0 0 20px 20px;"
-            type="primary"
-            icon="document"
-            @click="handleDownload('List of invoices', invoices)"
-          >Export Excel</el-button>
-        </span> -->
+      <el-row
+        v-if="loading"
+        :gutter="15"
+      >
+        <el-col
+          v-for="(count, count_index) in 4"
+          :key="count_index"
+          :xs="24"
+          :sm="24"
+          :md="6"
+          :lg="6"
+          :xl="6"
+        >
+          <el-card>
+            <el-skeleton
+              :loading="loading"
+              :rows="3"
+              animated
+            />
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <span
+        v-if="!loading"
+        style="cursor:pointer"
+        @click="initialize()"
+      >
+
+        <el-tooltip content="Refresh">
+          <feather-icon
+            icon="RefreshCwIcon"
+            class="ml-50"
+            size="30"
+          />
+        </el-tooltip>
+      </span>
+      <el-row
+        v-if="!loading"
+        :gutter="6"
+      >
+        <el-col
+          :xs="24"
+          :sm="12"
+          :md="6"
+          :lg="6"
+          :xl="6"
+        >
+          <b-card>
+            <b-card-body class="d-flex justify-content-between align-items-center">
+              <b-avatar
+                variant="light-dark"
+                size="50"
+              >
+                <feather-icon
+                  size="35"
+                  icon="FileTextIcon"
+                />
+              </b-avatar>
+              <div class="truncate">
+                <h2
+                  class="mb-25 font-weight-bolder"
+                >
+                  {{ total_invoices }}
+                </h2>
+                <span>Total Invoices</span>
+              </div>
+            </b-card-body>
+          </b-card>
+        </el-col>
+        <el-col
+          :xs="24"
+          :sm="12"
+          :md="6"
+          :lg="6"
+          :xl="6"
+        >
+          <b-card>
+            <b-card-body class="d-flex justify-content-between align-items-center">
+              <b-avatar
+                variant="light-warning"
+                size="50"
+              >
+                <feather-icon
+                  size="35"
+                  icon="AlertCircleIcon"
+                />
+              </b-avatar>
+              <div class="truncate">
+                <h2
+                  class="mb-25 font-weight-bolder"
+                >
+                  {{ pending_invoices }}
+                </h2>
+                <span>Pending Invoices</span>
+              </div>
+            </b-card-body>
+          </b-card>
+        </el-col>
+        <el-col
+          :xs="24"
+          :sm="12"
+          :md="6"
+          :lg="6"
+          :xl="6"
+        >
+          <b-card>
+            <b-card-body class="d-flex justify-content-between align-items-center">
+              <b-avatar
+                variant="light-danger"
+                size="50"
+              >
+                <feather-icon
+                  size="35"
+                  icon="DiscIcon"
+                />
+              </b-avatar>
+              <div class="truncate">
+                <h2
+                  class="mb-25 font-weight-bolder"
+                >
+                  {{ overdue_invoices }}
+                </h2>
+                <span>Overdue Invoices</span>
+              </div>
+            </b-card-body>
+          </b-card>
+        </el-col>
+        <el-col
+          :xs="24"
+          :sm="12"
+          :md="6"
+          :lg="6"
+          :xl="6"
+        >
+          <b-card>
+            <b-card-body class="d-flex justify-content-between align-items-center">
+              <b-avatar
+                variant="light-success"
+                size="50"
+              >
+                <feather-icon
+                  size="35"
+                  icon="CheckCircleIcon"
+                />
+              </b-avatar>
+              <div class="truncate">
+                <h2
+                  class="mb-25 font-weight-bolder"
+                >
+                  {{ paid_invoices }}
+                </h2>
+                <span>Paid Invoices</span>
+              </div>
+            </b-card-body>
+          </b-card>
+        </el-col>
+      </el-row>
+      <el-popover
+        placement="right"
+        width="400"
+        trigger="click"
+      >
+        <el-row :gutter="10">
+          <p>Filter using the fields below</p>
+          <div style="margin-bottom: 5px;">
+            <el-input
+              v-model="query.invoice_no"
+              placeholder="Invoice Number"
+            />
+          </div>
+          <div style="margin-bottom: 5px;">
+            <el-input
+              v-model="query.amount"
+              placeholder="Amount"
+            >
+              <template slot="prepend">
+                {{ currency }}
+              </template>
+            </el-input>
+            <br>
+          </div>
+          <div style="margin-bottom: 5px;">
+            <el-date-picker
+              v-model="query.due_date"
+              type="date"
+              placeholder="Due Date"
+              format="yyyy/MM/dd"
+              value-format="yyyy-MM-dd"
+              style="width: 100%"
+            />
+          </div>
+          <div style="margin-bottom: 5px;">
+            <el-select
+              v-model="query.status"
+              placeholder="Invoice Status"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="(status, status_index) in ['Pending', 'Overdue', 'Paid']"
+                :key="status_index"
+                :value="status"
+                :label="status"
+              />
+            </el-select>
+          </div>
+          <div style="margin-bottom: 5px;">
+            <el-select
+              v-model="query.invoice_approval"
+              placeholder="Invoice Status"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="(status, status_index) in [{ label: 'Approved', value: 'Approve'}, { label: 'Rejected', value: 'Reject'}]"
+                :key="status_index"
+                :value="status.value"
+                :label="status.label"
+              />
+            </el-select>
+          </div>
+          <div style="margin-bottom: 5px;">
+            <el-button
+              type="primary"
+              @click="fetchInvoices"
+            >
+              Submit Query
+            </el-button>
+            <el-button
+              type="default"
+              @click="clearFields"
+            >
+              Clear Fields
+            </el-button>
+          </div>
+        </el-row>
+        <el-button slot="reference">
+          Filter By
+        </el-button>
+      </el-popover>
       <v-client-table
         v-model="invoices"
         v-loading="loading"
@@ -68,7 +297,7 @@
               <iframe
                 class="pdf"
                 :src="baseServerUrl+'storage/'+props.row.invoice_link"
-                width="600"
+                width="550"
                 height="500"
               />
             </el-col>
@@ -81,7 +310,7 @@
 
                 class="pdf"
                 :src="baseServerUrl+'storage/'+props.row.payment_evidence"
-                width="600"
+                width="550"
                 height="500"
               />
             </el-col>
@@ -140,6 +369,15 @@
           {{ currency }}{{ Number(row.amount).toLocaleString() }}
         </div>
         <div
+          slot="invoice_approval"
+          slot-scope="{row}"
+        >
+          <div>
+            {{ (row.invoice_approval !== null && row.invoice_approval.action === 'Approve') ? 'Approved' : (row.invoice_approval !== null && row.invoice_approval.action === 'Reject') ? 'Rejected' : 'Pending' }} <br>
+            <small v-if="row.invoice_approval !== null"><em>{{ row.invoice_approval.details }}</em></small>
+          </div>
+        </div>
+        <div
           slot="action"
           slot-scope="props"
         >
@@ -189,7 +427,6 @@
             <el-tag
               v-if="props.row.is_confirmed === 1"
               type="success"
-              effect="dark"
             >Payment Confirmed</el-tag>
           </span>
         </div>
@@ -254,7 +491,7 @@
 
 <script>
 import {
-  BRow, BCol, VBTooltip,
+  BRow, BCol, VBTooltip, BCard, BCardBody, BAvatar,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import checkPermission from '@/utils/permission'
@@ -269,6 +506,9 @@ export default {
   components: {
     BRow,
     BCol,
+    BCard,
+    BCardBody,
+    BAvatar,
     Pagination,
     CreateInvoice,
     EditInvoice,
@@ -294,14 +534,15 @@ export default {
       dir: false,
       currency: '₦',
       columns: [
+        'action',
         'invoice_no',
         'subtotal',
         'discount',
         'amount',
         'due_date',
+        'invoice_approval',
         'status',
         'payment_date',
-        'action',
         // 'user.password_status',
       ],
 
@@ -310,8 +551,9 @@ export default {
           contact_email: 'Email',
           contact_phone: 'Phone',
           contact_address: 'Address',
-          is_active: 'Status',
-          action: '',
+          invoice_approval: 'Approval',
+          status: 'Status',
+          action: 'Action',
 
           // id: 'S/N',
         },
@@ -340,6 +582,10 @@ export default {
           'contact_phone',
         ],
       },
+      total_invoices: 0,
+      pending_invoices: 0,
+      overdue_invoices: 0,
+      paid_invoices: 0,
       showEditForm: false,
       invoices: [],
       loading: false,
@@ -348,6 +594,11 @@ export default {
         page: 1,
         limit: 50,
         vendor_id: '',
+        status: '',
+        amount: '',
+        due_date: '',
+        invoice_no: '',
+        invoice_approval: '',
       },
       total: 0,
     }
@@ -359,10 +610,26 @@ export default {
   },
   created() {
     this.fetchInvoices()
+    this.fetchInvoiceAnalysis()
   },
   methods: {
     checkPermission,
     checkRole,
+    clearFields() {
+      const app = this
+
+      app.query = {
+        page: app.query.page,
+        limit: app.query.limit,
+        vendor_id: '',
+        status: '',
+        amount: '',
+        due_date: '',
+        invoice_no: '',
+        invoice_approval: '',
+      }
+      app.fetchInvoices()
+    },
     handleCreationCommand(command) {
       const app = this
       if (command === 'generate') {
@@ -389,6 +656,19 @@ export default {
           app.total = response.invoices.total
           app.loading = false
         }).catch(app.loading = false)
+    },
+    fetchInvoiceAnalysis() {
+      const app = this
+      app.loading = true
+      const invoicesResource = new Resource('vdd/vendor-reports/vendor-invoices-analysis')
+      invoicesResource.vList({ vendor_id: app.vendorId })
+        .then(response => {
+          app.total_invoices = response.total_invoices
+          app.pending_invoices = response.pending_invoices
+          app.overdue_invoices = response.overdue_invoices
+          app.paid_invoices = response.paid_invoices
+          app.loading = false
+        }).catch(() => { app.loading = false })
     },
     editRow(invoice) {
       const app = this

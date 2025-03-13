@@ -3,7 +3,10 @@
     <div
       v-loading="loading"
     >
-      <div slot="header">
+      <div
+        v-if="!showInvoiceDetails"
+        slot="header"
+      >
         <b-row>
           <b-col
             cols="6"
@@ -23,10 +26,12 @@
             </el-select>
           </b-col>
         </b-row>
+        <hr>
       </div>
-      <hr>
       <invoices
+        v-if="form.vendor_id !== null"
         :vendor-id="form.vendor_id"
+        @details="showDetails"
       />
     </div>
   </el-card>
@@ -67,6 +72,7 @@ export default {
         vendor_id: null,
         client_id: '',
       },
+      showInvoiceDetails: false,
     }
   },
   computed: {
@@ -74,15 +80,19 @@ export default {
       return this.$store.getters.selectedClient
     },
   },
-  created() {
+  mounted() {
     this.fetchVendors()
   },
   methods: {
     checkPermission,
+    showDetails(value) {
+      const app = this
+      app.showInvoiceDetails = value
+    },
     fetchVendors() {
       const app = this
       app.loading = true
-      const fetchStaffResource = new Resource('vdd/fetch-vendors')
+      const fetchStaffResource = new Resource('vdd/fetch-approved-vendors')
       fetchStaffResource.list({ all: true })
         .then(response => {
           app.vendors = response.vendors

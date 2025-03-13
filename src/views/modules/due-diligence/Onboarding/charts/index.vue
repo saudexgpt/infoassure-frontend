@@ -1,23 +1,5 @@
 <template>
   <el-card>
-    <div
-      slot="header"
-    >
-      <span
-        class="pull-right"
-        style="cursor:pointer;"
-        @click="loadResources()"
-      >
-        <el-tooltip content="Refresh">
-          <feather-icon
-            icon="RefreshCwIcon"
-            class="ml-50"
-            size="30"
-          />
-        </el-tooltip>
-      </span>
-      <h3>Vendor Management System Overview</h3>
-    </div>
     <el-row
       v-if="loading"
       :gutter="15"
@@ -163,39 +145,39 @@
       </el-row>
       <el-row :gutter="15">
         <!-- <el-col
-            :xs="24"
-            :sm="24"
-            :md="8"
-            :lg="8"
-            :xl="8"
-          >
-            <el-card>
-              <div
-                slot="header"
-                class="clearfix"
-              >
-                <strong>Category Description</strong>
-              </div>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Category</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="(category, index) in categories"
-                    :key="index"
-                  >
-                    <td>{{ category.slug }}</td>
-                    <td>{{ category.name }} <br> <small><em>{{ category.description }}</em></small></td>
-                  </tr>
-                </tbody>
-              </table>
-            </el-card>
+              :xs="24"
+              :sm="24"
+              :md="8"
+              :lg="8"
+              :xl="8"
+            >
+              <el-card>
+                <div
+                  slot="header"
+                  class="clearfix"
+                >
+                  <strong>Category Description</strong>
+                </div>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Category</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(category, index) in categories"
+                      :key="index"
+                    >
+                      <td>{{ category.slug }}</td>
+                      <td>{{ category.name }} <br> <small><em>{{ category.description }}</em></small></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </el-card>
 
-          </el-col> -->
+            </el-col> -->
         <el-col
           :xs="24"
           :sm="24"
@@ -268,15 +250,6 @@
               :series="series2"
             />
             <el-empty v-else />
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :md="24">
-          <el-card>
-            <highcharts
-              :options="riskAssessmentReportChart"
-            />
           </el-card>
         </el-col>
       </el-row>
@@ -514,56 +487,6 @@ export default {
         //     },
         //   },
         // }],
-      },
-      riskAssessmentReportChart: {
-        chart: {
-          type: 'bar',
-          options3d: {
-            enabled: false,
-          },
-        },
-        title: {
-          text: 'Third Party Risk Assessment Count by Domains',
-          align: 'center',
-        },
-        subtitle: {
-          text: '',
-        },
-        plotOptions: {
-          series: {
-            stacking: 'normal',
-            dataLabels: {
-              enabled: true,
-            },
-          },
-        },
-        xAxis: {
-          categories: ['Financial & Operational Risk', 'General Risk Information', 'Regulatory & Compliance Risk', 'Risk Mitigation & Monitoring', 'Security & Data Protection Risk'],
-        },
-        yAxis: {
-          allowDecimals: false,
-          min: 0,
-          title: {
-            text: 'Scale',
-          },
-          stackLabels: {
-            enabled: true,
-          },
-        },
-        colors: ['#28c76f', '#ff9f43', '#ea5455'],
-        series: [{
-          name: 'Low',
-          data: [0, 1, 0, 2, 1],
-        }, {
-          name: 'Medium',
-          data: [1, 2, 0, 0, 1],
-        }, {
-          name: 'High',
-          data: [2, 0, 3, 1, 1],
-        }],
-        credits: {
-          enabled: false,
-        },
       },
     }
   },

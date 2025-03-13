@@ -54,31 +54,6 @@
               {{ row.email }} <br>
               {{ row.phone }} -->
             </div>
-            <!-- <div
-              slot="user_status"
-              slot-scope="{row}"
-            >
-              <el-tooltip
-                v-if="props.row.admin_user_id !== row.id"
-                :content="`Make ${row.name} the company's admin`"
-                placement="top"
-              >
-                <el-button
-                  type="info"
-                  circle
-                  @click="makeAdmin(props.row.id, row)"
-                >
-                  <feather-icon icon="UserCheckIcon" />
-                </el-button>
-              </el-tooltip>
-              <el-alert
-                v-else
-                type="success"
-                :closable="false"
-              >
-                Administrator
-              </el-alert>
-            </div> -->
             <div
               slot="action"
               slot-scope="{row}"
@@ -133,6 +108,12 @@
               </el-tooltip>
             </div>
           </v-client-table>
+        </div>
+        <div
+          slot="second_approval"
+          slot-scope="{row}"
+        >
+          <strong>{{ (row.second_approval !== null) ? ((row.second_approval.action === 'Approve') ? 'Approved' : 'Rejected') : 'Pending' }}</strong>
         </div>
         <div
           slot="action"
@@ -233,7 +214,8 @@ export default {
         'contact_email',
         'contact_phone',
         'contact_address',
-        'rating',
+        // 'rating',
+        // 'second_approval',
         // 'action',
         // 'user.password_status',
       ],
@@ -243,24 +225,24 @@ export default {
           contact_email: 'Email',
           contact_phone: 'Phone',
           contact_address: 'Address',
-          is_active: 'Status',
+          second_approval: 'Status',
           action: '',
 
           // id: 'S/N',
         },
         filterByColumn: false,
-        rowAttributesCallback(row) {
-          if (row.second_approval === null) {
-            return { style: 'background: #fcf1c0; color: #000000' }
-          }
-          // if (row.second_approval.action === 'Approve') {
-          //   return { style: 'background: #eaf8e5; color: #000000' }
-          // }
-          if (row.second_approval.action === 'Reject') {
-            return { style: 'background: #f5dbd3; color: #000000' }
-          }
-          return {}
-        },
+        // rowAttributesCallback(row) {
+        //   if (row.second_approval === null) {
+        //     return { style: 'background: #fcf1c0; color: #000000' }
+        //   }
+        //   if (row.second_approval.action === 'Approve') {
+        //     return { style: 'background: #eaf8e5; color: #000000' }
+        //   }
+        //   if (row.second_approval.action === 'Reject') {
+        //     return { style: 'background: #f5dbd3; color: #000000' }
+        //   }
+        //   return {}
+        // },
         sortable: [
           'name',
           'contact_email',
@@ -286,7 +268,7 @@ export default {
       total: 0,
     }
   },
-  created() {
+  mounted() {
     this.fetchVendors()
   },
   methods: {

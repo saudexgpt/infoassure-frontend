@@ -113,7 +113,7 @@ export default {
       saving: false,
     }
   },
-  created() {
+  mounted() {
     this.fetchQuestions()
   },
   methods: {

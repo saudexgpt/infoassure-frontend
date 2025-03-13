@@ -186,7 +186,7 @@ export default {
   //     return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
   //   },
   // },
-  created() {},
+  mounted() {},
   methods: {
     formSubmitted() {
       const app = this
@@ -202,7 +202,7 @@ export default {
           app.$toast({
             component: ToastificationContent,
             props: {
-              title: 'Vendor Created Successfully',
+              title: 'Vendor mounted Successfully',
               icon: 'CheckIcon',
               variant: 'success',
             },

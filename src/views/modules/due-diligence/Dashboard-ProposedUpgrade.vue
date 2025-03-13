@@ -18,149 +18,8 @@
       </span>
       <h3>Vendor Management System Overview</h3>
     </div>
-    <el-row
-      v-if="loading"
-      :gutter="15"
-    >
-      <el-col
-        v-for="(count, count_index) in 4"
-        :key="count_index"
-        :xs="24"
-        :sm="24"
-        :md="6"
-        :lg="6"
-        :xl="6"
-      >
-        <el-card>
-          <el-skeleton
-            :loading="loading"
-            :rows="4"
-            animated
-          />
-        </el-card>
-      </el-col>
-    </el-row>
+    <VendorOnboardingCount />
     <div v-if="!loading">
-      <el-row
-        :gutter="6"
-      >
-        <el-col
-          :xs="24"
-          :sm="12"
-          :md="6"
-          :lg="6"
-          :xl="6"
-        >
-          <b-card>
-            <b-card-body class="d-flex justify-content-between align-items-center">
-              <b-avatar
-                variant="light-dark"
-                size="50"
-              >
-                <feather-icon
-                  size="35"
-                  icon="UsersIcon"
-                />
-              </b-avatar>
-              <div class="truncate">
-                <h2
-                  class="mb-25 font-weight-bolder"
-                >
-                  {{ vendor_count }}
-                </h2>
-                <span>Total Vendors</span>
-              </div>
-            </b-card-body>
-          </b-card>
-        </el-col>
-        <el-col
-          :xs="24"
-          :sm="12"
-          :md="6"
-          :lg="6"
-          :xl="6"
-        >
-          <b-card>
-            <b-card-body class="d-flex justify-content-between align-items-center">
-              <b-avatar
-                variant="light-warning"
-                size="50"
-              >
-                <feather-icon
-                  size="35"
-                  icon="UserIcon"
-                />
-              </b-avatar>
-              <div class="truncate">
-                <h2
-                  class="mb-25 font-weight-bolder"
-                >
-                  {{ pending_approval }}
-                </h2>
-                <span>Pending</span>
-              </div>
-            </b-card-body>
-          </b-card>
-        </el-col>
-        <el-col
-          :xs="24"
-          :sm="12"
-          :md="6"
-          :lg="6"
-          :xl="6"
-        >
-          <b-card>
-            <b-card-body class="d-flex justify-content-between align-items-center">
-              <b-avatar
-                variant="light-success"
-                size="50"
-              >
-                <feather-icon
-                  size="35"
-                  icon="UserCheckIcon"
-                />
-              </b-avatar>
-              <div class="truncate">
-                <h2
-                  class="mb-25 font-weight-bolder"
-                >
-                  {{ approved_vendors }}
-                </h2>
-                <span>Approved</span>
-              </div>
-            </b-card-body>
-          </b-card>
-        </el-col>
-        <el-col
-          :xs="24"
-          :sm="12"
-          :md="6"
-          :lg="6"
-          :xl="6"
-        >
-          <b-card>
-            <b-card-body class="d-flex justify-content-between align-items-center">
-              <b-avatar
-                variant="light-danger"
-                size="50"
-              >
-                <feather-icon
-                  size="35"
-                  icon="UserXIcon"
-                />
-              </b-avatar>
-              <div class="truncate">
-                <h2
-                  class="mb-25 font-weight-bolder"
-                >
-                  {{ rejected_vendors }}
-                </h2>
-                <span>Rejected</span>
-              </div>
-            </b-card-body>
-          </b-card>
-        </el-col>
-      </el-row>
       <el-row :gutter="15">
         <!-- <el-col
             :xs="24"
@@ -272,15 +131,6 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :md="24">
-          <el-card>
-            <highcharts
-              :options="riskAssessmentReportChart"
-            />
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row>
         <el-col>
           <v-client-table
             v-model="vendors"
@@ -373,17 +223,16 @@
 
 <script>
 import {
-  BCard, BCardBody, BAvatar,
+// BCard, BCardBody, BAvatar,
 } from 'bootstrap-vue'
+import VendorOnboardingCount from '@/views/modules/DUE-DILIGENCE/Onboarding/charts/DataCount.vue'
 import Pagination from '@/views/components/Pagination-main/index.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    BCard,
-    BCardBody,
-    BAvatar,
     Pagination,
+    VendorOnboardingCount,
   },
   data() {
     return {
@@ -514,56 +363,6 @@ export default {
         //     },
         //   },
         // }],
-      },
-      riskAssessmentReportChart: {
-        chart: {
-          type: 'bar',
-          options3d: {
-            enabled: false,
-          },
-        },
-        title: {
-          text: 'Third Party Risk Assessment Count by Domains',
-          align: 'center',
-        },
-        subtitle: {
-          text: '',
-        },
-        plotOptions: {
-          series: {
-            stacking: 'normal',
-            dataLabels: {
-              enabled: true,
-            },
-          },
-        },
-        xAxis: {
-          categories: ['Financial & Operational Risk', 'General Risk Information', 'Regulatory & Compliance Risk', 'Risk Mitigation & Monitoring', 'Security & Data Protection Risk'],
-        },
-        yAxis: {
-          allowDecimals: false,
-          min: 0,
-          title: {
-            text: 'Scale',
-          },
-          stackLabels: {
-            enabled: true,
-          },
-        },
-        colors: ['#28c76f', '#ff9f43', '#ea5455'],
-        series: [{
-          name: 'Low',
-          data: [0, 1, 0, 2, 1],
-        }, {
-          name: 'Medium',
-          data: [1, 2, 0, 0, 1],
-        }, {
-          name: 'High',
-          data: [2, 0, 3, 1, 1],
-        }],
-        credits: {
-          enabled: false,
-        },
       },
     }
   },

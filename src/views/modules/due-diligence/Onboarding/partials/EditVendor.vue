@@ -195,7 +195,7 @@ export default {
   //     return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
   //   },
   // },
-  created() {
+  mounted() {
     this.setFormProperties(this.selectedVendor)
   },
   methods: {

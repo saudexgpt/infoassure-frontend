@@ -11,7 +11,7 @@ export default [
     // tag: '2',
     // tagVariant: 'light-warning',
     acl: {
-      roles: ['super'],
+      // roles: ['super'],
     },
     children: [
       // {
@@ -71,13 +71,13 @@ export default [
         title: 'SOA',
         route: 'soa',
       },
-      // {
-      //   title: 'Client Feedback Form',
-      //   route: 'client-feedback-form',
-      //   acl: {
-      //     permissions: ['manage-client-feedback'],
-      //   },
-      // },
+      {
+        title: 'Client Feedback Form',
+        route: 'client-feedback-form',
+        // acl: {
+        //   permissions: ['manage-client-feedback'],
+        // },
+      },
       {
         title: 'Module Packages',
         route: 'ManagePakages',

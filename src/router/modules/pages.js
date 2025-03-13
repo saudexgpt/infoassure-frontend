@@ -177,7 +177,7 @@ export default [
     name: 'client-feedback-form',
     component: () => import('@/views/modules/app-setup/FeedBackForm.vue'),
     meta: {
-      permissions: ['manage-client-feedback'],
+      // permissions: ['manage-client-feedback'],
     },
   },
 

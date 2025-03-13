@@ -118,7 +118,7 @@ export default {
 
     }
   },
-  created() {
+  mounted() {
   },
   methods: {
     handleDownload() {

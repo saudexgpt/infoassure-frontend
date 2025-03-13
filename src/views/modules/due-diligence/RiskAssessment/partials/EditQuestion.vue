@@ -185,7 +185,7 @@ export default {
       },
     }
   },
-  created() {
+  mounted() {
     this.form = this.selectedQuestion
   },
   methods: {

@@ -25,6 +25,55 @@
       />
     </div>
     <div v-else>
+
+      <div>
+        <el-tooltip
+          content="Enable vendor to make modification to response"
+          placement="bottom"
+        >
+          <button
+            v-if="isAdmin && questions[0].is_submitted === 1"
+            class="btn btn-success"
+            @click="allowModification(questions);"
+          ><feather-icon
+            icon="ThumbsUpIcon"
+          />
+            Enable Modification
+          </button>
+        </el-tooltip>
+        &nbsp;
+        <el-select
+          v-if="isAdmin && questions[0].is_submitted === 1"
+          v-model="questions[0].status"
+          placeholder="Change Status"
+          @input="changeStatus($event, questions)"
+        >
+          <el-option
+            v-for="(status, index) in statuses"
+            :key="index"
+            :value="status"
+            :label="status"
+          />
+        </el-select>
+        &nbsp;
+        <el-tag
+          v-if="questions[0].is_submitted === 1 && questions[0].status === null"
+          plain
+          round
+          type="default"
+        >
+          Status: Submitted
+        </el-tag>
+        <el-tag
+          v-else
+          plain
+          round
+          :type="(questions[0].status === 'Closed') ? 'success' : (questions[0].status === 'Work In Progress') ? 'warning' : 'danger'"
+        >
+          Status: {{ (questions[0].status) ? questions[0].status : 'Open' }}
+        </el-tag>
+      </div>
+      &nbsp;
       <div
         v-for="(question, question_index) in questions"
         :key="question_index"
@@ -36,49 +85,6 @@
         >
           <div>
 
-            <span
-              class="pull-right"
-            >
-              <el-button
-                v-if="question.is_submitted === 1 && question.status === null"
-                plain
-                round
-                type="default"
-              >
-                Status: Submitted
-              </el-button>
-              <el-button
-                v-else
-                plain
-                round
-                :type="(question.status === 'Closed') ? 'success' : (question.status === 'Work In Progress') ? 'warning' : 'danger'"
-              >
-                Status: {{ (question.status) ? question.status : 'Open' }}
-              </el-button>
-              <button
-                v-if="isAdmin && question.is_submitted === 1"
-                class="btn btn-success"
-                @click="allowModification(questions);"
-              ><feather-icon
-                icon="ThumbsUpIcon"
-              />
-                Enable Modification
-              </button>
-              &nbsp;
-              <el-select
-                v-if="isAdmin && question.is_submitted === 1"
-                v-model="question.status"
-                placeholder="Change Status"
-                @input="changeStatus($event, questions)"
-              >
-                <el-option
-                  v-for="(status, index) in statuses"
-                  :key="index"
-                  :value="status"
-                  :label="status"
-                />
-              </el-select>
-            </span>
             <strong style="color: red">
               Question {{ question_index + 1 }}  of  {{ questions.length }}
             </strong>
@@ -140,7 +146,6 @@
               <el-tooltip
                 v-if="question.key !== null"
                 class="item"
-                effect="light"
                 :content="question.key"
                 placement="bottom"
               >
@@ -165,6 +170,7 @@
                       <div v-if="question.is_submitted === 0">
                         <div>
                           <el-radio-group
+                            v-if="question.answer_type === 'yes-no' || question.answer_type === 'both'"
                             v-model="question.answer"
                             @change="saveAnswer(question, 'answer')"
                           >
@@ -205,6 +211,7 @@
                           </div>
                           <div v-else>
                             <el-input
+                              v-if="question.answer_type === 'open-ended' || question.answer_type === 'both'"
                               v-model="question.detailed_explanation"
                               type="textarea"
                               placeholder="Give some detailed response here..."
@@ -231,21 +238,10 @@
 
               <div
                 v-if="isAdmin && question.is_submitted === 1"
-                style="border: 5px dashed #c0c0c0; padding: 10px; margin-bottom: 5px; border-radius: 10px;"
+                :style="`background: ${(question.risk_score === 1) ? '#e0fadf' : (question.risk_score === 2) ? '#faf4df' : '#fadfdf'}; border: 3px dashed #cccccc; padding: 10px; margin-bottom: 5px; border-radius: 5px;`"
               >
                 <h3>Assessment</h3>
                 <b-row>
-
-                  <b-col cols="12">
-                    <label>Observation</label>
-                    <p><el-alert
-                      :closable="false"
-                      :type="(question.risk_score === 1) ? 'success' : (question.risk_score === 2) ? 'warning' : 'error'"
-                      effect="dark"
-                    >
-                      {{ (question.observation) ? question.observation : 'No observation yet' }}
-                    </el-alert></p>
-                  </b-col>
                   <b-col cols="12">
                     <label>Risk Score</label>
                     <p>
@@ -254,7 +250,7 @@
                         placeholder="Select Risk Score"
                         class="form-control"
                         style="width: 100%;"
-                        @input="saveAnswer(question, 'risk_score')"
+                        @input="saveAssessment(question, 'risk_score')"
                       >
                         <option
                           v-for="(score, score_index) in risk_scores"
@@ -265,9 +261,38 @@
                       </select>
                     </p>
                   </b-col>
+
+                  <b-col cols="12">
+                    <label>Observation</label>
+                    <p>
+                      <el-input
+                        v-model="question.observation"
+                        type="textarea"
+                        placeholder="Give your observation to the response here..."
+                        style="width: 100%"
+                        @blur="saveAssessment(question, 'observation')"
+                      />
+                    </p>
+                    <!-- <p><el-alert
+                      :closable="false"
+                      :type="(question.risk_score === 1) ? 'success' : (question.risk_score === 2) ? 'warning' : 'error'"
+                      effect="dark"
+                    >
+                      {{ (question.observation) ? question.observation : 'No observation yet' }}
+                    </el-alert></p> -->
+                  </b-col>
                   <b-col cols="12">
                     <label>Impact</label>
                     <p>
+                      <el-input
+                        v-model="question.impact"
+                        type="textarea"
+                        placeholder="State the impact this response poses..."
+                        style="width: 100%"
+                        @blur="saveAssessment(question, 'impact')"
+                      />
+                    </p>
+                    <!-- <p>
                       <el-alert
                         :closable="false"
                         :type="(question.risk_score === 1) ? 'success' : (question.risk_score === 2) ? 'warning' : 'error'"
@@ -275,11 +300,20 @@
                       >
                         {{ (question.impact) ? question.impact : 'No impact' }}
                       </el-alert>
-                    </p>
+                    </p> -->
                   </b-col>
                   <b-col cols="12">
                     <label>Recommendations</label>
                     <p>
+                      <el-input
+                        v-model="question.recommendations"
+                        type="textarea"
+                        placeholder="Provide a recommendation..."
+                        style="width: 100%"
+                        @blur="saveAssessment(question, 'recommendations')"
+                      />
+                    </p>
+                    <!-- <p>
                       <el-alert
                         :closable="false"
                         :type="(question.risk_score === 1) ? 'success' : (question.risk_score === 2) ? 'warning' : 'error'"
@@ -287,14 +321,13 @@
                       >
                         {{ (question.recommendations) ? question.recommendations : 'Nothing to recommend' }}
                       </el-alert>
-                    </p>
+                    </p> -->
                   </b-col>
                   <b-col cols="12">
                     <label>Status</label>
                     <p>
                       <el-alert
                         :closable="false"
-                        type="success"
                       >
                         {{ (question.status) ? question.status : 'Open' }}
                       </el-alert>
@@ -304,6 +337,7 @@
               </div>
             </el-col>
             <el-col
+              v-if="question.upload_evidence === 1"
               :lg="8"
               :md="8"
               :sm="24"
@@ -314,7 +348,7 @@
               >
                 <b-button
                   v-if="!isAdmin && question.is_submitted === 0"
-                  variant="gradient-primary"
+                  variant="gradient-dark"
                   block
                   @click="addEvidence(question.id)"
                 >
@@ -411,7 +445,7 @@
 </template>
 <script>
 import {
-  BButton, BModal, BAlert,
+  BButton, BModal, BAlert, BRow, BCol,
 } from 'bootstrap-vue'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import UploadDueDiligenceEvidence from '../../UploadDueDiligenceEvidence.vue'
@@ -422,6 +456,8 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
+    BRow,
+    BCol,
     BButton,
     BAlert,
     BModal,
@@ -482,7 +518,7 @@ export default {
       return this.$store.getters.selectedClient
     },
   },
-  created() {
+  mounted() {
     // this.fetchQuestionsWithResponse()
   },
   methods: {
@@ -529,7 +565,16 @@ export default {
       fetchConsultingsResource.vUpdate(answer.id, param)
         .then(() => {})
     },
+
+    saveAssessment(answer, field) {
+      console.log(answer[field])
+      const param = { answer: answer[field], field }
+      const fetchConsultingsResource = new Resource('vdd/responses/update')
+      fetchConsultingsResource.update(answer.id, param)
+        .then(() => {})
+    },
     submitAnswers(domains) {
+      const app = this
       const message = 'Click OK to confirm submit action. You will not be able to modify responses once you submit'
       // eslint-disable-next-line no-alert
       if (window.confirm(message)) {
@@ -537,12 +582,14 @@ export default {
         domains.forEach(response => {
           answerIds.push(response.id)
         })
+        app.loading = true
         const param = { answer_ids: answerIds, value: 1 }
         const submitAnswersResource = new Resource('vdd/answers/submit')
         submitAnswersResource.vStore(param)
           .then(() => {
             this.$emit('submitted')
             this.$emit('reloadAnalytics')
+            app.loading = false
           })
       }
     },

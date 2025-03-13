@@ -241,12 +241,10 @@
           </b-col>
         </b-row>
       </tab-content>
-
-      <!-- personal info tab -->
-      <tab-content title="Business Information">
+      <tab-content title="Pre Screening Information">
         <b-row>
           <b-col
-            cols="12"
+            cols="6"
             class="mb-2"
           >
             <h5 class="mb-2">
@@ -254,7 +252,7 @@
             </h5>
             <div>
               <el-radio
-                v-model="form.stores_information"
+                v-model="form.stores_sentivite_information"
                 :label="0"
                 border
                 :disabled="isAdmin"
@@ -262,7 +260,59 @@
                 No
               </el-radio>
               <el-radio
-                v-model="form.stores_information"
+                v-model="form.stores_sentivite_information"
+                :label="1"
+                border
+                :disabled="isAdmin"
+              >
+                Yes
+              </el-radio>
+            </div>
+          </b-col>
+          <b-col
+            cols="6"
+            class="mb-2"
+          >
+            <h5 class="mb-2">
+              Does your organization require direct access to our critical systems to perform its services?
+            </h5>
+            <div>
+              <el-radio
+                v-model="form.has_access_to_critical_systems"
+                :label="0"
+                border
+                :disabled="isAdmin"
+              >
+                No
+              </el-radio>
+              <el-radio
+                v-model="form.has_access_to_critical_systems"
+                :label="1"
+                border
+                :disabled="isAdmin"
+              >
+                Yes
+              </el-radio>
+            </div>
+          </b-col>
+          <b-col
+            cols="6"
+            class="mb-2"
+          >
+            <h5 class="mb-2">
+              Would a disruption in your services cause significant delays or downtime in our business operations?
+            </h5>
+            <div>
+              <el-radio
+                v-model="form.has_impact_on_business_operations"
+                :label="0"
+                border
+                :disabled="isAdmin"
+              >
+                No
+              </el-radio>
+              <el-radio
+                v-model="form.has_impact_on_business_operations"
                 :label="1"
                 border
                 :disabled="isAdmin"
@@ -272,10 +322,14 @@
             </div>
           </b-col>
         </b-row>
+
+      </tab-content>
+      <!-- personal info tab -->
+      <tab-content title="Business Information">
         <b-row>
           <b-col md="8">
             <!--Lesser Info-->
-            <b-row v-if="form.stores_information === 0">
+            <b-row v-if="form.stores_sentivite_information === 0 && form.has_access_to_critical_systems === 0 && form.has_impact_on_business_operations === 0">
               <b-col md="12">
                 <b-form-group
                   label="Have you worked with similar organizations before?"
@@ -433,7 +487,7 @@
             </b-row>
             <!--Lesser Info-->
             <!--More Info-->
-            <b-row v-if="form.stores_information === 1">
+            <b-row v-else>
               <b-col
                 cols="12"
                 class="mb-2"
@@ -916,9 +970,40 @@
                 <el-col
                   v-for="(document, document_index) in form.document_uploads"
                   :key="document_index"
-                  :md="12"
+                  :md="24"
                 >
-                  <div style="text-align: center; cursor: pointer">
+                  <div style="cursor: pointer; border: solid 1px #cccccc; padding: 10px;">
+                    <span @click="viewDocument(baseServerUrl+'storage/'+document.link)">
+                      <img
+                        :src="`images/${document.link.split('.')[1]}.png`"
+                        alt="Image"
+                        width="20"
+                      >
+
+                      <small style="font-weight: 900; padding: 10px">{{ document.title }}</small>
+
+                    </span>
+                    <span class="pull-right">
+                      <el-tooltip content="Download">
+                        <a
+                          :href="baseServerUrl+'storage/'+document.link"
+                          target="_blank"
+                        ><feather-icon
+                          size="20"
+                          icon="DownloadIcon"
+                        />
+                        </a>
+                      </el-tooltip>
+                      <el-tooltip content="Delete">
+                        <span @click="deleteUploadedDocument(document.id)"><feather-icon
+                          size="20"
+                          color="red"
+                          icon="TrashIcon"
+                        /></span>
+                      </el-tooltip>
+                    </span>
+                  </div>
+                  <!-- <div style="text-align: center; cursor: pointer">
                     <img
                       :src="`images/${document.link.split('.')[1]}.png`"
                       alt="Image"
@@ -946,7 +1031,7 @@
                         /></span>
                       </el-tooltip>
                     </p>
-                  </div>
+                  </div> -->
                 </el-col>
               </el-row>
             </div>
@@ -1077,7 +1162,9 @@ export default {
         country_of_incorporation: null,
         website: null,
         years_in_business: 1,
-        stores_information: 0,
+        stores_sentivite_information: 0,
+        has_access_to_critical_systems: 0,
+        has_impact_on_business_operations: 0,
         service_description: null,
         work_with_similar_organization: 1,
         references_to_working_with_similar_organizations: null,
@@ -1124,7 +1211,9 @@ export default {
         country_of_incorporation: null,
         website: null,
         years_in_business: 1,
-        stores_information: 0,
+        stores_sentivite_information: 0,
+        has_access_to_critical_systems: 0,
+        has_impact_on_business_operations: 0,
         service_description: null,
         work_with_similar_organization: 1,
         references_to_working_with_similar_organizations: null,
@@ -1170,7 +1259,7 @@ export default {
       return this.$store.getters.baseServerUrl
     },
   },
-  created() {
+  mounted() {
     this.fetchVendor()
     this.addLine()
   },
@@ -1266,7 +1355,9 @@ export default {
       formData.append('country_of_incorporation', app.form.country_of_incorporation)
       formData.append('website', app.form.website)
       formData.append('years_in_business', app.form.years_in_business)
-      formData.append('stores_information', app.form.stores_information)
+      formData.append('stores_sentivite_information', app.form.stores_sentivite_information)
+      formData.append('has_access_to_critical_systems', app.form.has_access_to_critical_systems)
+      formData.append('has_impact_on_business_operations', app.form.has_impact_on_business_operations)
       formData.append('service_description', app.form.service_description)
       formData.append('work_with_similar_organization', app.form.work_with_similar_organization)
       formData.append('references_to_working_with_similar_organizations', app.form.references_to_working_with_similar_organizations)

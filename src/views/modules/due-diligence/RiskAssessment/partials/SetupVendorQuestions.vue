@@ -15,6 +15,7 @@
     </el-select>
     <br><br>
     <el-collapse
+      v-if="form.vendor_id !== ''"
       accordion
       @change="handleCollapseChange"
     >
@@ -138,7 +139,7 @@ export default {
       return this.$store.getters.selectedClient
     },
   },
-  created() {
+  mounted() {
     this.fetchQuestions()
   },
   methods: {

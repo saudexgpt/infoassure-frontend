@@ -106,13 +106,13 @@
             :is-admin="true"
           />
         </el-tab-pane>
-        <el-tab-pane
+        <!-- <el-tab-pane
           v-if="form.vendor_id !== null"
           lazy
         >
           <span slot="label"><feather-icon icon="PieChartIcon" /> Report</span>
           <report :vendor-id="form.vendor_id" />
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
       <create-question
         v-if="isCreateQuestionSidebarActive"
@@ -151,7 +151,7 @@ import {
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import VendorResponses from './partials/VendorResponses.vue'
-import Report from '../Report.vue'
+// import Report from '../Report.vue'
 import SetupVendorQuestions from './partials/SetupVendorQuestions.vue'
 import checkPermission from '@/utils/permission'
 
@@ -161,7 +161,7 @@ export default {
     VendorResponses,
     BButton,
     SetupVendorQuestions,
-    Report,
+    // Report,
     // BPagination,
     // BFormGroup,
     // BFormInput,
@@ -212,7 +212,7 @@ export default {
     fetchVendors() {
       const app = this
       app.loading = true
-      const fetchStaffResource = new Resource('vdd/fetch-vendors')
+      const fetchStaffResource = new Resource('vdd/fetch-approved-vendors')
       fetchStaffResource.list({ all: true })
         .then(response => {
           app.vendors = response.vendors
@@ -224,14 +224,16 @@ export default {
       app.showQuestionSetupModal = false
       // const { limit, page } = app.query
       const { form } = app
-      form.client_id = app.selectedClient.id
-      app.loading = true
-      const fetchQuestionsResource = new Resource('vdd/responses/fetch')
-      fetchQuestionsResource.list(form)
-        .then(response => {
-          app.answers = response.answers
-          app.loading = false
-        })
+      if (form.vendor_id !== null) {
+        form.client_id = app.selectedClient.id
+        app.loading = true
+        const fetchQuestionsResource = new Resource('vdd/responses/fetch')
+        fetchQuestionsResource.list(form)
+          .then(response => {
+            app.answers = response.answers
+            app.loading = false
+          })
+      }
     },
     updateTable() {
       const app = this

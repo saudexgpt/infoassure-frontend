@@ -12,6 +12,7 @@ import '@/styles/index.scss' // global css
 import { registerLicense } from '@syncfusion/ej2-base'
 import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
+import VueApexCharts from 'vue-apexcharts'
 import HighchartsVue from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import drilldown from 'highcharts/modules/drilldown'
@@ -98,6 +99,9 @@ Vue.use(Event)
 // BSV Plugin Registration
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
+// apexchart
+Vue.use(VueApexCharts)
+Vue.component('apexchart', VueApexCharts)
 
 // Composition API
 Vue.use(VueCompositionAPI)
