@@ -31,29 +31,33 @@
             cols="6"
           >
             <span class="pull-right">
-              <b-button
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="gradient-primary"
-                @click="isCreateQuestionSidebarActive = true"
-              >
-                <feather-icon
-                  icon="PlusIcon"
-                  class="mr-50"
-                />
-                <span class="align-middle">Create New</span>
-              </b-button>
+              <el-tooltip content="Import and customize preset requirements from our databank">
+                <b-button
+                  v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                  variant="gradient-secondary"
+                  @click="showImportQuestionModal = true"
+                >
+                  <feather-icon
+                    icon="CornerRightDownIcon"
+                    class="mr-50"
+                  />
+                  <span class="align-middle">Import</span>
+                </b-button>
+              </el-tooltip>
               &nbsp;
-              <b-button
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="gradient-secondary"
-                @click="showImportQuestionModal = true"
-              >
-                <feather-icon
-                  icon="CornerRightDownIcon"
-                  class="mr-50"
-                />
-                <span class="align-middle">Import</span>
-              </b-button>
+              <el-tooltip content="Create your own requirement">
+                <b-button
+                  v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                  variant="gradient-primary"
+                  @click="isCreateQuestionSidebarActive = true"
+                >
+                  <feather-icon
+                    icon="PlusIcon"
+                    class="mr-50"
+                  />
+                  <span class="align-middle">Create New</span>
+                </b-button>
+              </el-tooltip>
               &nbsp;
               <!-- <b-button
                 v-if="checkPermission(['create-gap assessment'])"
@@ -148,9 +152,9 @@
         :destroy-on-close="true"
         :before-close="updateTable"
       >
-        <!-- <template slot="title">
-          <h2>Subscribe from the list of packages</h2>
-        </template> -->
+        <template slot="title">
+          <h3>Import Questions from our Databank</h3>
+        </template>
 
         <import-default-question />
       </el-drawer>

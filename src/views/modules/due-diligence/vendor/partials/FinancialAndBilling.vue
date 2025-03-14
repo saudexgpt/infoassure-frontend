@@ -570,17 +570,13 @@ export default {
           //   }
           return {}
         },
-        sortable: [
-          'name',
-          'contact_email',
-          'contact_phone',
-        ],
-        // filterable: false,
-        filterable: [
-          'name',
-          'contact_email',
-          'contact_phone',
-        ],
+        sortable: [],
+        filterable: false,
+        // filterable: [
+        //   'name',
+        //   'contact_email',
+        //   'contact_phone',
+        // ],
       },
       total_invoices: 0,
       pending_invoices: 0,

@@ -1,8 +1,11 @@
 <template>
   <div>
-    <div v-if="moduleIsActive">
+    <div v-if="moduleIsActive || isAdmin">
       <el-row :gutter="5">
         <el-col :md="8">
+          <p>Activities of the ISMS Module</p>
+        </el-col>
+        <!-- <el-col :md="8">
           <el-select
             v-model="selectedProject"
             placeholder="Select Project"
@@ -20,14 +23,14 @@
               <span style="float: right; color: #8492a6; font-size: 13px">{{ (project.available_module) ? project.available_module.name : '' }}</span>
             </el-option>
           </el-select>
-        </el-col>
+        </el-col> -->
       </el-row>
       <p />
       <div v-if="selectedProject !== null">
         <el-row :gutter="5">
           <el-col :md="24">
             <b-button-group>
-              <b-button
+              <!-- <b-button
                 id="gap_assessment"
 
                 variant="outline-secondary"
@@ -38,7 +41,7 @@
                   width="30"
                 >
                 Gap Assessment
-              </b-button>
+              </b-button> -->
               <b-button
                 id="risk_library"
 
@@ -171,24 +174,41 @@ export default {
     clientActivatedProjects() {
       this.checkIfProjectIsActive()
     },
+    selectedClient() {
+      this.checkIfProjectIsActive()
+    },
   },
-  created() {
+  // created() {
+  //   this.selectedProject = this.project
+  //   if (this.selectedClient.id !== null) {
+  //     this.checkIfProjectIsActive()
+  //   }
+  //   setTimeout(() => {
+  //     this.setView('gap_assessment')
+  //   }, 5000)
+  // },
+  // created() {
+  //   if (this.selectedClient.id !== null) {
+  //     this.checkIfProjectIsActive()
+  //   } else {
+  //     this.$alert('Please select a client to continue')
+  //   }
+  // },
+  mounted() {
+    // this.selectedProject = this.project
     if (this.selectedClient.id !== null) {
       this.checkIfProjectIsActive()
-    } else {
-      this.$alert('Please select a client to continue')
     }
-  },
-  mounted() {
-    this.setView(this.current_view)
+    setTimeout(() => {
+      this.setView('risk_library')
+    }, 5000)
   },
   methods: {
     checkPermission,
     checkIfProjectIsActive() {
       const app = this
-      const routeName = app.$route.name.split('-')
-      const moduleSlug = routeName[1]
-      const projects = app.clientActivatedProjects.filter(project => project.available_module.slug === moduleSlug)
+      const projects = app.clientActivatedProjects.filter(project => project.available_module.slug === 'isms')
+      console.log(projects)
       app.moduleIsActive = false
       if (projects.length > 0) {
         app.moduleIsActive = true

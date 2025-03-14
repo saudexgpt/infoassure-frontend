@@ -10,22 +10,32 @@
       <span slot="label"><feather-icon icon="HomeIcon" /> Manage Vendors</span>
       <el-tabs
         type="card"
+        @tab-click="forceRerender"
       >
-        <el-tab-pane lazy>
+        <el-tab-pane
+          :key="keyValue"
+          lazy
+        >
           <span slot="label"><feather-icon icon="ListIcon" /> Vendors List</span>
           <vendor-list />
         </el-tab-pane>
-        <el-tab-pane lazy>
+        <el-tab-pane
+          lazy
+        >
           <span slot="label"><feather-icon icon="PlusIcon" /> Create Vendors</span>
           <vendor-registration />
         </el-tab-pane>
-        <el-tab-pane lazy>
+        <el-tab-pane
+          lazy
+        >
           <span slot="label"><feather-icon icon="UserPlusIcon" /> Register Vendor Users</span>
           <vendor-user-registration />
         </el-tab-pane>
       </el-tabs>
     </el-tab-pane>
-    <el-tab-pane lazy>
+    <el-tab-pane
+      lazy
+    >
       <span slot="label"><feather-icon icon="SearchIcon" /> Vendors Screening/Approval</span>
       <screening-and-approval />
     </el-tab-pane>
@@ -46,6 +56,18 @@ export default {
     VendorRegistration,
     ScreeningAndApproval,
     VendorUserRegistration,
+  },
+  data() {
+    return {
+      keyValue: 1,
+    }
+  },
+  methods: {
+    forceRerender() {
+      // console.log(e)
+      this.keyValue += 1
+    },
+
   },
 }
 </script>

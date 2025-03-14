@@ -21,6 +21,14 @@ export default [
   // entry point of all modules
 
   {
+    path: '/isms-index',
+    name: 'isms-index',
+    component: () => import('@/views/modules/ISMS-ISO27001/index.vue'),
+    acl: {
+      roles: ['admin', 'client'],
+    },
+  },
+  {
     path: '/ndpa-index',
     name: 'ndpa-index',
     component: () => import('@/views/modules/NDPA/index.vue'),

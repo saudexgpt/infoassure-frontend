@@ -54,7 +54,7 @@
           <b-card>
             <b-card-body class="d-flex justify-content-between align-items-center">
               <b-avatar
-                variant="light-dark"
+                variant="light-primary"
                 size="50"
               >
                 <feather-icon
@@ -83,7 +83,7 @@
           <b-card>
             <b-card-body class="d-flex justify-content-between align-items-center">
               <b-avatar
-                variant="light-warning"
+                variant="light-secondary"
                 size="50"
               >
                 <feather-icon
@@ -162,40 +162,6 @@
         </el-col>
       </el-row>
       <el-row :gutter="15">
-        <!-- <el-col
-            :xs="24"
-            :sm="24"
-            :md="8"
-            :lg="8"
-            :xl="8"
-          >
-            <el-card>
-              <div
-                slot="header"
-                class="clearfix"
-              >
-                <strong>Category Description</strong>
-              </div>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Category</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="(category, index) in categories"
-                    :key="index"
-                  >
-                    <td>{{ category.slug }}</td>
-                    <td>{{ category.name }} <br> <small><em>{{ category.description }}</em></small></td>
-                  </tr>
-                </tbody>
-              </table>
-            </el-card>
-
-          </el-col> -->
         <el-col
           :xs="24"
           :sm="24"
@@ -274,9 +240,46 @@
       <el-row>
         <el-col :md="24">
           <el-card>
-            <highcharts
-              :options="riskAssessmentReportChart"
-            />
+            <div
+              slot="header"
+              class="clearfix"
+            >
+              <span class="pull-right">
+                <el-select
+                  v-model="selectedVendor"
+                  value-key="id"
+                  placeholder="Select Vendor"
+                  @input="fetchRiskAssessmentAnalysis"
+                >
+                  <el-option
+                    v-for="(vendor, index) in vendors"
+                    :key="index"
+                    :value="vendor"
+                    :label="vendor.name"
+                  />
+                </el-select>
+              </span>
+              <strong>Risk Score Count by Requirements</strong>
+            </div>
+            <div v-if="loadingAnalysis">
+
+              <el-skeleton
+                :loading="loadingAnalysis"
+                :rows="7"
+                animated
+              />
+            </div>
+            <div v-else>
+
+              <highcharts
+                v-if="categories_count > 0"
+                :options="riskAssessmentReportChart"
+              />
+              <el-empty
+                v-else
+                :description="`No Data Found for ${selectedVendor.name}`"
+              />
+            </div>
           </el-card>
         </el-col>
       </el-row>
@@ -388,7 +391,11 @@ export default {
   data() {
     return {
       categories: [],
+      categories_count: 0,
       vendors: [],
+      selectedVendor: {
+        name: '',
+      },
       query: {
         page: 1,
         limit: 50,
@@ -433,6 +440,7 @@ export default {
       rejected_vendors: 0,
       pending_approval: 0,
       loading: false,
+      loadingAnalysis: false,
       series1: [],
       chartOptions1: {
         chart: {
@@ -469,7 +477,7 @@ export default {
         chart: {
           type: 'pie',
         },
-        colors: ['#ff9f43', '#ea5455', '#28c76f'],
+        colors: ['#cccccc', '#000000', '#313adb'],
         labels: ['Pending', 'Rejected', 'Approved'],
         legend: {
           position: 'bottom',
@@ -498,22 +506,11 @@ export default {
             // offsetY: 10,
           },
         },
-        colors: ['#28c76f', '#ff9f43', '#ea5455'],
+        colors: ['#34db31', '#db9731', '#db3131'],
         labels: ['Low', 'Medium', 'High'],
         legend: {
           position: 'bottom',
         },
-        // responsive: [{
-        //   breakpoint: 480,
-        //   options: {
-        //     chart: {
-        //       width: 200,
-        //     },
-        //     legend: {
-        //       position: 'bottom',
-        //     },
-        //   },
-        // }],
       },
       riskAssessmentReportChart: {
         chart: {
@@ -523,7 +520,7 @@ export default {
           },
         },
         title: {
-          text: 'Third Party Risk Assessment Count by Domains',
+          text: '',
           align: 'center',
         },
         subtitle: {
@@ -538,7 +535,7 @@ export default {
           },
         },
         xAxis: {
-          categories: ['Financial & Operational Risk', 'General Risk Information', 'Regulatory & Compliance Risk', 'Risk Mitigation & Monitoring', 'Security & Data Protection Risk'],
+          categories: [],
         },
         yAxis: {
           allowDecimals: false,
@@ -547,20 +544,11 @@ export default {
             text: 'Scale',
           },
           stackLabels: {
-            enabled: true,
+            enabled: false,
           },
         },
-        colors: ['#28c76f', '#ff9f43', '#ea5455'],
-        series: [{
-          name: 'Low',
-          data: [0, 1, 0, 2, 1],
-        }, {
-          name: 'Medium',
-          data: [1, 2, 0, 0, 1],
-        }, {
-          name: 'High',
-          data: [2, 0, 3, 1, 1],
-        }],
+        colors: ['#34db31', '#db9731', '#db3131'],
+        series: [],
         credits: {
           enabled: false,
         },
@@ -595,6 +583,19 @@ export default {
           app.loading = false
         }).catch(() => { app.loading = false })
     },
+    fetchRiskAssessmentAnalysis() {
+      const app = this
+      app.loadingAnalysis = true
+      const fetchRAResource = new Resource('vdd/reports/vendor-risk-assessment-analysis')
+      fetchRAResource.list({ vendor_id: app.selectedVendor.id })
+        .then(response => {
+          app.riskAssessmentReportChart.series = response.series
+          app.riskAssessmentReportChart.xAxis.categories = response.risk_categories
+          app.riskAssessmentReportChart.title.text = app.selectedVendor.name
+          app.categories_count = response.risk_categories.length
+          app.loadingAnalysis = false
+        }).catch(() => { app.loadingAnalysis = false })
+    },
     fetchVendorCategories() {
       const app = this
       const fetchCategoryResource = new Resource('vdd/fetch-vendor-categories')
@@ -605,17 +606,21 @@ export default {
     },
     fetchDashboardVendors() {
       const app = this
-      const { limit, page } = this.query
+      // const { limit, page } = this.query
       app.loading = true
       const fetchStaffResource = new Resource('vdd/fetch-vendors')
-      fetchStaffResource.list(this.query)
+      fetchStaffResource.list({ all: true })
         .then(response => {
-          app.vendors = response.vendors.data
-          app.vendors.forEach((element, index) => {
-            // eslint-disable-next-line no-param-reassign, dot-notation
-            element['index'] = (page - 1) * limit + index + 1
-          })
-          app.total = response.vendors.total
+          app.vendors = response.vendors
+
+          // eslint-disable-next-line prefer-destructuring
+          app.selectedVendor = app.vendors[0]
+          app.fetchRiskAssessmentAnalysis()
+          // app.vendors.forEach((element, index) => {
+          //   // eslint-disable-next-line no-param-reassign, dot-notation
+          //   element['index'] = (page - 1) * limit + index + 1
+          // })
+          // app.total = response.vendors.total
           app.loading = false
         })
     },

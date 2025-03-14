@@ -23,6 +23,14 @@
                 <strong>Created:</strong> {{ moment(contract.created_at).fromNow() }}
               </p>
               <p><strong>Last Modified:</strong> {{ moment(contract.updated_at).fromNow() }}</p>
+              <p>
+                <el-button
+                  type="primary"
+                  @click="viewDocument(baseServerUrl+'storage/'+contract.file_link)"
+                >
+                  View Uploaded Document
+                </el-button>
+              </p>
             </div>
           </el-col>
         </el-row>
@@ -207,6 +215,21 @@
           </table>
         </div>
       </div>
+      <el-dialog
+        v-if="showDocumentModal"
+        v-model="showDocumentModal"
+        :visible.sync="showDocumentModal"
+        title="Contract Document"
+      >
+
+        <iframe
+          class="doc"
+          :src="selectedDocument"
+          width="650"
+          height="500"
+        />
+
+      </el-dialog>
     </el-col>
     <!-- <el-col :md="7">
       <aside>
@@ -260,6 +283,8 @@ export default {
       },
       score: null,
       sla: null,
+      showDocumentModal: false,
+      selectedDocument: null,
     }
   },
   computed: {
@@ -272,6 +297,11 @@ export default {
   },
   methods: {
     moment,
+    viewDocument(doc) {
+      const app = this
+      app.showDocumentModal = true
+      app.selectedDocument = doc
+    },
     setupSLAValues() {
       const app = this
       app.contract = app.selectedContract

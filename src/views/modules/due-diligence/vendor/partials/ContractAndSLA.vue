@@ -12,14 +12,8 @@
         </span>
         <hr>
       </div>
-      <el-tabs v-model="activeName">
-        <!-- <el-tab-pane
-          label="Performance Metrics Setup"
-          name="first"
-          lazy
-        >
-          <setup-performance-metrics :selected-contract="selectedContract" />
-        </el-tab-pane> -->
+      <configure-sla :selected-contract="selectedContract" />
+      <!-- <el-tabs v-model="activeName">
         <el-tab-pane
           label="SLA Configuration"
           name="first"
@@ -35,7 +29,7 @@
         >
           <sla-performance-score :selected-contract="selectedContract" />
         </el-tab-pane>
-      </el-tabs>
+      </el-tabs> -->
     </div>
     <div v-else>
       <div
@@ -43,27 +37,7 @@
       >
         <b-row>
           <b-col
-            cols="6"
-          >
-            <label>Select Vendor</label>
-            <el-select
-              v-model="selectedVendor"
-              placeholder="Select Vendor"
-              value-key="id"
-              style="width: 100%"
-              @input="fetchContracts()"
-            >
-              <el-option
-                v-for="(client, index) in vendors"
-                :key="index"
-                :value="client"
-                :label="client.name"
-              />
-            </el-select>
-          </b-col>
-          <b-col
-            v-if="form.vendor_id !== ''"
-            cols="6"
+            cols="12"
           >
             <span class="pull-right">
               <el-button
@@ -118,7 +92,7 @@
       <el-dialog
         v-if="dialogFormVisible"
         v-model="dialogFormVisible"
-        :title="`Create New Contract Document for ${selectedVendor.name}`"
+        title="Create New Contract Document"
         :visible.sync="dialogFormVisible"
       >
         <el-form :model="contractForm">
@@ -138,7 +112,7 @@
               type="date"
               placeholder="Set Start Date"
               style="width: 100%;"
-              format="yyyy/MM/dd"
+              format="yyyy-MM-dd"
               value-format="yyyy-MM-dd"
             />
           </el-form-item>
@@ -150,7 +124,7 @@
               type="date"
               placeholder="Set Expiry Date"
               style="width: 100%;"
-              format="yyyy/MM/dd"
+              format="yyyy-MM-dd"
               value-format="yyyy-MM-dd"
             />
           </el-form-item>
@@ -200,24 +174,30 @@
 import {
   BRow, BCol,
 } from 'bootstrap-vue'
-  // import { VueGoodTable } from 'vue-good-table'
+// import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
-import ConfigureSla from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/partials/ConfigureSLA.vue'
-import SlaPerformanceScore from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/partials/SLAPerformanceScore.vue'
+import ConfigureSla from '@/views/modules/DUE-DILIGENCE/vendor/partials/ConfigureSLA.vue'
+// import SlaPerformanceScore from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/partials/SLAPerformanceScore.vue'
 // import SetupPerformanceMetrics from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/partials/SetupPerformanceMetrics.vue'
 
 export default {
   components: {
     ConfigureSla,
-    SlaPerformanceScore,
+    // SlaPerformanceScore,
     // SetupPerformanceMetrics,
     BRow,
     BCol,
   },
   directives: {
     Ripple,
+  },
+  props: {
+    vendorId: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -235,8 +215,6 @@ export default {
       loading: false,
       pageLength: 10,
       dir: false,
-      vendors: [],
-      selectedVendor: null,
       contracts: [],
       columns: [
         'action',
@@ -273,15 +251,12 @@ export default {
     }
   },
   computed: {
-    selectedClient() {
-      return this.$store.getters.selectedClient
-    },
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
   },
   mounted() {
-    this.fetchVendors()
+    this.fetchContracts()
   },
   methods: {
     checkPermission,
@@ -319,21 +294,21 @@ export default {
         app.$alert('Please provide a title for this document')
         return false
       }
-      // if (app.contractForm.uploadableFile === null) {
-      //   app.$alert('Please upload a Contract Document with .pdf file format')
-      //   return false
-      // }
+      //   if (app.contractForm.uploadableFile === null) {
+      //     app.$alert('Please upload a Contract Document with .pdf file format')
+      //     return false
+      //   }
       app.loading = true
       const formData = new FormData()
-      formData.append('client_id', app.selectedClient.id)
-      formData.append('vendor_id', app.selectedVendor.id)
+      // formData.append('client_id', app.vendor.client_id)
+      formData.append('vendor_id', app.vendorId)
       formData.append('id', app.contractForm.id)
       formData.append('title', app.contractForm.title)
       formData.append('start_date', app.contractForm.start_date)
       formData.append('expiry_date', app.contractForm.expiry_date)
       formData.append('file_uploaded', app.contractForm.uploadableFile)
-      const uploadEvidenceResource = new Resource('vdd/client-contracts/upload-contract')
-      uploadEvidenceResource.store(formData)
+      const uploadEvidenceResource = new Resource('vdd/vendor-contracts/upload-contract')
+      uploadEvidenceResource.vStore(formData)
         .then(() => {
           app.fetchContracts()
           app.$message({
@@ -349,7 +324,6 @@ export default {
           app.dialogFormVisible = false
           app.loading = false
         }).catch(() => { app.loading = false })
-
       return true
     },
     showDetails(value) {
@@ -360,24 +334,14 @@ export default {
       const app = this
       app.dialogFormVisible = true
     },
-    fetchVendors() {
-      const app = this
-      app.loading = true
-      const fetchStaffResource = new Resource('vdd/fetch-approved-vendors')
-      fetchStaffResource.list({ all: true })
-        .then(response => {
-          app.vendors = response.vendors
-          app.loading = false
-        })
-    },
     fetchContracts() {
       const app = this
       app.loading = true
       const { form } = app
-      form.client_id = app.selectedClient.id
-      form.vendor_id = app.selectedVendor.id
-      const fetchContractsResource = new Resource('vdd/client-contracts/fetch')
-      fetchContractsResource.list(form)
+      // form.client_id = app.vendor.client_id
+      form.vendor_id = app.vendorId
+      const fetchContractsResource = new Resource('vdd/vendor-contracts/fetch')
+      fetchContractsResource.vList(form)
         .then(response => {
           app.contracts = response.contracts
           app.loading = false

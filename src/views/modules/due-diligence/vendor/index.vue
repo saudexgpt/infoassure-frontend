@@ -30,10 +30,10 @@
           <i class="el-icon-money" />
           <span slot="title">Financials & Billing</span>
         </el-menu-item>
-        <!-- <el-menu-item @click="page = 'risk-assessment'">
-          <i class="el-icon-help" />
-          <span slot="title">Risk Assessment</span>
-        </el-menu-item> -->
+        <el-menu-item @click="page = 'contracts'">
+          <i class="el-icon-tickets" />
+          <span slot="title">Contracts & SLA</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -86,6 +86,9 @@
           <div v-if="page === 'finance'">
             <financial-and-billing :vendor-id="otherUserData.vendor_id" />
           </div>
+          <div v-if="page === 'contracts'">
+            <contract-and-sla :vendor-id="otherUserData.vendor_id" />
+          </div>
         </div>
         <div v-else>
           <other-user-login product-module="vdd" />
@@ -101,6 +104,7 @@ import MailBox from './email/Email.vue'
 import Onboarding from './partials/Onboarding.vue'
 import RiskAssessment from './partials/RiskAssessment.vue'
 import FinancialAndBilling from './partials/FinancialAndBilling.vue'
+import ContractAndSla from './partials/ContractAndSLA.vue'
 import OtherUserLogin from '@/views/pages/authentication/OtherUserLogin.vue'
 
 export default {
@@ -110,6 +114,7 @@ export default {
     RiskAssessment,
     OtherUserLogin,
     FinancialAndBilling,
+    ContractAndSla,
   },
   data() {
     return {

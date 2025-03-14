@@ -2,12 +2,14 @@
   <el-tabs
     v-model="activeName"
     tab-position="left"
+    @tab-click="forceRerender"
   >
     <!-- <el-tabs
       v-model="activeName"
       @tab-click="handleClick"
     > -->
     <el-tab-pane
+      :key="keyValue"
       label="Dashboard"
       name="first"
       lazy
@@ -83,9 +85,14 @@ export default {
   data() {
     return {
       activeName: 'first',
+      keyValue: 1,
     }
   },
   methods: {
+    forceRerender() {
+      // console.log(e)
+      this.keyValue += 1
+    },
     // showClicked(tab, event) {
     //   console.log(tab, event)
     // },
