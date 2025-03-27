@@ -13,11 +13,7 @@
             </div>
           </el-col>
           <el-col :md="12">
-<<<<<<< HEAD
             <p><strong>Contract No:</strong> {{ contract.contract_no }}</p>
-=======
-            <p><strong>Contract ID:</strong> #{{ contract.id }}</p>
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             <p><strong>Start Date:</strong> {{ contract.start_date }}</p>
             <p><strong>Expiry Date:</strong> {{ contract.expiry_date }}</p>
           </el-col>

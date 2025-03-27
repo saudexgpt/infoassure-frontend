@@ -34,11 +34,7 @@
                   style="background: #000000;"
                 />
                 <el-table-column
-<<<<<<< HEAD
                   label="Question"
-=======
-                  label="Audit Question"
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                   prop="question"
                 >
                   <template slot-scope="scope">

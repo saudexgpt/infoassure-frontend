@@ -39,7 +39,6 @@
           </el-card>
         </el-col>
       </el-row>
-<<<<<<< HEAD
       <span
         v-if="!loading"
       >
@@ -53,22 +52,6 @@
             class="ml-50"
           /> Refresh
         </el-button>
-=======
-
-      <span
-        v-if="!loading"
-        style="cursor:pointer"
-        @click="initialize()"
-      >
-
-        <el-tooltip content="Refresh">
-          <feather-icon
-            icon="RefreshCwIcon"
-            class="ml-50"
-            size="30"
-          />
-        </el-tooltip>
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       </span>
       <el-row
         v-if="!loading"
@@ -335,11 +318,7 @@
       </v-client-table>
       <el-row :gutter="20">
         <pagination
-<<<<<<< HEAD
           v-show="total > 10"
-=======
-          v-show="total > 0"
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
           :total="total"
           :page.sync="query.page"
           :limit.sync="query.limit"

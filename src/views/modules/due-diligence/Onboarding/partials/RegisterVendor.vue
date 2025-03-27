@@ -111,7 +111,6 @@
               </b-row>
             </validation-observer>
           </tab-content>
-<<<<<<< HEAD
           <tab-content
             title="User Information"
           >
@@ -246,8 +245,6 @@
               </b-row>
             </validation-observer>
           </tab-content>
-=======
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         </form-wizard>
       </b-col>
       <!-- /Login-->
@@ -304,15 +301,12 @@ export default {
         contact_email: '',
         contact_phone: '',
         contact_address: '',
-<<<<<<< HEAD
         admin_first_name: '',
         admin_last_name: '',
         admin_email: '',
         admin_phone: '',
         designation: '',
         role: 'vendor',
-=======
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         required,
       },
       empty_form: {
@@ -320,15 +314,12 @@ export default {
         contact_email: '',
         contact_phone: '',
         contact_address: '',
-<<<<<<< HEAD
         admin_first_name: '',
         admin_last_name: '',
         admin_email: '',
         admin_phone: '',
         designation: '',
         role: 'vendor',
-=======
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         required,
       },
       genders: ['Male', 'Female'],
@@ -352,7 +343,6 @@ export default {
       registerResource.store(form)
         .then(response => {
           app.vendors.push(response.vendor)
-<<<<<<< HEAD
           app.loader = false
           app.$alert(`Vendor created successfully and notification is sent to ${form.admin_email}`)
           app.form = app.empty_form
@@ -364,18 +354,6 @@ export default {
           //     variant: 'success',
           //   },
           // })
-=======
-          app.form = app.empty_form
-          app.loader = false
-          app.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Vendor mounted Successfully',
-              icon: 'CheckIcon',
-              variant: 'success',
-            },
-          })
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
 
           // app.$alert(`A confirmation link has been sent to ${email}. Kindly check your mail and click on the link to complete your registration.`)
           // app.$alert(`<strong>A confirmation link has been sent to ${email}.</strong><br>Kindly check your mail and click on the link to complete your registration.`, 'Confirmation Link Sent', {

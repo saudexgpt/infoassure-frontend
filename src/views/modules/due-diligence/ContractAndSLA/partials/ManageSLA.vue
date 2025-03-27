@@ -7,10 +7,7 @@
       <div style="border: #f0f0f0 4px solid; padding: 10px; border-radius: 5px;">
         <el-row>
           <el-col :md="12">
-<<<<<<< HEAD
             <P><strong>Contract No.: </strong>{{ contract.contract_no }}</P>
-=======
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             <p><strong>Contract Document Title:</strong> {{ contract.title }}</p>
             <p><strong>Start Date:</strong> {{ contract.start_date }}</p>
             <p><strong>Expiry Date:</strong> {{ contract.expiry_date }}</p>

@@ -99,11 +99,7 @@
           :key="index"
           lazy
         >
-<<<<<<< HEAD
           <small slot="label"><feather-icon icon="CornerUpRightIcon" /> {{ index }}</small>
-=======
-          <span slot="label"><feather-icon icon="CornerUpRightIcon" /> {{ index }}</span>
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
           <vendor-responses
             :questions="questions"
             :vendor-id="form.vendor_id"

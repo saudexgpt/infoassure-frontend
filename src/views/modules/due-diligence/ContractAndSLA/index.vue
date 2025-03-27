@@ -5,11 +5,7 @@
         <span>
           <el-button
             type="danger"
-<<<<<<< HEAD
             @click="initialize(); manageContractSLA = false;"
-=======
-            @click="fetchContracts(); manageContractSLA = false;"
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
           >
             Back
           </el-button>
@@ -23,29 +19,17 @@
           lazy
         >
           <setup-performance-metrics :selected-contract="selectedContract" />
-<<<<<<< HEAD
         </el-tab-pane>
-=======
-        </el-tab-pane> -->
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         <el-tab-pane
           label="SLA Configuration"
           name="first"
           lazy
         >
           <configure-sla :selected-contract="selectedContract" />
-<<<<<<< HEAD
         </el-tab-pane> -->
         <el-tab-pane
           label="SLA Performance Score Card"
           name="first"
-=======
-        </el-tab-pane>
-        <el-tab-pane
-          v-if="selectedContract.sla !== null"
-          label="Performance Scorecard"
-          name="second"
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
           lazy
         >
           <sla-performance-score :selected-contract="selectedContract" />
@@ -66,11 +50,7 @@
               placeholder="Select Vendor"
               value-key="id"
               style="width: 100%"
-<<<<<<< HEAD
               @input="initialize()"
-=======
-              @input="fetchContracts()"
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             >
               <el-option
                 v-for="(client, index) in vendors"
@@ -93,7 +73,6 @@
           </b-col>
         </b-row>
       </div>
-<<<<<<< HEAD
       <div
         v-if="form.vendor_id !== ''"
       >
@@ -342,49 +321,6 @@
           </div>
         </v-client-table>
       </div>
-=======
-      <v-client-table
-        v-if="form.vendor_id !== ''"
-        v-model="contracts"
-        v-loading="loading"
-        :columns="columns"
-        :options="options"
-      >
-        <div
-          slot="file_link"
-          slot-scope="{row}"
-        >
-          <span @click="viewDocument(baseServerUrl+'storage/'+row.file_link)">
-            <img
-              src="images/pdf.png"
-              alt="Image"
-              width="20"
-            >
-            <small style="font-weight: 900; padding: 10px">Click to view</small>
-
-          </span>
-        </div>
-        <div
-          slot="action"
-          slot-scope="{row}"
-        >
-          <el-button
-            size="small"
-            type="success"
-            @click="manageSla(row)"
-          >
-            Manage SLA
-          </el-button>
-          <el-button
-            size="small"
-            type="info"
-            @click="editEntry(row)"
-          >
-            Edit
-          </el-button>
-        </div>
-      </v-client-table>
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       <el-dialog
         v-if="dialogFormVisible"
         v-model="dialogFormVisible"
@@ -468,38 +404,24 @@
 
 <script>
 import {
-<<<<<<< HEAD
   BRow, BCol, BCard, BCardBody, BAvatar,
-=======
-  BRow, BCol,
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
 } from 'bootstrap-vue'
   // import { VueGoodTable } from 'vue-good-table'
 import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
-<<<<<<< HEAD
 // import ConfigureSla from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/partials/ConfigureSLA.vue'
-=======
-import ConfigureSla from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/partials/ConfigureSLA.vue'
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
 import SlaPerformanceScore from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/partials/SLAPerformanceScore.vue'
 // import SetupPerformanceMetrics from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/partials/SetupPerformanceMetrics.vue'
 
 export default {
   components: {
-<<<<<<< HEAD
     // ConfigureSla,
     SlaPerformanceScore,
     // SetupPerformanceMetrics,
     BCard,
     BCardBody,
     BAvatar,
-=======
-    ConfigureSla,
-    SlaPerformanceScore,
-    // SetupPerformanceMetrics,
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     BRow,
     BCol,
   },
@@ -520,7 +442,6 @@ export default {
       showDocumentModal: false,
       selectedDocument: '',
       loading: false,
-<<<<<<< HEAD
       loadButton: false,
       pageLength: 10,
       dir: false,
@@ -528,30 +449,18 @@ export default {
       active_contracts: 0,
       renewed_contracts: 0,
       expired_contracts: 0,
-=======
-      pageLength: 10,
-      dir: false,
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       vendors: [],
       selectedVendor: null,
       contracts: [],
       columns: [
-<<<<<<< HEAD
         'contract_no',
-=======
-        'action',
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         'title',
         'file_link',
         'start_date',
         'expiry_date',
-<<<<<<< HEAD
         'status',
         'sla',
         'action',
-=======
-        // 'user.password_status',
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       ],
 
       options: {
@@ -571,12 +480,9 @@ export default {
         expiry_date: '',
         uploadableFile: null,
       },
-<<<<<<< HEAD
       renewalForm: {
         renewal_details: { status: '', notes: '' },
       },
-=======
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       form: {
         vendor_id: '',
         client_id: '',
@@ -598,13 +504,10 @@ export default {
   },
   methods: {
     checkPermission,
-<<<<<<< HEAD
     initialize() {
       this.fetchContracts()
       this.fetchContractsAnalysis()
     },
-=======
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     editEntry(row) {
       const app = this
       app.contractForm = row
@@ -690,7 +593,6 @@ export default {
           app.loading = false
         })
     },
-<<<<<<< HEAD
     renewContract(contract, status) {
       const app = this
       app.loadButton = true
@@ -704,8 +606,6 @@ export default {
           app.fetchContracts()
         })
     },
-=======
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     fetchContracts() {
       const app = this
       app.loading = true
@@ -719,7 +619,6 @@ export default {
           app.loading = false
         })
     },
-<<<<<<< HEAD
     fetchContractsAnalysis() {
       const app = this
       app.loading = true
@@ -733,8 +632,6 @@ export default {
           app.loading = false
         }).catch(() => { app.loading = false })
     },
-=======
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
   },
 }
 </script>
