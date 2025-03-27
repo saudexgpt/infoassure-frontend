@@ -1,0 +1,182 @@
+<template>
+  <div>
+    <b-sidebar
+      id="sidebar-task-handler"
+      sidebar-class="sidebar-lg"
+      :visible="isCreateStandardSidebarActive"
+      bg-variant="white"
+      shadow
+      backdrop
+      no-header
+      right
+      @change="(val) => $emit('update:is-create-standard-sidebar-active', val)"
+    >
+      <template #default="{ hide }">
+        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
+          <h5
+            v-if="isAdmin"
+            class="mb-0"
+          >
+            Fill the fields as applicable
+          </h5>
+          <h5
+            v-else
+            class="mb-0"
+          >
+            Consultant's Remarks
+          </h5>
+          <div>
+            <b-button
+              variant="gradient-danger"
+              class="btn-icon"
+              @click="hide"
+            >
+              <feather-icon
+                icon="XIcon"
+              />
+            </b-button>
+          </div>
+        </div>
+        <div
+          v-if="isAdmin"
+          class="justify-content-between align-items-center px-2 py-1"
+        >
+          <b-row v-loading="loading">
+
+            <b-col cols="12">
+              <label>Status</label>
+              <b-form-group
+                label-for="v-status"
+              >
+                <el-select
+                  v-model="form.status"
+                  placeholder="Select Status"
+                  style="width: 100%;"
+                  @blur="saveRemark('status')"
+                >
+                  <el-option
+                    v-for="(status, index) in statuses"
+                    :key="index"
+                    :value="status"
+                    :label="status"
+                  />
+                </el-select>
+              </b-form-group>
+            </b-col>
+            <b-col cols="12">
+              <label>General Remark</label>
+              <b-form-group
+                label-for="v-remark"
+              >
+                <el-input
+                  v-model="form.remark"
+                  type="textarea"
+                  placeholder="Type your remark here..."
+                  style="width: 100%;"
+                  @blur="saveRemark('remark')"
+                />
+              </b-form-group>
+            </b-col>
+            <!-- submit and reset -->
+            <b-col
+              cols="12"
+            >
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                type="submit"
+                variant="primary"
+                class="mr-1"
+                @click="$emit('reload')"
+              >
+                Submit
+              </b-button>
+            </b-col>
+          </b-row>
+        </div>
+        <div
+          v-else
+          class="justify-content-between align-items-center px-2 py-1"
+        >
+          <b-row v-loading="loading">
+            <b-col cols="12">
+              <label>Status</label>
+              <p>{{ form.status }}</p>
+            </b-col>
+            <b-col cols="12">
+              <label>General Remark</label>
+              <p>{{ form.remark }}</p>
+            </b-col>
+          </b-row>
+        </div>
+      </template>
+    </b-sidebar>
+  </div>
+</template>
+
+<script>
+import {
+  BSidebar, BRow, BCol, BFormGroup, BButton,
+} from 'bootstrap-vue'
+import Ripple from 'vue-ripple-directive'
+import Resource from '@/api/resource'
+
+export default {
+  components: {
+    BSidebar,
+    BRow,
+    BCol,
+    BFormGroup,
+    BButton,
+  },
+  directives: {
+    Ripple,
+  },
+  model: {
+    prop: 'isCreateStandardSidebarActive',
+    event: 'update:is-create-standard-sidebar-active',
+  },
+  props: {
+    isCreateStandardSidebarActive: {
+      type: Boolean,
+      required: true,
+    },
+    document: {
+      type: Object,
+      required: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: () => false,
+    },
+  },
+  data() {
+    return {
+      form: {
+        id: '',
+        status: '',
+        remark: '',
+      },
+      loading: false,
+      statuses: ['Pending on Client', 'Pending on Consultant', 'Reviewed'],
+      selectedConsulting: {},
+    }
+  },
+  created() {
+    this.form = this.document
+  },
+  methods: {
+    saveRemark(field) {
+      const app = this
+      const { form } = app
+      // console.log(document[field])
+      const param = { value: form[field], field }
+      const fetchConsultingsResource = new Resource('clauses/remark-on-upload')
+      fetchConsultingsResource.update(form.id, param)
+        .then(() => {})
+    },
+  },
+}
+</script>
+<style lang="scss" scoped>
+@import '~@core/scss/base/bootstrap-extended/include';
+</style>

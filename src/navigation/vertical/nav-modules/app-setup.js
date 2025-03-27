@@ -26,6 +26,10 @@ export default [
           // except: ['client'],
         },
       },
+      {
+        title: 'Risk Management',
+        route: 'risk-management-setup',
+      },
       // {
       //   title: 'Risk & Control Matrix',
       //   route: 'risk-setup',

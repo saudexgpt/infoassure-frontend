@@ -12,9 +12,9 @@ function setRoutes(userData) {
     router.addRoutes(response)
   })
 }
-const whiteList = ['/login', '/login-as', '/bia', '/rcsa', '/account/suspended', '/register', '/forgot-password', '/maintenance'] // no redirect whitelist
+const whiteList = ['/login', '/login-as', '/bia', '/vdd', '/vdd/mailbox/inbox', '/vdd/mailbox/sent', '/account/suspended', '/register', '/forgot-password', '/maintenance'] // no redirect whitelist
 router.beforeEach(async (to, from, next) => {
-  if (to.path === '/bia' || to.path === '/rcsa') {
+  if (to.path === '/bia' || to.path === '/vdd' || to.path === '/vdd/mailbox/inbox' || to.path === '/vdd/mailbox/sent') {
     store.dispatch('user/loadOtherUserData')
     next()
   } else {

@@ -15,8 +15,8 @@
             <li><code><a @click="handleDownload">Download CSV Format</a></code> to get the file format</li>
             <li>Open with a spreadsheet package, example Microsoft Excel package</li>
             <li>Leave the Table Header Names the way they are and <strong class="red">DO NOT MODIFY THEM</strong></li>
-            <li>Fill the downloaded csv file accordingly as guided by the Header Names. Each row for an entry. <br><strong class="red">DO NOT leave any cell blank.</strong></li>
-            <!-- <li>Delete the two sample entries given to guide you and start from row number two (2) in the file.</li> -->
+            <li>Fill the downloaded csv file accordingly as guided by the Header Names. Each row for an entry.</li>
+            <li>Delete the three sample entries given to guide you and start from row number two (2) in the file.</li>
             <li>When done with all entries, SAVE your file with .csv (Comma delimited) file extension. <strong class="red">For example question_1.csv</strong></li>
             <li>Fill the form accordingly and select the file from where you saved</li>
             <li>Preview your work and click on SUBMIT if satisfied</li>
@@ -99,12 +99,6 @@ export default {
     BCol,
     UploadExcelComponent,
   },
-  props: {
-    standards: {
-      type: Array,
-      required: true,
-    },
-  },
   data() {
     return {
       fill_fields_error: false,
@@ -125,10 +119,14 @@ export default {
       // this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         // const multiHeader = [['List of Products', '', '', '', '']];
-        const tHeader = ['DOMAIN', 'QUESTION', 'KEY']
+        const tHeader = ['DOMAIN', 'QUESTION', 'KEY', 'ANSWER_TYPE', 'REQUIRES_EVIDENCE']
         // const filterVal = []
         // const list = [] // this.items
-        const data = [] // this.formatJson(filterVal, list)
+        const data = [
+          ['Regulatory & Compliance Risk', 'Do you conduct regular compliance audits?', 'Upload latest audit report if applicable', 'both', 'yes'],
+          ['Security & Data Protection Risk', 'Do you process or store sensitive customer or company data?', '', 'yes-no', 'no'],
+          ['Security & Data Protection Risk', 'Do you have a formal cybersecurity policy?', 'Upload cybersecurity policy if applicable', 'yes-no', 'yes'],
+        ]// this.formatJson(filterVal, list)
         excel.export_json_to_excel({
           // multiHeader,
           header: tHeader,
@@ -150,7 +148,7 @@ export default {
       const { form } = app
       form.bulk_data = app.tableData
       app.loader = true
-      const uploadBulkStudents = new Resource('due-diligence/questions/upload-bulk')
+      const uploadBulkStudents = new Resource('vdd/questions/upload-default-questions')
       uploadBulkStudents.store(form)
         .then(response => {
           app.tableData = response.unsaved_data

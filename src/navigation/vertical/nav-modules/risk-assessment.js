@@ -9,10 +9,6 @@ export default [
     // },
     children: [
       {
-        title: 'Setup',
-        route: 'risk-management-setup',
-      },
-      {
         title: 'Risk Assessment',
         route: 'risk-assessment',
         acl: {

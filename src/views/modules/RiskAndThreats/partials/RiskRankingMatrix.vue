@@ -4,7 +4,7 @@
       slot="header"
       class="clearfix"
     >
-      <h1
+      <!-- <h1
         style="cursor: pointer"
         class="pull-right"
         @click="toggleDescription"
@@ -17,11 +17,11 @@
         >
           <i class="el-icon-info" />
         </el-tooltip>
-      </h1>
-      <h3>{{ matrix }} Risk Ranking Matrix</h3>
+      </h1> -->
+      <strong>Risk Heat Map ({{ matrix }} Matrix)</strong>
     </div>
     <div v-if="matrix === '3x3'">
-      <table class="table table-bordered">
+      <table class="table table-sm table-bordered">
         <tbody>
           <tr>
             <td rowspan="5">
@@ -77,7 +77,7 @@
       </table>
       <table
         v-if="showDescription"
-        class="table table-bordered"
+        class="table table-sm table-bordered"
       >
         <tbody>
           <tr>
@@ -112,7 +112,7 @@
 
     </div>
     <div v-if="matrix === '5x5'">
-      <table class="table table-bordered">
+      <table class="table table-sm table-bordered">
         <tbody>
           <tr>
             <td rowspan="7">
@@ -223,8 +223,7 @@
         </tbody>
       </table>
       <table
-        v-if="showDescription"
-        class="table table-bordered"
+        class="table table-sm table-bordered"
       >
         <tbody>
           <tr>
@@ -327,7 +326,7 @@ export default {
   props: {
     matrix: {
       type: String,
-      required: true,
+      default: () => '3x3',
     },
   },
   data() {

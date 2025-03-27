@@ -21,6 +21,34 @@
           {{ selectedMessage.subject }}
         </h4>
       </div>
+      <div class="pull-right">
+        <el-button-group>
+          <el-button
+            type="info"
+            size="small"
+            @click="handleReply = true"
+          >
+            <feather-icon icon="CornerUpLeftIcon" />
+            <span class="align-middle ml-50">Reply</span>
+          </el-button>
+          <!-- <el-button
+              type="success"
+              size="small"
+              @click="handleForward = true"
+            >
+              <feather-icon icon="CornerUpRightIcon" />
+              <span class="align-middle ml-50">Forward</span>
+            </el-button>
+            <el-button
+              type="danger"
+              size="small"
+              @click="deleteMessage('delete_' + type)"
+            >
+              <feather-icon icon="TrashIcon" />
+              <span class="align-middle ml-50">Delete</span>
+            </el-button> -->
+        </el-button-group>
+      </div>
     </div>
 
     <!-- Email Details -->
@@ -31,11 +59,12 @@
 
       <br>
       <!-- Label Row -->
-      <b-row>
+      <!-- <b-row>
         <b-col cols="12">
           <el-button-group>
             <el-button
-              type="primary"
+              type="info"
+              size="small"
               @click="handleReply = true"
             >
               <feather-icon icon="CornerUpLeftIcon" />
@@ -43,6 +72,7 @@
             </el-button>
             <el-button
               type="success"
+              size="small"
               @click="handleForward = true"
             >
               <feather-icon icon="CornerUpRightIcon" />
@@ -50,6 +80,7 @@
             </el-button>
             <el-button
               type="danger"
+              size="small"
               @click="deleteMessage('delete_' + type)"
             >
               <feather-icon icon="TrashIcon" />
@@ -57,12 +88,13 @@
             </el-button>
           </el-button-group>
         </b-col>
-      </b-row>
+      </b-row> -->
       <!-- Email Thread -->
       <b-row>
         <b-col cols="12">
           <email-message-card
             :message="selectedMessage"
+            :type="type"
             :options="options"
             :recipients="recipients"
           />
@@ -76,9 +108,20 @@
           </b-card>
         </b-col>
       </b-row> -->
-
+      <template v-if="selectedMessage.replies !== null">
+        <strong>Replies</strong>
+        <b-row
+          v-for="threadMail in selectedMessage.replies"
+          :key="threadMail.id"
+        >
+          <b-col cols="12">
+            <email-message-card :message="threadMail" />
+          </b-col>
+        </b-row>
+      </template>
       <!-- Earlier Email Messages -->
-      <template>
+      <!-- <template v-if="selectedMessage.replies !== null">
+        <strong>Replies</strong>
         <b-row
           v-for="threadMail in selectedMessage.replies.slice().reverse()"
           :key="threadMail.id"
@@ -87,7 +130,7 @@
             <email-message-card :message="threadMail" />
           </b-col>
         </b-row>
-      </template>
+      </template> -->
     </vue-perfect-scrollbar>
 
     <!-- REPLY MESSAGE DIALOG -->
@@ -99,6 +142,7 @@
       <el-input
         v-model="replied_message"
         type="textarea"
+        :rows="7"
       />
       <span
         slot="footer"
@@ -107,8 +151,8 @@
         <el-button @click="handleReply = false">Cancel</el-button>
         <el-button
           type="primary"
-          @click="updateMessage('reply')"
-        >Reply</el-button>
+          @click="replyMessage('reply')"
+        >Send</el-button>
       </span>
     </el-dialog>
     <!-- REPLY MESSAGE DIALOG -->
@@ -249,6 +293,24 @@ export default {
     this.selectedMessage = this.emailViewData
   },
   methods: {
+    replyMessage(action) {
+      const app = this
+      const param = {
+        message: app.replied_message,
+        action,
+        recipients: app.forward_recipients,
+      }
+      const updateMessageResource = new Resource('messages/reply')
+      updateMessageResource.update(app.selectedMessage.id, param)
+        .then(response => {
+          app.selectedMessage = response.message_details
+          app.handleReply = false
+          app.handleForward = false
+        })
+        .catch(() => {
+
+        })
+    },
     updateMessage(action) {
       const app = this
       const param = {

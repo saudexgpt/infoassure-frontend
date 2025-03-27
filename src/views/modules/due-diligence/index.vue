@@ -1,78 +1,121 @@
 <template>
-  <el-card>
-    <h3>Third Party Vendor Due Diligence Assessment</h3>
-    <b-tabs
-      content-class="mt-1"
+  <el-tabs
+    v-model="activeName"
+    tab-position="left"
+    @tab-click="forceRerender"
+  >
+    <!-- <el-tabs
+      v-model="activeName"
+      @tab-click="handleClick"
+    > -->
+    <el-tab-pane
+      :key="keyValue"
+      label="Dashboard"
+      name="#dashboard"
+      lazy
     >
-      <b-tab
-        v-if="checkPermission(['upload-due-diligence-requirements'])"
-        lazy
-      >
-        <template #title>
-          <feather-icon icon="ToolIcon" />
-          <span>Manage Requirements</span>
-        </template>
-        <manage-questions />
-      </b-tab>
-      <b-tab
-        lazy
-      >
-        <template #title>
-          <feather-icon icon="LayersIcon" />
-          <span>Perform Due Diligence Assessment</span>
-        </template>
-        <create :is-admin="isAdmin" />
-      </b-tab>
-      <!-- <b-tab
-        v-if="checkPermission(['manage-project-plan'])"
-        lazy
-      >
-        <template #title>
-          <feather-icon icon="BarChartIcon" />
-          <span>Report</span>
-        </template>
-        <create :is-admin="isAdmin" />
-      </b-tab> -->
-    </b-tabs>
-  </el-card>
+      <dashboard />
+    </el-tab-pane>
+    <el-tab-pane
+      label="Vendor Onboarding"
+      name="#onboarding"
+      lazy
+    >
+      <onboarding />
+    </el-tab-pane>
+    <el-tab-pane
+      label="Risk Management"
+      name="#risk-management"
+      lazy
+    >
+      <risk-assessment />
+    </el-tab-pane>
+    <el-tab-pane
+      label="Contracts & SLA"
+      name="#contract-and-sla"
+      lazy
+    >
+      <contract-and-sla />
+    </el-tab-pane>
+    <el-tab-pane
+      label="Financials & Billing"
+      name="#financials-and-billing"
+      lazy
+    >
+      <financials-and-billing />
+    </el-tab-pane>
+    <el-tab-pane
+      label="Vendor Relationship"
+      name="#vrm"
+      lazy
+    >
+      <VRM />
+    </el-tab-pane>
+    <!-- <el-tab-pane
+      label="Audit Assessment"
+      name="fifth"
+      lazy
+    >
+      <div>
+        <img
+          align="center"
+          src="images/construction.jpg"
+        >
+      </div>
+    </el-tab-pane>
+    <el-tab-pane
+      label="Reports & Analytics"
+      name="sixth"
+      lazy
+    >
+      <div>
+        <img
+          align="center"
+          src="images/construction.jpg"
+        >
+      </div>
+    </el-tab-pane> -->
+  </el-tabs>
 </template>
-
 <script>
-import {
-  BTabs, BTab,
-} from 'bootstrap-vue'
-import { mapGetters } from 'vuex'
-import Create from './Create.vue'
-import ManageQuestions from './ManageQuestions.vue'
-import checkPermission from '@/utils/permission'
+import Dashboard from '@/views/modules/DUE-DILIGENCE/Dashboard.vue'
+import Onboarding from '@/views/modules/DUE-DILIGENCE/Onboarding/index.vue'
+import RiskAssessment from '@/views/modules/DUE-DILIGENCE/RiskAssessment/index.vue'
+import FinancialsAndBilling from '@/views/modules/DUE-DILIGENCE/FinancialsAndBilling/index.vue'
+import ContractAndSla from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/index.vue'
+import VRM from '@/views/modules/DUE-DILIGENCE/VendorRelationshipManagement/index.vue'
 
 export default {
   components: {
-    BTabs,
-    BTab,
-    Create,
-    ManageQuestions,
+    Dashboard, Onboarding, RiskAssessment, FinancialsAndBilling, ContractAndSla, VRM,
+    // NDPAReport,
   },
   data() {
     return {
-      isAdmin: false,
+      activeName: '#dashboard',
+      keyValue: 1,
     }
   },
-  computed: {
-    ...mapGetters([
-      'userData',
-    ]),
-  },
-  created() {
-    this.setAdmin()
+  mounted() {
+    this.setCurrentPage()
   },
   methods: {
-    setAdmin() {
-      if (!this.userData.roles.includes('client')) {
-        this.isAdmin = true
-      }
+    forceRerender(tab, event) {
+      const app = this
+      console.log(event.target.id)
+      let hashString = event.target.id
+      hashString = hashString.replace('tab-', '')
+      // app.activeName = value
+      app.$router.push({ hash: `${hashString}` })
+      app.keyValue += 1
     },
-    checkPermission,
+    setCurrentPage() {
+      const app = this
+      app.activeName = (window.location.hash !== '') ? window.location.hash : '#dashboard'
+    },
+    // showClicked(tab, event) {
+    //   console.log(tab, event)
+    // },
   },
 }
 </script>

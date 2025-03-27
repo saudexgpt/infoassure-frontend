@@ -39,7 +39,19 @@
               placeholder="john@example.com"
             />
           </b-form-group>
-
+          <!-- <b-form-group>
+            <vue-recaptcha
+              :sitekey="recaptchaSiteKey"
+              :load-recaptcha-script="true"
+              @verify="validate"
+            />
+          </b-form-group> -->
+          <div
+            id="recaptcha-2"
+            class="g-recaptcha"
+            :data-sitekey="recaptchaSiteKey"
+          />
+          <br>
           <b-button
             type="submit"
             variant="primary"
@@ -65,10 +77,12 @@
 import {
   BCard, BCardTitle, BCardText, BForm, BFormGroup, BLink, BFormInput, BButton,
 } from 'bootstrap-vue'
+// import VueRecaptcha from 'vue-recaptcha'
 import Resource from '@/api/resource'
 
 export default {
   components: {
+    // VueRecaptcha,
     BCard,
     BButton,
     BCardTitle,
@@ -84,7 +98,24 @@ export default {
       load: false,
     }
   },
+  computed: {
+    recaptchaSiteKey() {
+      return process.env.VUE_APP_MIX_RECAPTCHA_SITE_KEY
+    },
+  },
+  mounted() {
+    this.$nextTick(() => {
+      // eslint-disable-next-line no-undef
+      grecaptcha.render('recaptcha-2')
+    })
+  },
   methods: {
+    validate(response) {
+      console.log(response)
+      // Validation.validate({ Response: response }).then(result => {
+      //   this.$emit('validate', result.objectResult.success)
+      // }).catch(error => console.log(error))
+    },
     validationForm() {
       const app = this
       const confirmEmailResource = new Resource('auth/recover-password')

@@ -237,11 +237,7 @@ export default {
             showInLegend: true,
           },
         },
-        series: [{
-          name: 'Value Count',
-          colorByPoint: true,
-          data: [],
-        }],
+        series: [],
         credits: {
           enabled: false,
         },

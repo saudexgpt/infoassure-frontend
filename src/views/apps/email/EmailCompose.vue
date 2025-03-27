@@ -15,18 +15,18 @@
     <!-- Modal Header -->
     <template #modal-header>
       <h5 class="modal-title">
-        Compose Mail
+        Compose Message
       </h5>
       <div class="modal-actions">
-        <feather-icon
+        <!-- <feather-icon
           icon="MinusIcon"
           class="cursor-pointer"
           @click="$emit('update:shall-show-email-compose-modal', false)"
-        />
-        <feather-icon
+        /> -->
+        <!-- <feather-icon
           icon="Maximize2Icon"
           class="ml-1 cursor-pointer"
-        />
+        /> -->
         <feather-icon
           icon="XIcon"
           class="ml-1 cursor-pointer"
@@ -55,47 +55,13 @@
 
       <!-- Footer: Right Content -->
       <div>
-
-        <!-- Dropdown: More Actions -->
-        <!-- <b-dropdown
-          variant="link"
-          no-caret
-          toggle-class="p-0"
+        <!-- <el-button
+          type="primary"
+          split
           right
-        >
-          <template #button-content>
-            <feather-icon
-              icon="MoreVerticalIcon"
-              size="17"
-              class="text-body"
-            />
-          </template>
-
-          <b-dropdown-item>
-            Add Label
-          </b-dropdown-item>
-
-          <b-dropdown-item>
-            Plain Text Mode
-          </b-dropdown-item>
-
-          <b-dropdown-divider />
-
-          <b-dropdown-item>
-            Print
-          </b-dropdown-item>
-          <b-dropdown-item>
-            Check Spelling
-          </b-dropdown-item>
-        </b-dropdown> -->
-
-        <!-- Discard Compose -->
-        <feather-icon
-          icon="TrashIcon"
-          size="17"
-          class="ml-75 cursor-pointer"
-          @click="discardEmail"
-        />
+          @click="sendMessage()"
+        >Send
+        </el-button> -->
       </div>
     </template>
 
@@ -108,7 +74,7 @@
           for="email-to"
           class="form-label"
         >To: </label>
-        <el-select
+        <!-- <el-select
           v-model="selected_option"
           style="width: 100%"
           placeholder="Select Recipients' Category"
@@ -133,95 +99,25 @@
           inactive-text="None"
           @change="selectAll()"
         />
-        <br>&nbsp;
+        <br>&nbsp; -->
         <el-select
           v-model="form.new_recipients"
           style="width: 100%"
-          placeholder="Select Recipients"
+          placeholder="Search Recipients"
+          remote
+          :remote-method="remoteMethod"
+          :loading="loading"
           filterable
           multiple
-          collapse-tags
         >
           <el-option
-            v-for="(recipient, index) in selected_recipients"
+            v-for="(user, index) in selected_recipients"
             :key="index"
-            :label="(recipient.user) ? recipient.user.first_name + ' ' + recipient.user.last_name + ' (' + recipient.user.username +')' : ''"
-            :value="recipient.user_id"
+            :label="`${user.name} - (${user.email})`"
+            :value="user.email"
           />
         </el-select>
       </div>
-
-      <!-- Field: Cc (Hidden Initially) -->
-      <!-- <div
-        v-show="showCcField"
-        class="compose-mail-form-field"
-      >
-        <label for="email-cc">CC: </label>
-        <v-select
-          v-model="composeData.cc"
-          :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-          multiple
-          label="name"
-          class="flex-grow-1 email-cc-selector"
-          :close-on-select="false"
-          :options="emailToOptions"
-          input-id="email-cc"
-        >
-
-          <template #option="{ avatar, name }">
-            <b-avatar
-              size="sm"
-              :src="avatar"
-            />
-            <span class="ml-50"> {{ name }}</span>
-          </template>
-
-          <template #selected-option="{ avatar, name }">
-            <b-avatar
-              size="sm"
-              class="border border-white"
-              :src="avatar"
-            />
-            <span class="ml-50"> {{ name }}</span>
-          </template>
-        </v-select>
-      </div> -->
-
-      <!-- Field: Bcc (Hidden Initially) -->
-      <!-- <div
-        v-show="showBccField"
-        class="compose-mail-form-field"
-      >
-        <label for="email-bcc">Bcc </label>
-        <v-select
-          v-model="composeData.bcc"
-          :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-          multiple
-          label="name"
-          class="flex-grow-1 email-bcc-selector"
-          :close-on-select="false"
-          :options="emailToOptions"
-          input-id="email-bcc"
-        >
-
-          <template #option="{ avatar, name }">
-            <b-avatar
-              size="sm"
-              :src="avatar"
-            />
-            <span class="ml-50"> {{ name }}</span>
-          </template>
-
-          <template #selected-option="{ avatar, name }">
-            <b-avatar
-              size="sm"
-              class="border border-white"
-              :src="avatar"
-            />
-            <span class="ml-50"> {{ name }}</span>
-          </template>
-        </v-select>
-      </div> -->
 
       <!-- Field: Subject -->
       <div class="compose-mail-form-field">
@@ -239,17 +135,6 @@
           v-model="form.message"
           :options="editorOption"
         />
-        <div
-          id="quill-toolbar"
-          class="d-flex border-bottom-0"
-        >
-          <!-- Add a bold button -->
-          <button class="ql-bold" />
-          <button class="ql-italic" />
-          <button class="ql-underline" />
-          <button class="ql-align" />
-          <button class="ql-link" />
-        </div>
       </div>
     </b-form>
 
@@ -304,12 +189,32 @@ export default {
     const composeData = ref({})
     const showCcField = ref(false)
     const showBccField = ref(false)
+    const toolbarOptions = [
+      [{ font: [] }],
+      ['bold', 'italic', 'underline'], // toggled buttons
+      // ['blockquote', 'code-block'],
+      ['link'/* , 'image', 'video', 'formula' */],
 
+      // [{ header: 1 }, { header: 2 }], // custom button values
+      [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+      // [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+      [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+      // [{ direction: 'rtl' }], // text direction
+
+      [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+      [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+
+      [{ align: [] }],
+
+      // ['clean'], // remove formatting button
+    ]
     const editorOption = {
       modules: {
-        toolbar: '#quill-toolbar',
+        toolbar: toolbarOptions,
       },
-      placeholder: 'Message',
+      placeholder: 'Type your message here...',
     }
 
     /* eslint-disable global-require */
@@ -349,6 +254,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       handleReply: false,
       handleForward: false,
       replied_message: '',
@@ -364,6 +270,23 @@ export default {
     }
   },
   methods: {
+    remoteMethod(query) {
+      const app = this
+      if (query !== '') {
+        this.loading = true
+        const fetchEmailsResource = new Resource('search-email-list')
+        fetchEmailsResource.list({ email_string: query })
+          .then(response => {
+            this.loading = false
+            app.selected_recipients = response.emails
+          })
+          .catch(() => {
+            this.loading = false
+          })
+      } else {
+        this.selected_recipients = []
+      }
+    },
     sendMessage() {
       const app = this
       const param = app.form

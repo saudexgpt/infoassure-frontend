@@ -1,7 +1,6 @@
 <template>
   <div class="auth-wrapper auth-v1 px-2">
     <div class="auth-inner py-2">
-
       <!-- Login-->
       <b-card
         v-loading="loader"
@@ -222,6 +221,22 @@
                     />
                   </b-form-group>
                 </b-col>
+                <b-col>
+                  <div
+                    id="recaptcha-reg"
+                    class="control"
+                  >
+                    <div
+                      id="recaptcha-main"
+                      class="g-recaptcha"
+                      :data-sitekey="recaptchaSiteKey"
+                    />
+                  </div>
+                  <!-- <vue-recaptcha
+                    ref="recaptcha"
+                    @verify="onVerify"
+                  /> -->
+                </b-col>
                 <!-- <b-col md="12">
                   <b-form-group
                     label="Create Password"
@@ -397,12 +412,23 @@ export default {
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
+    recaptchaSiteKey() {
+      return process.env.VUE_APP_MIX_RECAPTCHA_SITE_KEY
+    },
   },
   created() {
+    this.$nextTick(() => {
+      // eslint-disable-next-line no-undef
+      grecaptcha.render('recaptcha-main')
+    })
   },
   methods: {
+    onVerify(response) {
+      console.log(response)
+    },
     formSubmitted() {
       const app = this
+      app.$refs.recaptcha.execute()
       const registerResource = new Resource('auth/register-client')
       const { form } = app
       app.loader = true

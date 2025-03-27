@@ -46,6 +46,8 @@ import soc2 from './modules/soc2'
 import pciDss from './modules/pci-dss'
 import rcsa from './modules/rcsa'
 
+import modules from './modules/modules'
+
 Vue.use(Router)
 export const constantRoutes = [
 
@@ -148,6 +150,27 @@ export const constantRoutes = [
   },
   {
     hidden: true,
+    path: '/vdd',
+    name: 'VDD',
+    component: () => import('@/views/modules/DUE-DILIGENCE/vendor/index.vue'),
+    meta: {
+      layout: 'full',
+      // redirectIfLoggedIn: true,
+    },
+  },
+  {
+    hidden: true,
+    path: '/vdd/mailbox/:folder',
+    name: 'mailbox-folder',
+    component: () => import('@/views/modules/DUE-DILIGENCE/vendor/email/Email.vue'),
+    meta: {
+      contentRenderer: 'sidebar-left',
+      contentClass: 'email-application',
+      navActiveLink: 'apps-email',
+    },
+  },
+  {
+    hidden: true,
     path: '/login-as',
     component: () => import('@/views/modules/user/LoginAs.vue'),
     name: 'LoginAs',
@@ -176,6 +199,7 @@ export const asyncRoutes = [
   // =============================================================================
   { path: '/', redirect: { name: 'dashboard' } },
   ...pages,
+  ...modules,
   ...riskAssessment,
   ...soa,
   ...asv,

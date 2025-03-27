@@ -1,0 +1,291 @@
+@import '~element-ui/lib/theme-chalk/index.css';
+@import 'variables';
+@import 'mixin';
+@import 'transition';
+@import 'element-ui';
+@import 'sidebar';
+@import 'btn';
+@import 'laravue';
+
+// .card .card-header {
+//   background-color: #051225 !important;
+//   color: #fff !important;
+// }
+aside {
+  background: #eef1f6;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border-radius: 2px;
+  display: block;
+  line-height: 32px;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  color: #2c3e50;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  a {
+    color: #fff !important;
+    cursor: pointer;
+
+    &:hover {
+      color: rgb(226, 228, 229);
+    }
+  }
+}
+
+// main-container padding
+.app-container {
+  padding: 20px;
+}
+
+.components-container {
+  margin: 30px 50px;
+  position: relative;
+}
+
+.pagination-container {
+  margin-top: 30px;
+}
+
+.text-center {
+  text-align: center
+}
+
+.sub-navbar {
+  height: 50px;
+  line-height: 50px;
+  position: relative;
+  width: 100%;
+  text-align: right;
+  padding-right: 20px;
+  transition: 600ms ease position;
+  background: linear-gradient(90deg, rgba(32, 182, 249, 1) 0%, rgba(32, 182, 249, 1) 0%, rgba(33, 120, 241, 1) 100%, rgba(33, 120, 241, 1) 100%);
+
+  .subtitle {
+    font-size: 20px;
+    color: #fff;
+  }
+
+  &.draft {
+    background: #d0d0d0;
+  }
+
+  &.deleted {
+    background: #d0d0d0;
+  }
+}
+
+.link-type,
+.link-type:focus {
+  color: #337ab7;
+  cursor: pointer;
+
+  &:hover {
+    color: rgb(32, 160, 255);
+  }
+}
+
+.filter-container {
+  padding-bottom: 10px;
+
+  .filter-item {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
+  }
+}
+
+//refine vue-multiselect plugin
+.multiselect {
+  line-height: 16px;
+}
+
+.multiselect--active {
+  z-index: 1000 !important;
+}
+.el-card {
+  margin-bottom: 10px !important;
+}
+.el-card__body {
+  background-color: #fcfcfc !important;
+  padding: 10px !important;
+}
+.el-card__header {
+  padding: 5px 10px !important;
+  border-bottom: 1px solid #e0e0e0;
+}
+.VueTables__child-row-toggler {
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  display: block;
+  margin: auto;
+  text-align: center;
+}
+
+.VueTables__child-row-toggler--closed::before {
+  content: "+" !important;
+}
+
+.VueTables__child-row-toggler--open::before {
+  content: "-" !important;
+}
+// .VueTables__search-field {
+//   display: flex !important;
+// }
+// .VueTables__limit-field {
+//   display: flex !important;
+// }
+.table:not(.table-dark):not(.table-light) thead:not(.thead-dark) th, [dir] .table:not(.table-dark):not(.table-light) tfoot:not(.thead-dark) th{
+  background-color: transparent !important;
+}
+.row {
+  margin-bottom: 0.5rem;
+}
+th.verticalHeader {
+
+  position: sticky;
+  // overflow: visible;
+  // text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  height: 140px;
+  padding-right: 30px !important;
+
+}
+th.verticalHeader > div {
+    transform:
+        translate(13px, 0px)
+        rotate(270deg);
+    width: 20px;
+}
+
+th.verticalHeader > div > span {
+    padding: 5px 15px;
+}
+// th.verticalHeader>div {
+//   -ms-transform: translate(25px, 51px) rotate(270deg);
+//   -moz-transform: translate(25px, 51px) rotate(270deg);
+//   -webkit-transform: translate(25px, 51px) rotate(270deg);
+//   -o-transform: translate(25px, 51px) rotate(270deg);
+//   transform: translate(25px, 51px) rotate(270deg);
+//   position: absolute;
+//   bottom: 50px;
+//   width: 30px;
+//   text-align: left;
+
+// }
+// th.verticalHeader > div > span {
+//   padding: 5px 5px;
+
+// }
+
+th.verticalHeader {
+border: 1px solid #f0f0f0!important;
+}
+
+.callout {
+  padding: 10px;
+}
+
+.callout-danger {
+  background: rgb(231, 39, 39);
+  color: #ffffff;
+}
+
+.resultTable {
+  width: 100%;
+}
+.padded {
+  padding: 5px;
+}
+.resultTable td{
+  padding: 5px;
+  text-align:center;
+  border-top:1px solid #ddd
+}
+.align-left {
+  text-align: left !important;
+}
+.resultTable th{
+  font-weight:bold
+}
+.resultTable thead th{
+  vertical-align:bottom
+}
+
+.demo-wrap {
+  overflow: hidden;
+  position: relative;
+}
+
+.demo-bg {
+  opacity: 0.05;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 90%;
+  
+}
+
+
+.demo-content {
+  position: relative;
+}
+
+
+.activatedProject {
+  border: 2px solid #9892ec; padding: 10px; border-radius: 10px; margin-bottom: 10px; cursor: pointer;
+  font-size: 24px; font-weight: 900;
+    &:hover {
+      background: #9892ec; color: #ffffff; border: 2px solid #ffffff;
+    }
+}
+
+.sticky-header {
+  width: 100%;
+}
+
+/*This will work on every browser*/
+.sticky-header thead tr:nth-child(1) th {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 10;
+}
+.el-tabs--border-card {
+  background: #FFF;
+  border: 1px solid #DCDFE6;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
+  border-radius: 10px;
+}
+.el-tabs--border-card > .el-tabs__header {
+  background-color: #F5F7FA;
+  border-bottom: 1px solid #E4E7ED;
+  margin: 0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.el-loading-mask {
+  background-color: rgba(255, 255, 255, 0.229);
+  margin: 0;
+  -webkit-transition: opacity 0.3s;
+}
+.no-margin {
+  margin: -30px
+}
+.el-tabs--left .el-tabs__item.is-left {
+  text-align: left;
+}
+
+/* this is customized to ensure the hyperlink form in a ckeditoris visible on a modal*/
+.ck.ck-link-form {
+  z-index: 10000;
+}
+.b-sidebar-outer {
+ z-index: 100 !important;
+}
+/* customization of hyperlink visibility ends */

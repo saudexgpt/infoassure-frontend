@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Risks Management</h3>
+    <h3>Risks Management Setup</h3>
     <el-tabs
       v-if="selectedClient !== null"
       type="border-card"

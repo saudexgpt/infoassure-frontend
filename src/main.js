@@ -12,6 +12,7 @@ import '@/styles/index.scss' // global css
 import { registerLicense } from '@syncfusion/ej2-base'
 import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
+import VueApexCharts from 'vue-apexcharts'
 import HighchartsVue from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import drilldown from 'highcharts/modules/drilldown'
@@ -32,17 +33,17 @@ import App from './App.vue'
 // Global Components
 import './global-components'
 // 3rd party plugins
-import '@axios'
-import '@/libs/acl'
+// import '@axios'
+// import '@/libs/acl'
 import '@/libs/portal-vue'
-import '@/libs/clipboard'
+// import '@/libs/clipboard'
 import '@/libs/toastification'
-import '@/libs/sweet-alerts'
+// import '@/libs/sweet-alerts'
 // import '@/libs/vue-select'
 // import '@/libs/tour'
 
 // Axios Mock Adapter
-import '@/@fake-db/db'
+// import '@/@fake-db/db'
 
 /* -------------------------------------------------------------------------- */
 /*                             PUSHER CONFIG                                  */
@@ -70,7 +71,7 @@ Vue.use(ElementUI, {
 // registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCekxyWmFZfVpgcV9DZFZTQWYuP1ZhSXxXdkZhUX9bdXBXQ2JbVkw=')
 
 /// //////////////live license///////////////////////
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NBaF5cXmZCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXxceXRTRmhdWE10XUA=')
+registerLicense(process.env.VUE_APP_MIX_SYNC_FUSION_LICENSE)
 
 Vue.use(CKEditor)
 Vue.use(ClientTable, {
@@ -98,6 +99,9 @@ Vue.use(Event)
 // BSV Plugin Registration
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
+// apexchart
+Vue.use(VueApexCharts)
+Vue.component('apexchart', VueApexCharts)
 
 // Composition API
 Vue.use(VueCompositionAPI)
