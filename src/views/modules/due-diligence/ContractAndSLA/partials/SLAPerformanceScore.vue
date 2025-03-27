@@ -1,7 +1,10 @@
 <template>
   <el-row
     v-if="contract !== null"
+<<<<<<< HEAD
     v-loading="loading"
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     :gutter="5"
   >
     <el-col :md="24">
@@ -35,7 +38,11 @@
             </div>
           </el-col>
         </el-row>
+<<<<<<< HEAD
         <div v-if="sla !== null">
+=======
+        <div>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
           <h4><em>SLA Performance Score Card</em></h4>
           <table
             v-loading="loading"
@@ -58,10 +65,14 @@
               </tr>
             </tbody>
           </table>
+<<<<<<< HEAD
           <table
             v-if="sla !== null"
             class="table table-bordered"
           >
+=======
+          <table class="table table-bordered">
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             <tbody>
               <tr>
                 <td
@@ -75,10 +86,18 @@
               <tr>
                 <td />
                 <td>Metrics</td>
+<<<<<<< HEAD
                 <td>Achieved Value <small>(Analyzed {{ sla.report_frequency }})</small></td>
               </tr>
               <tr
                 v-for="(item, index) in sla.score_cards"
+=======
+                <td>Target</td>
+                <td>Achieved Value</td>
+              </tr>
+              <tr
+                v-for="(item, index) in score.kpi_metrics"
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                 :key="index"
               >
                 <template v-if="item.metrics !== '' && item.metrics !== null">
@@ -87,6 +106,7 @@
                       {{ index + 1 }}
                     </span>
                   </td>
+<<<<<<< HEAD
                   <td width="200">
                     <strong>{{ item.kpi_metrics.metrics }}</strong><br>
                     <small><em>{{ item.kpi_metrics.hint }}</em></small><br>
@@ -126,6 +146,31 @@
                 </template>
               </tr>
               <!-- <tr>
+=======
+                  <td width="400">
+                    <strong>{{ item.metrics }}</strong><br>
+                    <small><em>{{ item.hint }}</em></small>
+                  </td>
+                  <td>
+                    <strong>{{ item.target }}{{ item.unit }}</strong>
+                  </td>
+                  <td>
+                    <el-input
+                      v-model="item.result"
+                      type="number"
+                      :min="1"
+                      :max="100"
+                    >
+                      <template slot="append">
+                        {{ item.unit }}
+                      </template>
+                    </el-input>
+                    <small>Supply achieved value</small>
+                  </td>
+                </template>
+              </tr>
+              <tr>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                 <td colspan="2">
                   <strong>Service Quality Rating</strong>
                 </td>
@@ -139,10 +184,17 @@
                   />
                   <small>Customer satisfaction rating</small>
                 </td>
+<<<<<<< HEAD
               </tr> -->
             </tbody>
           </table>
           <!-- <table class="table table-bordered">
+=======
+              </tr>
+            </tbody>
+          </table>
+          <table class="table table-bordered">
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             <tbody>
               <tr>
                 <td><strong>SLA Compliance Status</strong></td>
@@ -231,7 +283,11 @@
                 </td>
               </tr>
             </tbody>
+<<<<<<< HEAD
           </table> -->
+=======
+          </table>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         </div>
       </div>
       <el-dialog
@@ -298,11 +354,16 @@ export default {
         action_required: '',
         comments: '',
         approval_status: '',
+<<<<<<< HEAD
       },
       number_of_assessments: {
         Weekly: [52, 'Week'], Monthly: [12, 'Month'], Quarterly: [4, 'Quarter'], Biannually: [2, 'Half'], Annually: [1, ''],
       },
       score_cards: [],
+=======
+        kpi_metrics: [],
+      },
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       score: null,
       sla: null,
       showDocumentModal: false,
@@ -316,6 +377,7 @@ export default {
   },
   mounted() {
     this.setupSLAValues()
+<<<<<<< HEAD
     this.showSLA()
   },
   methods: {
@@ -359,6 +421,11 @@ export default {
           break
       }
     },
+=======
+  },
+  methods: {
+    moment,
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     viewDocument(doc) {
       const app = this
       app.showDocumentModal = true
@@ -367,6 +434,7 @@ export default {
     setupSLAValues() {
       const app = this
       app.contract = app.selectedContract
+<<<<<<< HEAD
       // app.sla = app.selectedContract.sla
       // app.score = (app.selectedContract.score !== null) ? app.selectedContract.score : app.defaultScoreVal
       // app.score.score_cards = (app.selectedContract.score !== null) ? app.score.score_cards : app.sla.performance_metrics
@@ -410,6 +478,15 @@ export default {
           app.showSLA(false)
         }).catch(() => {
         })
+=======
+      app.sla = app.selectedContract.sla
+      app.score = (app.selectedContract.score !== null) ? app.selectedContract.score : app.defaultScoreVal
+      app.score.kpi_metrics = (app.selectedContract.score !== null) ? app.score.kpi_metrics : app.sla.performance_metrics
+      app.score.vendor_id = app.contract.vendor_id
+      app.score.client_id = app.contract.client_id
+      app.score.contract_id = app.contract.id
+      app.score.sla_config_id = app.sla.id
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     },
     saveSLA() {
       const app = this

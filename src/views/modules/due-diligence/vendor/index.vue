@@ -18,6 +18,7 @@
         <span>Vendor Management System</span>
       </div>
       <el-menu>
+<<<<<<< HEAD
         <el-menu-item @click="setPage('#onboarding')">
           <i class="el-icon-office-building" />
           <span slot="title">Onboarding</span>
@@ -42,6 +43,23 @@
           >
             <span>VRM</span>
           </el-tooltip>
+=======
+        <el-menu-item @click="page = 'onboarding'">
+          <i class="el-icon-office-building" />
+          <span slot="title">Onboarding</span>
+        </el-menu-item>
+        <el-menu-item @click="page = 'risk-assessment'">
+          <i class="el-icon-help" />
+          <span slot="title">Vendor Assessment</span>
+        </el-menu-item>
+        <el-menu-item @click="page = 'finance'">
+          <i class="el-icon-money" />
+          <span slot="title">Financials & Billing</span>
+        </el-menu-item>
+        <el-menu-item @click="page = 'contracts'">
+          <i class="el-icon-tickets" />
+          <span slot="title">Contracts & SLA</span>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         </el-menu-item>
       </el-menu>
     </el-aside>
@@ -57,7 +75,11 @@
           content="In-app Mailbox"
           placement="top-start"
         >
+<<<<<<< HEAD
           <span @click="setPage('#mailbox')">
+=======
+          <span @click="page = 'mailbox'">
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             <i
               class="el-icon-message"
               style="margin-right: 15px; cursor: pointer;  font-size: 24px"
@@ -81,11 +103,16 @@
 
       <el-main>
         <div v-if="getOtherToken">
+<<<<<<< HEAD
           <div v-if="page === '#onboarding'">
+=======
+          <div v-if="page === 'onboarding'">
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             <onboarding
               :vendor-id="otherUserData.vendor_id"
             />
           </div>
+<<<<<<< HEAD
           <div v-if="page === '#mailbox'">
             <mail-box />
           </div>
@@ -101,6 +128,20 @@
           <div v-if="page === '#vrm'">
             <VRM :vendor-id="otherUserData.vendor_id" />
           </div>
+=======
+          <div v-if="page === 'mailbox'">
+            <mail-box />
+          </div>
+          <div v-if="page === 'risk-assessment'">
+            <risk-assessment :vendor-id="otherUserData.vendor_id" />
+          </div>
+          <div v-if="page === 'finance'">
+            <financial-and-billing :vendor-id="otherUserData.vendor_id" />
+          </div>
+          <div v-if="page === 'contracts'">
+            <contract-and-sla :vendor-id="otherUserData.vendor_id" />
+          </div>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         </div>
         <div v-else>
           <other-user-login product-module="vdd" />
@@ -117,7 +158,10 @@ import Onboarding from './partials/Onboarding.vue'
 import RiskAssessment from './partials/RiskAssessment.vue'
 import FinancialAndBilling from './partials/FinancialAndBilling.vue'
 import ContractAndSla from './partials/ContractAndSLA.vue'
+<<<<<<< HEAD
 import VRM from './partials/VRM.vue'
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
 import OtherUserLogin from '@/views/pages/authentication/OtherUserLogin.vue'
 
 export default {
@@ -128,13 +172,20 @@ export default {
     OtherUserLogin,
     FinancialAndBilling,
     ContractAndSla,
+<<<<<<< HEAD
     VRM,
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
   },
   data() {
     return {
       business_impact_analyses: [],
       loading: false,
+<<<<<<< HEAD
       page: '#onboarding',
+=======
+      page: 'onboarding',
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     }
   },
   computed: {
@@ -145,14 +196,18 @@ export default {
       return this.$store.getters.otherUserData
     },
   },
+<<<<<<< HEAD
   mounted() {
     this.setCurrentPage()
   },
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
   methods: {
     checkPermission,
     async logout() {
       await this.$store.dispatch('user/logoutOtherUser')
     },
+<<<<<<< HEAD
     setCurrentPage() {
       const app = this
       app.page = (window.location.hash !== '') ? window.location.hash : '#onboarding'
@@ -162,6 +217,8 @@ export default {
       app.page = value
       app.$router.push({ hash: `${value}` })
     },
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
   },
 }
 </script>

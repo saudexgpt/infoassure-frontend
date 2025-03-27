@@ -13,7 +13,11 @@
             </div>
           </el-col>
           <el-col :md="12">
+<<<<<<< HEAD
             <p><strong>Contract No:</strong> {{ contract.contract_no }}</p>
+=======
+            <p><strong>Contract ID:</strong> #{{ contract.id }}</p>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             <p><strong>Start Date:</strong> {{ contract.start_date }}</p>
             <p><strong>Expiry Date:</strong> {{ contract.expiry_date }}</p>
           </el-col>
@@ -162,12 +166,20 @@
                 :key="index"
               >
                 <td width="160">
+<<<<<<< HEAD
                   <span v-if="item.modify === 1">
+=======
+                  <span v-if="item.modify">
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                     <el-button
                       size="mini"
                       type="danger"
                       icon="el-icon-delete"
+<<<<<<< HEAD
                       @click="removeLine(index, item.id)"
+=======
+                      @click="removeLine(index)"
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                     />
                     <el-button
                       size="mini"
@@ -180,9 +192,15 @@
                     {{ index + 1 }}
                   </span>
                 </td>
+<<<<<<< HEAD
                 <td>
                   <div
                     v-if="item.modify === 1"
+=======
+                <td width="280">
+                  <div
+                    v-if="item.modify"
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                   >
                     <el-input
                       v-model="item.metrics"
@@ -194,13 +212,21 @@
                   </div>
                   <small><em>{{ item.hint }}</em></small>
                 </td>
+<<<<<<< HEAD
                 <td width="200">
+=======
+                <td>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                   <el-select
                     v-model="item.unit"
                     filterable
                     style="width: 100%"
                     placeholder="Pick"
+<<<<<<< HEAD
                     :disabled="item.unit_disabled === 1"
+=======
+                    :disabled="item.unit_disabled"
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                   >
                     <el-option
                       v-for="(unit, unit_index) in ['%', 'Hrs', 'Days']"
@@ -210,7 +236,11 @@
                     />
                   </el-select>
                 </td>
+<<<<<<< HEAD
                 <td width="200">
+=======
+                <td>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                   <el-input
                     v-if="item.unit !== ''"
                     v-model="item.target"
@@ -317,11 +347,19 @@
                     />
                     <el-radio
                       border
+<<<<<<< HEAD
                       label="Biannually"
                     />
                     <el-radio
                       border
                       label="Annually"
+=======
+                      label="Biannualy"
+                    />
+                    <el-radio
+                      border
+                      label="Anually"
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                     />
                   </el-radio-group>
                   <!-- <el-select
@@ -460,6 +498,7 @@ export default {
         approval_workflow: '',
         performance_metrics: [],
       },
+<<<<<<< HEAD
       sla: {
         vendor_id: '',
         client_id: '',
@@ -491,6 +530,19 @@ export default {
         },
         {
           modify: 0, metrics: 'Resolution Time', hint: 'Define time to resolve non-critical issues', target: 12, unit: 'Hrs', unit_disabled: 1, result: '',
+=======
+      sla: null,
+      fill_fields_error: false,
+      performance_metrics: [
+        {
+          modify: false, metrics: 'Uptime Guarantee', hint: 'The percentage of time a service or system is functional and accessible', target: 99, unit: '%', unit_disabled: true, result: '',
+        },
+        {
+          modify: false, metrics: 'Rapid Response Time', hint: 'Define response time for critical issues', target: 3, unit: 'Hrs', unit_disabled: true, result: '',
+        },
+        {
+          modify: false, metrics: 'Resolution Time', hint: 'Define time to resolve non-critical issues', target: 12, unit: 'Hrs', unit_disabled: true, result: '',
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         },
       ],
       showDocumentModal: false,
@@ -517,6 +569,7 @@ export default {
       app.showDocumentModal = true
       app.selectedDocument = doc
     },
+<<<<<<< HEAD
     setupSLAValues() {
       const app = this
       app.contract = app.selectedContract
@@ -538,6 +591,8 @@ export default {
         })
         .catch(() => { app.loading = false })
     },
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     rowIsEmpty() {
       this.fill_fields_error = false
       const checkEmptyLines = this.sla.performance_metrics.filter(
@@ -552,6 +607,7 @@ export default {
       }
       return false
     },
+<<<<<<< HEAD
     deleteItem(id) {
       const deleteResource = new Resource('vdd/vendor-contracts/destroy-metrics')
       deleteResource.vDestroy(id)
@@ -563,6 +619,10 @@ export default {
       if (id !== null) {
         this.deleteItem(id)
       }
+=======
+    removeLine(detailId) {
+      this.fill_fields_error = false
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       if (!this.blockRemoval) {
         this.sla.performance_metrics.splice(detailId, 1)
       }
@@ -572,23 +632,49 @@ export default {
         return false
       }
       this.sla.performance_metrics.push({
+<<<<<<< HEAD
         id: null,
         modify: 1,
+=======
+        modify: true,
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         metrics: '',
         hint: '',
         target: null,
         unit: '',
+<<<<<<< HEAD
         unit_disabled: 0,
+=======
+        unit_disabled: false,
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         result: '',
       })
       return true
     },
+<<<<<<< HEAD
+=======
+    setupSLAValues() {
+      const app = this
+      app.contract = app.selectedContract
+      app.sla = (app.selectedContract.sla !== null) ? app.selectedContract.sla : app.defaultSLAVal
+      app.sla.performance_metrics = (app.sla.performance_metrics !== null) ? app.sla.performance_metrics : app.performance_metrics
+      app.sla.vendor_id = app.contract.vendor_id
+      app.sla.client_id = app.contract.client_id
+      app.sla.contract_id = app.contract.id
+      this.addLine()
+    },
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     saveSLA() {
       const app = this
       app.loading = true
       const form = app.sla
+<<<<<<< HEAD
       const saveSLAResource = new Resource('vdd/vendor-contracts/save-sla')
       saveSLAResource.vStore(form)
+=======
+      const saveSLAResource = new Resource('vdd/client-contracts/save-sla')
+      saveSLAResource.store(form)
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         .then(() => {
           app.$message({ message: 'Action Successful', type: 'success' })
           app.loading = false

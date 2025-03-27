@@ -33,6 +33,7 @@
         <div
           slot="child_row"
           slot-scope="props"
+<<<<<<< HEAD
           style="max-height: 500px; overflow: auto;"
         >
 
@@ -75,6 +76,46 @@
                     </el-button>
                   </el-tooltip>
                   <!-- <el-tooltip
+=======
+        >
+          <el-alert
+            type="error"
+            :closable="false"
+          >
+            Privileged users for {{ props.row.name }}
+          </el-alert>
+          <v-client-table
+            v-model="props.row.users"
+            :columns="['name', 'email', 'phone', 'action']"
+            :options="{ filterable: false }"
+          >
+            <div
+              slot="name"
+              slot-scope="{row}"
+            >
+              <strong>{{ row.name }}</strong>
+              <!-- <br>
+              {{ row.email }} <br>
+              {{ row.phone }} -->
+            </div>
+            <div
+              slot="action"
+              slot-scope="{row}"
+            >
+              <el-tooltip
+                :content="`Edit ${row.name}'s info`"
+                placement="top"
+              >
+                <el-button
+                  circle
+                  type="primary"
+                  @click="editThisVendorUser(row)"
+                >
+                  <feather-icon icon="EditIcon" />
+                </el-button>
+              </el-tooltip>
+              <!-- <el-tooltip
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
                 content="Activate Account"
                 placement="top"
               >
@@ -86,6 +127,7 @@
                   <feather-icon icon="CheckIcon" />
                 </el-button>
               </el-tooltip> -->
+<<<<<<< HEAD
                   <el-tooltip
                     content="Send login credentials"
                     placement="top"
@@ -148,6 +190,34 @@
               </aside>
             </el-col>
           </el-row>
+=======
+              <el-tooltip
+                content="Send login credentials"
+                placement="top"
+              >
+                <el-button
+                  circle
+                  type="info"
+                  @click="sendLoginCredentials(row)"
+                >
+                  <feather-icon icon="KeyIcon" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip
+                content="Delete User"
+                placement="top"
+              >
+                <el-button
+                  circle
+                  type="danger"
+                  @click="deleteClientUser(props.row.id, row.id)"
+                >
+                  <feather-icon icon="TrashIcon" />
+                </el-button>
+              </el-tooltip>
+            </div>
+          </v-client-table>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         </div>
         <div
           slot="second_approval"
@@ -170,7 +240,11 @@
       <hr>
       <el-row :gutter="20">
         <pagination
+<<<<<<< HEAD
           v-show="total > 10"
+=======
+          v-show="total > 0"
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
           :total="total"
           :page.sync="query.page"
           :limit.sync="query.limit"
@@ -306,6 +380,7 @@ export default {
         limit: 50,
       },
       total: 0,
+<<<<<<< HEAD
       empty: [],
       client_users: [],
       selectedClientUsers: [],
@@ -319,10 +394,17 @@ export default {
   mounted() {
     this.fetchVendors()
     this.fetchClientUsers()
+=======
+    }
+  },
+  mounted() {
+    this.fetchVendors()
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
   },
   methods: {
     checkPermission,
     checkRole,
+<<<<<<< HEAD
     fetchClientUsers() {
       const app = this
       const clientUsersResource = new Resource('vdd/fetch-client-users')
@@ -353,6 +435,12 @@ export default {
       const app = this
       const { limit, page } = this.query
       app.loading = load
+=======
+    fetchVendors() {
+      const app = this
+      const { limit, page } = this.query
+      app.loading = true
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       const fetchStaffResource = new Resource('vdd/fetch-vendors')
       fetchStaffResource.list(this.query)
         .then(response => {

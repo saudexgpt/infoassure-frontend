@@ -97,6 +97,7 @@
       >
         <el-form :model="contractForm">
           <el-form-item
+<<<<<<< HEAD
             label="Upload Contract Document"
           >
             <input
@@ -107,6 +108,8 @@
             <small>Acceptable file formats is PDF</small>
           </el-form-item>
           <el-form-item
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             label="Unique Title of the Contract Document"
           >
             <el-input
@@ -138,6 +141,19 @@
               value-format="yyyy-MM-dd"
             />
           </el-form-item>
+<<<<<<< HEAD
+=======
+          <el-form-item
+            label="Upload Contract Document"
+          >
+            <input
+              class="form-control"
+              type="file"
+              @change="onImageChange"
+            >
+            <small>Acceptable file formats is PDF</small>
+          </el-form-item>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
 
         </el-form>
         <span
@@ -218,7 +234,10 @@ export default {
       contracts: [],
       columns: [
         'action',
+<<<<<<< HEAD
         'contract_no',
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         'title',
         'file_link',
         'start_date',
@@ -275,12 +294,16 @@ export default {
         app.$alert('Only .pdf file format is accepted')
         return false
       }
+<<<<<<< HEAD
       // attempt extracting file content
       // app.convertPdfToText(e.target.files[0])
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       // eslint-disable-next-line prefer-destructuring
       app.contractForm.uploadableFile = e.target.files[0]
       return true
     },
+<<<<<<< HEAD
     convertPdfToText(file) {
       const app = this
       app.loading = true
@@ -293,6 +316,8 @@ export default {
         }).catch(() => { app.loading = false })
       return true
     },
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     manageSla(contract) {
       const app = this
       app.selectedContract = contract

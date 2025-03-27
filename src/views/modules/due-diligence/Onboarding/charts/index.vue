@@ -425,6 +425,20 @@ export default {
           categories: [],
           floating: true,
         },
+<<<<<<< HEAD
+=======
+        // responsive: [{
+        //   breakpoint: 480,
+        //   options: {
+        //     chart: {
+        //       width: 200,
+        //     },
+        //     legend: {
+        //       position: 'bottom',
+        //     },
+        //   },
+        // }],
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       },
       series2: [],
       chartOptions2: {

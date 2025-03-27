@@ -120,10 +120,14 @@
             </div>
           </div>
           <hr>
+<<<<<<< HEAD
           <el-row
             v-loading="loading"
             :gutter="5"
           >
+=======
+          <el-row :gutter="5">
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             <el-col
               :lg="16"
               :md="16"
@@ -238,6 +242,109 @@
                   </div>
                 </div>
               </div>
+<<<<<<< HEAD
+=======
+
+              <div
+                v-if="isAdmin && question.is_submitted === 1"
+                :style="`background: ${(question.risk_score === 1) ? '#e0fadf' : (question.risk_score === 2) ? '#faf4df' : '#fadfdf'}; border: 3px dashed #cccccc; padding: 10px; margin-bottom: 5px; border-radius: 5px;`"
+              >
+                <h3>Assessment</h3>
+                <b-row>
+                  <b-col cols="12">
+                    <label>Risk Score</label>
+                    <p>
+                      <select
+                        v-model="question.risk_score"
+                        placeholder="Select Risk Score"
+                        class="form-control"
+                        style="width: 100%;"
+                        @input="saveAssessment(question, 'risk_score')"
+                      >
+                        <option
+                          v-for="(score, score_index) in risk_scores"
+                          :key="score_index"
+                          :value="score.value"
+                          :label="score.label"
+                        />
+                      </select>
+                    </p>
+                  </b-col>
+
+                  <b-col cols="12">
+                    <label>Observation</label>
+                    <p>
+                      <el-input
+                        v-model="question.observation"
+                        type="textarea"
+                        placeholder="Give your observation to the response here..."
+                        style="width: 100%"
+                        @blur="saveAssessment(question, 'observation')"
+                      />
+                    </p>
+                    <!-- <p><el-alert
+                      :closable="false"
+                      :type="(question.risk_score === 1) ? 'success' : (question.risk_score === 2) ? 'warning' : 'error'"
+                      effect="dark"
+                    >
+                      {{ (question.observation) ? question.observation : 'No observation yet' }}
+                    </el-alert></p> -->
+                  </b-col>
+                  <b-col cols="12">
+                    <label>Impact</label>
+                    <p>
+                      <el-input
+                        v-model="question.impact"
+                        type="textarea"
+                        placeholder="State the impact this response poses..."
+                        style="width: 100%"
+                        @blur="saveAssessment(question, 'impact')"
+                      />
+                    </p>
+                    <!-- <p>
+                      <el-alert
+                        :closable="false"
+                        :type="(question.risk_score === 1) ? 'success' : (question.risk_score === 2) ? 'warning' : 'error'"
+                        effect="dark"
+                      >
+                        {{ (question.impact) ? question.impact : 'No impact' }}
+                      </el-alert>
+                    </p> -->
+                  </b-col>
+                  <b-col cols="12">
+                    <label>Recommendations</label>
+                    <p>
+                      <el-input
+                        v-model="question.recommendations"
+                        type="textarea"
+                        placeholder="Provide a recommendation..."
+                        style="width: 100%"
+                        @blur="saveAssessment(question, 'recommendations')"
+                      />
+                    </p>
+                    <!-- <p>
+                      <el-alert
+                        :closable="false"
+                        :type="(question.risk_score === 1) ? 'success' : (question.risk_score === 2) ? 'warning' : 'error'"
+                        effect="dark"
+                      >
+                        {{ (question.recommendations) ? question.recommendations : 'Nothing to recommend' }}
+                      </el-alert>
+                    </p> -->
+                  </b-col>
+                  <b-col cols="12">
+                    <label>Status</label>
+                    <p>
+                      <el-alert
+                        :closable="false"
+                      >
+                        {{ (question.status) ? question.status : 'Open' }}
+                      </el-alert>
+                    </p>
+                  </b-col>
+                </b-row>
+              </div>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
             </el-col>
             <el-col
               v-if="question.upload_evidence === 1"
@@ -247,7 +354,11 @@
               :xs="24"
             >
               <div
+<<<<<<< HEAD
                 style="max-height: 300px; overflow: auto; background: #fcfcfc; padding: 10px;"
+=======
+                style="height: 300px; overflow: auto; background: #fcfcfc; padding: 10px;"
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
               >
                 <b-button
                   v-if="!isAdmin && question.is_submitted === 0"
@@ -320,6 +431,7 @@
               </div>
             </el-col>
           </el-row>
+<<<<<<< HEAD
 
           <el-row v-if="isAdmin && question.is_submitted === 1">
             <el-col
@@ -333,6 +445,8 @@
               />
             </el-col>
           </el-row>
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         </div>
       </div>
       <!-- <give-due-diligence-remarks
@@ -361,11 +475,18 @@
 </template>
 <script>
 import {
+<<<<<<< HEAD
   BButton, BModal, BAlert,
 } from 'bootstrap-vue'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import UploadDueDiligenceEvidence from '../../UploadDueDiligenceEvidence.vue'
 import EditRiskAssessment from './EditRiskAssessment.vue'
+=======
+  BButton, BModal, BAlert, BRow, BCol,
+} from 'bootstrap-vue'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import UploadDueDiligenceEvidence from '../../UploadDueDiligenceEvidence.vue'
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
 // import GiveDueDiligenceRemarks from '../../GiveDueDiligenceRemarks.vue'
 import VueDocumentEditor from '@/views/components/editors/VueDocumentEditor.vue'
 import VueSpreadsheetEditor from '@/views/components/editors/VueSpreadsheetEditor.vue'
@@ -373,11 +494,19 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
+<<<<<<< HEAD
+=======
+    BRow,
+    BCol,
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     BButton,
     BAlert,
     BModal,
     UploadDueDiligenceEvidence,
+<<<<<<< HEAD
     EditRiskAssessment,
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     // GiveDueDiligenceRemarks,
     VueDocumentEditor,
     VueSpreadsheetEditor,
@@ -494,7 +623,10 @@ export default {
       const message = 'Click OK to confirm submit action. You will not be able to modify responses once you submit'
       // eslint-disable-next-line no-alert
       if (window.confirm(message)) {
+<<<<<<< HEAD
         app.$message('Response is submitted')
+=======
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         const answerIds = []
         domains.forEach(response => {
           answerIds.push(response.id)

@@ -1,10 +1,20 @@
 <template>
   <div>
+<<<<<<< HEAD
     <el-skeleton
       :loading="loading"
       :rows="4"
       animated
     />
+=======
+    <el-card>
+      <el-skeleton
+        :loading="loading"
+        :rows="4"
+        animated
+      />
+    </el-card>
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
     <div v-if="!loading">
       <el-card>
         <div
@@ -20,9 +30,18 @@
             <strong>Vendors By IRR <i class="el-icon-question" /></strong>
           </el-tooltip>
         </div>
+<<<<<<< HEAD
         <highcharts
           :options="highChart"
         />
+=======
+        <apexchart
+          v-if="series"
+          :options="chartOptions"
+          :series="series"
+        />
+        <el-empty v-else />
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
       </el-card>
     </div>
   </div>
@@ -39,6 +58,7 @@ export default {
   data() {
     return {
       loading: false,
+<<<<<<< HEAD
       highChart: {
         chart: {
           type: 'pie',
@@ -83,6 +103,24 @@ export default {
         series: [],
         credits: {
           enabled: false,
+=======
+      series: [],
+      chartOptions: {
+        chart: {
+          type: 'donut',
+        },
+        plotOptions: {
+          pie: {
+            startAngle: -90,
+            endAngle: 90,
+            // offsetY: 10,
+          },
+        },
+        colors: ['#28c76f', '#ff9f43', '#ea5455'],
+        labels: ['Low', 'Medium', 'High'],
+        legend: {
+          position: 'bottom',
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
         },
       },
     }
@@ -94,10 +132,17 @@ export default {
     fetchVendorsRatings() {
       const app = this
       app.loading = true
+<<<<<<< HEAD
       const fetchReportResource = new Resource('vdd/reports/vendor-onboarding-report')
       fetchReportResource.list({ chart_type: 'ratings' })
         .then(response => {
           app.highChart.series = response.series
+=======
+      const fetchStaffResource = new Resource('vdd/reports/vendor-onboarding-report')
+      fetchStaffResource.list({ chart_type: 'ratings' })
+        .then(response => {
+          app.series = response.vendor_ratings_series
+>>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
           app.loading = false
         }).catch(() => { app.loading = false })
     },

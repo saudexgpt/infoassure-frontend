@@ -1,123 +1,17 @@
 <template>
-<<<<<<< HEAD
-  <el-tabs type="border-card">
-    <!-- <el-tabs
-      v-model="activeName"
-      @tab-click="handleClick"
-    > -->
-    <el-tab-pane
-      label="Onboarding"
-      lazy
-    >
-      <OnboardingDashboard />
-    </el-tab-pane>
-    <el-tab-pane
-      label="Risk Assessment"
-      lazy
-    >
-      <RiskAssessmentDashboard />
-    </el-tab-pane>
-    <!-- <el-tab-pane
-      label="Vendor Onboarding"
-      name="#onboarding"
-      lazy
-    >
-      <RiskAssessment />
-    </el-tab-pane>
-    <el-tab-pane
-      label="Risk Management"
-      name="#risk-management"
-      lazy
-    >
-      <risk-assessment />
-    </el-tab-pane>
-    <el-tab-pane
-      label="Contracts & SLA"
-      name="#contract-and-sla"
-      lazy
-    >
-      <contract-and-sla />
-    </el-tab-pane>
-    <el-tab-pane
-      label="Financials & Billing"
-      name="#financials-and-billing"
-      lazy
-    >
-      <financials-and-billing />
-    </el-tab-pane>
-    <el-tab-pane
-      label="Vendor Relationship"
-      name="#vrm"
-      lazy
-    >
-      <VRM />
-    </el-tab-pane> -->
-    <!-- <el-tab-pane
-      label="Audit Assessment"
-      name="fifth"
-      lazy
-    >
-      <div>
-        <img
-          align="center"
-          src="images/construction.jpg"
-        >
-      </div>
-    </el-tab-pane>
-    <el-tab-pane
-      label="Reports & Analytics"
-      name="sixth"
-      lazy
-    >
-      <div>
-        <img
-          align="center"
-          src="images/construction.jpg"
-        >
-      </div>
-    </el-tab-pane> -->
-  </el-tabs>
-</template>
-<script>
-import OnboardingDashboard from '@/views/modules/DUE-DILIGENCE/Onboarding/Dashboard.vue'
-import RiskAssessmentDashboard from '@/views/modules/DUE-DILIGENCE/RiskAssessment/Dashboard.vue'
-// import FinancialsAndBilling from '@/views/modules/DUE-DILIGENCE/FinancialsAndBilling/index.vue'
-// import ContractAndSla from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/index.vue'
-// import VRM from '@/views/modules/DUE-DILIGENCE/VendorRelationshipManagement/index.vue'
-
-export default {
-  components: {
-    OnboardingDashboard, RiskAssessmentDashboard,
-  },
-  data() {
-    return {
-      activeName: '#dashboard',
-      keyValue: 1,
-    }
-  },
-  mounted() {
-    // this.setCurrentPage()
-  },
-  methods: {
-=======
-  <el-card>
+  <div>
     <div
-      slot="header"
+      style="cursor:pointer; text-align: right;"
+      @click="loadResources()"
     >
-      <span
-        class="pull-right"
-        style="cursor:pointer;"
-        @click="loadResources()"
-      >
-        <el-tooltip content="Refresh">
-          <feather-icon
-            icon="RefreshCwIcon"
-            class="ml-50"
-            size="30"
-          />
-        </el-tooltip>
-      </span>
-      <h3>Vendor Management System Overview</h3>
+
+      <el-tooltip content="Refresh">
+        <feather-icon
+          icon="RefreshCwIcon"
+          class="ml-50"
+          size="30"
+        />
+      </el-tooltip>
     </div>
     <el-row
       v-if="loading"
@@ -155,7 +49,7 @@ export default {
           <b-card>
             <b-card-body class="d-flex justify-content-between align-items-center">
               <b-avatar
-                variant="light-primary"
+                variant="light-dark"
                 size="50"
               >
                 <feather-icon
@@ -184,7 +78,7 @@ export default {
           <b-card>
             <b-card-body class="d-flex justify-content-between align-items-center">
               <b-avatar
-                variant="light-secondary"
+                variant="light-warning"
                 size="50"
               >
                 <feather-icon
@@ -263,6 +157,40 @@ export default {
         </el-col>
       </el-row>
       <el-row :gutter="15">
+        <!-- <el-col
+          :xs="24"
+          :sm="24"
+          :md="8"
+          :lg="8"
+          :xl="8"
+        >
+          <el-card>
+            <div
+              slot="header"
+              class="clearfix"
+            >
+              <strong>Category Description</strong>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(category, index) in categories"
+                  :key="index"
+                >
+                  <td>{{ category.slug }}</td>
+                  <td>{{ category.name }} <br> <small><em>{{ category.description }}</em></small></td>
+                </tr>
+              </tbody>
+            </table>
+          </el-card>
+
+        </el-col> -->
         <el-col
           :xs="24"
           :sm="24"
@@ -335,52 +263,6 @@ export default {
               :series="series2"
             />
             <el-empty v-else />
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :md="24">
-          <el-card>
-            <div
-              slot="header"
-              class="clearfix"
-            >
-              <span class="pull-right">
-                <el-select
-                  v-model="selectedVendor"
-                  value-key="id"
-                  placeholder="Select Vendor"
-                  @input="fetchRiskAssessmentAnalysis"
-                >
-                  <el-option
-                    v-for="(vendor, index) in vendors"
-                    :key="index"
-                    :value="vendor"
-                    :label="vendor.name"
-                  />
-                </el-select>
-              </span>
-              <strong>Risk Score Count by Requirements</strong>
-            </div>
-            <div v-if="loadingAnalysis">
-
-              <el-skeleton
-                :loading="loadingAnalysis"
-                :rows="7"
-                animated
-              />
-            </div>
-            <div v-else>
-
-              <highcharts
-                v-if="categories_count > 0"
-                :options="riskAssessmentReportChart"
-              />
-              <el-empty
-                v-else
-                :description="`No Data Found for ${selectedVendor.name}`"
-              />
-            </div>
           </el-card>
         </el-col>
       </el-row>
@@ -472,7 +354,7 @@ export default {
         </el-col>
       </el-row>
     </div>
-  </el-card>
+  </div>
 </template>
 
 <script>
@@ -492,11 +374,7 @@ export default {
   data() {
     return {
       categories: [],
-      categories_count: 0,
       vendors: [],
-      selectedVendor: {
-        name: '',
-      },
       query: {
         page: 1,
         limit: 50,
@@ -515,7 +393,7 @@ export default {
           name: 'Vendor Name',
           'category.slug': 'Category',
           second_approval: 'Status',
-          inherent_risk_rating: 'Inherent Risk Rating',
+          inherent_risk_rating: 'Rating',
 
           // id: 'S/N',
         },
@@ -541,7 +419,6 @@ export default {
       rejected_vendors: 0,
       pending_approval: 0,
       loading: false,
-      loadingAnalysis: false,
       series1: [],
       chartOptions1: {
         chart: {
@@ -578,7 +455,7 @@ export default {
         chart: {
           type: 'pie',
         },
-        colors: ['#cccccc', '#000000', '#313adb'],
+        colors: ['#ff9f43', '#ea5455', '#28c76f'],
         labels: ['Pending', 'Rejected', 'Approved'],
         legend: {
           position: 'bottom',
@@ -607,52 +484,22 @@ export default {
             // offsetY: 10,
           },
         },
-        colors: ['#34db31', '#db9731', '#db3131'],
+        colors: ['#28c76f', '#ff9f43', '#ea5455'],
         labels: ['Low', 'Medium', 'High'],
         legend: {
           position: 'bottom',
         },
-      },
-      riskAssessmentReportChart: {
-        chart: {
-          type: 'bar',
-          options3d: {
-            enabled: false,
-          },
-        },
-        title: {
-          text: '',
-          align: 'center',
-        },
-        subtitle: {
-          text: '',
-        },
-        plotOptions: {
-          series: {
-            stacking: 'normal',
-            dataLabels: {
-              enabled: true,
-            },
-          },
-        },
-        xAxis: {
-          categories: [],
-        },
-        yAxis: {
-          allowDecimals: false,
-          min: 0,
-          title: {
-            text: 'Scale',
-          },
-          stackLabels: {
-            enabled: false,
-          },
-        },
-        colors: ['#34db31', '#db9731', '#db3131'],
-        series: [],
-        credits: {
-          enabled: false,
-        },
+        // responsive: [{
+        //   breakpoint: 480,
+        //   options: {
+        //     chart: {
+        //       width: 200,
+        //     },
+        //     legend: {
+        //       position: 'bottom',
+        //     },
+        //   },
+        // }],
       },
     }
   },
@@ -684,19 +531,6 @@ export default {
           app.loading = false
         }).catch(() => { app.loading = false })
     },
-    fetchRiskAssessmentAnalysis() {
-      const app = this
-      app.loadingAnalysis = true
-      const fetchRAResource = new Resource('vdd/reports/vendor-risk-assessment-analysis')
-      fetchRAResource.list({ vendor_id: app.selectedVendor.id })
-        .then(response => {
-          app.riskAssessmentReportChart.series = response.series
-          app.riskAssessmentReportChart.xAxis.categories = response.risk_categories
-          app.riskAssessmentReportChart.title.text = app.selectedVendor.name
-          app.categories_count = response.risk_categories.length
-          app.loadingAnalysis = false
-        }).catch(() => { app.loadingAnalysis = false })
-    },
     fetchVendorCategories() {
       const app = this
       const fetchCategoryResource = new Resource('vdd/fetch-vendor-categories')
@@ -707,25 +541,20 @@ export default {
     },
     fetchDashboardVendors() {
       const app = this
-      // const { limit, page } = this.query
+      const { limit, page } = this.query
       app.loading = true
       const fetchStaffResource = new Resource('vdd/fetch-vendors')
-      fetchStaffResource.list({ all: true })
+      fetchStaffResource.list(this.query)
         .then(response => {
-          app.vendors = response.vendors
-
-          // eslint-disable-next-line prefer-destructuring
-          app.selectedVendor = app.vendors[0]
-          app.fetchRiskAssessmentAnalysis()
-          // app.vendors.forEach((element, index) => {
-          //   // eslint-disable-next-line no-param-reassign, dot-notation
-          //   element['index'] = (page - 1) * limit + index + 1
-          // })
-          // app.total = response.vendors.total
+          app.vendors = response.vendors.data
+          app.vendors.forEach((element, index) => {
+            // eslint-disable-next-line no-param-reassign, dot-notation
+            element['index'] = (page - 1) * limit + index + 1
+          })
+          app.total = response.vendors.total
           app.loading = false
         })
     },
->>>>>>> e535cf9e54c24382d79f396c014e9034db20c8b6
   },
 }
 </script>
