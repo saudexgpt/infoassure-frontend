@@ -5,6 +5,11 @@ export default [
     component: () => import('@/views/dashboard/DashboardMain.vue'),
   },
   {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('@/views/modules/settings/index.vue'),
+  },
+  {
     path: '/apps/email',
     name: 'apps-email',
     component: () => import('@/views/apps/email/Email.vue'),
@@ -81,14 +86,11 @@ export default [
       modules: ['rcsa'],
     },
   },
-  {
-    path: '/manage-assets',
-    name: 'manage-assets',
-    component: () => import('@/views/modules/ManageAssets/index.vue'),
-    // meta: {
-    //   modules: ['rcsa'],
-    // },
-  },
+  // {
+  //   path: '/manage-assets',
+  //   name: 'manage-assets',
+  //   component: () => import('@/views/modules/ManageAssets/index.vue'),
+  // },
   // {
   //   path: '/risk-setup',
   //   name: 'risk-setup',

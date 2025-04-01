@@ -26,7 +26,7 @@
 
         <b-form
           class="auth-forgot-password-form mt-2"
-          @submit.prevent="validationForm"
+          @submit.prevent="submit"
         >
           <b-form-group
             label="Email"
@@ -35,27 +35,23 @@
             <b-form-input
               id="forgot-password-email"
               v-model="userEmail"
+              type="email"
               name="forgot-password-email"
               placeholder="john@example.com"
             />
           </b-form-group>
-          <!-- <b-form-group>
-            <vue-recaptcha
-              :sitekey="recaptchaSiteKey"
-              :load-recaptcha-script="true"
+          <b-form-group>
+            <Recaptcha
+              ref="recaptcha"
               @verify="validate"
             />
-          </b-form-group> -->
-          <div
-            id="recaptcha-2"
-            class="g-recaptcha"
-            :data-sitekey="recaptchaSiteKey"
-          />
+          </b-form-group>
           <br>
           <b-button
             type="submit"
             variant="primary"
             block
+            :disabled="userEmail === '' || g_recaptcha_response === ''"
           >
             Send reset link
           </b-button>
@@ -77,12 +73,12 @@
 import {
   BCard, BCardTitle, BCardText, BForm, BFormGroup, BLink, BFormInput, BButton,
 } from 'bootstrap-vue'
-// import VueRecaptcha from 'vue-recaptcha'
+import Recaptcha from '@/views/modules/components/Recaptcha.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    // VueRecaptcha,
+    Recaptcha,
     BCard,
     BButton,
     BCardTitle,
@@ -95,41 +91,43 @@ export default {
   data() {
     return {
       userEmail: '',
+      g_recaptcha_response: '',
       load: false,
     }
   },
-  computed: {
-    recaptchaSiteKey() {
-      return process.env.VUE_APP_MIX_RECAPTCHA_SITE_KEY
-    },
-  },
   mounted() {
-    this.$nextTick(() => {
-      // eslint-disable-next-line no-undef
-      grecaptcha.render('recaptcha-2')
-    })
+    // this.$nextTick(() => {
+    //   // eslint-disable-next-line no-undef
+    //   grecaptcha.render('recaptcha-2')
+    // })
   },
   methods: {
     validate(response) {
-      console.log(response)
-      // Validation.validate({ Response: response }).then(result => {
-      //   this.$emit('validate', result.objectResult.success)
-      // }).catch(error => console.log(error))
+      const app = this
+      app.g_recaptcha_response = response
+      // console.log(response)
+      // app.submit()
     },
-    validationForm() {
+    // execute the recaptcha widget
+    // executeRecaptcha() {
+    //   this.$refs.recaptcha.execute()
+    // },
+    submit() {
       const app = this
       const confirmEmailResource = new Resource('auth/recover-password')
       app.load = true
-      confirmEmailResource.store({ email: app.userEmail })
+      confirmEmailResource.store({ email: app.userEmail, g_recaptcha_response: app.g_recaptcha_response })
         .then(response => {
           app.$message({
             message: response.message,
             type: 'success',
           })
           app.userEmail = ''
+          this.$refs.recaptcha.reset()
           app.load = false
         })
         .catch(error => {
+          app.$refs.recaptcha.reset()
           app.$message({
             message: error.response.data.message,
             type: 'error',

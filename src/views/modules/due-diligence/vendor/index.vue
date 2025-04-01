@@ -3,7 +3,6 @@
     <el-aside
       v-if="getOtherToken"
       width="250px"
-      style="background-color: rgb(238, 241, 246)"
     >
       <div style="text-align: center;">
         <img
@@ -49,7 +48,7 @@
     <el-container>
       <el-header
         v-if="getOtherToken"
-        style="text-align: right;"
+        style="background-color: rgb(187, 144, 2); color: #ffffff; text-align: right;"
       >
         <el-tooltip
           class="item"
@@ -69,7 +68,7 @@
         >
           <i
             class="el-icon-user"
-            style="margin-right: 15px;  font-size: 20px"
+            style="margin-right: 15px; color: #ffffff; font-size: 20px"
           > {{ otherUserData.name }}</i>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="a">

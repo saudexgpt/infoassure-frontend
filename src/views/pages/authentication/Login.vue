@@ -104,7 +104,7 @@
           </b-form>
           <el-alert
             v-if="reset_password"
-            :title="title"
+            title="You are required to change your password"
             type="error"
             :closable="false"
           />

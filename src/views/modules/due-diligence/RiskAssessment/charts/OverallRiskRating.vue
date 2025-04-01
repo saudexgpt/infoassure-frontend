@@ -92,7 +92,7 @@ export default {
         chart: {
           type: 'column',
           options3d: {
-            enabled: true,
+            enabled: false,
             alpha: 10,
             beta: 0,
           },
@@ -136,7 +136,7 @@ export default {
         chart: {
           type: 'pie',
           options3d: {
-            enabled: true,
+            enabled: false,
             alpha: 10,
             beta: 0,
           },

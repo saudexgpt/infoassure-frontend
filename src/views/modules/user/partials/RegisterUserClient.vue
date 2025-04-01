@@ -115,7 +115,7 @@
                   >
                     <b-form-input
                       id="email"
-                      v-model="clientUserform.admin_email"
+                      v-model="clientUserform.email"
                       placeholder="Enter Email Address"
                       :state="errors.length > 0 ? false:null"
                     />
@@ -136,7 +136,7 @@
                   >
                     <b-form-input
                       id="phone"
-                      v-model="clientUserform.admin_phone"
+                      v-model="clientUserform.phone"
                       :state="errors.length > 0 ? false:null"
                       placeholder="Enter Phone Number"
                     />
@@ -218,8 +218,8 @@ export default {
         client_id: '',
         admin_first_name: '',
         admin_last_name: '',
-        admin_email: '',
-        admin_phone: '',
+        email: '',
+        phone: '',
         designation: '',
         role: 'client',
         login_as: 'client',
@@ -229,8 +229,8 @@ export default {
         client_id: '',
         admin_first_name: '',
         admin_last_name: '',
-        admin_email: '',
-        admin_phone: '',
+        email: '',
+        phone: '',
         designation: '',
         role: 'client',
         login_as: 'client',
@@ -288,9 +288,10 @@ export default {
       const registerResource = new Resource('clients/register-client-user')
       const { clientUserform } = app
       app.loader = true
-      // const email = form.admin_email
+      const { email } = app.clientUserform
       registerResource.store(clientUserform)
         .then(() => {
+          app.$alert(`A confirmation link has been sent to ${email}`)
           app.$emit('saved')
           app.clientUserform = app.empty_clientUserform
           app.loader = false

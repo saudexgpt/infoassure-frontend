@@ -51,7 +51,7 @@ export default {
         chart: {
           type: 'bar',
           options3d: {
-            enabled: true,
+            enabled: false,
           },
         },
         title: {

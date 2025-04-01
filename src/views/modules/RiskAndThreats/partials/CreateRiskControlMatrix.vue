@@ -785,8 +785,8 @@ import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import CreateRiskCategory from './CreateRiskCategory.vue'
-import CreateAssetType from '@/views/modules/ManageAssets/CreateAssetType.vue'
-import CreateAsset from '@/views/modules/ManageAssets/CreateAsset.vue'
+import CreateAssetType from '@/views/modules/settings/partials/ManageAssets/CreateAssetType.vue'
+import CreateAsset from '@/views/modules/settings/partials/ManageAssets/CreateAsset.vue'
 
 export default {
   components: {

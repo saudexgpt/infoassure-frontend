@@ -22,7 +22,7 @@
           color="#bb9002"
           title="SIGN UP FORM"
           subtitle="Kindly provide the information below"
-          shape="circle"
+          shape="tab"
           step-size="xs"
           finish-button-text="Submit"
           back-button-text="Back"
@@ -179,7 +179,7 @@
                     >
                       <b-form-input
                         id="email"
-                        v-model="form.admin_email"
+                        v-model="form.email"
                         placeholder="Enter Email Address"
                         :state="errors.length > 0 ? false:null"
                       />
@@ -200,7 +200,7 @@
                     >
                       <b-form-input
                         id="phone"
-                        v-model="form.admin_phone"
+                        v-model="form.phone"
                         :state="errors.length > 0 ? false:null"
                         placeholder="Enter Phone Number"
                       />
@@ -222,20 +222,12 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <div
-                    id="recaptcha-reg"
-                    class="control"
-                  >
-                    <div
-                      id="recaptcha-main"
-                      class="g-recaptcha"
-                      :data-sitekey="recaptchaSiteKey"
+                  <b-form-group>
+                    <Recaptcha
+                      ref="recaptcha"
+                      @verify="validate"
                     />
-                  </div>
-                  <!-- <vue-recaptcha
-                    ref="recaptcha"
-                    @verify="onVerify"
-                  /> -->
+                  </b-form-group>
                 </b-col>
                 <!-- <b-col md="12">
                   <b-form-group
@@ -343,11 +335,13 @@ import {
   // BAlert,
 } from 'bootstrap-vue'
 import { required } from '@validations'
+import Recaptcha from '@/views/modules/components/Recaptcha.vue'
 // import { codeIcon } from './code'
 import Resource from '@/api/resource'
 
 export default {
   components: {
+    Recaptcha,
     ValidationProvider,
     ValidationObserver,
     FormWizard,
@@ -379,13 +373,14 @@ export default {
         contact_address: '',
         admin_first_name: '',
         admin_last_name: '',
-        admin_email: '',
+        email: '',
         password: '',
         cpassword: '',
-        admin_phone: '',
+        phone: '',
         designation: '',
         role: 'admin',
         required,
+        g_recaptcha_response: '',
       },
       empty_form: {
         organization_name: '',
@@ -394,14 +389,16 @@ export default {
         contact_address: '',
         admin_first_name: '',
         admin_last_name: '',
-        admin_email: '',
+        email: '',
         password: '',
         cpassword: '',
-        admin_phone: '',
+        phone: '',
         designation: '',
         role: 'admin',
         required,
+        g_recaptcha_response: '',
       },
+      recaptcha_response: '',
       genders: ['Male', 'Female'],
       loader: false,
       imgUrl: require('@/assets/images/pages/login/lms2.jpg'),
@@ -417,24 +414,27 @@ export default {
     },
   },
   created() {
-    this.$nextTick(() => {
-      // eslint-disable-next-line no-undef
-      grecaptcha.render('recaptcha-main')
-    })
+    // this.$nextTick(() => {
+    //   // eslint-disable-next-line no-undef
+    //   grecaptcha.render('recaptcha-main')
+    // })
   },
   methods: {
-    onVerify(response) {
-      console.log(response)
+    validate(response) {
+      const app = this
+      app.form.g_recaptcha_response = response
+      // console.log(response)
+      // app.submit()
     },
     formSubmitted() {
       const app = this
-      app.$refs.recaptcha.execute()
       const registerResource = new Resource('auth/register-client')
       const { form } = app
       app.loader = true
-      const email = form.admin_email
+      const { email } = form
       registerResource.store(form)
         .then(() => {
+          app.$refs.recaptcha.reset()
           app.form = app.empty_form
           app.loader = false
           app.$toast({
@@ -453,6 +453,7 @@ export default {
           this.$router.push({ path: '/login' })
           // send mail
         }).catch(error => {
+          app.$refs.recaptcha.reset()
           console.log(error)
           app.$toast({
             component: ToastificationContent,

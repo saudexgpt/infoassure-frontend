@@ -173,7 +173,7 @@
                     >
                       <b-form-input
                         id="email"
-                        v-model="form.admin_email"
+                        v-model="form.admin"
                         placeholder="Enter Email Address"
                         :state="errors.length > 0 ? false:null"
                       />
@@ -194,7 +194,7 @@
                     >
                       <b-form-input
                         id="phone"
-                        v-model="form.admin_phone"
+                        v-model="form.phone"
                         :state="errors.length > 0 ? false:null"
                         placeholder="Enter Phone Number"
                       />
@@ -342,8 +342,9 @@ export default {
         contact_address: '',
         admin_first_name: '',
         admin_last_name: '',
-        admin_email: '',
-        admin_phone: '',
+        admin: '',
+        email: '',
+        phone: '',
         designation: '',
         required,
       },
@@ -354,8 +355,9 @@ export default {
         contact_address: '',
         admin_first_name: '',
         admin_last_name: '',
-        admin_email: '',
-        admin_phone: '',
+        admin: '',
+        email: '',
+        phone: '',
         designation: '',
         required,
       },
@@ -377,7 +379,7 @@ export default {
       const registerResource = new Resource('register')
       const { form } = app
       app.loader = true
-      // const email = form.admin_email
+      const { email } = form
       registerResource.store(form)
         .then(() => {
           app.form = app.empty_form
@@ -391,7 +393,7 @@ export default {
             },
           })
 
-          // app.$alert(`A confirmation link has been sent to ${email}. Kindly check your mail and click on the link to complete your registration.`)
+          app.$alert(`A confirmation link has been sent to ${email}`)
           // app.$alert(`<strong>A confirmation link has been sent to ${email}.</strong><br>Kindly check your mail and click on the link to complete your registration.`, 'Confirmation Link Sent', {
           //   dangerouslyUseHTMLString: true,
           // })
