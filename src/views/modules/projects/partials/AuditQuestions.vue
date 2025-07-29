@@ -41,13 +41,6 @@
                     Consultant Remark </el-button
                   >&nbsp;
                   <!-- <el-popover
-                  v-if="isAdmin"
-                  placement="right"
-                  width="400"
-                  trigger="click"
-                >
-                  <div>
-                    <el-input
                       v-model="adminRemark"
                       placeholder="Give remark here..."
                       type="textarea"
@@ -113,6 +106,17 @@
                     @click="submitAnswers(clause.questions)"
                     ><feather-icon icon="SaveIcon" />
                     Submit
+                  </button>
+                </div>
+                <div>
+                  <button
+                    v-for="(quest_count, q_index) in clause.questions.length"
+                    :key="q_index"
+                    :class="`btn ${parseInt(question_index) === q_index ? 'btn-primary' : 'btn-dark'} btn-dark btn-sm`"
+                    style="margin: 1px 1px 0 0"
+                    @click="change(q_index, index)"
+                  >
+                    {{ quest_count }}
                   </button>
                 </div>
                 <div>

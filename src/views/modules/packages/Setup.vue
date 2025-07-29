@@ -1,6 +1,6 @@
 <template>
   <div>
-    <setup-n-d-p-a v-if="projectModule === 'ndpa'" :module-id="moduleId" />
+    <SetupNDPA v-if="projectModule === 'ndpa'" :module-id="moduleId" />
   </div>
 </template>
 

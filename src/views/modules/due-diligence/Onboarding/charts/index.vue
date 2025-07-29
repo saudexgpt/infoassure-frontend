@@ -288,6 +288,13 @@ export default {
         xaxis: {
           categories: [],
           floating: true
+        },
+        dataLabels: {
+          enabled: true
+        },
+        xaxis: {
+          categories: [],
+          floating: true
         }
       },
       series2: [],

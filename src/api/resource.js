@@ -84,6 +84,44 @@ class Resource {
       method: 'delete'
     })
   }
+
+  vList(query) {
+    return vendorRequest({
+      url: `/${this.uri}`,
+      method: 'get',
+      params: query
+    })
+  }
+
+  vGet(id) {
+    return vendorRequest({
+      url: `/${this.uri}/${id}`,
+      method: 'get'
+    })
+  }
+
+  vStore(resource) {
+    return vendorRequest({
+      url: `/${this.uri}`,
+      method: 'post',
+      data: resource
+    })
+  }
+
+  vUpdate(id, resource) {
+    return vendorRequest({
+      url: `/${this.uri}/${id}`,
+      method: 'put',
+      data: resource
+    })
+  }
+
+  vDestroy(id) {
+    return vendorRequest({
+      url: `/${this.uri}/${id}`,
+      method: 'delete'
+    })
+  }
 }
 
 export { Resource as default }

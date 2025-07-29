@@ -45,11 +45,11 @@
     <el-alert v-if="clauses.length > 0" type="success">
       Click on the + sign to view Sections
     </el-alert>
-    <v-client-table v-model="clauses" v-loading="loading" :columns="columns" :options="options">
+    <v-client-table :data="clauses" v-loading="loading" :columns="columns" :options="options">
       <template v-slot:child_row="props">
         <strong>Sections for {{ `${props.row.name} - ${props.row.description}` }}</strong>
         <aside>
-          <v-client-table v-model="props.row.sections" :columns="['name', 'action']" :options="{}">
+          <v-client-table :data="props.row.sections" :columns="['name', 'action']" :options="{}">
             <template v-slot:name="{ row }">
               <div>
                 {{ `${row.name} - ${row.description}` }}

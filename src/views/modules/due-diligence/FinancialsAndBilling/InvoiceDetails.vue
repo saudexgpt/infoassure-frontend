@@ -385,7 +385,6 @@ export default {
       string = string.replace(/[, ]/g, '')
 
       /* Is number zero? */
-
       if (parseInt(string) === 0) {
         return 'zero'
       }

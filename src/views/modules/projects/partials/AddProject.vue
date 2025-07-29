@@ -154,18 +154,8 @@
                           style="width: 100%"
                         />
                         <hr />
-                        <card-payment
-                          :form="form"
-                          :currency="currency"
-                          @paid="fetchSubscriptionDetails"
-                        />
+                        <card-payment :form="form" :currency="currency" />
                       </div>
-                      <!-- <card-payment
-                        v-if="validEmail(form.email)"
-                        :form="form"
-                        :currency="currency"
-                        @paid="fetchSubscriptionDetails"
-                      /> -->
                     </div>
                   </td>
                 </tr>
@@ -380,6 +370,18 @@ export default {
   }
 }
 </script>
+<style scoped>
+.fixed {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  width: 480px;
+  height: 550px;
+  overflow: auto;
+  background: #f9f9f9;
+  padding: 20px;
+}
+</style>
 <style scoped>
 .fixed {
   position: fixed;

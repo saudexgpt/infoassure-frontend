@@ -223,7 +223,6 @@ const actions = {
             setOtherToken(response.token)
             saveOtherUser(response.user)
           }
-
           // resolve(response)
         })
         .catch((error) => {

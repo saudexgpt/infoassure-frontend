@@ -103,6 +103,7 @@ const mutations = {
     // Get Data localStorage
     const userInfo = JSON.parse(localStorage.getItem('userInfo')) || state.AppActiveUser
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const property of Object.keys(payload)) {
       if (payload[property] !== null) {
         // If some of user property is null - user default property defined in state.AppActiveUser

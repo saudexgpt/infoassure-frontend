@@ -8,6 +8,9 @@
       :md="24"
       :lg="24"
       :xl="24"
+      :md="24"
+      :lg="24"
+      :xl="24"
     >
       <el-skeleton :loading="load" :rows="3" animated />
       <el-card

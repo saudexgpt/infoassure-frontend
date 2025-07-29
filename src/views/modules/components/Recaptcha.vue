@@ -6,7 +6,7 @@
 export default {
   data() {
     return {
-      sitekey: process.env.VUE_APP_MIX_RECAPTCHA_SITE_KEY,
+      sitekey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
       widgetId: 0
     }
   },

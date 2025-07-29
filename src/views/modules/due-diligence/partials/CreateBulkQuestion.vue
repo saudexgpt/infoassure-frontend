@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import UploadExcelComponent from '@/views/components/UploadExcel/index.vue'
+import UploadExcelComponent from '@/views/Components/UploadExcel/index.vue'
 import Resource from '@/api/resource'
 
 export default {
