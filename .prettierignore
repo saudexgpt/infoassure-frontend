@@ -1,4 +1,9 @@
-dist
-dev/assets/vendor
-node_modules
-src/node_modules
+/node_modules/**
+/dist/
+/dist*
+/public/*
+/docs/*
+/src/types/env.d.ts
+/docs/**/*
+/plop/**/*
+CHANGELOG

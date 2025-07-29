@@ -1,12 +1,8 @@
 <template>
   <el-card>
-    <b-button
-      :loading="downloading"
-      variant="outline-secondary"
-      @click="exportToExcel('BIAReport')"
-    >
+    <el-button :loading="downloading" type="info" @click="exportToExcel('BIAReport')">
       Export
-    </b-button>
+    </el-button>
     <!-- <el-button
       v-if="!expand"
       type="warning"
@@ -23,73 +19,59 @@
     >
       Shrink Table
     </el-button> -->
-    <div style="max-height: 500px; overflow: auto;">
-      <table
-        id="BIAReport"
-        v-loading="loading"
-        class="table table-bordered"
-      >
+    <div style="max-height: 500px; overflow: auto">
+      <table id="BIAReport" v-loading="loading" class="table table-bordered">
         <thead>
           <tr>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 10px">
-                SN
-              </div>
+              <div style="width: 10px"> SN </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                Business Unit
-              </div>
+              <div style="width: 250px"> Business Unit </div>
             </th>
             <th
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                Business Process Name
-              </div>
+              <div style="width: 250px"> Business Process Name </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 350px">
-                Business Process Description Summary
-              </div>
+              <div style="width: 350px"> Business Process Description Summary </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                Role(s) responsible for business process
-              </div>
+              <div style="width: 250px"> Role(s) responsible for business process </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
               <div style="width: 150px">
@@ -100,51 +82,46 @@
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
               <div style="width: 150px">
-                Minimum number of people that can carry out this process that would still make economic sense
+                Minimum number of people that can carry out this process that would still make
+                economic sense
               </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                Product or Service being delivered
-              </div>
+              <div style="width: 250px"> Product or Service being delivered </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                Legal, Regulatory and Contractual Obligations
-              </div>
+              <div style="width: 250px"> Legal, Regulatory and Contractual Obligations </div>
             </th>
             <th
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                Impact Criteria
-              </div>
+              <div style="width: 250px"> Impact Criteria </div>
             </th>
             <th
               v-for="(disruption_impact, pdi_index) in process_disruption_impact"
               :key="pdi_index"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
               <div style="width: 250px">
@@ -155,139 +132,118 @@
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
+              data-f-sz="14"
+            >
+              <div style="width: 250px"> Priority </div>
+            </th>
+            <th
+              v-if="expand"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px"
+              data-f-sz="14"
+            >
+              <div style="width: 250px"> Minimum Service Level </div>
+            </th>
+            <th
+              v-if="expand"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px"
+              data-f-sz="14"
+            >
+              <div style="width: 250px"> MAO (Maximum Allowable Outage) </div>
+            </th>
+            <th
+              v-if="expand"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px"
+              data-f-sz="14"
+            >
+              <div style="width: 250px"> RTO (Recovery Time Objective) </div>
+            </th>
+            <th
+              v-if="expand"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px"
+              data-f-sz="14"
+            >
+              <div style="width: 250px"> RPO (Recovery Point Objective) </div>
+            </th>
+            <th
+              v-if="expand"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px"
+              data-f-sz="14"
+            >
+              <div style="width: 250px"> Applications used by process </div>
+            </th>
+            <th
+              v-if="expand"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px"
+              data-f-sz="14"
+            >
+              <div style="width: 250px"> Which Business Units are you dependent on? </div>
+            </th>
+            <th
+              v-if="expand"
+              data-fill-color="333333"
+              data-f-color="ffffff"
+              style="font-size: 14px"
               data-f-sz="14"
             >
               <div style="width: 250px">
-                Priority
+                Which Business Processes are you dependent on in the Business Unit(s) listed in the
+                previous cell.
               </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                Minimum Service Level
-              </div>
+              <div style="width: 250px"> Who are your Key vendors or External dependencies </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                MAO (Maximum Allowable Outage)
-              </div>
+              <div style="width: 250px"> Vital Non-Electronic Records </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                RTO (Recovery Time Objective)
-              </div>
+              <div style="width: 250px"> Vital Electronic Records </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                RPO (Recovery Point Objective)
-              </div>
+              <div style="width: 250px"> Alternative Workarounds during system failure </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
-              data-f-sz="14"
-            >
-              <div style="width: 250px">
-                Applications used by process
-              </div>
-            </th>
-            <th
-              v-if="expand"
-              data-fill-color="333333"
-              data-f-color="ffffff"
-              style="font-size: 14px;"
-              data-f-sz="14"
-            >
-              <div style="width: 250px">
-                Which Business Units are you dependent on?
-              </div>
-            </th>
-            <th
-              v-if="expand"
-              data-fill-color="333333"
-              data-f-color="ffffff"
-              style="font-size: 14px;"
-              data-f-sz="14"
-            >
-              <div style="width: 250px">
-                Which Business Processes are you dependent on in the Business Unit(s) listed in the previous cell.
-              </div>
-            </th>
-            <th
-              v-if="expand"
-              data-fill-color="333333"
-              data-f-color="ffffff"
-              style="font-size: 14px;"
-              data-f-sz="14"
-            >
-              <div style="width: 250px">
-                Who are your Key vendors or External dependencies
-              </div>
-            </th>
-            <th
-              v-if="expand"
-              data-fill-color="333333"
-              data-f-color="ffffff"
-              style="font-size: 14px;"
-              data-f-sz="14"
-            >
-              <div style="width: 250px">
-                Vital Non-Electronic Records
-              </div>
-            </th>
-            <th
-              v-if="expand"
-              data-fill-color="333333"
-              data-f-color="ffffff"
-              style="font-size: 14px;"
-              data-f-sz="14"
-            >
-              <div style="width: 250px">
-                Vital Electronic Records
-              </div>
-            </th>
-            <th
-              v-if="expand"
-              data-fill-color="333333"
-              data-f-color="ffffff"
-              style="font-size: 14px;"
-              data-f-sz="14"
-            >
-              <div style="width: 250px">
-                Alternative Workarounds during system failure
-              </div>
-            </th>
-            <th
-              v-if="expand"
-              data-fill-color="333333"
-              data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
               <div style="width: 250px">
@@ -298,91 +254,62 @@
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                Peak Period
-              </div>
+              <div style="width: 250px"> Peak Period </div>
             </th>
             <th
               v-if="expand"
               data-fill-color="333333"
               data-f-color="ffffff"
-              style="font-size: 14px;"
+              style="font-size: 14px"
               data-f-sz="14"
             >
-              <div style="width: 250px">
-                Remote Working
-              </div>
+              <div style="width: 250px"> Remote Working </div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <template
-            v-for="(report, index) in bias"
-          >
-
-            <tr :key="index">
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+          <template v-for="(report, index) in bias" :key="index">
+            <tr>
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ index + 1 }}
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_unit }}
               </td>
               <td :rowspan="report.impacts.length">
                 {{ report.business_process }}
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 <!-- eslint-disable-next-line vue/no-v-html-->
-                <span v-html="report.description" />
+                <span v-html="report.description"></span>
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.roles_responsible }}
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.no_of_people_involved }}
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.minimum_no_of_people_involved }}
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.product_or_service_delivered }}
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.regulatory_obligations }}
               </td>
               <td
-                style="background: #000000; color: #FFFFFF"
+                style="background: #000000; color: #ffffff"
                 data-fill-color="000000"
                 data-f-color="FFFFFF"
-              >{{ report.impacts[0].criteria }}</td>
+                >{{ report.impacts[0].criteria }}</td
+              >
               <td
-                v-for="(disruption_impact_value, pdi_val) in report.impacts[0].process_disruption_impact"
+                v-for="(disruption_impact_value, pdi_val) in report.impacts[0]
+                  .process_disruption_impact"
                 :key="`${pdi_val}-1`"
               >
                 {{ disruption_impact_value.meaning }}
@@ -391,124 +318,67 @@
                 v-if="expand"
                 :rowspan="report.impacts.length"
                 :style="`background: #${report.priority_color}`"
-                :data-fill-color="`${(report.priority_color)? report.priority_color : 'FFFFFF'}`"
+                :data-fill-color="`${report.priority_color ? report.priority_color : 'FFFFFF'}`"
                 data-f-color="000000"
               >
                 {{ report.priority }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 <!-- {{ calculateMinimumServiceLevel(report.minimum_no_of_people_involved, report.no_of_people_involved) }}% -->
                 {{ report.minimum_service_level }}%
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.maximum_allowable_outage }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.recovery_time_objective }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.recovery_point_objective }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.applications_used }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.business_units_depended_on }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.processes_depended_on }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.key_vendors_or_external_dependencies }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.vital_non_electronic_records }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.vital_electronic_records }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.alternative_workaround_during_system_failure }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.key_individuals_process_depends_on }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.peak_periods }}
-
               </td>
-              <td
-                v-if="expand"
-                :rowspan="report.impacts.length"
-              >
+              <td v-if="expand" :rowspan="report.impacts.length">
                 {{ report.business_process.remote_working }}
-
               </td>
             </tr>
             <template v-if="report.impacts.length > 1">
-              <tr
-                v-for="(impact, impact_index) in report.impacts"
-                :key="impact_index"
-              >
+              <tr v-for="(impact, impact_index) in report.impacts" :key="impact_index">
                 <template v-if="report.impacts[impact_index + 1]">
                   <td
-                    style="background: #000000; color: #FFFFFF"
+                    style="background: #000000; color: #ffffff"
                     data-fill-color="000000"
                     data-f-color="FFFFFF"
-                  >{{ report.impacts[impact_index + 1].criteria }}</td>
+                    >{{ report.impacts[impact_index + 1].criteria }}</td
+                  >
                   <td
-                    v-for="(disruption_impact_value, pdi_val) in report.impacts[impact_index + 1].process_disruption_impact"
+                    v-for="(disruption_impact_value, pdi_val) in report.impacts[impact_index + 1]
+                      .process_disruption_impact"
                     :key="`${pdi_val}-2`"
                   >
                     {{ disruption_impact_value.meaning }}
@@ -516,32 +386,25 @@
                 </template>
               </tr>
             </template>
-
           </template>
-
         </tbody>
       </table>
     </div>
   </el-card>
 </template>
 <script>
-import {
-  BButton,
-} from 'bootstrap-vue'
-import TableToExcel from '@linways/table-to-excel'
+// import TableToExcel from '@linways/table-to-excel'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    BButton,
-  },
+  components: {},
   data() {
     return {
       expand: true,
       bias: [],
       process_disruption_impact: [],
       loading: false,
-      downloading: false,
+      downloading: false
     }
   },
   computed: {
@@ -550,23 +413,20 @@ export default {
     },
     clientActivatedProjects() {
       return this.$store.getters.clientActivatedProjects
-    },
+    }
   },
   created() {
     this.fetchBIA()
   },
   methods: {
-
     fetchBIA() {
-      const app = this
-      app.loading = true
-      const fetchBIAResource = new Resource('bia/fetch-bia')
-      fetchBIAResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.loading = false
-          app.bias = response.bias
-          app.process_disruption_impact = response.process_disruption_impact
-        })
+      this.loading = true
+      const fetchBIAResource = new Resource('bcms/bia/fetch-bia')
+      fetchBIAResource.list({ client_id: this.selectedClient.id }).then((response) => {
+        this.loading = false
+        this.bias = response.bias
+        this.process_disruption_impact = response.process_disruption_impact
+      })
     },
     calculateMinimumServiceLevel(numerator, denominator) {
       let minimumServiceLevel = 0
@@ -576,20 +436,18 @@ export default {
       return minimumServiceLevel.toFixed(1)
     },
     exportToExcel(id) {
-      const app = this
-      setTimeout(() => {
-        TableToExcel.convert(document.getElementById(id), {
-          name: `${app.selectedClient.name}-BIA.xlsx`,
-          sheet: {
-            name: 'Sheet 1',
-          },
-        })
-      }, 1000)
-
       // setTimeout(() => {
-      //   app.downloading = false
+      //   TableToExcel.convert(document.getElementById(id), {
+      //     name: `${this.selectedClient.name}-BIA.xlsx`,
+      //     sheet: {
+      //       name: 'Sheet 1'
+      //     }
+      //   })
+      // }, 1000)
+      // setTimeout(() => {
+      //   this.downloading = false
       // }, 30000)
-    },
-  },
+    }
+  }
 }
 </script>

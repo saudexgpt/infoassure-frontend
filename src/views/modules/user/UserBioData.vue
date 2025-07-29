@@ -1,27 +1,25 @@
 <template>
-  <b-card v-if="user">
+  <el-card v-if="user">
+    <h3>USER BIODATA</h3>
     <!-- User Avatar & Action Buttons -->
     <el-row :gutter="20">
       <el-col :lg="8">
-
-        <div
-          align="center"
-          style="background: #f0f0f0; padding: 10px"
-        >
+        <div align="center" style="background: #f0f0f0; padding: 10px">
           <img
-            :src="baseServerUrl +'storage/'+ user.photo"
+            :src="baseServerUrl + 'storage/' + form.photo"
             alt="Photo"
-            width="120"
+            width="100"
             onerror="this.src='/images/profile-image.png'"
             style="border: #000000 solid 3px; border-radius: 5px"
-          >
+          />
           <div>
-            <br>
+            <br />
             <h5>{{ user.name }}</h5>
-            <small class="font-weight-bold">{{ user.email }}</small><br>
+            <small class="font-weight-bold">{{ user.email }}</small
+            ><br />
             <span class="font-weight-bold">{{ user.phone }}</span>
           </div>
-          <!-- <b-avatar
+          <!-- <el-avatar
             :src="baseServerUrl +'storage/'+user.photo"
             variant="light-primary"
             onerror="this.src='/images/profile-image.png'"
@@ -38,228 +36,125 @@
             </div>
           </div> -->
         </div>
+        <br />
         <!-- We want to make sure only the owner of the data can modify it-->
-        <div
-          v-if="userData.id === user.id"
-          class="demo-inline-spacing"
-        >
-          <b-button
-            v-if="user.role !== 'student'"
-            size="sm"
-            variant="primary"
-            @click="changePhoto()"
-          >
-            Change Photo
-          </b-button>
-          <b-button
-            size="sm"
-            variant="danger"
-            @click="dialogVisible = true"
-          >
-            Update Password
-          </b-button>
+        <div v-if="userData.id === user.id">
+          <el-button type="info" @click="changePhoto()"> Change Photo </el-button>
+          <el-button type="danger" @click="dialogVisible = true"> Update Password </el-button>
         </div>
       </el-col>
       <el-col :lg="16">
-        <div label="Full Name">
-          <strong>Full Name</strong>
-          <el-input v-model="user.name" />
-        </div>
-        <div label="Email">
-          <strong>Email</strong>
-          <el-input
-            v-model="user.email"
-          />
-        </div>
-        <div label="Phone">
-          <strong>Phone</strong>
-          <el-input
-            v-model="user.phone"
-          />
-        </div>
+        <v-text-field
+          variant="outlined"
+          label="Full Name"
+          v-model="form.name"
+          class="round"
+          name="login-email"
+          placeholder="Full Name"
+        />
+        <v-text-field
+          variant="outlined"
+          label="Email"
+          v-model="form.email"
+          type="email"
+          class="round"
+          name="login-email"
+          placeholder="Email"
+        />
+        <v-text-field
+          variant="outlined"
+          label="Phone"
+          v-model="form.phone"
+          class="round"
+          placeholder="Phone"
+        />
         <div>
-          <br>
-          <el-button
-            type="primary"
-            @click="updateBioData"
-          >
-            Update
-          </el-button>
+          <el-button type="primary" @click="updateBioData"> Update </el-button>
         </div>
       </el-col>
     </el-row>
-    <el-dialog
-      title="Change Password"
-      :visible.sync="dialogVisible"
-      width="30%"
-    >
-      <div
-        v-loading="load"
-      >
-        <validation-observer>
-          <b-form
-            v-loading="load"
-            method="POST"
-            class="auth-login-form mt-2"
-            @submit.prevent="updatePassword"
-          >
-            <!-- email -->
-            <b-form-group
-              label-for="login-email"
-            >
-              <b-form-input
-                id="login-email"
-                v-model="form.email"
-                class="round"
-                name="login-email"
-                placeholder="Email"
-                disabled
-              />
-            </b-form-group>
-            <b-form-group
-              label-for="old-password"
-            >
-              <validation-provider
-                #default="{ errors }"
-                name="Old Password"
-                rules="required"
-              >
-                <b-form-input
-                  id="old-password"
-                  v-model="form.password"
-                  class="round"
-                  name="old-password"
-                  placeholder="Enter old password"
-                />
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-form-group>
-
-            <!-- forgot password -->
-            <b-form-group>
-              <validation-provider
-                #default="{ errors }"
-                name="Password"
-                vid="Password"
-                rules="required|password|min:9"
-              >
-                <b-input-group
-                  class="input-group-merge round"
-                >
-                  <b-form-input
-                    v-model="form.new_password"
-                    class="form-control-merge"
-                    :type="passwordFieldType"
-                    name="login-password"
-                    placeholder="New Password"
-                  />
-                  <b-input-group-append is-text>
-                    <feather-icon
-                      class="cursor-pointer"
-                      :icon="passwordToggleIcon"
-                      @click="togglePasswordVisibility"
-                    />
-                  </b-input-group-append>
-                </b-input-group>
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-form-group>
-
-            <b-form-group>
-              <validation-provider
-                #default="{ errors }"
-                name="Confirm Password"
-                rules="required|confirmed:Password"
-              >
-                <b-input-group
-                  class="input-group-merge round"
-                >
-                  <b-form-input
-                    v-model="form.confirm_password"
-                    class="form-control-merge"
-                    :type="passwordFieldType"
-                    name="login-password"
-                    placeholder="Confirm Password"
-                  />
-                  <b-input-group-append is-text>
-                    <feather-icon
-                      class="cursor-pointer"
-                      :icon="passwordToggleIcon"
-                      @click="togglePasswordVisibility"
-                    />
-                  </b-input-group-append>
-                </b-input-group>
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-form-group>
-            <b-button
-              pill
-              variant="gradient-warning"
-              block
-              @click="updatePassword"
-            >
-              Update Password
-            </b-button>
-            <br>
-            <!-- <a href="/dashboard">
+    <el-dialog title="Change Password" v-model="dialogVisible" width="30%">
+      <div v-loading="load">
+        <el-form
+          v-loading="load"
+          method="POST"
+          class="auth-login-form mt-2"
+          @submit.prevent="updatePassword"
+        >
+          <v-text-field
+            variant="outlined"
+            label="Email"
+            v-model="form.email"
+            type="email"
+            class="round"
+            name="login-email"
+            placeholder="Email"
+            disabled
+          />
+          <v-text-field
+            variant="outlined"
+            label="Old Password"
+            v-model="form.password"
+            class="round"
+            name="old-password"
+            placeholder="Enter old password"
+            type="password"
+          />
+          <v-text-field
+            variant="outlined"
+            label="New Password"
+            v-model="form.new_password"
+            class="form-control-merge"
+            :type="passwordFieldType"
+            name="login-password"
+            placeholder="New Password"
+            append-inner-icon="tabler:eye"
+            @click:append-inner="togglePasswordVisibility"
+          />
+          <v-text-field
+            variant="outlined"
+            label="Confirm Password"
+            v-model="form.confirm_password"
+            class="form-control-merge"
+            :type="passwordFieldType"
+            name="login-password"
+            placeholder="Confirm Password"
+            append-inner-icon="mdi-eye"
+            @click:append-inner="togglePasswordVisibility"
+          />
+          <el-button pill type="success" block @click="updatePassword"> Update Password </el-button>
+          <br />
+          <!-- <a href="/dashboard">
                 I will do that later from my profile
               </a> -->
-          </b-form>
-        </validation-observer>
+        </el-form>
       </div>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          type="danger"
-          @click="dialogVisible = false"
-        >Cancel</el-button>
-        <!-- <el-button
-          type="success"
-          @click="updatePassword()"
-        >Submit</el-button> -->
-      </span>
+      <!-- <template v-slot:footer>
+        <span class="dialog-footer">
+          <el-button type="danger" @click="dialogVisible = false">Cancel</el-button>
+        </span>
+      </template> -->
     </el-dialog>
-    <upload-photo
-      v-if="isUploadPhotoSidebarActive"
-      v-model="isUploadPhotoSidebarActive"
-      :user="user"
-      @save="updatePhoto"
-    />
-  </b-card>
+    <el-dialog title="Upload Photo" v-model="isUploadPhotoSidebarActive" width="30%">
+      <UploadPhoto v-if="isUploadPhotoSidebarActive" :user="user" @save="updatePhoto" />
+    </el-dialog>
+  </el-card>
 </template>
 
 <script>
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import {
-  BButton, BCard, BForm, BFormGroup, BInputGroup, BInputGroupAppend, BFormInput,
-} from 'bootstrap-vue'
-import { mapGetters } from 'vuex'
-// import { avatarText } from '@core/utils/filter'
 import UploadPhoto from '@/views/modules/user/UploadPhoto.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    BCard,
-    BButton,
-    BForm,
-    BFormGroup,
-    BInputGroup,
-    BInputGroupAppend,
-    BFormInput,
-    // BAvatar,
-    UploadPhoto,
-    ValidationProvider,
-    ValidationObserver,
+    UploadPhoto
   },
   props: {
     user: {
       type: Object,
       required: true,
-      default: () => ({}),
-    },
+      default: () => ({})
+    }
   },
   data() {
     // const { resolveUserRoleVariant } = useUsersList()
@@ -267,56 +162,58 @@ export default {
       // avatarText,
       // resolveUserRoleVariant,
       form: {
+        photo: '',
+        name: '',
         email: '',
         password: '',
         new_password: '',
         confirm_password: '',
-        include_old_password: true,
+        include_old_password: true
       },
       dialogVisible: false,
       load: false,
-      isUploadPhotoSidebarActive: false,
+      isUploadPhotoSidebarActive: false
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     },
-    ...mapGetters([
-      'userData',
-    ]),
+    userData() {
+      return this.$store.getters.userData
+    }
   },
   mounted() {
-    this.form.email = this.user.email
+    this.form = this.user
   },
   methods: {
     updatePassword() {
-      const app = this
-      if (app.form.confirm_password === app.form.new_password && app.form.new_password !== '') {
-        app.load = true
-        this.$store.dispatch('user/updatePassword', app.form)
+      if (this.form.confirm_password === this.form.new_password && this.form.new_password !== '') {
+        this.load = true
+        this.$store
+          .dispatch('user/updatePassword', this.form)
           .then(() => {
-            app.$message('Password updated successfully')
-            app.logout()
-          }).catch(error => {
+            this.$message('Password updated successfully')
+            this.logout()
+          })
+          .catch((error) => {
             console.log(error)
-            app.load = false
+            this.load = false
             this.$message({
               message: error.response.data.message,
-              type: 'danger',
+              type: 'danger'
             })
           })
       } else {
-        app.$alert('New Password does not match')
+        this.$alert('New Password does not match')
       }
     },
     changePhoto() {
-      const app = this
-      app.isUploadPhotoSidebarActive = true
+      this.isUploadPhotoSidebarActive = true
     },
     updatePhoto(photo) {
-      const app = this
-      app.user.photo = photo
+      this.form.photo = photo
+      this.isUploadPhotoSidebarActive = false
     },
     updateBioData() {
       this.updating = true
@@ -327,10 +224,10 @@ export default {
           this.updating = false
           this.$message({
             message: 'Profile updated successfully',
-            type: 'success',
+            type: 'success'
           })
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error)
           this.updating = false
         })
@@ -338,8 +235,8 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push('/login').catch(() => {})
-    },
-  },
+    }
+  }
 }
 </script>
 

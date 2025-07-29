@@ -1,11 +1,9 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-mixed-operators */
 /**
  * Simple RESTful helper class
  */
 
 class Helper {
-// helper function to rank student result;
+  // helper function to rank student result;
   rankResult(scoreAverage, resultAverages, option) {
     this.resultAveragesArray = []
     // convert resultAverages object to array
@@ -15,10 +13,10 @@ class Helper {
     //   // this.resultAveragesArray.push(resultAverages[key])
     //   }
     // }
-    // eslint-disable-next-line array-callback-return
+
     // console.log(resultAverages)
-    // eslint-disable-next-line array-callback-return
-    Object.entries(resultAverages).map(item => {
+
+    Object.entries(resultAverages).map((item) => {
       // console.log(item)
       this.resultAveragesArray.push(item[1])
       // return item
@@ -28,15 +26,24 @@ class Helper {
     // })
     this.resultAveragesArray.sort((a, b) => b - a) // sort numerical array in descending order
 
-    let position = `${this.resultAveragesArray.indexOf(scoreAverage) + 1}`// to get the index/position of this score in the sorted array
+    let position = `${this.resultAveragesArray.indexOf(scoreAverage) + 1}` // to get the index/position of this score in the sorted array
     if (option === 'position') {
       const strLength = position.length
       // console.log(position)
-      if (position === '1' || (strLength === '2' && position.substr(0, 1) !== '1') && position.substr(1) === '1') {
+      if (
+        position === '1' ||
+        (strLength === '2' && position.substr(0, 1) !== '1' && position.substr(1) === '1')
+      ) {
         position += 'st'
-      } else if (position === '2' || (strLength === '2' && position.substr(0, 1) !== '1') && position.substr(1) === '2') {
+      } else if (
+        position === '2' ||
+        (strLength === '2' && position.substr(0, 1) !== '1' && position.substr(1) === '2')
+      ) {
         position += 'nd'
-      } else if (position === '3' || (strLength === '2' && position.substr(0, 1) !== '1') && position.substr(1) === '3') {
+      } else if (
+        position === '3' ||
+        (strLength === '2' && position.substr(0, 1) !== '1' && position.substr(1) === '3')
+      ) {
         position += 'rd'
       } else {
         position += 'th'
@@ -56,20 +63,22 @@ class Helper {
         hasRole = false
         hasPermission = false
         if (item.acl.roles) {
-          hasRole = roles.some(role => item.acl.roles.includes(role))
+          hasRole = roles.some((role) => item.acl.roles.includes(role))
         }
 
         if (item.acl.permissions) {
-          hasPermission = permissions.some(permission => item.acl.permissions.includes(permission))
+          hasPermission = permissions.some((permission) =>
+            item.acl.permissions.includes(permission)
+          )
         }
 
-        return (hasRole || hasPermission)
+        return hasRole || hasPermission
       }
 
       if (item.acl.except) {
         // we hide navigation for user whose role you have been excluded
-        const exclude = roles.some(permission => item.acl.except.includes(permission))
-        return (!exclude)
+        const exclude = roles.some((permission) => item.acl.except.includes(permission))
+        return !exclude
       }
     }
 
@@ -83,7 +92,7 @@ class Helper {
 
     if (item.acl) {
       if (item.acl.modules !== '' && item.acl.modules !== undefined) {
-        hasModule = modules.some(eachModule => item.acl.modules.includes(eachModule))
+        hasModule = modules.some((eachModule) => item.acl.modules.includes(eachModule))
         return this.checkRolesAndPermissionOnly(item, userData) && hasModule
       }
       return this.checkRolesAndPermissionOnly(item, userData)

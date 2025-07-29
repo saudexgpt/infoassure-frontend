@@ -1,64 +1,59 @@
 <template>
   <el-card>
-    <div slot="header">
-      <span
-        class="pull-right"
-      >
-        <b-button
-          variant="primary"
-          @click="viewType='tabular'; showMenu = false"
-        ><i class="el-icon-menu" /> Tabular View</b-button>
-      </span>
-      <h3>Business Impact Analysis</h3>
-    </div>
-    <el-container style="height: 100%; border: 1px solid #eee; background: #fff;">
+    <template v-slot:header>
+      <div>
+        <span class="pull-right">
+          <el-button type="primary" @click="viewType = 'tabular'"
+            ><icon icon="tabler:table" /> Tabular View</el-button
+          >
+        </span>
+        <h3>Business Impact Analysis</h3>
+      </div>
+    </template>
+    <el-container style="height: 100%; border: 1px solid #eee; background: #fff">
       <el-aside
         v-if="showMenu"
         v-loading="loading"
         element-loading-text="loading assessment, please wait..."
-        width="400px"
+        width="300px"
       >
-        <div>
-          <el-menu>
-            <el-submenu
-              v-for="(assessments, business_unit) in business_impact_analyses"
-              :key="business_unit"
-              :index="`${business_unit}`"
+        <el-collapse>
+          <el-collapse-item
+            v-for="(assessments, business_unit) in business_impact_analyses"
+            :key="business_unit"
+            :index="`${business_unit}`"
+          >
+            <template #title>
+              <strong>{{ business_unit }}</strong>
+            </template>
+            <el-card
+              v-for="(assessment, assessments_index) in assessments"
+              :key="assessments_index"
+              :id="`${business_unit}-${assessments_index}`"
+              @click="viewDetails(assessment, `${business_unit}-${assessments_index}`)"
+              style="cursor: pointer; margin-bottom: 5px"
+              shadow="hover"
             >
-              <template slot="title">
-                <strong>{{ business_unit }}</strong>
-              </template>
-
-              <el-menu-item
-                v-for="(assessment, assessment_index) in assessments"
-                :key="assessment_index"
-                :index="`${business_unit}-${assessment_index}`"
-                @click="viewDetails(assessment)"
-              >
-                <small><strong>{{ assessment.business_process }}</strong></small>
-              </el-menu-item>
-            </el-submenu>
-          </el-menu>
-        </div>
+              <div>
+                <strong>
+                  {{ assessment.generated_process_id }}
+                </strong>
+                {{ assessment.business_process }}
+              </div>
+            </el-card>
+          </el-collapse-item>
+        </el-collapse>
       </el-aside>
 
       <el-container>
         <h1>
-          <el-tooltip
-            effect="dark"
-            content="Toggle Menu"
-            placement="right"
-          >
-            <a
-              v-if="showMenu"
-              style="cursor: pointer"
-              @click="toggleMenu"
-            ><i class="el-icon-s-fold" /></a>
-            <a
-              v-else
-              style="cursor: pointer"
-              @click="toggleMenu"
-            ><i class="el-icon-s-unfold" /></a>
+          <el-tooltip effect="dark" content="Toggle Menu" placement="right">
+            <a v-if="showMenu" style="cursor: pointer" @click="toggleMenu"
+              ><i class="el-icon-s-fold"></i
+            ></a>
+            <a v-else style="cursor: pointer" @click="toggleMenu"
+              ><i class="el-icon-s-unfold"></i
+            ></a>
           </el-tooltip>
         </h1>
 
@@ -73,18 +68,10 @@
           <div v-if="viewType === 'tabular'">
             <analysis-table />
           </div>
-          <div
-            v-if="viewType === 'welcome'"
-            align="center"
-          >
-            <img
-              src="/images/project-icons/bia-large.png"
-              width="200"
-            >
+          <div v-if="viewType === 'welcome'" align="center">
+            <img src="/images/project-icons/bia-large.png" width="200" />
             <h3>Manage your BIA here</h3>
-            <span
-              align="center"
-            >
+            <span align="center">
               <p>Use the Left Navigation to perform your analysis </p>
             </span>
           </div>
@@ -94,18 +81,14 @@
   </el-card>
 </template>
 <script>
-import {
-  BButton,
-} from 'bootstrap-vue'
 import EditAnalysis from './EditAnalysis.vue'
 import AnalysisTable from './AnalysisTable.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    BButton,
     EditAnalysis,
-    AnalysisTable,
+    AnalysisTable
   },
   data() {
     return {
@@ -115,7 +98,7 @@ export default {
       impacts: [],
       selectedData: [],
       loading: false,
-      loadView: false,
+      loadView: false
     }
   },
   computed: {
@@ -124,13 +107,13 @@ export default {
     },
     clientActivatedProjects() {
       return this.$store.getters.clientActivatedProjects
-    },
+    }
   },
   watch: {
     selectedClient() {
       this.fetchBIA()
       this.fetchImpacts()
-    },
+    }
   },
   created() {
     this.fetchBIA()
@@ -138,45 +121,65 @@ export default {
   },
   methods: {
     fetchImpacts() {
-      const app = this
-      const param = { client_id: app.selectedClient.id }
+      const param = { client_id: this.selectedClient.id }
       const fetchEntryResource = new Resource('risk-assessment/fetch-impacts')
-      fetchEntryResource.list(param)
-        .then(response => {
-          app.impacts = response.impacts
+      fetchEntryResource
+        .list(param)
+        .then((response) => {
+          this.impacts = response.impacts
         })
-        .catch(error => {
-          app.loading = false
+        .catch((error) => {
+          this.loading = false
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          this.$message.error(error.response.data.error)
         })
     },
     toggleMenu() {
-      const app = this
-      app.showMenu = !app.showMenu
+      this.showMenu = !this.showMenu
     },
-    viewDetails(data) {
-      const app = this
-      app.selectedData = data
-      app.viewType = 'edit'
-      app.showMenu = false
+    // viewDetails(data) {
+    //   this.selectedData = data
+    //   this.viewType = 'edit'
+    //   // this.showMenu = false
+    // },
+    viewDetails(data, viewId) {
+      if (data.id) {
+        this.selectedData = data
+        this.viewType = 'edit'
+        // this.showMenu = false
+        this.changeActiveTabBgColor(viewId)
+      }
+    },
+    changeActiveTabBgColor(viewId) {
+      const divs = document.getElementsByClassName('el-card')
+      // Loop through the buttons and add the activeCard class to the current/clicked button
+
+      if (divs.length > 0) {
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].style.background = '#ffffff'
+          divs[i].style.color = '#000000'
+        }
+      }
+      document.getElementById(viewId).style.background = '#000000'
+      document.getElementById(viewId).style.color = '#ffffff'
     },
     fetchBIA() {
-      const app = this
-      app.loading = true
-      const fetchBIAResource = new Resource('bia/fetch-bia')
-      fetchBIAResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.loading = false
-          app.business_impact_analyses = response.business_impact_analyses
-        }).catch(() => {
-          app.loading = false
+      this.loading = true
+      const fetchBIAResource = new Resource('bcms/bia/fetch-bia')
+      fetchBIAResource
+        .list({ client_id: this.selectedClient.id })
+        .then((response) => {
+          this.loading = false
+          this.business_impact_analyses = response.business_impact_analyses
+        })
+        .catch(() => {
+          this.loading = false
         })
     },
     renderViewAgain() {
       this.fetchBIA()
       this.$notify({ title: 'Entry Updated', type: 'success' })
-    },
-  },
+    }
+  }
 }
 </script>

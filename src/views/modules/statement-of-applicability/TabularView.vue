@@ -6,14 +6,8 @@
     style="max-height: 650px; overflow: auto"
     class="table-responsive"
   >
-
-    <b-button
-      variant="outline-secondary"
-      @click="exportToExcel('soaTable')"
-    >
-      Export
-    </b-button>
-    <p />
+    <b-button variant="outline-secondary" @click="exportToExcel('soaTable')"> Export </b-button>
+    <p></p>
     <!-- <el-collapse v-if="!downloading">
 
           <el-collapse-item
@@ -285,147 +279,75 @@
             </div>
           </el-collapse-item>
         </el-collapse> -->
-    <table
-      id="soaTable"
-      data-cols-width="30,50,70,30,30,30,30,30,50,30,30,50,30,30,30,30,30,30"
-    >
+    <table id="soaTable" data-cols-width="30,50,70,30,30,30,30,30,50,30,30,50,30,30,30,30,30,30">
       <thead>
         <tr>
           <th
             rowspan="2"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="14"
             data-fill-color="333333"
             data-f-color="ffffff"
-          ><div
-            style="width: 150px;"
-          >AREA</div></th>
+            ><div style="width: 150px">AREA</div></th
+          >
           <th
             rowspan="2"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="14"
             data-fill-color="333333"
             data-f-color="ffffff"
-          ><div
-            style="width: 250px;"
-          >CONTROL</div></th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-            :data-a-wrap="true"
-          ><div
-            style="width: 250px;"
-          >Control Description</div></th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Control Applicable</th>
+            ><div style="width: 250px">CONTROL</div></th
+          >
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff" :data-a-wrap="true"
+            ><div style="width: 250px">Control Description</div></th
+          >
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff">Control Applicable</th>
           <th
             colspan="3"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="14"
             data-fill-color="333333"
             data-f-color="ffffff"
-          >REASONS FOR SELECTION</th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Description of Controls/Justification for Exclusion</th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Reference to Control Document/Evidence</th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Control Implemented</th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Additional Controls Required (if any)</th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Asset</th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Risk</th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Issue</th>
-          <th
-            rowspan="2"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >R</th>
-          <th
-            rowspan="2"
-            data-fill-color="46035a"
-            data-f-color="ffffff"
-          >A</th>
-          <th
-            rowspan="2"
-            data-fill-color="46035a"
-            data-f-color="ffffff"
-          >C</th>
-          <th
-            rowspan="2"
-            data-fill-color="46035a"
-            data-f-color="ffffff"
-          >I</th>
+            >REASONS FOR SELECTION</th
+          >
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff"
+            >Description of Controls/Justification for Exclusion</th
+          >
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff"
+            >Reference to Control Document/Evidence</th
+          >
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff">Control Implemented</th>
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff"
+            >Additional Controls Required (if any)</th
+          >
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff">Asset</th>
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff">Risk</th>
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff">Issue</th>
+          <th rowspan="2" data-fill-color="333333" data-f-color="ffffff">R</th>
+          <th rowspan="2" data-fill-color="46035a" data-f-color="ffffff">A</th>
+          <th rowspan="2" data-fill-color="46035a" data-f-color="ffffff">C</th>
+          <th rowspan="2" data-fill-color="46035a" data-f-color="ffffff">I</th>
         </tr>
         <tr>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Legal/Contractual Requirement</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Business Requirement</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Result of Risk Assessment</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Legal/Contractual Requirement</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Business Requirement</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Result of Risk Assessment</th>
         </tr>
       </thead>
       <tbody>
-        <template
-          v-for="soa in soas"
-        >
-          <tr :key="soa.name">
+        <template v-for="soa in soas" :key="soa.name">
+          <tr>
             <td data-a-v="top">
               {{ soa.name }}
             </td>
-            <td
-              v-for="cell in 17"
-              :key="`${cell}-i`"
-            />
+            <td v-for="cell in 17" :key="`${cell}-i`"></td>
           </tr>
-          <tr
-            v-for="control in soa.controls"
-            :key="control.id"
-          >
-            <td />
+          <tr v-for="control in soa.controls" :key="control.id">
+            <td></td>
             <td data-a-v="top">
               {{ control.name }}
             </td>
-            <td
-              data-a-wrap="true"
-              data-a-v="top"
-            >
-
+            <td data-a-wrap="true" data-a-v="top">
               {{ control.description }}
             </td>
             <td data-a-v="top">
@@ -440,16 +362,10 @@
             <td data-a-v="top">
               {{ control.soa.result_of_risk_assessment }}
             </td>
-            <td
-              data-a-wrap="true"
-              data-a-v="top"
-            >
+            <td data-a-wrap="true" data-a-v="top">
               {{ control.soa.justification_of_exclusion }}
             </td>
-            <td
-              data-a-wrap="true"
-              data-a-v="top"
-            >
+            <td data-a-wrap="true" data-a-v="top">
               {{ control.soa.reference_to_control_document }}
             </td>
             <td data-a-v="top">
@@ -459,12 +375,9 @@
               {{ control.soa.addition_control_required }}
             </td>
             <td data-a-v="top">
-              {{ (control.soa.assets) ? control.soa.assets.toString() : '' }}
+              {{ control.soa.assets ? control.soa.assets.toString() : '' }}
             </td>
-            <td
-              data-a-wrap="true"
-              data-a-v="top"
-            >
+            <td data-a-wrap="true" data-a-v="top">
               {{ control.soa.risk }}
             </td>
             <td data-a-v="top">
@@ -483,38 +396,20 @@
               {{ control.soa.i }}
             </td>
           </tr>
-          <tr :key="`${soa.name}-total`">
-            <td
-              data-fill-color="2E37B4"
-              data-f-color="ffffff"
-            >Totals: </td>
-            <td
-              data-fill-color="2E37B4"
-              data-f-color="ffffff"
-            >{{ soa.controls.length }}</td>
-            <td
-              data-fill-color="2E37B4"
-              data-f-color="ffffff"
-            />
-            <td
-              data-fill-color="2E37B4"
-              data-f-color="ffffff"
-            >{{ getTotal('applicable', soa.controls) }}</td>
-            <td
-              data-fill-color="2E37B4"
-              data-f-color="ffffff"
-            >{{ getTotal('implemented', soa.controls) }}</td>
-            <td
-              v-for="cell in 13"
-              :key="`${cell}-total`"
-            />
+          <tr>
+            <td data-fill-color="2E37B4" data-f-color="ffffff">Totals: </td>
+            <td data-fill-color="2E37B4" data-f-color="ffffff">{{ soa.controls.length }}</td>
+            <td data-fill-color="2E37B4" data-f-color="ffffff"></td>
+            <td data-fill-color="2E37B4" data-f-color="ffffff">{{
+              getTotal('applicable', soa.controls)
+            }}</td>
+            <td data-fill-color="2E37B4" data-f-color="ffffff">{{
+              getTotal('implemented', soa.controls)
+            }}</td>
+            <td v-for="cell in 13" :key="`${cell}-total`"></td>
           </tr>
-          <tr :key="`${soa.name}-border`">
-            <td
-              v-for="cell in 18"
-              :key="`${cell}-border`"
-              data-fill-color="000000"
-            />
+          <tr>
+            <td v-for="cell in 18" :key="`${cell}-border`" data-fill-color="000000"></td>
           </tr>
         </template>
       </tbody>
@@ -523,31 +418,25 @@
 </template>
 
 <script>
-import {
-  BButton,
-} from 'bootstrap-vue'
-import TableToExcel from '@linways/table-to-excel'
-// import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
 
 export default {
   components: {
-    BButton,
+    BButton
   },
   directives: {
-    Ripple,
+    Ripple
   },
   props: {
     selectedClient: {
       type: Object,
-      required: true,
+      required: true
     },
     standardId: {
       type: Number,
-      required: true,
-    },
+      required: true
+    }
   },
 
   data() {
@@ -557,7 +446,7 @@ export default {
       isCreaterisk_assessmentsidebarActive: false,
       pageLength: 10,
       dir: false,
-      summary: {},
+      summary: {}
     }
   },
   created() {
@@ -583,7 +472,7 @@ export default {
     },
     getTotal(field, controls) {
       let count = 0
-      controls.forEach(control => {
+      controls.forEach((control) => {
         if (control.soa[field] === 'Yes') {
           count += 1
         }
@@ -591,53 +480,51 @@ export default {
       return count
     },
     fetchSOA(load = true) {
-      const app = this
-      app.loading = load
+      this.loading = load
       const fetchSOAsResource = new Resource('soa/fetch-soa')
-      fetchSOAsResource.list({ client_id: app.selectedClient.id, standard_id: app.standardId })
-        .then(response => {
-          app.soas = response.soas
-          app.loading = false
-        }).catch(() => { app.loading = false })
+      fetchSOAsResource
+        .list({ client_id: this.selectedClient.id, standard_id: this.standardId })
+        .then((response) => {
+          this.soas = response.soas
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     fetchReportSummary() {
-      const app = this
-      const param = { client_id: app.selectedClient.id, standard_id: app.standardId }
+      const param = { client_id: this.selectedClient.id, standard_id: this.standardId }
       const fetchConsultingsResource = new Resource('reports/soa-summary')
-      fetchConsultingsResource.list(param)
-        .then(response => {
-          app.summary = response
-          // app.chart_report.series = response.series
-          // app.chart_report.xAxis.categories = response.categories
-          // app.chart_report.subtitle.text = response.subtitle
-        })
+      fetchConsultingsResource.list(param).then((response) => {
+        this.summary = response
+        // this.chart_report.series = response.series
+        // this.chart_report.xAxis.categories = response.categories
+        // this.chart_report.subtitle.text = response.subtitle
+      })
     },
     exportToExcel(id) {
-      const app = this
-      app.downloading = true
-      setTimeout(() => {
-        TableToExcel.convert(document.getElementById(id), {
-          name: `${app.selectedClient.name}-SOADetails.xlsx`,
-          sheet: {
-            name: 'Sheet 1',
-          },
-        })
-      }, 1000)
-
-      setTimeout(() => {
-        app.downloading = false
-      }, 30000)
-    },
-  },
+      // this.downloading = true
+      // setTimeout(() => {
+      //   TableToExcel.convert(document.getElementById(id), {
+      //     name: `${this.selectedClient.name}-SOADetails.xlsx`,
+      //     sheet: {
+      //       name: 'Sheet 1'
+      //     }
+      //   })
+      // }, 1000)
+      // setTimeout(() => {
+      //   this.downloading = false
+      // }, 30000)
+    }
+  }
 }
 </script>
-<style lang="scss" >
-@import '@core/scss/vue/libs/vue-good-table.scss';
-</style>
 <style scoped>
-table, th, td {
-  border:1px solid #cccccc;
+table,
+th,
+td {
+  border: 1px solid #cccccc;
   border-collapse: collapse;
-  padding: 5px
+  padding: 5px;
 }
 </style>

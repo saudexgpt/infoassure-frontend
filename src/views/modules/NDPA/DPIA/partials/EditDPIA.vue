@@ -1,44 +1,27 @@
 <template>
   <div v-loading="loading">
-    <b-row class="match-height">
-      <b-col md="8">
-        <app-collapse
-          accordion
-          type="margin"
-        >
-          <app-collapse-item
-            title="RISK DESCRIPTION"
-            :is-visible="true"
-          >
-
-            <b-row>
-              <b-col md="12">
-                <b-form-group
-                  label="Business Unit"
-                >
-                  <textarea
-                    v-model="form.business_unit"
-                    disabled
-                    class="form-control"
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Business Process"
-                >
+    <el-row class="match-height">
+      <el-col md="8">
+        <el-collapse accordion type="margin">
+          <el-collapse-item title="RISK DESCRIPTION" :is-visible="true">
+            <el-row>
+              <el-col md="12">
+                <el-form-group label="Business Unit">
+                  <textarea v-model="form.business_unit" disabled class="form-control"></textarea>
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Business Process">
                   <textarea
                     v-model="form.business_process"
                     disabled
                     class="form-control"
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Personal Data Asset"
-                >
-                  <!-- <b-tooltip
+                  ></textarea>
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Personal Data Asset">
+                  <!-- <el-tooltip
                     target="personal_data_asset"
                     title="The personal data that could be affected by the risk. Could be defined at individual data item level e.g. date of birth, or as a group of data items e.g. delivery information."
                   /> -->
@@ -48,42 +31,33 @@
                     v-model="form.personal_data_asset"
                     class="form-control"
                     disabled
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Risk Scenerio"
-                >
-                  <b-tooltip
-                    target="risk_scenerio"
-                  />
-                  <a
-                    style="color: #409EFF"
-                    @click="showRisksForm = true"
-                  > <i class="el-icon-plus" /> Click to pick from Risk Register</a>
-                  <ckeditor
+                  ></textarea>
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Risk Scenerio">
+                  <el-tooltip target="risk_scenerio" />
+                  <a style="color: #409eff" @click="showRisksForm = true">
+                    <i class="el-icon-plus"></i> Click to pick from Risk Register</a
+                  >
+                  <!-- <ckeditor
                     id="risk_scenerio"
                     v-model="form.risk_scenerio"
                     :editor="editor"
                     :config="editorConfig"
                     disabled
-                  />
-                  <!-- <textarea
+                  /> -->
+                  <textarea
                     id="risk_scenerio"
                     v-model="form.risk_scenerio"
                     placeholder="Enter Risk Scenerio"
                     class="form-control"
                     @blur="updateField($event.target.value, 'risk_scenerio')"
-                  /> -->
-                </b-form-group>
-              </b-col>
-              <b-col
-                md="12"
-              >
-                <b-form-group
-                  label="Existing Controls"
-                >
+                  ></textarea>
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Existing Controls">
                   <code>Fed in from risk register selection</code>
                   <ckeditor
                     id="existing_controls"
@@ -99,33 +73,26 @@
                     type="text"
                     @blur="updateField($event.target.value, 'existing_controls')"
                   /> -->
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Risk Owner"
-                >
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Risk Owner">
                   <code>This is also the business process owner</code>
                   <input
                     v-model="form.risk_owner"
                     placeholder="Risk owner"
                     disabled
                     class="form-control"
-                  >
-                </b-form-group>
-              </b-col>
-            </b-row>
-          </app-collapse-item>
-          <app-collapse-item
-            title="RISK ANALYSIS"
-          >
-
-            <b-row>
-              <b-col md="12">
-                <b-form-group
-                  label="Likelihood"
-                >
-                  <b-tooltip
+                  />
+                </el-form-group>
+              </el-col>
+            </el-row>
+          </el-collapse-item>
+          <el-collapse-item title="RISK ANALYSIS">
+            <el-row>
+              <el-col md="12">
+                <el-form-group label="Likelihood">
+                  <el-tooltip
                     target="likelihood"
                     title="Was the data obtained from the data subject directly or was it obtained from another source, such as a supplied database?"
                   />
@@ -141,16 +108,13 @@
                       :key="l_index1"
                       :label="`${likelihood.value}-${likelihood.name}`"
                       :value="likelihood.value"
-                    />
+                    ></option>
                   </select>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Likelihood Rationale"
-                >
-
-                  <!-- <b-tooltip
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Likelihood Rationale">
+                  <!-- <el-tooltip
                     target="likelihood_rationale"
                     title="The role that is responsible for the personal data"
                   /> -->
@@ -160,7 +124,7 @@
                     v-model="form.likelihood_rationale"
                     class="form-control"
                     disabled
-                  />
+                  ></textarea>
                   <!-- <textarea
                     id="likelihood_rationale"
                     v-model="form.likelihood_rationale"
@@ -169,13 +133,11 @@
                     type="text"
                     @blur="updateField($event.target.value, 'likelihood_rationale')"
                   /> -->
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Impact"
-                >
-                  <b-tooltip
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Impact">
+                  <el-tooltip
                     target="impact"
                     title="The use that the personal data is put to e.g. 'fulfilling a sale' or 'sending marketing information'"
                   />
@@ -191,23 +153,21 @@
                       :key="c_index"
                       :label="`${impact.value}-${impact.name}`"
                       :value="impact.value"
-                    />
+                    ></option>
                   </select>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Impact Rationale"
-                >
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Impact Rationale">
                   <code>Value is based on the Impact Analysis settings</code>
-                  <ckeditor
+                  <!-- <ckeditor
                     id="impact_rationale"
                     v-model="form.impact_rationale"
                     :editor="editor"
                     :config="editorConfig"
                     disabled
-                  />
-                  <!-- <b-tooltip
+                  /> -->
+                  <el-tooltip
                     target="impact_rationale"
                     title="The role that is responsible for the personal data"
                   />
@@ -218,15 +178,15 @@
                     class="form-control"
                     type="text"
                     @blur="updateField($event.target.value, 'impact_rationale')"
-                  /> -->
-                </b-form-group>
-              </b-col>
-              <!-- <b-col md="12">
-                <b-form-group
+                  ></textarea>
+                </el-form-group>
+              </el-col>
+              <!-- <el-col md="12">
+                <el-form-group
                   label="Risk Score"
                 >
 
-                  <b-tooltip
+                  <el-tooltip
                     target="risk_score"
                     title="The role that is responsible for the personal data"
                   />
@@ -238,14 +198,14 @@
                     type="number"
                     disabled
                   >
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group
                   label="Risk Level"
                 >
 
-                  <b-tooltip
+                  <el-tooltip
                     target="risk_level"
                     title="The role that is responsible for the personal data"
                   />
@@ -256,13 +216,11 @@
                     type="text"
                     disabled
                   >
-                </b-form-group>
-              </b-col> -->
-            </b-row>
-          </app-collapse-item>
-          <app-collapse-item
-            title="TREATMENT"
-          >
+                </el-form-group>
+              </el-col> -->
+            </el-row>
+          </el-collapse-item>
+          <el-collapse-item title="TREATMENT">
             <risk-treatment-options
               :selected-data="form"
               :risk-score="form.risk_score"
@@ -270,9 +228,9 @@
               table="d_p_i_assessments"
               @selected="resetForm"
             />
-            <!-- <b-row>
-              <b-col md="12">
-                <b-form-group
+            <!-- <el-row>
+              <el-col md="12">
+                <el-form-group
                   label="Treatment Actions"
                 >
 
@@ -286,15 +244,15 @@
                   </el-button>
                   <p />
                   <h4><strong>{{ form.treatment_option }}</strong></h4>
-                </b-form-group>
+                </el-form-group>
                 <hr>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
+              </el-col>
+              <el-col md="12">
+                <el-form-group
                   label="Treatment Actions"
                 >
 
-                  <b-tooltip
+                  <el-tooltip
                     target="treatment_actions"
                     title="The role that is responsible for the personal data"
                   />
@@ -306,21 +264,15 @@
                     type="text"
                     @blur="updateField($event.target.value, 'treatment_actions')"
                   />
-                </b-form-group>
-              </b-col>
-            </b-row> -->
-          </app-collapse-item>
-          <app-collapse-item
-            v-if="form.treatment_option === 'Mitigate'"
-            title="POST-TREATMENT"
-          >
-
-            <b-row>
-              <b-col md="12">
-                <b-form-group
-                  label="Likelihood"
-                >
-                  <!-- <b-tooltip
+                </el-form-group>
+              </el-col>
+            </el-row> -->
+          </el-collapse-item>
+          <el-collapse-item v-if="form.treatment_option === 'Mitigate'" title="POST-TREATMENT">
+            <el-row>
+              <el-col md="12">
+                <el-form-group label="Likelihood">
+                  <!-- <el-tooltip
                     target="revised_likelihood"
                     title="Was the data obtained from the data subject directly or was it obtained from another source, such as a supplied database?"
                   /> -->
@@ -336,16 +288,13 @@
                       :key="l_index1"
                       :label="`${likelihood.value}-${likelihood.name}`"
                       :value="likelihood.value"
-                    />
+                    ></option>
                   </select>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Likelihood Rationale"
-                >
-
-                  <!-- <b-tooltip
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Likelihood Rationale">
+                  <!-- <el-tooltip
                     target="revised_likelihood_rationale"
                     title="The role that is responsible for the personal data"
                   /> -->
@@ -355,14 +304,12 @@
                     class="form-control"
                     type="text"
                     disabled
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Post-Treatment Impact"
-                >
-                  <!-- <b-tooltip
+                  ></textarea>
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Post-Treatment Impact">
+                  <!-- <el-tooltip
                     target="revised_impact"
                     title="The use that the personal data is put to e.g. 'fulfilling a sale' or 'sending marketing information'"
                   /> -->
@@ -378,34 +325,31 @@
                       :key="c_index"
                       :label="`${impact.value}-${impact.name}`"
                       :value="impact.value"
-                    />
+                    ></option>
                   </select>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Impact Rationale"
-                >
-
-                  <ckeditor
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group label="Impact Rationale">
+                  <!-- <ckeditor
                     id="revised_impact_rationale"
                     v-model="form.revised_impact_rationale"
                     :editor="editor"
                     :config="editorConfig"
                     disabled
-                  />
-                  <!-- <textarea
+                  /> -->
+                  <textarea
                     id="revised_impact_rationale"
                     v-model="form.revised_impact_rationale"
                     placeholder="Impact Rationale"
                     class="form-control"
                     type="text"
                     @blur="updateField($event.target.value, 'revised_impact_rationale')"
-                  /> -->
-                </b-form-group>
-              </b-col>
-              <!-- <b-col md="12">
-                <b-form-group
+                  ></textarea>
+                </el-form-group>
+              </el-col>
+              <!-- <el-col md="12">
+                <el-form-group
                   label="Risk Score"
                 >
                   <input
@@ -416,14 +360,14 @@
                     type="number"
                     disabled
                   >
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
+                </el-form-group>
+              </el-col>
+              <el-col md="12">
+                <el-form-group
                   label="Risk Level"
                 >
 
-                  <b-tooltip
+                  <el-tooltip
                     target="revised_risk_level"
                     title="The role that is responsible for the personal data"
                   />
@@ -435,107 +379,71 @@
                     type="text"
                     disabled
                   >
-                </b-form-group>
-              </b-col> -->
-              <b-col
-                md="12"
-              >
-                <b-form-group
-                  label="Comments"
-                >
-                  <!-- <b-tooltip
-                    target="comments"
-                    title="Any other relevant information"
-                  />
+                </el-form-group>
+              </el-col> -->
+              <el-col md="12">
+                <el-form-group label="Comments">
+                  <el-tooltip target="comments" title="Any other relevant information" />
                   <textarea
                     id="comments"
                     v-model="form.comments"
                     class="form-control"
-                    @blur="updateField($event.target.value, 'comments');"
-                  /> -->
-                  <ckeditor
+                    @blur="updateField($event.target.value, 'comments')"
+                  ></textarea>
+                  <!-- <ckeditor
                     id="comments"
                     v-model="form.comments"
                     :editor="editor"
                     :config="editorConfig"
-                    @blur="updateField($event.target.value, 'comments');"
-                  />
-                </b-form-group>
-              </b-col>
-            </b-row>
-          </app-collapse-item>
-        </app-collapse>
+                    @blur="updateField($event.target.value, 'comments')"
+                  /> -->
+                </el-form-group>
+              </el-col>
+            </el-row>
+          </el-collapse-item>
+        </el-collapse>
         <P />
-        <el-button
-          type="primary"
-          @click="$emit('updated')"
-        >
-          Done
-        </el-button>
-      </b-col>
-      <b-col
-        md="4"
-      >
+        <el-button type="primary" @click="$emit('updated')"> Done </el-button>
+      </el-col>
+      <el-col md="4">
         <aside>
           <div align="center">
             <h4>Pre-Treatment Values</h4>
-            <img
-              :src="changeImpactImage(form.risk_level)"
-            >
+            <img :src="changeImpactImage(form.risk_level)" />
           </div>
           <p>
-            Risk Score: <strong>{{ form.risk_score }}</strong><br>
+            Risk Score: <strong>{{ form.risk_score }}</strong
+            ><br />
             Risk Level: <strong>{{ form.risk_level }}</strong>
           </p>
         </aside>
-        <hr>
+        <hr />
         <aside v-if="form.treatment_option === 'Mitigate'">
           <div align="center">
             <h4>Post-Treatment Values</h4>
-            <img
-              :src="changeImpactImage(form.revised_risk_level)"
-            >
+            <img :src="changeImpactImage(form.revised_risk_level)" />
           </div>
           <p>
-            Risk Score: <strong>{{ form.revised_risk_score }}</strong><br>
+            Risk Score: <strong>{{ form.revised_risk_score }}</strong
+            ><br />
             Risk Level: <strong>{{ form.revised_risk_level }}</strong>
           </p>
         </aside>
-      </b-col>
-    </b-row>
-    <b-modal
-      v-model="showRisksForm"
-      title="Select Risks"
-      centered
-      size="xl"
-      hide-footer
-    >
-      <v-client-table
-        v-model="risk_registers"
-        :columns="columns"
-        :options="options"
-      >
-        <div
-          slot="select"
-          slot-scope="{row}"
-        >
-          <el-checkbox
-            v-model="risk_scenerios"
-            :label="row.risk_id"
-            border
-          />
-        </div>
+      </el-col>
+    </el-row>
+    <el-dialog v-model="showRisksForm" title="Select Risks" centered size="xl" hide-footer>
+      <v-client-table v-model="risk_registers" :columns="columns" :options="options">
+        <template v-slot:select="{ row }">
+          <div>
+            <el-checkbox v-model="risk_scenerios" :label="row.risk_id" border />
+          </div>
+        </template>
       </v-client-table>
       <aside>
-        <el-button
-          type="primary"
-          @click="setRiskScenerios()"
-        >
-          Done
-        </el-button>
+        <el-button type="primary" @click="setRiskScenerios()"> Done </el-button>
       </aside>
-    </b-modal>
-    <b-modal
+    </el-dialog>
+    <el-dialog
       v-model="showTreatmentModal"
       title="Risk Treatment Option"
       centered
@@ -544,24 +452,18 @@
     >
       <div>
         <div>
-          <el-alert
-            :type="treatment_alert_type"
-            :closable="false"
-          >
+          <el-alert :type="treatment_alert_type" :closable="false">
             {{ treatment_comment }}
           </el-alert>
         </div>
         <div v-if="!showTreatmentOption">
           <el-button
             type="success"
-            @click="updateField('Accept', 'treatment_option'); showTreatmentModal = false"
+            @click="(updateField('Accept', 'treatment_option'), (showTreatmentModal = false))"
           >
             Accept
           </el-button>
-          <el-button
-            type="default"
-            @click="showTreatmentOption = true"
-          >
+          <el-button type="default" @click="showTreatmentOption = true">
             I want to explore other options
           </el-button>
         </div>
@@ -571,62 +473,48 @@
             v-model="form.treatment_option"
             class="form-control"
             placeholder="Select Option"
-            @change="updateField($event.target.value, 'treatment_option'); showTreatmentModal = false"
+            @change="
+              (updateField($event.target.value, 'treatment_option'), (showTreatmentModal = false))
+            "
           >
             <option
               v-for="(treatment_option, option_index) in treatment_options"
               :key="option_index"
               :label="treatment_option"
               :value="treatment_option"
-            />
+            ></option>
           </select>
         </div>
       </div>
-    </b-modal>
+    </el-dialog>
   </div>
 </template>
 <script>
-import {
-  BRow, BCol, BFormGroup, BTooltip,
-} from 'bootstrap-vue'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
-import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import RiskTreatmentOptions from '@/views/modules/risk-assessment/partials/RiskTreatmentOptions.vue'
 
 export default {
   components: {
-    BRow,
-    BCol,
-    BFormGroup,
-    BTooltip,
-    AppCollapse,
-    AppCollapseItem,
-    RiskTreatmentOptions,
+    RiskTreatmentOptions
     // BButton,
-  },
-  directives: {
-    Ripple,
   },
   props: {
     selectedData: {
       type: Object,
-      required: true,
+      required: true
     },
     riskAppetite: {
       type: Number,
-      required: true,
+      required: true
     },
     likelihoods: {
       type: Array,
-      default: () => ({}),
+      default: () => null
     },
     impacts: {
       type: Array,
-      default: () => ({}),
-    },
+      default: () => null
+    }
   },
   data() {
     return {
@@ -656,33 +544,28 @@ export default {
         rivised_impact_rationale: '',
         revised_risk_score: '',
         revised_risk_level: '',
-        comments: '',
+        comments: ''
       },
       treatment_options: ['Avoid', 'Mitigate', 'Transfer', 'Accept'],
-      columns: [
-        'select',
-        'risk_id',
-        'vulnerability_description',
-        'control_description',
-      ],
+      columns: ['select', 'risk_id', 'vulnerability_description', 'control_description'],
       options: {
         headings: {
           risk_id: 'REF',
           vulnerability_description: 'Risk Desc',
-          control_description: 'Control',
+          control_description: 'Control'
         },
         pagination: {
           dropdown: true,
-          chunk: 10,
+          chunk: 10
         },
         perPage: 10,
         filterByColumn: true,
         texts: {
-          filter: 'Search:',
+          filter: 'Search:'
         },
         sortable: ['risk_id', 'vulnerability_description', 'control_description'],
         // filterable: false,
-        filterable: ['risk_id', 'vulnerability_description', 'control_description'],
+        filterable: ['risk_id', 'vulnerability_description', 'control_description']
       },
       loading: false,
       selectedClient: {},
@@ -693,7 +576,7 @@ export default {
       treatment_comment: '',
       treatment_alert_type: 'error',
       showTreatmentModal: false,
-      showTreatmentOption: false,
+      showTreatmentOption: false
     }
   },
   created() {
@@ -702,8 +585,7 @@ export default {
   },
   methods: {
     resetForm(data) {
-      const app = this
-      app.form = data
+      this.form = data
     },
     changeImpactImage(str) {
       if (str) {
@@ -712,68 +594,70 @@ export default {
       return 'images/project-icons/no-impact-level.png'
     },
     treatRisk() {
-      const app = this
-      const assessment = app.form
+      const assessment = this.form
       const riskValue = assessment.risk_score
       const { riskAppetite } = app
       if (riskValue <= riskAppetite) {
-        app.treatment_comment = `Risk Score of ${riskValue} satisfies your Risk Appetite of ${riskAppetite}. You might want to Accept the risk, it's up to you.`
-        app.treatment_alert_type = 'success'
-        app.showTreatmentOption = false
+        this.treatment_comment = `Risk Score of ${riskValue} satisfies your Risk Appetite of ${riskAppetite}. You might want to Accept the risk, it's up to you.`
+        this.treatment_alert_type = 'success'
+        this.showTreatmentOption = false
       } else {
-        app.treatment_comment = `Risk Score of ${riskValue} exceeds your Risk Appetite of ${riskAppetite}. Kindly pick an option to further treat the risk`
-        app.treatment_alert_type = 'error'
-        app.showTreatmentOption = true
+        this.treatment_comment = `Risk Score of ${riskValue} exceeds your Risk Appetite of ${riskAppetite}. Kindly pick an option to further treat the risk`
+        this.treatment_alert_type = 'error'
+        this.showTreatmentOption = true
       }
-      app.showTreatmentModal = true
+      this.showTreatmentModal = true
     },
     fetchRiskRegister() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const fetchRisksResource = new Resource('fetch-risk-registers')
-      fetchRisksResource.list({ client_id: app.selectedData.client_id, business_unit_id: app.selectedData.business_unit_id })
-        .then(response => {
-          app.risk_registers = response.risk_registers
-          app.loading = false
-        }).catch(() => { app.loading = false })
+      fetchRisksResource
+        .list({
+          client_id: this.selectedData.client_id,
+          business_unit_id: this.selectedData.business_unit_id
+        })
+        .then((response) => {
+          this.risk_registers = response.risk_registers
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     setRiskScenerios() {
-      const app = this
-      app.showRisksForm = false
+      this.showRisksForm = false
       let scenerio = '<ul>'
       let control = '<ul>'
-      app.risk_scenerios.forEach(riskId => {
-        const fileteredRiskRegister = app.risk_registers.filter(riskRegister => riskRegister.risk_id === riskId)
+      this.risk_scenerios.forEach((riskId) => {
+        const fileteredRiskRegister = this.risk_registers.filter(
+          (riskRegister) => riskRegister.risk_id === riskId
+        )
         scenerio += `<li> ${fileteredRiskRegister[0].vulnerability_description}</li>`
         control += `<li> ${fileteredRiskRegister[0].control_description}</li>`
       })
-      app.form.risk_scenerio = scenerio
-      app.form.existing_controls = control
-      app.updateField(scenerio, 'risk_scenerio')
-      app.updateField(control, 'existing_controls')
+      this.form.risk_scenerio = scenerio
+      this.form.existing_controls = control
+      this.updateField(scenerio, 'risk_scenerio')
+      this.updateField(control, 'existing_controls')
     },
     updateField(value, field) {
-      const app = this
       const params = {
-        field, value,
+        field,
+        value
       }
       const updateResources = new Resource('dpia/update')
-      updateResources.update(app.selectedData.id, params)
-        .then(response => {
-          app.form = response.dpia
-        }).catch()
-    },
-  },
+      updateResources
+        .update(this.selectedData.id, params)
+        .then((response) => {
+          this.form = response.dpia
+        })
+        .catch()
+    }
+  }
 }
 </script>
-    <style lang="scss" scoped>
-    @import '~@core/scss/base/bootstrap-extended/include';
-    </style>
-    <style lang="scss">
-    @import '@core/scss/vue/pages/page-auth.scss';
-    </style>
-    <style scoped>
-    .no-padding {
-      padding: 0 !important;
-    }
-    </style>
+<style scoped>
+.no-padding {
+  padding: 0 !important;
+}
+</style>

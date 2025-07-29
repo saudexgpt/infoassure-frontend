@@ -1,12 +1,9 @@
 <template>
-  <div
-    :class="{'hidden':hidden}"
-    class="pagination-container"
-  >
+  <div :class="{ hidden: hidden }" class="pagination-container">
     <el-pagination
       :background="background"
-      :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
       :layout="layout"
       :page-sizes="pageSizes"
       :total="total"
@@ -25,38 +22,38 @@ export default {
   props: {
     total: {
       required: true,
-      type: Number,
+      type: Number
     },
     page: {
       type: Number,
-      default: 1,
+      default: 1
     },
     limit: {
       type: Number,
-      default: 20,
+      default: 20
     },
     pageSizes: {
       type: Array,
       default() {
         return [10, 15, 20, 30, 50, 100]
-      },
+      }
     },
     layout: {
       type: String,
-      default: 'total, sizes, prev, pager, next, jumper',
+      default: 'total, sizes, prev, pager, next, jumper'
     },
     background: {
       type: Boolean,
-      default: true,
+      default: true
     },
     autoScroll: {
       type: Boolean,
-      default: true,
+      default: true
     },
     hidden: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   computed: {
     currentPage: {
@@ -65,7 +62,7 @@ export default {
       },
       set(val) {
         this.$emit('update:page', val)
-      },
+      }
     },
     pageSize: {
       get() {
@@ -73,8 +70,8 @@ export default {
       },
       set(val) {
         this.$emit('update:limit', val)
-      },
-    },
+      }
+    }
   },
   methods: {
     handleSizeChange(val) {
@@ -88,8 +85,8 @@ export default {
       if (this.autoScroll) {
         scrollTo(0, 800)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -1,8 +1,11 @@
 <template>
   <div>
-    <div v-if="moduleIsActive">
+    <div v-if="moduleIsActive || isAdmin">
       <el-row :gutter="5">
         <el-col :md="8">
+          <p>Activities of the ISMS Module</p>
+        </el-col>
+        <!-- <el-col :md="8">
           <el-select
             v-model="selectedProject"
             placeholder="Select Project"
@@ -20,65 +23,49 @@
               <span style="float: right; color: #8492a6; font-size: 13px">{{ (project.available_module) ? project.available_module.name : '' }}</span>
             </el-option>
           </el-select>
-        </el-col>
+        </el-col> -->
       </el-row>
-      <p />
+      <p></p>
       <div v-if="selectedProject !== null">
         <el-row :gutter="5">
           <el-col :md="24">
-            <b-button-group>
-              <!-- <b-button
+            <el-button-group>
+              <!-- <el-button
                 id="gap_assessment"
 
                 variant="outline-secondary"
                 @click="setView('gap_assessment')"
               >
                 <img
-                  src="images/project-icons/gap-assessment.png"
+                  src="/images/project-icons/gap-assessment.png"
                   width="30"
                 >
                 Gap Assessment
-              </b-button> -->
-              <b-button
+              </el-button> -->
+              <el-button
                 id="risk_library"
-
                 variant="outline-secondary"
                 @click="setView('risk_library')"
               >
-                <img
-                  src="images/project-icons/risk_library.png"
-                  width="30"
-                >
+                <img src="/images/project-icons/risk_library.png" width="30" />
                 Risk & Controls
-              </b-button>
-              <b-button
+              </el-button>
+              <el-button
                 id="risk_assessment"
-
                 variant="outline-secondary"
                 @click="setView('risk_assessment')"
               >
-                <img
-                  src="images/project-icons/risk-assessment.png"
-                  width="30"
-                >
+                <img src="/images/project-icons/risk-assessment.png" width="30" />
                 Risk Assessment
-              </b-button>
-              <b-button
-                id="soa"
-
-                variant="outline-secondary"
-                @click="setView('soa')"
-              >
-                <img
-                  src="images/project-icons/soa.png"
-                  width="30"
-                >
+              </el-button>
+              <el-button id="soa" variant="outline-secondary" @click="setView('soa')">
+                <img src="/images/project-icons/soa.png" width="30" />
                 SOA
-              </b-button>
-            </b-button-group>
+              </el-button>
+            </el-button-group>
           </el-col>
         </el-row>
-        <p />
+        <p></p>
         <div>
           <gap-assessment
             v-if="current_view === 'gap_assessment'"
@@ -86,11 +73,7 @@
             :selected-project="selectedProject"
             :is-admin="isAdmin"
           />
-          <risk-library
-            v-if="current_view === 'risk_library'"
-            module="isms"
-            view-only="isms"
-          />
+          <risk-library v-if="current_view === 'risk_library'" module="isms" view-only="isms" />
           <risk-assessment
             v-if="current_view === 'risk_assessment'"
             module="isms"
@@ -111,7 +94,7 @@
       align="center"
     >
       <img
-        src="/images/caution.png"
+        src="//images/caution.png"
         width="300"
         alt="NOT FOUND"
       >
@@ -124,9 +107,6 @@
 </template>
 
 <script>
-import {
-  BButtonGroup, BButton,
-} from 'bootstrap-vue'
 import GapAssessment from '@/views/modules/projects/partials/GapAssessment.vue'
 import RiskLibrary from '@/views/modules/RiskAndThreats/ViewRiskControlMatrix.vue'
 import RiskAssessment from '@/views/modules/risk-assessment/index.vue'
@@ -136,19 +116,17 @@ import checkPermission from '@/utils/permission'
 
 export default {
   components: {
-    BButtonGroup,
-    BButton,
     GapAssessment,
     RiskLibrary,
     RiskAssessment,
-    SOA,
+    SOA
     // ProjectPlanDetails,
   },
   props: {
     isAdmin: {
       type: Boolean,
-      default: () => false,
-    },
+      default: () => false
+    }
   },
   data() {
     return {
@@ -156,7 +134,7 @@ export default {
       assessment_activities_array: [],
       moduleIsActive: false,
       projects: [],
-      selectedProject: null,
+      selectedProject: null
     }
   },
   computed: {
@@ -165,62 +143,82 @@ export default {
     },
     clientActivatedProjects() {
       return this.$store.getters.clientActivatedProjects
-    },
+    }
   },
   watch: {
     clientActivatedProjects() {
       this.checkIfProjectIsActive()
     },
-  },
-  created() {
-    if (this.selectedClient.id !== null) {
+    selectedClient() {
       this.checkIfProjectIsActive()
-    } else {
-      this.$alert('Please select a client to continue')
     }
   },
+  // created() {
+  //   this.selectedProject = this.project
+  //   if (this.selectedClient.id !== null) {
+  //     this.checkIfProjectIsActive()
+  //   }
+  //   setTimeout(() => {
+  //     this.setView('gap_assessment')
+  //   }, 5000)
+  // },
+  // created() {
+  //   if (this.selectedClient.id !== null) {
+  //     this.checkIfProjectIsActive()
+  //   } else {
+  //     this.$alert('Please select a client to continue')
+  //   }
+  // },
   mounted() {
-    this.setView(this.current_view)
+    // this.selectedProject = this.project
+    if (this.selectedClient.id !== null) {
+      this.checkIfProjectIsActive()
+    }
+    setTimeout(() => {
+      this.setView('risk_library')
+    }, 5000)
   },
   methods: {
     checkPermission,
     checkIfProjectIsActive() {
-      const app = this
-      const routeName = app.$route.name.split('-')
-      const moduleSlug = routeName[1]
-      const projects = app.clientActivatedProjects.filter(project => project.available_module.slug === moduleSlug)
-      app.moduleIsActive = false
+      const projects = this.clientActivatedProjects.filter(
+        (project) => project.available_module.slug === 'isms'
+      )
+      console.log(projects)
+      this.moduleIsActive = false
       if (projects.length > 0) {
-        app.moduleIsActive = true
-        app.projects = projects
-        // eslint-disable-next-line prefer-destructuring
-        app.selectedProject = projects[0]
+        this.moduleIsActive = true
+        this.projects = projects
+
+        this.selectedProject = projects[0]
       }
     },
     setAssessmentActivities() {
-      const app = this
-      const { standard } = app.selectedProject
+      const { standard } = this.selectedProject
       const assessmentActivities = standard.assessment_activities
-      app.assessment_activities_array = (assessmentActivities !== null) ? assessmentActivities.split('|') : []
+      this.assessment_activities_array =
+        assessmentActivities !== null ? assessmentActivities.split('|') : []
     },
     setView(viewId) {
-      const app = this
-      app.current_view = viewId
-      app.changeActiveTabBgColor(viewId)
+      this.current_view = viewId
+      this.changeActiveTabBgColor(viewId)
     },
     changeActiveTabBgColor(viewId) {
       const divs = document.getElementsByClassName('btn')
       // Loop through the buttons and add the activeCard class to the current/clicked button
-      // eslint-disable-next-line no-plusplus
+
       for (let i = 0; i < divs.length; i++) {
         const current = document.getElementsByClassName('btn btn-secondary')
         // If there's no activeCard class
         if (current.length > 0) {
-          current[0].className = current[0].className.replace('btn btn-secondary', 'btn btn-outline-secondary')
+          current[0].className = current[0].className.replace(
+            'btn btn-secondary',
+            'btn btn-outline-secondary'
+          )
         }
       }
       document.getElementById(viewId).className = 'btn btn-secondary'
-    },
-  },
+    }
+  }
 }
 </script>

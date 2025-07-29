@@ -3,10 +3,7 @@
     <div class="block">
       <legend>{{ title }}</legend>
       <div v-if="notifications.length > 0">
-        <el-timeline
-          v-loading="listLoading"
-          style="height: 400px; overflow:auto;"
-        >
+        <el-timeline v-loading="listLoading" style="height: 400px; overflow: auto">
           <el-timeline-item
             v-for="(activity_log, index) in notifications"
             :key="index"
@@ -15,9 +12,9 @@
             color="#0bbd87"
           >
             <el-card>
-              <label>{{ activity_log.data.title }}</label>
+              <p>{{ activity_log.data.title }}</p>
               <!-- eslint-disable-next-line vue/no-v-html-->
-              <span v-html="activity_log.data.description" />
+              <span v-html="activity_log.data.description"></span>
             </el-card>
           </el-timeline-item>
         </el-timeline>
@@ -28,8 +25,8 @@
       <pagination
         v-show="total > 0"
         :total="total"
-        :page.sync="query.page"
-        :limit.sync="query.limit"
+        v-model:page="query.page"
+        v-model:limit="query.limit"
         @pagination="markAsRead"
       />
     </div>
@@ -39,18 +36,18 @@
 <script>
 import moment from 'moment'
 import Resource from '@/api/resource'
-import Pagination from '@/views/components/Pagination-main/index.vue'
+import Pagination from '@/views/Components/Pagination-main/index.vue'
 
 const markNotificationAsRead = new Resource('notification/mark-as-read')
 export default {
   components: {
-    Pagination,
+    Pagination
   },
   props: {
     title: {
       type: String,
-      default: 'Notification',
-    },
+      default: 'Notification'
+    }
   },
   data() {
     return {
@@ -58,15 +55,15 @@ export default {
       listLoading: false,
       query: {
         page: 1,
-        limit: 10,
+        limit: 10
       },
-      total: 0,
+      total: 0
     }
   },
   computed: {
     notifications() {
       return this.$store.getters.userData.notifications
-    },
+    }
   },
   created() {
     this.markAsRead()
@@ -74,22 +71,19 @@ export default {
   methods: {
     moment,
     markAsRead() {
-      const app = this
-      const { limit, page } = app.query
-      app.listLoading = true
-      markNotificationAsRead.list(this.query)
-        .then(response => {
-          const { data } = response.notifications
-          data.forEach((element, index) => {
-            // eslint-disable-next-line dot-notation, no-param-reassign
-            element['index'] = (page - 1) * limit + index + 1
-          })
-          this.total = response.notifications.total
-          app.$store.dispatch('user/setNotifications', data)
-          app.$store.dispatch('user/setUnreadNotificationCount', response.unread_notifications)
-          this.listLoading = false
+      const { limit, page } = this.query
+      this.listLoading = true
+      markNotificationAsRead.list(this.query).then((response) => {
+        const { data } = response.notifications
+        data.forEach((element, index) => {
+          element['index'] = (page - 1) * limit + index + 1
         })
-    },
-  },
+        this.total = response.notifications.total
+        this.$store.dispatch('user/setNotifications', data)
+        this.$store.dispatch('user/setUnreadNotificationCount', response.unread_notifications)
+        this.listLoading = false
+      })
+    }
+  }
 }
 </script>

@@ -1,19 +1,15 @@
 <template>
   <div>
-    <div
-      v-if="!showEditForm"
-      slot="header"
-    >
-      <b-row>
-        <b-col
-          cols="7"
-        >
-          <h3>
-            Registered Clients
-          </h3>
-        </b-col>
-      </b-row>
-      <hr>
+    <div>
+      <el-row>
+        <el-col :md="21">
+          <h3> Registered Clients </h3>
+        </el-col>
+        <el-col :md="3">
+          <el-button type="primary" @click="registerDialog = true">New Registration</el-button>
+        </el-col>
+      </el-row>
+      <hr />
       <!-- <span class="pull-right">
         <el-button
           v-if="clients.length > 0"
@@ -24,222 +20,158 @@
           @click="handleDownload('List of Clients', clients)"
         >Export Excel</el-button>
       </span> -->
-      <v-client-table
-        v-model="clients"
-        v-loading="loading"
-        :columns="columns"
-        :options="options"
-      >
-        <div
-          slot="child_row"
-          slot-scope="props"
-        >
-          <el-alert
-            type="success"
-            :closable="false"
-          >
-            Privileged users for {{ props.row.name }}
-          </el-alert>
-          <v-client-table
-            v-model="props.row.users"
-            :columns="['name', 'action']"
-            :options="{ filterable: false }"
-          >
-            <div
-              slot="name"
-              slot-scope="{row}"
+      <v-client-table :data="clients" v-loading="loading" :columns="columns" :options="options">
+        <template v-slot:child_row="props">
+          <div>
+            <el-alert type="error" :closable="false">
+              Privileged users for {{ props.row.name }}
+            </el-alert>
+            <v-client-table
+              :data="props.row.users"
+              :columns="['name', 'user_status', 'action']"
+              :options="{ filterable: false }"
             >
-              <strong>{{ row.name }}</strong> <br>
-              {{ row.email }} <br>
-              {{ row.phone }}
-            </div>
-            <div
-              slot="action"
-              slot-scope="{row}"
-            >
-              <el-tooltip
-                :content="`Edit ${row.name}'s info`"
-                placement="top"
-              >
-                <el-button
-                  circle
-                  type="primary"
-                  @click="editThisClientUser(row)"
-                >
-                  <feather-icon icon="EditIcon" />
-                </el-button>
-              </el-tooltip>
-              <el-tooltip
-                content="Activate Account"
-                placement="top"
-              >
-                <el-button
-                  circle
-                  type="success"
-                  @click="confirmRegistration(row.id, 'admin_confirmation')"
-                >
-                  <feather-icon icon="CheckIcon" />
-                </el-button>
-              </el-tooltip>
-              <el-tooltip
-                content="Send login credentials"
-                placement="top"
-              >
-                <el-button
-                  circle
-                  type="warning"
-                  @click="sendLoginCredentials(row)"
-                >
-                  <feather-icon icon="KeyIcon" />
-                </el-button>
-              </el-tooltip>
-              <el-tooltip
-                content="Delete User"
-                placement="top"
-              >
-                <el-button
-                  circle
-                  type="danger"
-                  @click="deleteClientUser(props.row.id, row.id)"
-                >
-                  <feather-icon icon="TrashIcon" />
-                </el-button>
-              </el-tooltip>
-            </div>
-          </v-client-table>
-        </div>
-        <div
-          slot="is_active"
-          slot-scope="{row}"
-        >
-          {{ (row.is_active === 1) ? 'Active' : 'Suspended' }}
-        </div>
-        <div
-          slot="action"
-          slot-scope="props"
-        >
-          <b-dropdown
-            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-            class="mx-1"
-            right
-            text="Action"
-          >
-            <!-- <b-dropdown-item>
-              <router-link
-                :to="{name: 'clientsDetails', params: {id: props.row.id}}"
-              >
-                <span><feather-icon icon="EyeIcon" /> View Details</span>
-              </router-link>
-            </b-dropdown-item> -->
-            <b-dropdown-item
-              v-if="checkPermission(['update-clients'])"
-              @click="editClient(props.row)"
-            >
-              <span><feather-icon icon="Edit2Icon" /> Edit</span>
-            </b-dropdown-item>
+              <template v-slot:name="{ row }">
+                <div>
+                  <strong>{{ row.name }}</strong> <br />
+                  {{ row.email }} <br />
+                  {{ row.phone }}
+                </div>
+              </template>
+              <template v-slot:user_status="{ row }">
+                <div>
+                  <el-tooltip
+                    v-if="props.row.admin_user_id !== row.id"
+                    :content="`Make ${row.name} the company's admin`"
+                    placement="top"
+                  >
+                    <el-button type="info" circle @click="makeAdmin(props.row.id, row)">
+                      <icon icon="tabler:user-check" />
+                    </el-button>
+                  </el-tooltip>
+                  <el-alert v-else type="success" :closable="false"> Administrator </el-alert>
+                </div>
+              </template>
+              <template v-slot:action="{ row }">
+                <el-button-group class="ml-4">
+                  <el-tooltip :content="`Edit ${row.name}'s info`" placement="top">
+                    <el-button type="primary" plain @click="editThisClientUser(row)">
+                      <icon icon="tabler:edit" />
+                    </el-button>
+                  </el-tooltip>
+                  <el-tooltip content="Activate Account" placement="top">
+                    <el-button
+                      type="primary"
+                      plain
+                      @click="confirmRegistration(row.id, 'admin_confirmation')"
+                    >
+                      <icon icon="tabler:check" />
+                    </el-button>
+                  </el-tooltip>
+                  <el-tooltip content="Send login credentials" placement="top">
+                    <el-button type="primary" plain @click="sendLoginCredentials(row)">
+                      <icon icon="tabler:key" />
+                    </el-button>
+                  </el-tooltip>
+                  <el-tooltip content="Delete User" placement="top">
+                    <el-button type="primary" plain @click="deleteClientUser(props.row.id, row.id)">
+                      <icon icon="tabler:trash" />
+                    </el-button>
+                  </el-tooltip>
+                </el-button-group>
+              </template>
+            </v-client-table>
+          </div>
+        </template>
+        <template v-slot:is_active="{ row }">
+          <div>
+            {{ row.is_active === 1 ? 'Active' : 'Suspended' }}
+          </div>
+        </template>
+        <template v-slot:action="props">
+          <div>
+            <el-dropdown>
+              <el-button type="info" plain> Action <icon icon="tabler:chevron-down" /> </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item
+                    v-if="checkPermission(['update-clients'])"
+                    @click="editClient(props.row)"
+                  >
+                    <span><icon icon="tabler:edit" /> Edit</span>
+                  </el-dropdown-item>
 
-            <b-dropdown-item
-              v-if="checkRole(['super']) && props.row.is_active === 0"
-              @click="toggleClientSuspension(props.row, 1, 'activate')"
-            >
-              <span><feather-icon icon="UnlockIcon" /> Activate</span>
-            </b-dropdown-item>
-            <b-dropdown-item
-              v-if="checkRole(['super']) && props.row.is_active === 1"
-              @click="toggleClientSuspension(props.row, 0, 'suspend')"
-            >
-              <span><feather-icon icon="LockIcon" /> Suspend</span>
-            </b-dropdown-item>
-            <!-- <b-dropdown-item @click="resetPassword(props.row.user)">
-              <span><feather-icon icon="UnlockIcon" /> Reset Password</span>
-            </b-dropdown-item>
-            <b-dropdown-item @click="loginAsUser(props.row.user)">
-              <span v-b-tooltip.hover.right="'Login as ' + props.row.user.first_name"><feather-icon icon="KeyIcon" /> Login</span>
-            </b-dropdown-item>
-            <b-dropdown-item @click="removeStaff(props.row)">
-              <span v-b-tooltip.hover.right="'Delete ' + props.row.user.first_name"><feather-icon icon="TrashIcon" /> Delete</span>
-            </b-dropdown-item> -->
-          </b-dropdown>
-        </div>
+                  <el-dropdown-item
+                    v-if="checkRole(['super']) && props.row.is_active === 0"
+                    @click="toggleClientSuspension(props.row, 1, 'activate')"
+                  >
+                    <span><icon icon="tabler:lock-open-2" /> Activate</span>
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="checkRole(['super']) && props.row.is_active === 1"
+                    @click="toggleClientSuspension(props.row, 0, 'suspend')"
+                  >
+                    <span><icon icon="tabler:lock-password" /> Suspend</span>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </template>
       </v-client-table>
       <el-row :gutter="20">
         <pagination
           v-show="total > 0"
           :total="total"
-          :page.sync="query.page"
-          :limit.sync="query.limit"
+          v-model:page="query.page"
+          v-model:limit="query.limit"
           @pagination="fetchClients"
         />
       </el-row>
     </div>
-    <div v-else>
-      <b-row>
-        <b-col
-          cols="7"
-        >
-          <h3>
-            Edit Client
-          </h3>
-        </b-col>
-        <b-col cols="3">
-
-          <span class="pull-right">
-            <el-button
-              style="margin:0 0 20px 20px;"
-              type="danger"
-              icon="el-icon-back"
-              @click="fetchClients(); showEditForm = false"
-            >Back</el-button>
-          </span>
-        </b-col>
-      </b-row>
-      <hr>
-      <edit-client
-        v-if="!editClientUser"
-        :selected-client="selectedClient"
-        @update="fetchClients()"
-      />
-      <edit-client-user
-        v-if="editClientUser"
-        :selected-client-user="selectedClientUser"
-        @update="fetchClients()"
-      />
-    </div>
+    <el-dialog v-model="registerDialog" title="Register New Client">
+      <RegisterClient @saved="fetchClients" />
+    </el-dialog>
+    <el-dialog
+      v-if="showEditClientForm"
+      v-model="showEditClientForm"
+      :title="`Edit ${selectedClient.name}`"
+    >
+      <EditClient :selected-client="selectedClient" @update="fetchClients()" />
+    </el-dialog>
+    <el-dialog
+      v-if="showEditClientUserForm"
+      v-model="showEditClientUserForm"
+      :title="`Edit ${selectedClientUser.name}`"
+    >
+      <EditClientUser :selected-client-user="selectedClientUser" @update="fetchClients()" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {
-  BRow, BCol, VBTooltip, BDropdown, BDropdownItem,
-} from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
 import checkPermission from '@/utils/permission'
 import checkRole from '@/utils/role'
-import Pagination from '@/views/components/Pagination-main/index.vue'
+import Pagination from '@/views/Components/Pagination-main/index.vue'
+import RegisterClient from './RegisterClient.vue'
 import EditClient from './EditClient.vue'
 import EditClientUser from './EditClientUser.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    BDropdown,
-    BDropdownItem,
-    BRow,
-    BCol,
     Pagination,
     EditClient,
     EditClientUser,
-  },
-  directives: {
-    'b-tooltip': VBTooltip,
-    Ripple,
+    RegisterClient
   },
   data() {
     return {
       downloadLoading: false,
       editClientUser: false,
-      isCreateClassSidebarActive: false,
-      isEditClassSidebarActive: false,
+      registerDialog: false,
+      showEditClientForm: false,
+      showEditClientUserForm: false,
       pageLength: 10,
       dir: false,
       columns: [
@@ -248,7 +180,7 @@ export default {
         'contact_phone',
         'contact_address',
         'is_active',
-        'action',
+        'action'
         // 'user.password_status',
       ],
 
@@ -258,7 +190,7 @@ export default {
           contact_phone: 'Phone',
           contact_address: 'Address',
           is_active: 'Status',
-          action: '',
+          action: ''
 
           // id: 'S/N',
         },
@@ -269,17 +201,9 @@ export default {
           }
           return {}
         },
-        sortable: [
-          'name',
-          'contact_email',
-          'contact_phone',
-        ],
+        sortable: ['name', 'contact_email', 'contact_phone'],
         // filterable: false,
-        filterable: [
-          'name',
-          'contact_email',
-          'contact_phone',
-        ],
+        filterable: ['name', 'contact_email', 'contact_phone']
       },
       showEditForm: false,
       clients: [],
@@ -289,9 +213,9 @@ export default {
       selected_row_index: '',
       query: {
         page: 1,
-        limit: 50,
+        limit: 50
       },
-      total: 0,
+      total: 0
     }
   },
   created() {
@@ -301,127 +225,173 @@ export default {
     checkPermission,
     checkRole,
     fetchClients() {
-      const app = this
       const { limit, page } = this.query
-      app.loading = true
+      this.loading = true
       const fetchStaffResource = new Resource('clients')
-      fetchStaffResource.list(this.query)
-        .then(response => {
-          app.clients = response.clients.data
-          app.clients.forEach((element, index) => {
-            // eslint-disable-next-line no-param-reassign, dot-notation
-            element['index'] = (page - 1) * limit + index + 1
-          })
-          app.total = response.clients.total
-          app.loading = false
+      fetchStaffResource.list(this.query).then((response) => {
+        this.clients = response.clients.data
+        this.clients.forEach((element, index) => {
+          element['index'] = (page - 1) * limit + index + 1
+        })
+        this.total = response.clients.total
+        this.loading = false
+      })
+    },
+    makeAdmin(clientId, user) {
+      this.$confirm(
+        `Please confirm that ${user.name} is the company's new admin?`,
+        'Confirm Action',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.loading = true
+          const clientResource = new Resource('clients/assign-user-as-client-admin')
+          clientResource
+            .update(clientId, { user_id: user.id })
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: 'Action Successfully'
+              })
+              this.loading = false
+              this.fetchClients()
+            })
+            .catch(() => {
+              this.loading = false
+              this.$message({
+                type: 'danger',
+                message: 'An error occured. Please try again'
+              })
+            })
+        })
+        .catch(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: 'Delete canceled',
+          // })
         })
     },
     toggleClientSuspension(client, value, action) {
-      this.$confirm(`Are you sure you want to ${action} ${client.name}
-      ?`, 'Confirm Action', {
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-        type: 'warning',
-      }).then(() => {
-        this.loading = true
-        const clientResource = new Resource('clients/toggle-client-suspension')
-        clientResource.update(client.id, { value })
-          .then(() => {
+      this.$confirm(
+        `Are you sure you want to ${action} ${client.name}
+      ?`,
+        'Confirm Action',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.loading = true
+          const clientResource = new Resource('clients/toggle-client-suspension')
+          clientResource.update(client.id, { value }).then(() => {
             this.$message({
               type: 'success',
-              message: 'Action Successfully',
+              message: 'Action Successfully'
             })
             this.loading = false
             this.fetchClients()
           })
-      }).catch(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: 'Delete canceled',
-        // })
-      })
+        })
+        .catch(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: 'Delete canceled',
+          // })
+        })
     },
     confirmRegistration(userId, code) {
-      const app = this
       const confirmCodeResource = new Resource('auth/confirm-registration')
-      app.loading = true
-      confirmCodeResource.list({ code, user_id: userId })
-        .then(response => {
+      this.loading = true
+      confirmCodeResource
+        .list({ code, user_id: userId })
+        .then((response) => {
           this.$message({
             type: 'success',
-            message: response,
+            message: response
           })
-          app.loading = false
+          this.loading = false
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
+          this.$message.error(error.response.data.error)
+          this.loading = false
         })
     },
     sendLoginCredentials(user) {
-      this.$confirm(`Are you sure you want to send login credentials to ${user.email}
-      ?`, 'Confirm Action', {
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-        type: 'warning',
-      }).then(() => {
-        this.loading = true
-        const deleteStaffResource = new Resource('clients/send-login-credentials')
-        deleteStaffResource.update(user.id)
-          .then(() => {
+      this.$confirm(
+        `Are you sure you want to send login credentials to ${user.email}
+      ?`,
+        'Confirm Action',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.loading = true
+          const deleteStaffResource = new Resource('clients/send-login-credentials')
+          deleteStaffResource.update(user.id).then(() => {
             this.$message({
               type: 'success',
-              message: 'Login Credentials Sent Successfully',
+              message: 'Login Credentials Sent Successfully'
             })
             this.loading = false
           })
-      }).catch(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: 'Delete canceled',
-        // })
-      })
+        })
+        .catch(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: 'Delete canceled',
+          // })
+        })
     },
     deleteClientUser(clientId, userId) {
-      this.$confirm('Are you sure you want to remove this user from this client?', 'Confirm Action', {
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-        type: 'warning',
-      }).then(() => {
-        this.loading = true
-        const deleteStaffResource = new Resource('clients/delete-client-user')
-        deleteStaffResource.update(clientId, { user_id: userId })
-          .then(() => {
+      this.$confirm(
+        'Are you sure you want to remove this user from this client?',
+        'Confirm Action',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.loading = true
+          const deleteStaffResource = new Resource('clients/delete-client-user')
+          deleteStaffResource.update(clientId, { user_id: userId }).then(() => {
             this.fetchClients()
             this.$message({
               type: 'success',
-              message: 'Action Successful',
+              message: 'Action Successful'
             })
             this.loading = false
           })
-      }).catch(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: 'Delete canceled',
-        // })
-      })
+        })
+        .catch(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: 'Delete canceled',
+          // })
+        })
     },
     editClient(value) {
-      // console.log(props)
-      const app = this
-      app.selectedClient = value
-      app.showEditForm = true
+      this.selectedClient = value
+      this.showEditClientForm = true
     },
     editThisClientUser(row) {
-      const app = this
-      app.selectedClientUser = row
-      app.showEditForm = true
-      app.editClientUser = true
+      this.selectedClientUser = row
+      this.showEditClientUserForm = true
     },
     handleDownload(tableTitle, clientsList) {
       this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
+      import('@/vendor/Export2Excel').then((excel) => {
         const multiHeader = [[tableTitle, '', '', '', '', '', '']]
         const tHeader = [
           // 'STUDENTSHIP STATUS',
@@ -430,7 +400,7 @@ export default {
           'OTHER NAMES',
           'EMAIL',
           'PHONE',
-          'GENDER',
+          'GENDER'
         ]
         const filterVal = [
           // 'studentship_status',
@@ -439,7 +409,7 @@ export default {
           'user.first_name',
           'user.email',
           'user.phone1',
-          'user.gender',
+          'user.gender'
         ]
         const list = clientsList
         const data = this.formatJson(filterVal, list)
@@ -449,38 +419,37 @@ export default {
           data,
           filename: tableTitle,
           autoWidth: true,
-          bookType: 'csv',
+          bookType: 'csv'
         })
         this.downloadLoading = false
       })
     },
     formatJson(filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => {
-        if (j === 'user.username') {
-          return v.user.username
-        }
-        if (j === 'user.last_name') {
-          return v.user.last_name
-        }
-        if (j === 'user.first_name') {
-          return v.user.first_name
-        }
-        if (j === 'user.email') {
-          return v.user.email
-        }
-        if (j === 'user.phone1') {
-          return v.user.phone1
-        }
-        if (j === 'user.gender') {
-          return v.user.gender
-        }
+      return jsonData.map((v) =>
+        filterVal.map((j) => {
+          if (j === 'user.username') {
+            return v.user.username
+          }
+          if (j === 'user.last_name') {
+            return v.user.last_name
+          }
+          if (j === 'user.first_name') {
+            return v.user.first_name
+          }
+          if (j === 'user.email') {
+            return v.user.email
+          }
+          if (j === 'user.phone1') {
+            return v.user.phone1
+          }
+          if (j === 'user.gender') {
+            return v.user.gender
+          }
 
-        return v[j]
-      }))
-    },
-  },
+          return v[j]
+        })
+      )
+    }
+  }
 }
 </script>
-<style lang="scss" >
-@import '@core/scss/vue/libs/vue-good-table.scss';
-</style>

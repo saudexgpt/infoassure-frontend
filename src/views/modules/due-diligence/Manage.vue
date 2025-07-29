@@ -1,22 +1,15 @@
 <template>
   <el-card>
     <h3>Third Party Vendor Due Diligence Assessment</h3>
-    <b-tabs
-      content-class="mt-1"
-    >
-      <b-tab
-        v-if="checkPermission(['upload-due-diligence-requirements'])"
-        lazy
-      >
+    <b-tabs content-class="mt-1">
+      <b-tab v-if="checkPermission(['upload-due-diligence-requirements'])" lazy>
         <template #title>
           <feather-icon icon="ToolIcon" />
           <span>Manage Requirements</span>
         </template>
         <manage-questions />
       </b-tab>
-      <b-tab
-        lazy
-      >
+      <b-tab lazy>
         <template #title>
           <feather-icon icon="LayersIcon" />
           <span>Perform Due Diligence Assessment</span>
@@ -38,30 +31,23 @@
 </template>
 
 <script>
-import {
-  BTabs, BTab,
-} from 'bootstrap-vue'
 import { mapGetters } from 'vuex'
 import Create from './Create.vue'
-import ManageQuestions from './ManageQuestions.vue'
+// import ManageQuestions from './ManageQuestions-Old.vue'
 import checkPermission from '@/utils/permission'
 
 export default {
   components: {
-    BTabs,
-    BTab,
-    Create,
-    ManageQuestions,
+    Create
+    // ManageQuestions,
   },
   data() {
     return {
-      isAdmin: false,
+      isAdmin: false
     }
   },
   computed: {
-    ...mapGetters([
-      'userData',
-    ]),
+    ...mapGetters(['userData'])
   },
   created() {
     this.setAdmin()
@@ -72,7 +58,7 @@ export default {
         this.isAdmin = true
       }
     },
-    checkPermission,
-  },
+    checkPermission
+  }
 }
 </script>

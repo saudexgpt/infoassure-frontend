@@ -5,25 +5,16 @@
         <tr>
           <th>Title</th>
           <th>File</th>
-          <th />
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>
-            <el-input
-              v-model="form.title"
-              type="text"
-              outline
-              placeholder="Title of document"
-            />
+            <el-input v-model="form.title" type="text" outline placeholder="Title of document" />
           </td>
           <td>
-            <input
-              class="form-control"
-              type="file"
-              @change="onImageChange"
-            >
+            <input class="form-control" type="file" @change="onImageChange" />
           </td>
           <td>
             <span>
@@ -35,7 +26,6 @@
               >
                 <feather-icon icon="UploadIcon" /> Upload
               </b-button>
-
             </span>
           </td>
         </tr>
@@ -44,62 +34,55 @@
   </div>
 </template>
 <script>
-import { BButton } from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
-  components: { BButton },
-  directives: {
-    Ripple,
-  },
+  components: {},
   props: {
     answerId: {
       type: Number,
-      default: () => null,
-    },
+      default: () => null
+    }
   },
   data() {
     return {
       showTable: false,
       form: {
-        title: '',
+        title: ''
       },
       fill_fields_error: false,
       load: false,
-      uploadableFile: null,
+      uploadableFile: null
     }
   },
   methods: {
     onImageChange(e) {
-      const app = this
-      // eslint-disable-next-line prefer-destructuring
-      app.uploadableFile = e.target.files[0]
+      this.uploadableFile = e.target.files[0]
     },
     submit() {
-      const app = this
-      app.load = true
+      this.load = true
       const formData = new FormData()
-      formData.append('title', app.form.title)
-      formData.append('file_uploaded', app.uploadableFile)
-      formData.append('answer_id', app.answerId)
-      const updatePhotoResource = new Resource('due-diligence/answers/upload-due-diligence-evidence')
-      updatePhotoResource.store(formData)
+      formData.append('title', this.form.title)
+      formData.append('file_uploaded', this.uploadableFile)
+      formData.append('answer_id', this.answerId)
+      const updatePhotoResource = new Resource('vdd/answers/upload-due-diligence-evidence')
+      updatePhotoResource
+        .vStore(formData)
         .then(() => {
-          app.load = false
-          app.uploadableFile = null
-          app.form = {
+          this.load = false
+          this.uploadableFile = null
+          this.form = {
             title: '',
-            link: '',
+            link: ''
           }
-          app.$emit('reload')
-          app.$message('File upload successful')
+          this.$emit('reload')
+          this.$message('File upload successful')
         })
-        .catch(e => {
-          app.load = false
-          app.$message(e.response.message)
+        .catch((e) => {
+          this.load = false
+          this.$message(e.response.message)
         })
-    },
-  },
+    }
+  }
 }
 </script>

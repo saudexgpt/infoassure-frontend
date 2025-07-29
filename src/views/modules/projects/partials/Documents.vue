@@ -1,21 +1,8 @@
 <template>
-
-  <app-collapse
-    v-loading="loading"
-    accordion
-    type="border"
-  >
-    <template
-      v-for="(clause, index) in clauses"
-    >
-
-      <app-collapse-item
-        :key="index"
-        :title="clause.name"
-      >
-        <div
-          style="padding: 5px; border: 5px double #c0c0c0;border-radius: 8px;"
-        >
+  <el-collapse v-loading="loading" accordion type="border">
+    <template v-for="(clause, index) in clauses" :key="index">
+      <el-collapse-item :title="clause.name">
+        <div style="padding: 5px; border: 5px double #c0c0c0; border-radius: 8px">
           <strong>Click on the + sign to view remarks</strong>
           <v-client-table
             v-model="clause.uploads"
@@ -23,60 +10,34 @@
             :columns="['template_title', 'template_link', 'upload_link', 'exception']"
             :options="options"
           >
-            <template
-              slot="child_row"
-              slot-scope="{row}"
-            >
+            <template v-slot:child_row="{ row }">
               <div>
-                <div
-                  v-if="row.remark !== null"
-                >
+                <div v-if="row.remark !== null">
                   <strong>Remark on this document: </strong>
                   <div
-                    style="padding: 5px; border: 2px solid #409EFF; border-radius: 8px; margin: 5px;"
+                    style="padding: 5px; border: 2px solid #409eff; border-radius: 8px; margin: 5px"
                   >
-
                     {{ row.remark }}
                   </div>
                 </div>
                 <div v-else>
-                  <el-alert
-                    :closable="false"
-                    type="error"
-                  >
-                    No remark has been made
-                  </el-alert>
+                  <el-alert :closable="false" type="error"> No remark has been made </el-alert>
                 </div>
               </div>
             </template>
-            <template
-              slot="template_title"
-              slot-scope="{row}"
-            >
+            <template v-slot:template_title="{ row }">
               {{ row.template_title }}
             </template>
-            <template
-              slot="template_link"
-              slot-scope="{row}"
-            >
+            <template v-slot:template_link="{ row }">
               <div v-if="row.is_exception === 0">
-                <a
-                  :href="baseServerUrl+'storage/'+row.template_link"
-                  target="_blank"
-                >
-                  <el-button
-                    circle
-                    type="warning"
-                  >
+                <a :href="baseServerUrl + 'storage/' + row.template_link" target="_blank">
+                  <el-button circle type="warning">
                     <feather-icon icon="DownloadIcon" />
                   </el-button>
                 </a>
               </div>
             </template>
-            <template
-              slot="upload_link"
-              slot-scope="props"
-            >
+            <template v-slot:upload_link="props">
               <div v-if="!isAdmin">
                 <div v-if="props.row.is_exception === 0">
                   <input
@@ -84,38 +45,25 @@
                     type="file"
                     class="form-control"
                     @change="onImageChange($event, props.row.id, props.index, index)"
-                  >
-                  <br>
-                  <small
-                    :id="'progress_' + props.row.id"
-                    style="display: none"
-                  >
-                    <el-progress
-                      :percentage="progress"
-                      :status="status"
-                    />
+                  />
+                  <br />
+                  <small :id="'progress_' + props.row.id" style="display: none">
+                    <el-progress :percentage="progress" :status="status" />
                   </small>
                   <div v-if="props.row.link !== null">
-                    <el-alert
-                      :closable="false"
-                      type="success"
-                    >
+                    <el-alert :closable="false" type="success">
                       Uploaded
-                      <a
-                        :href="baseServerUrl+'storage/'+props.row.link"
-                        target="_blank"
-                      >
-                        <el-button
-                          circle
-                          type="primary"
-                        >
+                      <a :href="baseServerUrl + 'storage/' + props.row.link" target="_blank">
+                        <el-button circle type="primary">
                           <feather-icon icon="DownloadIcon" />
                         </el-button>
                       </a>
                     </el-alert>
                   </div>
                   <el-popover
-                    v-if="!isAdmin && props.row.is_exception === 0 && selectedProject.is_completed === 0"
+                    v-if="
+                      !isAdmin && props.row.is_exception === 0 && selectedProject.is_completed === 0
+                    "
                     placement="right"
                     width="400"
                     trigger="click"
@@ -137,41 +85,27 @@
                         Done
                       </el-button>
                     </div>
-                    <el-button
-                      slot="reference"
-                      size="mini"
-                      type="danger"
-                      round
-                    >
-                      Click if Not Applicable
-                    </el-button>
+                    <template v-slot:reference>
+                      <el-button size="mini" type="danger" round>
+                        Click if Not Applicable
+                      </el-button>
+                    </template>
                   </el-popover>
                 </div>
                 <div v-else>
-                  <el-alert
-                    type="error"
-                    :closable="false"
-                  >
-                    <strong>Not Applicable</strong>. To undo, click on the <code>EXCLUSIONS</code> tab and reverse it
+                  <el-alert type="error" :closable="false">
+                    <strong>Not Applicable</strong>. To undo, click on the
+                    <code>EXCLUSIONS</code> tab and reverse it
                   </el-alert>
                 </div>
               </div>
               <div v-else>
                 <div v-if="props.row.is_exception === 0">
                   <div v-if="props.row.link !== null">
-                    <el-alert
-                      :closable="false"
-                      type="success"
-                    >
+                    <el-alert :closable="false" type="success">
                       Uploaded
-                      <a
-                        :href="baseServerUrl+'storage/'+props.row.link"
-                        target="_blank"
-                      >
-                        <el-button
-                          circle
-                          type="primary"
-                        >
+                      <a :href="baseServerUrl + 'storage/' + props.row.link" target="_blank">
+                        <el-button circle type="primary">
                           <feather-icon icon="DownloadIcon" />
                         </el-button>
                       </a>
@@ -179,19 +113,13 @@
                   </div>
                 </div>
                 <div v-else>
-                  <el-alert
-                    type="error"
-                    :closable="false"
-                  >
+                  <el-alert type="error" :closable="false">
                     <strong>Not Applicable</strong>
                   </el-alert>
                 </div>
               </div>
             </template>
-            <template
-              slot="exception"
-              slot-scope="props"
-            >
+            <template v-slot:exception="props">
               <!-- <el-popover
                 v-if="isAdmin"
                 placement="right"
@@ -223,15 +151,8 @@
                   Give Remark
                 </el-button>
               </el-popover> -->
-              <el-button
-                size="mini"
-                type="primary"
-                round
-                @click="openRemarkModal(props.row)"
-              >
-                <feather-icon
-                  icon="MessageSquareIcon"
-                />
+              <el-button size="mini" type="primary" round @click="openRemarkModal(props.row)">
+                <feather-icon icon="MessageSquareIcon" />
                 Consultant Remark
               </el-button>
             </template>
@@ -244,39 +165,32 @@
           :is-admin="isAdmin"
           @reload="fetchClausesWithDocuments"
         />
-      </app-collapse-item>
+      </el-collapse-item>
     </template>
-    <app-collapse-item title="EVIDENCE">
-      <evidence
-        :selected-project="selectedProject"
-        :is-admin="isAdmin"
-      />
-    </app-collapse-item>
-  </app-collapse>
+    <el-collapse-item title="EVIDENCE">
+      <evidence :selected-project="selectedProject" :is-admin="isAdmin" />
+    </el-collapse-item>
+  </el-collapse>
 </template>
 <script>
-import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
-import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import Resource from '@/api/resource'
 import Evidence from './Evidence.vue'
 import GiveDocumentRemarks from './GiveDocumentRemarks.vue'
 
 export default {
   components: {
-    AppCollapse,
-    AppCollapseItem,
     Evidence,
-    GiveDocumentRemarks,
+    GiveDocumentRemarks
   },
   props: {
     selectedProject: {
       type: Object,
-      required: true,
+      required: true
     },
     isAdmin: {
       type: Boolean,
-      default: () => false,
-    },
+      default: () => false
+    }
   },
   data() {
     return {
@@ -285,13 +199,13 @@ export default {
           template_title: 'Title',
           template_link: 'Download Template',
           upload_link: 'Uploads',
-          exception: '',
+          exception: ''
         },
         texts: {
-          filter: 'Search:',
+          filter: 'Search:'
         },
         sortable: [],
-        filterable: false,
+        filterable: false
         // filterable: [],
       },
       clauses: [],
@@ -306,22 +220,21 @@ export default {
       interval: '',
       status: 'warning',
       exceptionReason: '',
-      adminRemark: '',
+      adminRemark: ''
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
-    },
+    }
   },
   created() {
     this.fetchClausesWithDocuments()
   },
   methods: {
     openRemarkModal(selectedDocument) {
-      const app = this
-      app.selectedDocumentForRemark = selectedDocument
-      app.showRemarkModal = true
+      this.selectedDocumentForRemark = selectedDocument
+      this.showRemarkModal = true
     },
     setProgress() {
       this.progress = 10
@@ -335,87 +248,81 @@ export default {
       }, 100)
     },
     showOrHideRemark(id) {
-      const app = this
-      if (app.showRemark === id) {
-        app.showRemark = 0
+      if (this.showRemark === id) {
+        this.showRemark = 0
       } else {
-        app.showRemark = id
+        this.showRemark = id
       }
     },
     fetchClausesWithDocuments() {
-      const app = this
-      app.loading = true
-      const { client_id } = app.selectedProject
-      const { standard_id } = app.selectedProject
-      const { id } = app.selectedProject
+      this.loading = true
+      const { client_id } = this.selectedProject
+      const { standard_id } = this.selectedProject
+      const { id } = this.selectedProject
       const fetchConsultingsResource = new Resource('clauses/fetch-clauses-with-documents')
-      fetchConsultingsResource.list({ client_id, standard_id, project_id: id })
-        .then(response => {
-          app.clauses = response.clauses
-          app.loading = false
-        })
+      fetchConsultingsResource.list({ client_id, standard_id, project_id: id }).then((response) => {
+        this.clauses = response.clauses
+        this.loading = false
+      })
     },
     createException(clauseId, uploadId, clauseIndex, uploadIndex) {
-      const app = this
-      app.loadButton = true
+      this.loadButton = true
       const param = {
-        project_id: app.selectedProject.id, clause_id: clauseId, type: 'upload', upload_id: uploadId, reason: app.exceptionReason,
+        project_id: this.selectedProject.id,
+        clause_id: clauseId,
+        type: 'upload',
+        upload_id: uploadId,
+        reason: this.exceptionReason
       }
       const createExceptionResource = new Resource('exceptions/create')
-      createExceptionResource.store(param)
-        .then(() => {
-          app.clauses[clauseIndex].uploads[uploadIndex - 1].is_exception = 1
-          app.loadButton = false
-          app.exceptionReason = ''
-          app.$emit('reloadAnalytics')
-        })
+      createExceptionResource.store(param).then(() => {
+        this.clauses[clauseIndex].uploads[uploadIndex - 1].is_exception = 1
+        this.loadButton = false
+        this.exceptionReason = ''
+        this.$emit('reloadAnalytics')
+      })
     },
     onImageChange(e, uploadId, uploadIndex, clauseIndex) {
-      const app = this
-      // eslint-disable-next-line prefer-destructuring
-      app.uploadableFile = e.target.files[0]
-      // console.log(app.uploadableFile)
-      app.submitUpload(uploadId, uploadIndex, clauseIndex)
+      this.uploadableFile = e.target.files[0]
+      // console.log(this.uploadableFile)
+      this.submitUpload(uploadId, uploadIndex, clauseIndex)
     },
     submitUpload(uploadId, uploadIndex, clauseIndex) {
-      const app = this
       document.getElementById(`progress_${uploadId}`).style.display = 'block'
-      app.setProgress()
+      this.setProgress()
       const formData = new FormData()
-      formData.append('file_uploaded', app.uploadableFile)
+      formData.append('file_uploaded', this.uploadableFile)
       formData.append('upload_id', uploadId)
       const updatePhotoResource = new Resource('clauses/upload-file')
-      updatePhotoResource.store(formData)
-        .then(response => {
+      updatePhotoResource
+        .store(formData)
+        .then((response) => {
           // clearInterval(this.interval)
           setTimeout(() => {
             document.getElementById(`progress_${uploadId}`).style.display = 'none'
-            app.progress = 10
+            this.progress = 10
           }, 2000)
-          app.uploadableFile = null
-          app.clauses[clauseIndex].uploads[uploadIndex - 1].link = response
-          // app.$message('File upload successful')
-          app.$emit('reloadAnalytics')
+          this.uploadableFile = null
+          this.clauses[clauseIndex].uploads[uploadIndex - 1].link = response
+          // this.$message('File upload successful')
+          this.$emit('reloadAnalytics')
         })
-        .catch(e => {
-          app.load = false
-          app.$message(e.response.message)
+        .catch((e) => {
+          this.load = false
+          this.$message(e.response.message)
         })
     },
     saveRemark(uploadId, clauseIndex, uploadIndex) {
-      const app = this
-      app.loadButton = true
-      const remark = app.adminRemark
+      this.loadButton = true
+      const remark = this.adminRemark
       const param = { remark }
       const saveRemarkResource = new Resource('clauses/remark-on-upload')
-      saveRemarkResource.update(uploadId, param)
-        .then(() => {
-          app.clauses[clauseIndex].uploads[uploadIndex - 1].remark = remark
-          app.loadButton = false
-          app.adminRemark = ''
-        })
-    },
-  },
-
+      saveRemarkResource.update(uploadId, param).then(() => {
+        this.clauses[clauseIndex].uploads[uploadIndex - 1].remark = remark
+        this.loadButton = false
+        this.adminRemark = ''
+      })
+    }
+  }
 }
 </script>

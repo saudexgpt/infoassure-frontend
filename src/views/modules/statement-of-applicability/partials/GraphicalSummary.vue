@@ -1,21 +1,16 @@
 <template>
   <aside>
-    <highcharts
-      v-loading="loading"
-      :options="chart_report"
-    />
+    <highcharts v-loading="loading" :options="chart_report" />
   </aside>
 </template>
 <script>
-
 export default {
-  components: {
-  },
+  components: {},
   props: {
     summary: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
@@ -24,15 +19,15 @@ export default {
         chart: {
           type: 'column',
           options3d: {
-            enabled: false,
-          },
+            enabled: false
+          }
         },
         title: {
           text: 'SOA Summary',
-          align: 'center',
+          align: 'center'
         },
         subtitle: {
-          text: '',
+          text: ''
         },
         plotOptions: {
           // column: {
@@ -40,44 +35,42 @@ export default {
           // },
         },
         xAxis: {
-          categories: [],
+          categories: []
         },
         yAxis: {
           allowDecimals: false,
           min: 0,
           // max: 100,
           title: {
-            text: 'Scale',
-          },
+            text: 'Scale'
+          }
         },
         series: [],
         credits: {
-          enabled: false,
-        },
-      },
+          enabled: false
+        }
+      }
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
-    },
+    }
   },
   watch: {
     summary() {
       this.setData()
-    },
+    }
   },
   created() {
     this.setData()
   },
   methods: {
     setData() {
-      const app = this
-      app.chart_report.series = app.summary.series
-      app.chart_report.xAxis.categories = app.summary.categories
-      app.chart_report.subtitle.text = app.summary.subtitle
-    },
-  },
-
+      this.chart_report.series = this.summary.series
+      this.chart_report.xAxis.categories = this.summary.categories
+      this.chart_report.subtitle.text = this.summary.subtitle
+    }
+  }
 }
 </script>

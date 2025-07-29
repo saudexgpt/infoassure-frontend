@@ -1,5 +1,5 @@
 // import store from '@/store';
-import store from '@/store'
+import store from '@/VuexStore'
 /**
  * @param {Array} value
  * @returns {Boolean}
@@ -10,10 +10,10 @@ export default function checkPermission(value) {
     const permissions = store.getters && store.getters.userData.permissions
     const requiredPermissions = value
 
-    const hasPermission = permissions.some(permission => requiredPermissions.includes(permission))
+    const hasPermission = permissions.some((permission) => requiredPermissions.includes(permission))
 
     return hasPermission
   }
-  console.error('Need permissions! Like v-permission="[\'manage permission\',\'edit article\']"')
+  console.error("Need permissions! Like v-permission=\"['manage permission','edit article']\"")
   return false
 }

@@ -1,78 +1,79 @@
 <template>
   <div v-loading="loading">
     <div>
-      <el-tooltip
-        class="item"
-        effect="dark"
-        content="Save"
-        placement="top-start"
-      >
-        <el-button
-          type="success"
-          size="mini"
-          @click="save"
-        >
+      <el-tooltip class="item" effect="dark" content="Save" placement="top-start">
+        <el-button type="success" size="mini" @click="save">
           <feather-icon icon="SaveIcon" />
         </el-button>
       </el-tooltip>
-      <el-tooltip
-        class="item"
-        effect="dark"
-        content="Download"
-        placement="top-start"
-      >
-        <el-button
-          type="primary"
-          size="mini"
-        >
+      <el-tooltip class="item" effect="dark" content="Download" placement="top-start">
+        <el-button type="primary" size="mini">
           <feather-icon icon="DownloadIcon" />
         </el-button>
       </el-tooltip>
     </div>
-    <ejs-spreadsheet
+    <ejs-spreadsheet>
+      <e-sheets>
+        <e-sheet>
+          <e-ranges>
+            <e-range :dataSource="data" />
+          </e-ranges>
+        </e-sheet>
+      </e-sheets>
+    </ejs-spreadsheet>
+    <!-- <ejs-spreadsheet
       ref="spreadsheet"
       height="750px"
       :open-url="openUrl"
       :allow-open="true"
       :save-url="saveUrl"
       :created="created"
-    />
+    /> -->
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import { SpreadsheetPlugin } from '@syncfusion/ej2-vue-spreadsheet'
+import {
+  SpreadsheetComponent,
+  RangesDirective,
+  RangeDirective,
+  SheetsDirective,
+  SheetDirective
+} from '@syncfusion/ej2-vue-spreadsheet'
 // import Resource from '@/api/resource'
-
-Vue.use(SpreadsheetPlugin)
 export default {
+  components: {
+    'ejs-spreadsheet': SpreadsheetComponent,
+    'e-sheets': SheetsDirective,
+    'e-sheet': SheetDirective,
+    'e-ranges': RangesDirective,
+    'e-range': RangeDirective
+  },
   props: {
-
     documentPath: {
       type: String,
-      default: '',
+      default: ''
     },
     documentTitle: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
   data() {
     return {
       openUrl: 'https://services.syncfusion.com/vue/production/api/spreadsheet/open',
       saveUrl: 'https://services.syncfusion.com/vue/production/api/spreadsheet/save',
-      loading: false,
+      loading: false
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
-    },
+    }
   },
   methods: {
     save() {
-      this.$refs.spreadsheet.saveAsJson().then(response => {
+      this.$refs.spreadsheet.saveAsJson().then((response) => {
         console.log(response)
       })
     },
@@ -81,16 +82,18 @@ export default {
       // 'https://cdn.syncfusion.com/scripts/spreadsheet/Sample.xlsx'
       // fetch(`${this.baseServerUrl}storage/${this.documentPath}`, options)
       fetch(`${this.baseServerUrl}storage/${this.documentPath}`) // fetch the remote url
-        .then(response => {
+        .then((response) => {
           console.log(response)
           this.loading = false
-          response.blob().then(fileBlob => { // convert the excel file to blob
+          response.blob().then((fileBlob) => {
+            // convert the excel file to blob
             const file = new File([fileBlob], 'Sample.xlsx') // convert the blob into file
             this.$refs.spreadsheet.open({ file }) // open the file into Spreadsheet
           })
-        }).catch(this.loading = false)
-    },
-  },
+        })
+        .catch((this.loading = false))
+    }
+  }
 }
 </script>
 <style>

@@ -1,76 +1,50 @@
 <template>
   <el-card>
-    <div slot="header">
-      <b-row>
-        <b-col
-          cols="6"
-        >
-          <h4>Available Permissions</h4>
-        </b-col>
-        <b-col
-          cols="6"
-        >
-          <span class="pull-right">
-            <b-button
-              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="gradient-primary"
-              @click="isCreatePermissionSidebarActive = true"
-            >
-              <feather-icon
-                icon="FilePlusIcon"
-                class="mr-50"
-              />
-              <span class="align-middle">Create</span>
-            </b-button>
-          </span>
-        </b-col>
-      </b-row>
-    </div>
+    <template v-slot:header>
+      <div>
+        <el-row>
+          <el-col cols="6">
+            <h4>Available Permissions</h4>
+          </el-col>
+          <el-col cols="6">
+            <span class="pull-right">
+              <el-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="gradient-primary"
+                @click="isCreatePermissionSidebarActive = true"
+              >
+                <feather-icon icon="FilePlusIcon" class="mr-50" />
+                <span class="align-middle">Create</span>
+              </el-button>
+            </span>
+          </el-col>
+        </el-row>
+      </div>
+    </template>
     <!-- table -->
 
-    <v-client-table
-      v-model="permissions"
-      v-loading="loading"
-      :columns="columns"
-      :options="options"
-    >
+    <v-client-table :data="permissions" v-loading="loading" :columns="columns" :options="options">
       <!-- <div
         slot="action"
         slot-scope="props"
       >
-        <b-button
+        <el-button
           variant="gradient-warning"
           class="btn-icon rounded-circle"
           @click="editThisRow(props.row)"
         >
           <feather-icon icon="EditIcon" />
-        </b-button>
+        </el-button>
       </div> -->
     </v-client-table>
   </el-card>
 </template>
 
 <script>
-import {
-  BButton, BRow, BCol,
-} from 'bootstrap-vue'
-// import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    BButton,
-    // BPagination,
-    // BFormGroup,
-    // BFormInput,
-    // BFormSelect,
-    BRow,
-    BCol,
-  },
-  directives: {
-    Ripple,
-  },
+  components: {},
   data() {
     return {
       loading: false,
@@ -81,7 +55,7 @@ export default {
 
       columns: [
         // 'name',
-        'display_name',
+        'display_name'
         // 'description',
         // 'action',
       ],
@@ -89,7 +63,7 @@ export default {
       options: {
         headings: {
           display_name: 'Permission',
-          action: '',
+          action: ''
 
           // id: 'S/N',
         },
@@ -100,24 +74,24 @@ export default {
         perPage: 10,
         filterByColumn: true,
         texts: {
-          filter: 'Search:',
+          filter: 'Search:'
         },
         sortable: [
           // 'name',
-          'display_name',
+          'display_name'
           // 'description',
         ],
         // filterable: false,
         filterable: [
           // 'name',
-          'display_name',
+          'display_name'
           // 'description',
-        ],
+        ]
       },
       permissions: [],
       searchTerm: '',
       editable_row: '',
-      selected_row_index: '',
+      selected_row_index: ''
     }
   },
   created() {
@@ -125,33 +99,26 @@ export default {
   },
   methods: {
     fetchPermissions() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const fetchCurriculumSetupResource = new Resource('acl/permissions/index')
-      fetchCurriculumSetupResource.list()
-        .then(response => {
-          app.permissions = response.permissions
-          app.loading = false
-        })
+      fetchCurriculumSetupResource.list().then((response) => {
+        this.permissions = response.permissions
+        this.loading = false
+      })
     },
     updateTable(permissions) {
-      const app = this
-      app.permissions = permissions
+      this.permissions = permissions
     },
     editThisRow(selectedRow) {
       // console.log(props)
-      const app = this
+
       // const editableRow = selected_row;
-      app.editable_row = selectedRow
-      app.isEditPermissionSidebarActive = true
+      this.editable_row = selectedRow
+      this.isEditPermissionSidebarActive = true
     },
     updateEditedTableRow() {
-      const app = this
-      app.fetchPermissions()
-    },
-  },
+      this.fetchPermissions()
+    }
+  }
 }
 </script>
-<style lang="scss" >
-@import '@core/scss/vue/libs/vue-good-table.scss';
-</style>

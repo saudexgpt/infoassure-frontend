@@ -1,14 +1,7 @@
 <template>
   <div v-if="showDocumentEditor !== 'none'">
-    <span
-      class="pull-right"
-    >
-      <el-button
-        type="danger"
-        class="btn-icon"
-        size="mini"
-        @click="showDocumentEditor = 'none'"
-      >
+    <span class="pull-right">
+      <el-button type="danger" class="btn-icon" size="mini" @click="showDocumentEditor = 'none'">
         <feather-icon icon="XIcon" />
       </el-button>
     </span>
@@ -24,115 +17,83 @@
     />
   </div>
   <div v-else>
-    <b-tabs
-      v-if="selectedClient !== null"
-      content-class="mt-1"
-    >
+    <b-tabs v-if="selectedClient !== null" content-class="mt-1">
       <b-tab>
         <template #title>
           <span>Details</span>
         </template>
-        <app-collapse
-          v-loading="loading"
-          accordion
-          type="border"
-        >
+        <app-collapse v-loading="loading" accordion type="border">
           <app-collapse-item
             v-for="(domainQuestions, index) in domains"
             :key="index"
             :title="index"
           >
-            <div
-              v-for="(question, question_index) in domainQuestions"
-              :key="question_index"
-            >
+            <div v-for="(question, question_index) in domainQuestions" :key="question_index">
               <div
                 v-if="currenctQuestions[index] === question_index"
-                class="col-lg-12 col-md-12 col-sm-12 col-xs-12 "
-                style="padding: 5px; border: 5px double #c0c0c0;border-radius: 8px;"
+                class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                style="padding: 5px; border: 5px double #c0c0c0; border-radius: 8px"
               >
                 <div>
-
-                  <span
-                    class="pull-right"
-                  >
+                  <span class="pull-right">
                     <el-button
                       size="mini"
                       type="primary"
                       @click="openRemarkModal(question.response)"
                     >
-                      <feather-icon
-                        icon="MessageSquareIcon"
-                      />
+                      <feather-icon icon="MessageSquareIcon" />
                       Consultant Remark
                     </el-button>
                     <button
                       v-if="isAdmin"
-                      class="btn btn-success  btn-sm"
-                      @click="allowModification(domainQuestions);"
-                    ><feather-icon
-                      icon="ThumbsUpIcon"
-                    />
+                      class="btn btn-success btn-sm"
+                      @click="allowModification(domainQuestions)"
+                      ><feather-icon icon="ThumbsUpIcon" />
                       Enable Modification
                     </button>
                   </span>
                   <strong style="color: red">
-                    Question {{ question_index + 1 }}  of  {{ domainQuestions.length }}
+                    Question {{ question_index + 1 }} of {{ domainQuestions.length }}
                   </strong>
 
                   <div>
                     <button
                       v-if="question_index !== 0"
                       class="btn btn-danger btn-sm"
-                      @click="change(question_index-1, index);"
-                    > <feather-icon
-                      icon="ArrowLeftIcon"
-                    /> Prev
+                      @click="change(question_index - 1, index)"
+                    >
+                      <feather-icon icon="ArrowLeftIcon" /> Prev
                     </button>
                     <button
                       v-if="parseInt(question_index + 1) < domainQuestions.length"
-                      class="btn btn-primary  btn-sm"
-                      @click="change(question_index+1, index);"
-                    > Next
-                      <feather-icon
-                        icon="ArrowRightIcon"
-                      />
+                      class="btn btn-primary btn-sm"
+                      @click="change(question_index + 1, index)"
+                    >
+                      Next
+                      <feather-icon icon="ArrowRightIcon" />
                     </button>
                     <button
-                      v-if="!isAdmin && parseInt(question_index + 1) === domainQuestions.length && question.response.is_submitted === 0"
-                      class="btn btn-success  btn-sm"
-                      @click="submitAnswers(domainQuestions);"
-                    ><feather-icon
-                      icon="SaveIcon"
-                    />
+                      v-if="
+                        !isAdmin &&
+                        parseInt(question_index + 1) === domainQuestions.length &&
+                        question.response.is_submitted === 0
+                      "
+                      class="btn btn-success btn-sm"
+                      @click="submitAnswers(domainQuestions)"
+                      ><feather-icon icon="SaveIcon" />
                       Submit
                     </button>
-
                   </div>
                 </div>
-                <hr>
+                <hr />
                 <el-row :gutter="5">
-                  <el-col
-                    :lg="16"
-                    :md="16"
-                    :sm="24"
-                    :xs="24"
-                  >
-
-                    <!-- <ckeditor
-                      id="question"
-                      v-model="question.question"
-                      :editor="editor"
-                      :config="editorConfig"
-                      disabled
-                    /> -->
+                  <el-col :lg="16" :md="16" :sm="24" :xs="24">
                     <div
                       v-if="showQuestions"
-                      style="background: #f0f0f0; padding: 10px; margin-bottom: 5px;"
+                      style="background: #f0f0f0; padding: 10px; margin-bottom: 5px"
                     >
-
                       <!--eslint-disable-next-line vue/no-v-html-->
-                      <span v-html="question.question" />
+                      <span v-html="question.question"></span>
                     </div>
                     <el-tooltip
                       v-if="question.key !== null"
@@ -143,53 +104,25 @@
                     >
                       <el-button>Key/Insight</el-button>
                     </el-tooltip>
-                    <div
-                      style="padding:10px;"
-                    >
-
+                    <div style="padding: 10px">
                       <div class="control-group">
-                        <label
-                          class="control-label"
-                          for="inputEmail"
-                        />
+                        <label class="control-label" for="inputEmail"></label>
                         <div class="controls">
-                          <input
-                            v-model="question.response.id"
-                            type="hidden"
-                          >
+                          <input v-model="question.response.id" type="hidden" />
                           <div v-if="!isAdmin">
-
                             <div v-if="question.response.is_submitted === 0">
                               <div>
                                 <el-radio-group
                                   v-model="question.response.answer"
                                   @change="saveAnswer(question.response, 'answer')"
                                 >
-                                  <el-radio
-                                    label="YES"
-                                    border
-                                  >
-                                    YES
-                                  </el-radio>
-                                  <el-radio
-                                    label="NO"
-                                    border
-                                  >
-                                    NO
-                                  </el-radio>
-                                  <el-radio
-                                    label="NA"
-                                    border
-                                  >
-                                    NOT APPLICABLE
-                                  </el-radio>
+                                  <el-radio label="YES" border> YES </el-radio>
+                                  <el-radio label="NO" border> NO </el-radio>
+                                  <el-radio label="NA" border> NOT APPLICABLE </el-radio>
                                 </el-radio-group>
-                                <br>
+                                <br />
                                 <div v-if="question.response.answer === 'NA'">
-                                  <el-alert
-                                    type="error"
-                                    :closable="false"
-                                  >
+                                  <el-alert type="error" :closable="false">
                                     Kindly give reasons why this is NOT APPLICABLE
                                   </el-alert>
                                   <el-input
@@ -209,32 +142,26 @@
                                     @blur="saveAnswer(question.response, 'detailed_explanation')"
                                   />
                                 </div>
-                                <hr>
+                                <hr />
                               </div>
                             </div>
                             <div v-else>
-                              <strong>Response:</strong>&nbsp;{{ question.response.answer }}<br><br>
+                              <strong>Response:</strong>&nbsp;{{ question.response.answer
+                              }}<br /><br />
                               {{ question.response.detailed_explanation }}
                             </div>
-
                           </div>
                           <div v-else>
-                            <strong>Response:</strong>&nbsp;{{ question.response.answer }}<br><br>
+                            <strong>Response:</strong>&nbsp;{{ question.response.answer
+                            }}<br /><br />
                             {{ question.response.detailed_explanation }}
                           </div>
                         </div>
                       </div>
                     </div>
                   </el-col>
-                  <el-col
-                    :lg="8"
-                    :md="8"
-                    :sm="24"
-                    :xs="24"
-                  >
-                    <div
-                      style="height: 300px; overflow: auto; background: #fcfcfc; padding: 10px;"
-                    >
+                  <el-col :lg="8" :md="8" :sm="24" :xs="24">
+                    <div style="height: 300px; overflow: auto; background: #fcfcfc; padding: 10px">
                       <b-button
                         v-if="!isAdmin"
                         variant="gradient-primary"
@@ -244,61 +171,58 @@
                         <feather-icon icon="UploadIcon" />
                         Upload Evidence
                       </b-button>
-                      <div v-if="isAdmin">
-                        Uploaded Evidences
-                      </div>
-                      <hr>
+                      <div v-if="isAdmin"> Uploaded Evidences </div>
+                      <hr />
                       <b-alert
                         v-for="(evidence, evidence_index) in question.response.evidences"
                         :key="evidence_index"
                         variant="primary"
                         show
                       >
-                        <div
-                          v-loading="loadDelete"
-                          class="alert-body"
-                        >
+                        <div v-loading="loadDelete" class="alert-body">
                           <!-- <a
                             :href="baseServerUrl+'storage/'+evidence.link"
                             target="_blank"
                           >{{ evidence.evidence_title }}</a> -->
                           <small style="font-size: 11px">{{ evidence.evidence_title }}</small>
-                          <span
-                            class="pull-right"
-                          >
+                          <span class="pull-right">
                             <el-dropdown>
-                              <b-button
-                                variant="flat"
-                                class="btn-icon rounded-circle"
-                              >
-                                <i class="el-icon-more-outline" />
+                              <b-button variant="flat" class="btn-icon rounded-circle">
+                                <i class="el-icon-more-outline"></i>
                               </b-button>
-                              <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item
-                                  v-if="evidence.link.split('.').pop() === 'docx' || evidence.link.split('.').pop() === 'doc'"
-                                >
-                                  <span @click="viewAndEditDocument(evidence, 'word')">Edit Word Doc</span>
-                                </el-dropdown-item>
+                              <template v-slot:dropdown>
+                                <el-dropdown-menu>
+                                  <el-dropdown-item
+                                    v-if="
+                                      evidence.link.split('.').pop() === 'docx' ||
+                                      evidence.link.split('.').pop() === 'doc'
+                                    "
+                                  >
+                                    <span @click="viewAndEditDocument(evidence, 'word')"
+                                      >Edit Word Doc</span
+                                    >
+                                  </el-dropdown-item>
 
-                                <!-- <el-dropdown-item
+                                  <!-- <el-dropdown-item
                                   v-if="evidence.link.split('.').pop() === 'xlsx' || evidence.link.split('.').pop() === 'xls'"
                                 >
                                   <span @click="viewAndEditDocument(evidence, 'spreadsheet')">Edit Spreadsheet</span>
                                 </el-dropdown-item> -->
 
-                                <el-dropdown-item>
-                                  <a
-                                    :href="baseServerUrl+'storage/'+evidence.link"
-                                    target="_blank"
-                                  >Download
-                                  </a>
-                                </el-dropdown-item>
-                                <el-dropdown-item
-                                  v-if="!isAdmin"
-                                >
-                                  <span @click="destroyDueDiligenceEvidence(evidence.id)">Delete</span>
-                                </el-dropdown-item>
-                              </el-dropdown-menu>
+                                  <el-dropdown-item>
+                                    <a
+                                      :href="baseServerUrl + 'storage/' + evidence.link"
+                                      target="_blank"
+                                      >Download
+                                    </a>
+                                  </el-dropdown-item>
+                                  <el-dropdown-item v-if="!isAdmin">
+                                    <span @click="destroyDueDiligenceEvidence(evidence.id)"
+                                      >Delete</span
+                                    >
+                                  </el-dropdown-item>
+                                </el-dropdown-menu>
+                              </template>
                             </el-dropdown>
                           </span>
                         </div>
@@ -317,67 +241,43 @@
           :is-admin="isAdmin"
           @reload="fetchQuestionsWithResponse"
         />
-        <b-modal
-          v-model="showModal"
-          title="Upload Evidence"
-          centered
-          size="lg"
-          hide-footer
-        >
-
+        <b-modal v-model="showModal" title="Upload Evidence" centered size="lg" hide-footer>
           <upload-due-diligence-evidence
             :answer-id="selectedAnswer"
             @reload="fetchQuestionsWithResponse"
           />
-
         </b-modal>
       </b-tab>
       <b-tab v-if="isAdmin">
         <template #title>
           <span>Report</span>
         </template>
-        <report
-          :data="domains"
-          :selected-client="selectedClient"
-        />
+        <report :data="domains" :selected-client="selectedClient" />
       </b-tab>
     </b-tabs>
   </div>
 </template>
 <script>
-import {
-  BButton, BModal, BAlert, BTabs, BTab,
-} from 'bootstrap-vue'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
-import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import UploadDueDiligenceEvidence from './UploadDueDiligenceEvidence.vue'
 import GiveDueDiligenceRemarks from './GiveDueDiligenceRemarks.vue'
 import Report from './Report.vue'
-import VueDocumentEditor from '@/views/components/editors/VueDocumentEditor.vue'
-import VueSpreadsheetEditor from '@/views/components/editors/VueSpreadsheetEditor.vue'
+import VueDocumentEditor from '@/views/Components/editors/VueDocumentEditor.vue'
+import VueSpreadsheetEditor from '@/views/Components/editors/VueSpreadsheetEditor.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    BButton,
-    BAlert,
-    BModal,
-    BTabs,
-    BTab,
-    AppCollapse,
-    AppCollapseItem,
     UploadDueDiligenceEvidence,
     GiveDueDiligenceRemarks,
     VueDocumentEditor,
     VueSpreadsheetEditor,
-    Report,
+    Report
   },
   props: {
     isAdmin: {
       type: Boolean,
-      default: () => false,
-    },
+      default: () => false
+    }
   },
   data() {
     return {
@@ -395,12 +295,8 @@ export default {
       exceptionReason: '',
       adminRemark: '',
       showModal: false,
-      editor: ClassicEditor,
-      editorConfig: {
-        // The configuration of the editor.
-      },
       showDocumentEditor: 'none',
-      selectedDocument: '',
+      selectedDocument: ''
     }
   },
   computed: {
@@ -409,144 +305,136 @@ export default {
     },
     selectedClient() {
       return this.$store.getters.selectedClient
-    },
+    }
   },
   watch: {
     selectedClient() {
       this.setDueDiligenceResponses()
-    },
+    }
   },
   created() {
     this.setDueDiligenceResponses()
   },
   methods: {
     setCurrentQuestions(domains) {
-      const app = this
       // const noOfDomains = Object.keys(domains).length
 
-      // eslint-disable-next-line no-restricted-syntax, guard-for-in
       for (const key in domains) {
-        if (!Object.hasOwnProperty.call(app.currenctQuestions, key)) {
-          app.currenctQuestions[key] = 0
+        if (!Object.hasOwnProperty.call(this.currenctQuestions, key)) {
+          this.currenctQuestions[key] = 0
         }
-        // app.currenctQuestions[key] = 0
+        // this.currenctQuestions[key] = 0
       }
-      app.currentQuestionsAreSet = true
+      this.currentQuestionsAreSet = true
     },
     openRemarkModal(selectedAnswer) {
-      const app = this
-      app.selectedAnswerForRemark = selectedAnswer
-      app.showRemarkModal = true
+      this.selectedAnswerForRemark = selectedAnswer
+      this.showRemarkModal = true
     },
     addEvidence(answerId) {
-      const app = this
-      app.selectedAnswer = answerId
-      app.showModal = true
+      this.selectedAnswer = answerId
+      this.showModal = true
     },
     fetchQuestionsWithResponse(load = true) {
-      const app = this
-      app.showRemarkModal = false
-      app.loading = load
-      const fetchQuestionsWithResponseResource = new Resource('due-diligence/questions/fetch-questions-with-response')
-      fetchQuestionsWithResponseResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.domains = response.domains
-          if (!app.currentQuestionsAreSet) {
-            app.setCurrentQuestions(app.domains)
+      this.showRemarkModal = false
+      this.loading = load
+      const fetchQuestionsWithResponseResource = new Resource(
+        'due-diligence/questions/fetch-questions-with-response'
+      )
+      fetchQuestionsWithResponseResource
+        .list({ client_id: this.selectedClient.id })
+        .then((response) => {
+          this.domains = response.domains
+          if (!this.currentQuestionsAreSet) {
+            this.setCurrentQuestions(this.domains)
           }
-          app.loading = false
+          this.loading = false
         })
     },
     setDueDiligenceResponses() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const fetchQuestionsWithResponseResource = new Resource('due-diligence/answers/save')
-      fetchQuestionsWithResponseResource.store({ client_id: app.selectedClient.id })
-        .then(() => {
-          app.fetchQuestionsWithResponse()
-          app.loading = false
-        })
+      fetchQuestionsWithResponseResource.store({ client_id: this.selectedClient.id }).then(() => {
+        this.fetchQuestionsWithResponse()
+        this.loading = false
+      })
     },
     colorButton(index, current) {
       document.getElementById(`quest_button_${index}_${current}`).style.backgroundColor = '#ccc'
       // }
     },
     change(value, index) {
-      const app = this
-      if (Object.hasOwnProperty.call(app.currenctQuestions, index)) {
-        app.currenctQuestions[index] = value
+      if (Object.hasOwnProperty.call(this.currenctQuestions, index)) {
+        this.currenctQuestions[index] = value
       }
-      app.showQuestions = false
+      this.showQuestions = false
       setTimeout(() => {
-        app.showQuestions = true
+        this.showQuestions = true
       }, 5)
     },
     saveAnswer(answer, field) {
       // console.log(answer[field])
       const param = { answer: answer[field], field }
       const fetchConsultingsResource = new Resource('due-diligence/answers/update')
-      fetchConsultingsResource.update(answer.id, param)
-        .then(() => {})
+      fetchConsultingsResource.update(answer.id, param).then(() => {})
     },
     submitAnswers(domains) {
-      const message = 'Click OK to confirm submit action. You will not be able to modify responses once you submit'
-      // eslint-disable-next-line no-alert
+      const message =
+        'Click OK to confirm submit action. You will not be able to modify responses once you submit'
+
       if (window.confirm(message)) {
         const answerIds = []
-        domains.forEach(response => {
+        domains.forEach((response) => {
           answerIds.push(response.id)
         })
         const param = { answer_ids: answerIds, value: 1 }
         const submitAnswersResource = new Resource('due-diligence/answers/submit')
-        submitAnswersResource.store(param)
-          .then(() => {
-            this.fetchQuestionsWithResponse()
-            this.$emit('reloadAnalytics')
-          })
+        submitAnswersResource.store(param).then(() => {
+          this.fetchQuestionsWithResponse()
+          this.$emit('reloadAnalytics')
+        })
       }
     },
     allowModification(domains) {
       const message = 'Click OK to confirm that you allow the modification of this response'
-      // eslint-disable-next-line no-alert
+
       if (window.confirm(message)) {
         const answerIds = []
-        domains.forEach(question => {
+        domains.forEach((question) => {
           answerIds.push(question.response.id)
         })
         const param = { answer_ids: answerIds, value: 0 }
         const submitAnswersResource = new Resource('due-diligence/answers/submit')
-        submitAnswersResource.store(param)
-          .then(() => {
-            this.$message('Modification Enabled')
-            this.fetchQuestionsWithResponse()
-            this.$emit('reloadAnalytics')
-          })
+        submitAnswersResource.store(param).then(() => {
+          this.$message('Modification Enabled')
+          this.fetchQuestionsWithResponse()
+          this.$emit('reloadAnalytics')
+        })
       }
     },
     destroyDueDiligenceEvidence(id) {
-      const app = this
-
-      // eslint-disable-next-line no-alert
-      if (window.confirm('Are you sure you want to delete this document? This cannot be recovered')) {
-        app.loadDelete = true
+      if (
+        window.confirm('Are you sure you want to delete this document? This cannot be recovered')
+      ) {
+        this.loadDelete = true
         const destroyEvidenceResource = new Resource('due-diligence/answers/destroy-evidence')
-        destroyEvidenceResource.destroy(id)
+        destroyEvidenceResource
+          .destroy(id)
           .then(() => {
-            app.fetchQuestionsWithResponse(false)
-            app.$message('Document Deleted')
-            app.loadDelete = false
-          }).catch(e => {
-            app.loadDelete = false
-            app.$message(e.response.message)
+            this.fetchQuestionsWithResponse(false)
+            this.$message('Document Deleted')
+            this.loadDelete = false
+          })
+          .catch((e) => {
+            this.loadDelete = false
+            this.$message(e.response.message)
           })
       }
     },
     viewAndEditDocument(data, type) {
-      const app = this
-      app.selectedDocument = data
-      app.showDocumentEditor = type
-    },
-  },
-
+      this.selectedDocument = data
+      this.showDocumentEditor = type
+    }
+  }
 }
 </script>

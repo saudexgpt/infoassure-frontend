@@ -25,170 +25,124 @@
       </el-row>
     </aside> -->
     <div>
-      <el-button
-        type="primary"
-        @click="exportToExcel('RCMReport')"
-      >
-        Export
-      </el-button>
-      <p />
+      <el-button type="primary" @click="exportToExcel('RCMReport')"> Export </el-button>
+      <p></p>
       <div class="table-responsive">
         <h3>Risk and Control Matrix for {{ assessmentModule.toUpperCase() }}</h3>
-        <table
-          id="RCMReport"
-          v-loading="loading"
-          class="table table-bordered"
-        >
+        <table id="RCMReport" v-loading="loading" class="table table-bordered">
           <thead>
             <tr>
               <template v-if="assessmentModule === 'rcsa'">
                 <th
-
                   data-fill-color="333333"
                   data-f-color="ffffff"
-                  style="font-size: 14px;"
+                  style="font-size: 14px"
                   data-f-sz="14"
                 >
-                  <div style="width: 10px">
-                    L1
-                  </div>
+                  <div style="width: 10px"> L1 </div>
                 </th>
                 <th
-
                   data-fill-color="333333"
                   data-f-color="ffffff"
-                  style="font-size: 14px;"
+                  style="font-size: 14px"
                   data-f-sz="14"
                 >
-                  <div style="width: 10px">
-                    L2
-                  </div>
+                  <div style="width: 10px"> L2 </div>
                 </th>
                 <th
-
                   data-fill-color="333333"
                   data-f-color="ffffff"
-                  style="font-size: 14px;"
+                  style="font-size: 14px"
                   data-f-sz="14"
                 >
-                  <div style="width: 10px">
-                    L3
-                  </div>
+                  <div style="width: 10px"> L3 </div>
                 </th>
               </template>
               <template v-if="assessmentModule !== 'isms'">
                 <th
                   data-fill-color="333333"
                   data-f-color="ffffff"
-                  style="font-size: 14px;"
+                  style="font-size: 14px"
                   data-f-sz="14"
                 >
-                  <div style="width: 50px">
-                    PROCESS ID
-                  </div>
-                </th>
-                <th
-
-                  data-fill-color="333333"
-                  data-f-color="ffffff"
-                  style="font-size: 14px;"
-                  data-f-sz="14"
-                >
-                  <div style="width: 150px">
-                    DEPARTMENT/BUSINESS UNIT
-                  </div>
+                  <div style="width: 50px"> PROCESS ID </div>
                 </th>
                 <th
                   data-fill-color="333333"
                   data-f-color="ffffff"
-                  style="font-size: 14px;"
+                  style="font-size: 14px"
                   data-f-sz="14"
                 >
-                  <div style="width: 250px">
-                    PROCESS
-                  </div>
+                  <div style="width: 150px"> DEPARTMENT/BUSINESS UNIT </div>
+                </th>
+                <th
+                  data-fill-color="333333"
+                  data-f-color="ffffff"
+                  style="font-size: 14px"
+                  data-f-sz="14"
+                >
+                  <div style="width: 250px"> PROCESS </div>
                 </th>
               </template>
               <template v-if="assessmentModule === 'isms' || assessmentModule === 'ndpa'">
                 <th
                   data-fill-color="333333"
                   data-f-color="ffffff"
-                  style="font-size: 14px;"
+                  style="font-size: 14px"
                   data-f-sz="14"
                 >
-                  <div style="width: 250px">
-                    Asset Type
-                  </div>
+                  <div style="width: 250px"> Asset Type </div>
                 </th>
                 <th
-
                   data-fill-color="333333"
                   data-f-color="ffffff"
-                  style="font-size: 14px;"
+                  style="font-size: 14px"
                   data-f-sz="14"
                 >
-                  <div style="width: 150px">
-                    Asset
-                  </div>
+                  <div style="width: 150px"> Asset </div>
                 </th>
               </template>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  RISK NO.
-                </div>
+                <div style="width: 250px"> RISK NO. </div>
               </th>
               <template v-if="assessmentModule === 'rcsa'">
-
                 <th
-
                   data-fill-color="333333"
                   data-f-color="ffffff"
-                  style="font-size: 14px;"
+                  style="font-size: 14px"
                   data-f-sz="14"
                 >
-                  <div style="width: 250px">
-                    RISK CATEGORY
-                  </div>
+                  <div style="width: 250px"> RISK CATEGORY </div>
                 </th>
                 <th
-
                   data-fill-color="333333"
                   data-f-color="ffffff"
-                  style="font-size: 14px;"
+                  style="font-size: 14px"
                   data-f-sz="14"
                 >
-                  <div style="width: 250px">
-                    RISK SUB-CATEGORY
-                  </div>
+                  <div style="width: 250px"> RISK SUB-CATEGORY </div>
                 </th>
               </template>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 150px">
-                  RISK OWNER
-                </div>
+                <div style="width: 150px"> RISK OWNER </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  RISK DESCRIPTION
-                </div>
+                <div style="width: 250px"> RISK DESCRIPTION </div>
               </th>
               <!-- <th
 
@@ -204,224 +158,168 @@
               <th
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  CONTROL NO.
-                </div>
+                <div style="width: 250px"> CONTROL NO. </div>
               </th>
               <th
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  CONTROL LOCATION
-                </div>
+                <div style="width: 250px"> CONTROL LOCATION </div>
               </th>
               <th
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  CONTROL DESCRIPTION
-                </div>
+                <div style="width: 250px"> CONTROL DESCRIPTION </div>
               </th>
               <th
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  CONTROL OWNER
-                </div>
+                <div style="width: 250px"> CONTROL OWNER </div>
               </th>
               <th
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  FREQUENCY
-                </div>
+                <div style="width: 250px"> FREQUENCY </div>
               </th>
               <th
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  CONTROL TYPE
-                </div>
+                <div style="width: 250px"> CONTROL TYPE </div>
               </th>
               <th
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  NATURE OF CONTROL
-                </div>
+                <div style="width: 250px"> NATURE OF CONTROL </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  APPLICATION USED
-                </div>
+                <div style="width: 250px"> APPLICATION USED </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  COMPENSATING CONTROL
-                </div>
+                <div style="width: 250px"> COMPENSATING CONTROL </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  TEST PROCEDURES
-                </div>
+                <div style="width: 250px"> TEST PROCEDURES </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  SAMPLE SIZE
-                </div>
+                <div style="width: 250px"> SAMPLE SIZE </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  DATA REQUIRED
-                </div>
+                <div style="width: 250px"> DATA REQUIRED </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  LINK TO EVIDENCE
-                </div>
+                <div style="width: 250px"> LINK TO EVIDENCE </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  TEST CONCLUSION
-                </div>
+                <div style="width: 250px"> TEST CONCLUSION </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  GAP DESCRIPTION
-                </div>
+                <div style="width: 250px"> GAP DESCRIPTION </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  TOD IMPROVEMENT OPPORTUNITY (IF ANY)
-                </div>
+                <div style="width: 250px"> TOD IMPROVEMENT OPPORTUNITY (IF ANY) </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  RECOMMENDATION
-                </div>
+                <div style="width: 250px"> RECOMMENDATION </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  RESPONSIBILITY
-                </div>
+                <div style="width: 250px"> RESPONSIBILITY </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  TIMELINE
-                </div>
+                <div style="width: 250px"> TIMELINE </div>
               </th>
               <th
-
                 data-fill-color="333333"
                 data-f-color="ffffff"
-                style="font-size: 14px;"
+                style="font-size: 14px"
                 data-f-sz="14"
               >
-                <div style="width: 250px">
-                  TOD GAP STATUS
-                </div>
+                <div style="width: 250px"> TOD GAP STATUS </div>
               </th>
             </tr>
           </thead>
           <tbody>
-            <template
-              v-for="(report, index) in risk_registers"
-            >
-
-              <tr :key="index">
+            <template v-for="(report, index) in risk_registers" :key="index">
+              <tr>
                 <template v-if="assessmentModule === 'rcsa'">
                   <td>
                     {{ report.l1 }}
@@ -460,7 +358,7 @@
                 </td>
                 <td>
                   <!-- eslint-disable-next-line vue/no-v-html-->
-                  <span v-html="report.vulnerability_description" />
+                  <span v-html="report.vulnerability_description"></span>
                 </td>
                 <!-- <td>
                   <span v-html="report.outcome" />
@@ -471,7 +369,7 @@
                 </td>
                 <td>
                   <!-- eslint-disable-next-line vue/no-v-html-->
-                  <span v-html="report.control_description" />
+                  <span v-html="report.control_description"></span>
                 </td>
                 <td>
                   {{ report.control_owner }}
@@ -503,8 +401,9 @@
                 <td>
                   <a
                     v-if="report.link_to_evidence !== null"
-                    :href="baseServerUrl+'storage/'+report.link_to_evidence"
-                  >{{ baseServerUrl+'storage/'+report.link_to_evidence }}</a>
+                    :href="baseServerUrl + 'storage/' + report.link_to_evidence"
+                    >{{ baseServerUrl + 'storage/' + report.link_to_evidence }}</a
+                  >
                 </td>
                 <td>
                   {{ report.test_conclusion }}
@@ -531,7 +430,7 @@
             </template>
           </tbody>
         </table>
-        <br>
+        <br />
       </div>
     </div>
   </div>
@@ -542,8 +441,7 @@
 //   BButton,
 // } from 'bootstrap-vue'
 // import { VueGoodTable } from 'vue-good-table'
-import TableToExcel from '@linways/table-to-excel'
-import Ripple from 'vue-ripple-directive'
+// import TableToExcel from '@linways/table-to-excel'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
 
@@ -551,13 +449,10 @@ export default {
   components: {
     // BButton,
   },
-  directives: {
-    Ripple,
-  },
   props: {
     clientId: {
       type: Number,
-      default: null,
+      default: null
     },
     // businessUnitId: {
     //   type: Number,
@@ -565,14 +460,25 @@ export default {
     // },
     assessmentModule: {
       type: String,
-      default: () => null,
-    },
+      default: () => null
+    }
   },
   data() {
     return {
       loading: false,
       downloading: false,
-      control_frequencies: ['Per Transaction', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Biannually', 'Annually', 'N/A', 'Per Merchant', 'Per Terminal Request'],
+      control_frequencies: [
+        'Per Transaction',
+        'Daily',
+        'Weekly',
+        'Monthly',
+        'Quarterly',
+        'Biannually',
+        'Annually',
+        'N/A',
+        'Per Merchant',
+        'Per Terminal Request'
+      ],
       risk_types: [],
       risk_registers: [],
       clients: [],
@@ -583,22 +489,22 @@ export default {
       showAssignConsultantModal: false,
       form: {
         client_id: '',
-        business_unit_id: '',
+        business_unit_id: ''
       },
-      selectedRisk: null,
+      selectedRisk: null
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
-    },
+    }
   },
   watch: {
     businessUnitId() {
       this.form.client_id = this.clientId
       this.form.business_unit_id = this.businessUnitId
       this.fetchRisks()
-    },
+    }
   },
   created() {
     this.form.client_id = this.clientId
@@ -609,80 +515,72 @@ export default {
   methods: {
     checkPermission,
     fetchRiskCategories() {
-      const app = this
       const fetchEntryResource = new Resource('risk-assessment/fetch-categories')
-      fetchEntryResource.list({ client_id: app.form.client_id })
-        .then(response => {
-          app.risk_types = response.categories
-          app.loading = false
+      fetchEntryResource
+        .list({ client_id: this.form.client_id })
+        .then((response) => {
+          this.risk_types = response.categories
+          this.loading = false
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
+          this.$message.error(error.response.data.error)
+          this.loading = false
         })
     },
     // fetchBusinessUnits() {
-    //   const app = this
-    //   app.form.business_unit_id = ''
+    //
+    //   this.form.business_unit_id = ''
     //   const fetchCriteriaResource = new Resource('business-units/fetch-business-units')
-    //   fetchCriteriaResource.list({ client_id: app.form.client_id })
+    //   fetchCriteriaResource.list({ client_id: this.form.client_id })
     //     .then(response => {
-    //       app.business_units = response.business_units
-    //     }).catch(() => { app.loading = false })
+    //       this.business_units = response.business_units
+    //     }).catch(() => { this.loading = false })
     // },
     fetchRisks() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const fetchRisksResource = new Resource('fetch-module-risk-registers')
-      fetchRisksResource.list({ client_id: app.form.client_id, module: app.assessmentModule })
-        .then(response => {
-          app.risk_registers = response.risk_registers
-          app.loading = false
-        }).catch(() => { app.loading = false })
+      fetchRisksResource
+        .list({ client_id: this.form.client_id, module: this.assessmentModule })
+        .then((response) => {
+          this.risk_registers = response.risk_registers
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     updateField($event, field, assessment) {
-      const app = this
       const params = { field, value: $event.target.value }
       const updateResource = new Resource('update-risk-register')
-      updateResource.update(assessment.id, params)
-        .then(() => {
-          app.$emit('reload')
-        })
+      updateResource.update(assessment.id, params).then(() => {
+        this.$emit('reload')
+      })
     },
     exportToExcel(id) {
-      const app = this
-      app.downloading = true
-      setTimeout(() => {
-        TableToExcel.convert(document.getElementById(id), {
-          name: 'RCM-Report.xlsx',
-          sheet: {
-            name: 'Sheet 1',
-          },
-        })
-      }, 1000)
-
-      setTimeout(() => {
-        app.downloading = false
-      }, 30000)
+      // this.downloading = true
+      // setTimeout(() => {
+      //   TableToExcel.convert(document.getElementById(id), {
+      //     name: 'RCM-Report.xlsx',
+      //     sheet: {
+      //       name: 'Sheet 1'
+      //     }
+      //   })
+      // }, 1000)
+      // setTimeout(() => {
+      //   this.downloading = false
+      // }, 30000)
     },
     destroyRow(row) {
-      const app = this
-
-      // eslint-disable-next-line no-alert
       if (window.confirm('Are you sure you want to delete this entry?')) {
-        app.loading = true
+        this.loading = true
         const destroyProjectsResource = new Resource('risk-assessment/destroy')
-        destroyProjectsResource.destroy(row.id)
-          .then(() => {
-            app.fetchRisks()
-            app.loading = false
-          })
+        destroyProjectsResource.destroy(row.id).then(() => {
+          this.fetchRisks()
+          this.loading = false
+        })
       }
-    },
-  },
+    }
+  }
 }
 </script>
-      <style lang="scss" >
-      @import '@core/scss/vue/libs/vue-good-table.scss';
-      </style>

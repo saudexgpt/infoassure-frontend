@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <div slot="header">
+    <div v:slot="header">
       <span>
         <!-- <el-button
           size="mini"
@@ -14,190 +14,120 @@
           />
           <span class="align-middle">Create</span>
         </el-button> -->
-        <b-button
-          variant="outline-secondary"
+        <el-button
+          type="info"
+          plain
           :loading="downloading"
-
           @click="exportTableToExcel('riskAssessmentTable')"
         >
-          <feather-icon
-            icon="DownloadIcon"
-            class="mr-50"
-          />
-          <span class="align-middle">Export</span>
-        </b-button>
+          <icon icon="tabler:download" /> Export
+        </el-button>
       </span>
     </div>
-    <p />
-    <div
-      v-if="riskAssessments.length > 0"
-      style="max-height: 500px; overflow: auto;"
-    >
-      <b-tabs
-        v-if="assessmentModule === 'rcsa'"
-        content-class="mt-1"
-      >
-        <b-tab
-          lazy
-        >
+    <p></p>
+    <div v-if="riskAssessments.length > 0" style="max-height: 550px; overflow: auto">
+      <el-tabs v-if="assessmentModule === 'rcsa'" content-class="mt-1">
+        <el-tab lazy>
           <template #title>
             <feather-icon icon="ListIcon" />
             <span>Process Level Risk Universe</span>
           </template>
 
-          <table
-            id="riskAssessmentTable"
-            class="table table-bordered table-striped"
-          >
+          <table id="riskAssessmentTable" class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Business Unit</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Business Process</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >RISK ID</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >RISK TYPE</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >RISK DESCRIPTION</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Impact/Outcome</th>
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Business Unit</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Business Process</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">RISK ID</th>
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">RISK TYPE</th>
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >RISK DESCRIPTION</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Impact/Outcome</th
+                >
                 <th
                   v-for="impact_data in riskAssessments[0].impact_data"
                   :key="`${impact_data.slug}_pre`"
                   div
-
                   data-fill-color="333333"
                   data-b-a-s="thin"
                   data-f-color="ffffff"
-                > {{ impact_data.name }}</th>
+                >
+                  {{ impact_data.name }}</th
+                >
                 <th
                   v-for="impact_data in riskAssessments[0].impact_on_areas"
                   :key="`${impact_data.slug}_pre2`"
                   data-fill-color="333333"
                   data-b-a-s="thin"
                   data-f-color="ffffff"
-                > {{ impact_data.name }}</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Impact of Occurence</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Likelihood of Occurence</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Overall Rating</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Inherent Risk Rating</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Treatment</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Control/Mitigating Actions</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Control Effectiveness Level</th>
+                >
+                  {{ impact_data.name }}</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Impact of Occurence</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Likelihood of Occurence</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Overall Rating</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Inherent Risk Rating</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Treatment</th>
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Control/Mitigating Actions</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Control Effectiveness Level</th
+                >
                 <th
                   v-for="impact_data in riskAssessments[0].revised_impact_data"
                   :key="`${impact_data.slug}_post`"
-
                   data-fill-color="333333"
                   data-b-a-s="thin"
                   data-f-color="ffffff"
-                > {{ impact_data.name }}</th>
+                >
+                  {{ impact_data.name }}</th
+                >
                 <th
                   v-for="impact_data in riskAssessments[0].revised_impact_on_areas"
                   :key="`${impact_data.slug}_post2`"
                   data-fill-color="333333"
                   data-b-a-s="thin"
                   data-f-color="ffffff"
-                > {{ impact_data.name }}</th>
-                <th
-                  data-fill-color="45058d"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Impact of Occurence</th>
-                <th
-                  data-fill-color="45058d"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Likelihood of Occurence</th>
-                <th
-                  data-fill-color="45058d"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Overall Rating</th>
-                <th
-                  data-fill-color="45058d"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Residual Risk Rating</th>
-                <th
-
-                  data-fill-color="333333"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Primary Risk Owners</th>
-                <th
-                  data-fill-color="46035a"
-                  data-b-a-s="thin"
-                  data-f-color="ffffff"
-                >Key Risk Indicator</th>
+                >
+                  {{ impact_data.name }}</th
+                >
+                <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                  >Impact of Occurence</th
+                >
+                <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                  >Likelihood of Occurence</th
+                >
+                <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                  >Overall Rating</th
+                >
+                <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                  >Residual Risk Rating</th
+                >
+                <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                  >Primary Risk Owners</th
+                >
+                <th data-fill-color="46035a" data-b-a-s="thin" data-f-color="ffffff"
+                  >Key Risk Indicator</th
+                >
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(assessment, index) in riskAssessments"
-                :key="index"
-              >
+              <tr v-for="(assessment, index) in riskAssessments" :key="index">
                 <td>
                   <div style="width: 250px">
                     {{ assessment.business_unit }}
@@ -218,16 +148,14 @@
                 <td>
                   <div style="width: 300px">
                     <!-- eslint-disable-next-line vue/no-v-html -->
-                    <span v-html="assessment.impact_rationale" />
+                    <span v-html="assessment.impact_rationale"></span>
                   </div>
                 </td>
                 <td
                   v-for="(impact_data, impact_data_index) in assessment.impact_data"
                   :key="impact_data_index"
                 >
-
                   {{ impact_data.meaning }}
-
                 </td>
                 <td
                   v-for="(impact_data, impact_data_index) in assessment.impact_on_areas"
@@ -236,22 +164,15 @@
                   <div style="width: 150px">
                     {{ impact_data.meaning }}
                   </div>
-
                 </td>
                 <td>
-
                   {{ assessment.impact_of_occurence }}
-
                 </td>
                 <td>
-
                   {{ assessment.likelihood_of_occurence }}
-
                 </td>
                 <td>
-
                   {{ assessment.risk_score }}
-
                 </td>
                 <td
                   :style="`background: #${assessment.risk_level_color}`"
@@ -262,36 +183,32 @@
                   {{ assessment.risk_level }}
                 </td>
                 <td>
-
                   {{ assessment.treatment_option }}
-
                 </td>
                 <td>
                   <div style="width: 300px">
-
                     <!--eslint-disable-next-line vue/no-v-html -->
-                    <span v-html="assessment.recommended_control" />
+                    <span v-html="assessment.recommended_control"></span>
                   </div>
                 </td>
                 <td>
                   {{ assessment.control_effectiveness_level }}
-
                 </td>
                 <td
                   v-for="(impact_data, revised_impact_data_index) in assessment.revised_impact_data"
                   :key="`${revised_impact_data_index}_post`"
                 >
                   {{ impact_data.meaning }}
-
                 </td>
                 <td
-                  v-for="(impact_data, revised_impact_data_index) in assessment.revised_impact_on_areas"
+                  v-for="(
+                    impact_data, revised_impact_data_index
+                  ) in assessment.revised_impact_on_areas"
                   :key="`${revised_impact_data_index}_post2`"
                 >
                   <div style="width: 150px">
                     {{ impact_data.meaning }}
                   </div>
-
                 </td>
                 <td>
                   {{ assessment.revised_impact_of_occurence }}
@@ -308,8 +225,7 @@
                   data-b-a-s="thin"
                   data-f-color="ffffff"
                 >
-                  <div>{{ assessment.revised_risk_level }}
-                  </div>
+                  <div>{{ assessment.revised_risk_level }} </div>
                 </td>
                 <td>
                   {{ assessment.risk_owner }}
@@ -317,28 +233,21 @@
                 <td>
                   <div style="width: 300px">
                     <!--eslint-disable-next-line vue/no-v-html -->
-                    <span v-html="assessment.key_risk_indicator" />
+                    <span v-html="assessment.key_risk_indicator"></span>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
-        </b-tab>
-        <b-tab
-          lazy
-        >
+        </el-tab>
+        <el-tab lazy>
           <template #title>
             <feather-icon icon="AlertTriangleIcon" />
             <span>Key Risk Indicator Assessment</span>
           </template>
 
-          <div
-            v-if="downloading"
-          >
-            <table
-              id="KRIAssessmentTable"
-              class="table table-bordered table-striped"
-            >
+          <div v-if="downloading">
+            <table id="KRIAssessmentTable" class="table table-bordered table-striped">
               <thead>
                 <tr>
                   <th
@@ -347,7 +256,7 @@
                     data-b-a-s="thin"
                     :rowspan="2"
                     colspan="4"
-                  />
+                  ></th>
                   <th
                     v-for="quarterCount in 4"
                     :key="quarterCount"
@@ -356,8 +265,9 @@
                     data-a-h="center"
                     data-b-a-s="thin"
                     :colspan="12"
-                    style="text-align: center;"
-                  >Quater {{ quarterCount }}</th>
+                    style="text-align: center"
+                    >Quater {{ quarterCount }}</th
+                  >
                 </tr>
                 <tr>
                   <th
@@ -368,34 +278,19 @@
                     data-a-h="center"
                     data-b-a-s="thin"
                     :colspan="4"
-                    style="text-align: center;"
-                  >Month {{ monthCount }}</th>
+                    style="text-align: center"
+                    >Month {{ monthCount }}</th
+                  >
                 </tr>
                 <tr>
-                  <th
-
-                    data-fill-color="333333"
-                    data-f-color="ffffff"
-                    data-b-a-s="thin"
-                  >KRI</th>
-                  <th
-
-                    data-fill-color="333333"
-                    data-f-color="ffffff"
-                    data-b-a-s="thin"
-                  >Frequency of Assessment</th>
-                  <th
-
-                    data-fill-color="333333"
-                    data-f-color="ffffff"
-                    data-b-a-s="thin"
-                  >Unit of Measurement</th>
-                  <th
-
-                    data-fill-color="333333"
-                    data-f-color="ffffff"
-                    data-b-a-s="thin"
-                  >Comment</th>
+                  <th data-fill-color="333333" data-f-color="ffffff" data-b-a-s="thin">KRI</th>
+                  <th data-fill-color="333333" data-f-color="ffffff" data-b-a-s="thin"
+                    >Frequency of Assessment</th
+                  >
+                  <th data-fill-color="333333" data-f-color="ffffff" data-b-a-s="thin"
+                    >Unit of Measurement</th
+                  >
+                  <th data-fill-color="333333" data-f-color="ffffff" data-b-a-s="thin">Comment</th>
                   <th
                     v-for="weekCount in 48"
                     :key="weekCount"
@@ -403,15 +298,13 @@
                     data-f-color="ffffff"
                     data-a-h="center"
                     data-b-a-s="thin"
-                    style="text-align: center;"
-                  >Week {{ weekCount }}</th>
+                    style="text-align: center"
+                    >Week {{ weekCount }}</th
+                  >
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="(assessment, index) in riskAssessments"
-                  :key="index"
-                >
+                <tr v-for="(assessment, index) in riskAssessments" :key="index">
                   <td data-b-a-s="thin">
                     <div style="width: 250px">
                       {{ assessment.kri }}
@@ -431,9 +324,13 @@
                     </div>
                   </td>
                   <td
-                    v-for="(no_of_assessment, assess_index) in number_of_assessments[assessment.frequency_of_assessment]"
+                    v-for="(no_of_assessment, assess_index) in number_of_assessments[
+                      assessment.frequency_of_assessment
+                    ]"
                     :key="assess_index"
-                    :colspan="parseInt(48 / number_of_assessments[assessment.frequency_of_assessment])"
+                    :colspan="
+                      parseInt(48 / number_of_assessments[assessment.frequency_of_assessment])
+                    "
                     :data-fill-color="assessment.assessments[no_of_assessment][1].slice(1)"
                     data-f-color="000000"
                     data-a-h="center"
@@ -446,22 +343,22 @@
               </tbody>
             </table>
           </div>
-          <k-r-i-assessment
-            v-else
-            mode="manage"
-          />
-        </b-tab>
-      </b-tabs>
+          <k-r-i-assessment v-else mode="manage" />
+        </el-tab>
+      </el-tabs>
       <div v-else-if="assessmentModule === 'bcms'">
-        <table
-          id="riskAssessmentTable"
-          class="table table-bordered table-striped"
-        >
+        <table id="riskAssessmentTable" class="table table-bordered table-striped">
           <thead>
             <tr>
               <th
-                :colspan="parseInt(12 + riskAssessments[0].impact_data.length + riskAssessments[0].impact_on_areas.length)"
-                style="font-size: 18px;"
+                :colspan="
+                  parseInt(
+                    12 +
+                      riskAssessments[0].impact_data.length +
+                      riskAssessments[0].impact_on_areas.length
+                  )
+                "
+                style="font-size: 18px"
                 data-f-sz="18"
                 data-fill-color="45058d"
                 data-b-a-s="thin"
@@ -470,8 +367,14 @@
                 RISK ANALYSIS
               </th>
               <th
-                :colspan="parseInt(10 + riskAssessments[0].impact_data.length + riskAssessments[0].impact_on_areas.length )"
-                style="font-size: 18px;"
+                :colspan="
+                  parseInt(
+                    10 +
+                      riskAssessments[0].impact_data.length +
+                      riskAssessments[0].impact_on_areas.length
+                  )
+                "
+                style="font-size: 18px"
                 data-f-sz="18"
                 data-fill-color="45058d"
                 data-b-a-s="thin"
@@ -481,7 +384,7 @@
               </th>
               <th
                 :colspan="1"
-                style="font-size: 18px;"
+                style="font-size: 18px"
                 data-f-sz="18"
                 data-fill-color="45058d"
                 data-b-a-s="thin"
@@ -491,7 +394,7 @@
               </th>
               <th
                 colspan="3"
-                style="font-size: 18px;"
+                style="font-size: 18px"
                 data-f-sz="18"
                 data-fill-color="46035a"
                 data-b-a-s="thin"
@@ -501,106 +404,67 @@
               </th>
             </tr>
             <tr>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >RA-ID</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Business Unit</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Business Process</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Owner</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Applicable Threat</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Existing Controls</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Likelihood Value</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Likelihood Justification</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">RA-ID</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Business Unit</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Business Process</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Risk Owner</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Applicable Threat</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Existing Controls</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Likelihood Value</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Likelihood Justification</th
+              >
               <th
                 v-for="impact_data in riskAssessments[0].impact_data"
                 :key="`${impact_data.slug}_pre`"
                 data-fill-color="333333"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
-              > {{ impact_data.name }}</th>
+              >
+                {{ impact_data.name }}</th
+              >
               <th
                 v-for="impact_data in riskAssessments[0].impact_on_areas"
                 :key="`${impact_data.slug}_pre2`"
                 data-fill-color="333333"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
-              > {{ impact_data.name }}</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Impact Value</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Impact Rationale</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Score</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Level</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Treatment Option</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Recommended Control</th>
-              <th
-
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Control Effectiveness Level</th>
+              >
+                {{ impact_data.name }}</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Impact Value</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Impact Rationale</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Risk Score</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Risk Level</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Treatment Option</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Recommended Control</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Control Effectiveness Level</th
+              >
               <!-- <th
                 data-fill-color="45058d"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
               >Applicable Annexture Controls</th> -->
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Present Status</th>
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Present Status</th
+              >
               <!-- <th
               data-fill-color="45058d"
               data-b-a-s="thin"
@@ -611,72 +475,55 @@
               data-b-a-s="thin"
               data-f-color="ffffff"
             >Responsibility (Actual Name)</th> -->
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Likelihood Value</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Likelihood Justification</th>
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Likelihood Value</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Likelihood Justification</th
+              >
               <th
                 v-for="impact_data in riskAssessments[0].revised_impact_data"
                 :key="`${impact_data.slug}_post`"
                 data-fill-color="333333"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
-              > {{ impact_data.name }}</th>
+              >
+                {{ impact_data.name }}</th
+              >
               <th
                 v-for="impact_data in riskAssessments[0].revised_impact_on_areas"
                 :key="`${impact_data.slug}_post2`"
                 data-fill-color="333333"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
-              > {{ impact_data.name }}</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Impact Value</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Impact Rationale</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Risk Score</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Risk Level</th>
-              <th
-                data-fill-color="46035a"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Treatment Option B</th>
-              <th
-                data-fill-color="46035a"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Treatment Plan Residual</th>
-              <th
-                data-fill-color="46035a"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Residual Plan Present Status</th>
+              >
+                {{ impact_data.name }}</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Impact Value</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Impact Rationale</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Risk Score</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Risk Level</th
+              >
+              <th data-fill-color="46035a" data-b-a-s="thin" data-f-color="ffffff"
+                >Risk Treatment Option B</th
+              >
+              <th data-fill-color="46035a" data-b-a-s="thin" data-f-color="ffffff"
+                >Risk Treatment Plan Residual</th
+              >
+              <th data-fill-color="46035a" data-b-a-s="thin" data-f-color="ffffff"
+                >Residual Plan Present Status</th
+              >
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="(assessment, index) in riskAssessments"
-              :key="index"
-            >
+            <tr v-for="(assessment, index) in riskAssessments" :key="index">
               <td>{{ assessment.risk_id }}</td>
               <td>
                 {{ assessment.business_unit }}
@@ -690,26 +537,23 @@
               <td>
                 <div style="width: 300px">
                   <!--eslint-disable-next-line vue/no-v-html-->
-                  <span v-html="assessment.vulnerability_description" />
+                  <span v-html="assessment.vulnerability_description"></span>
                 </div>
               </td>
               <td>
                 <div style="width: 300px">
                   <!--eslint-disable-next-line vue/no-v-html-->
-                  <span v-html="assessment.control_description" />
+                  <span v-html="assessment.control_description"></span>
                 </div>
               </td>
               <td>
-
                 {{ assessment.likelihood_of_occurence }}
-
               </td>
               <td>
                 <div style="width: 300px">
                   <!--eslint-disable-next-line vue/no-v-html-->
-                  <span v-html="assessment.likelihood_rationale" />
+                  <span v-html="assessment.likelihood_rationale"></span>
                 </div>
-
               </td>
               <td
                 v-for="(impact_data, impact_data_index) in assessment.impact_data"
@@ -726,24 +570,18 @@
                 <div style="width: 150px">
                   {{ impact_data.meaning }}
                 </div>
-
               </td>
               <td>
-
                 {{ assessment.impact_of_occurence }}
-
               </td>
               <td>
-
                 <div style="width: 300px">
                   <!-- eslint-disable-next-line vue/no-v-html -->
-                  <span v-html="assessment.impact_rationale" />
+                  <span v-html="assessment.impact_rationale"></span>
                 </div>
               </td>
               <td>
-
                 {{ assessment.risk_score }}
-
               </td>
               <td
                 :style="`background: #${assessment.risk_level_color}`"
@@ -754,20 +592,16 @@
                 {{ assessment.risk_level }}
               </td>
               <td>
-
                 {{ assessment.treatment_option }}
-
               </td>
               <td>
                 <div style="width: 300px">
-
                   <!--eslint-disable-next-line vue/no-v-html -->
-                  <span v-html="assessment.recommended_control" />
+                  <span v-html="assessment.recommended_control"></span>
                 </div>
               </td>
               <td>
                 {{ assessment.control_effectiveness_level }}
-
               </td>
               <!-- <td>
                 {{ assessment.applicable_annexture }}
@@ -794,31 +628,28 @@
                 <div style="width: 150px">
                   {{ impact_data.meaning }}
                 </div>
-
               </td>
               <td
-                v-for="(impact_data, revised_impact_data_index) in assessment.revised_impact_on_areas"
+                v-for="(
+                  impact_data, revised_impact_data_index
+                ) in assessment.revised_impact_on_areas"
                 :key="`${revised_impact_data_index}_post2`"
               >
                 <div style="width: 150px">
                   {{ impact_data.meaning }}
                 </div>
-
               </td>
               <td>
                 {{ assessment.revised_impact_of_occurence }}
-
               </td>
               <td>
-
                 <div style="width: 300px">
                   <!-- eslint-disable-next-line vue/no-v-html -->
-                  <span v-html="assessment.revised_impact_rationale" />
+                  <span v-html="assessment.revised_impact_rationale"></span>
                 </div>
               </td>
               <td>
                 {{ assessment.revised_risk_score }}
-
               </td>
               <td
                 :style="`background: #${assessment.revised_risk_level_color}`"
@@ -842,15 +673,18 @@
         </table>
       </div>
       <div v-else>
-        <table
-          id="riskAssessmentTable"
-          class="table table-bordered table-striped"
-        >
+        <table id="riskAssessmentTable" class="table table-bordered table-striped">
           <thead>
             <tr>
               <th
-                :colspan="parseInt(14 + riskAssessments[0].impact_data.length + riskAssessments[0].impact_on_areas.length)"
-                style="font-size: 18px;"
+                :colspan="
+                  parseInt(
+                    14 +
+                      riskAssessments[0].impact_data.length +
+                      riskAssessments[0].impact_on_areas.length
+                  )
+                "
+                style="font-size: 18px"
                 data-f-sz="18"
                 data-fill-color="45058d"
                 data-b-a-s="thin"
@@ -859,8 +693,14 @@
                 RISK ANALYSIS
               </th>
               <th
-                :colspan="parseInt(10 + riskAssessments[0].impact_data.length + riskAssessments[0].impact_on_areas.length )"
-                style="font-size: 18px;"
+                :colspan="
+                  parseInt(
+                    10 +
+                      riskAssessments[0].impact_data.length +
+                      riskAssessments[0].impact_on_areas.length
+                  )
+                "
+                style="font-size: 18px"
                 data-f-sz="18"
                 data-fill-color="45058d"
                 data-b-a-s="thin"
@@ -870,7 +710,7 @@
               </th>
               <th
                 :colspan="1"
-                style="font-size: 18px;"
+                style="font-size: 18px"
                 data-f-sz="18"
                 data-fill-color="45058d"
                 data-b-a-s="thin"
@@ -880,7 +720,7 @@
               </th>
               <th
                 colspan="3"
-                style="font-size: 18px;"
+                style="font-size: 18px"
                 data-f-sz="18"
                 data-fill-color="46035a"
                 data-b-a-s="thin"
@@ -890,121 +730,74 @@
               </th>
             </tr>
             <tr>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >RA-ID</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Business Unit</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Business Process</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Owner</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Asset Types</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Assets</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Applicable Threat</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">RA-ID</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Business Unit</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Business Process</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Risk Owner</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Asset Types</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Assets</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Applicable Threat</th
+              >
               <!-- <th
               data-fill-color="333333"
               data-b-a-s="thin"
               data-f-color="ffffff"
             >Impact Outcome</th> -->
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Existing Controls</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Likelihood Value</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Likelihood Justification</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Existing Controls</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Likelihood Value</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Likelihood Justification</th
+              >
               <th
                 v-for="impact_data in riskAssessments[0].impact_data"
                 :key="`${impact_data.slug}_pre`"
                 data-fill-color="333333"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
-              > {{ impact_data.name }}</th>
+              >
+                {{ impact_data.name }}</th
+              >
               <th
                 v-for="impact_data in riskAssessments[0].impact_on_areas"
                 :key="`${impact_data.slug}_pre2`"
                 data-fill-color="333333"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
-              > {{ impact_data.name }}</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Impact Value</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Impact Rationale</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Score</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Level</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Treatment Option</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Recommended Control</th>
-              <th
-
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Control Effectiveness Level</th>
+              >
+                {{ impact_data.name }}</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Impact Value</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Impact Rationale</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Risk Score</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff">Risk Level</th>
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Treatment Option</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Recommended Control</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Control Effectiveness Level</th
+              >
               <!-- <th
                 data-fill-color="45058d"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
               >Applicable Annexture Controls</th> -->
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Present Status</th>
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Present Status</th
+              >
               <!-- <th
               data-fill-color="45058d"
               data-b-a-s="thin"
@@ -1015,65 +808,51 @@
               data-b-a-s="thin"
               data-f-color="ffffff"
             >Responsibility (Actual Name)</th> -->
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Likelihood Value</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Likelihood Justification</th>
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Likelihood Value</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Likelihood Justification</th
+              >
               <th
                 v-for="impact_data in riskAssessments[0].revised_impact_data"
                 :key="`${impact_data.slug}_post`"
                 data-fill-color="333333"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
-              > {{ impact_data.name }}</th>
+              >
+                {{ impact_data.name }}</th
+              >
               <th
                 v-for="impact_data in riskAssessments[0].revised_impact_on_areas"
                 :key="`${impact_data.slug}_post2`"
                 data-fill-color="333333"
                 data-b-a-s="thin"
                 data-f-color="ffffff"
-              > {{ impact_data.name }}</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Impact Value</th>
-              <th
-                data-fill-color="333333"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Impact Rationale</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Risk Score</th>
-              <th
-                data-fill-color="45058d"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Revised Risk Level</th>
-              <th
-                data-fill-color="46035a"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Treatment Option B</th>
-              <th
-                data-fill-color="46035a"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Risk Treatment Plan Residual</th>
-              <th
-                data-fill-color="46035a"
-                data-b-a-s="thin"
-                data-f-color="ffffff"
-              >Residual Plan Present Status</th>
+              >
+                {{ impact_data.name }}</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Impact Value</th
+              >
+              <th data-fill-color="333333" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Impact Rationale</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Risk Score</th
+              >
+              <th data-fill-color="45058d" data-b-a-s="thin" data-f-color="ffffff"
+                >Revised Risk Level</th
+              >
+              <th data-fill-color="46035a" data-b-a-s="thin" data-f-color="ffffff"
+                >Risk Treatment Option B</th
+              >
+              <th data-fill-color="46035a" data-b-a-s="thin" data-f-color="ffffff"
+                >Risk Treatment Plan Residual</th
+              >
+              <th data-fill-color="46035a" data-b-a-s="thin" data-f-color="ffffff"
+                >Residual Plan Present Status</th
+              >
             </tr>
           </thead>
           <!-- <tbody v-if="!downloading">
@@ -1397,10 +1176,7 @@
           </tr>
         </tbody> -->
           <tbody>
-            <tr
-              v-for="(assessment, index) in riskAssessments"
-              :key="index"
-            >
+            <tr v-for="(assessment, index) in riskAssessments" :key="index">
               <td>{{ assessment.risk_id }}</td>
               <td>
                 {{ assessment.business_unit }}
@@ -1420,7 +1196,7 @@
               <td>
                 <div style="width: 300px">
                   <!--eslint-disable-next-line vue/no-v-html-->
-                  <span v-html="assessment.vulnerability_description" />
+                  <span v-html="assessment.vulnerability_description"></span>
                 </div>
               </td>
               <!-- <td>
@@ -1432,20 +1208,17 @@
               <td>
                 <div style="width: 300px">
                   <!--eslint-disable-next-line vue/no-v-html-->
-                  <span v-html="assessment.control_description" />
+                  <span v-html="assessment.control_description"></span>
                 </div>
               </td>
               <td>
-
                 {{ assessment.likelihood_of_occurence }}
-
               </td>
               <td>
                 <div style="width: 300px">
                   <!--eslint-disable-next-line vue/no-v-html-->
-                  <span v-html="assessment.likelihood_rationale" />
+                  <span v-html="assessment.likelihood_rationale"></span>
                 </div>
-
               </td>
               <td
                 v-for="(impact_data, impact_data_index) in assessment.impact_data"
@@ -1462,24 +1235,18 @@
                 <div style="width: 150px">
                   {{ impact_data.meaning }}
                 </div>
-
               </td>
               <td>
-
                 {{ assessment.impact_of_occurence }}
-
               </td>
               <td>
-
                 <div style="width: 300px">
                   <!-- eslint-disable-next-line vue/no-v-html -->
-                  <span v-html="assessment.impact_rationale" />
+                  <span v-html="assessment.impact_rationale"></span>
                 </div>
               </td>
               <td>
-
                 {{ assessment.risk_score }}
-
               </td>
               <td
                 :style="`background: #${assessment.risk_level_color}`"
@@ -1490,20 +1257,16 @@
                 {{ assessment.risk_level }}
               </td>
               <td>
-
                 {{ assessment.treatment_option }}
-
               </td>
               <td>
                 <div style="width: 300px">
-
                   <!--eslint-disable-next-line vue/no-v-html -->
-                  <span v-html="assessment.recommended_control" />
+                  <span v-html="assessment.recommended_control"></span>
                 </div>
               </td>
               <td>
                 {{ assessment.control_effectiveness_level }}
-
               </td>
               <!-- <td>
                 {{ assessment.applicable_annexture }}
@@ -1530,31 +1293,28 @@
                 <div style="width: 150px">
                   {{ impact_data.meaning }}
                 </div>
-
               </td>
               <td
-                v-for="(impact_data, revised_impact_data_index) in assessment.revised_impact_on_areas"
+                v-for="(
+                  impact_data, revised_impact_data_index
+                ) in assessment.revised_impact_on_areas"
                 :key="`${revised_impact_data_index}_post2`"
               >
                 <div style="width: 150px">
                   {{ impact_data.meaning }}
                 </div>
-
               </td>
               <td>
                 {{ assessment.revised_impact_of_occurence }}
-
               </td>
               <td>
-
                 <div style="width: 300px">
                   <!-- eslint-disable-next-line vue/no-v-html -->
-                  <span v-html="assessment.revised_impact_rationale" />
+                  <span v-html="assessment.revised_impact_rationale"></span>
                 </div>
               </td>
               <td>
                 {{ assessment.revised_risk_score }}
-
               </td>
               <td
                 :style="`background: #${assessment.revised_risk_level_color}`"
@@ -1585,12 +1345,6 @@
 </template>
 
 <script>
-import {
-  BButton, BTabs, BTab,
-} from 'bootstrap-vue'
-import TableToExcel from '@linways/table-to-excel'
-// import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
 import KRIAssessment from './KRIAssessment.vue'
@@ -1598,25 +1352,19 @@ import KRIAssessment from './KRIAssessment.vue'
 
 export default {
   components: {
-    BButton,
-    BTabs,
-    BTab,
-    KRIAssessment,
+    KRIAssessment
     // CreateRiskAssessment,
-  },
-  directives: {
-    Ripple,
   },
   props: {
     standardId: {
       type: Number,
-      default: () => 0,
+      default: () => 0
       // required: true,
     },
     assessmentModule: {
       type: String,
-      default: () => ('all'), // this is the general risk assessment
-    },
+      default: () => 'all' // this is the general risk assessment
+    }
   },
   data() {
     return {
@@ -1642,7 +1390,7 @@ export default {
       selectedAssessment: '',
       treatment_comment: '',
       treatment_alert_type: 'error',
-      showTreatmentOption: false,
+      showTreatmentOption: false
     }
   },
   computed: {
@@ -1651,7 +1399,7 @@ export default {
     },
     clientActivatedProjects() {
       return this.$store.getters.clientActivatedProjects
-    },
+    }
   },
   watch: {
     selectedClient() {
@@ -1659,7 +1407,7 @@ export default {
       this.fetchLikelihoods()
       this.fetchAssetTypes()
       this.fetchRiskAssessments()
-    },
+    }
   },
   created() {
     this.fetchImpacts()
@@ -1669,13 +1417,12 @@ export default {
   },
   methods: {
     checkPermission,
-    customClassName({
-      row, column,
-    }) {
+    customClassName({ row, column }) {
       if (column.label === 'Risk Category') {
         if (row.risk_category === 'High') {
           return 'btn-danger'
-        } if (row.risk_category === 'Medium') {
+        }
+        if (row.risk_category === 'Medium') {
           return 'btn-warning'
         }
         if (row.risk_category === 'Low') {
@@ -1685,7 +1432,8 @@ export default {
       if (column.label === 'Revised Risk') {
         if (row.revised_risk_category === 'High') {
           return 'btn-danger'
-        } if (row.revised_risk_category === 'Medium') {
+        }
+        if (row.revised_risk_category === 'Medium') {
           return 'btn-warning'
         }
         if (row.revised_risk_category === 'Low') {
@@ -1695,19 +1443,19 @@ export default {
       return ''
     },
     createAsset(asseTypeId) {
-      const app = this
       if (asseTypeId === '' || asseTypeId === null) {
-        app.$alert('Please select an asset type')
+        this.$alert('Please select an asset type')
       } else {
-        app.selectedAssetTypeId = asseTypeId
-        app.createAssetModal = true
+        this.selectedAssetTypeId = asseTypeId
+        this.createAssetModal = true
       }
     },
     customClass(row, opt) {
       if (opt === 'risk_category') {
         if (row.risk_category === 'High') {
           return 'DD2C2C'
-        } if (row.risk_category === 'Medium') {
+        }
+        if (row.risk_category === 'Medium') {
           return 'F0C63E'
         }
         if (row.risk_category === 'Low') {
@@ -1717,7 +1465,8 @@ export default {
       if (opt === 'revised_risk_category') {
         if (row.revised_risk_category === 'High') {
           return 'DD2C2C'
-        } if (row.revised_risk_category === 'Medium') {
+        }
+        if (row.revised_risk_category === 'Medium') {
           return 'F0C63E'
         }
         if (row.revised_risk_category === 'Low') {
@@ -1727,145 +1476,153 @@ export default {
       return ''
     },
     fetchImpacts() {
-      const app = this
       const fetchEntryResource = new Resource('risk-assessment/fetch-impacts')
-      fetchEntryResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.loading = false
-          app.impacts = response.impacts
+      fetchEntryResource
+        .list({ client_id: this.selectedClient.id })
+        .then((response) => {
+          this.loading = false
+          this.impacts = response.impacts
         })
-        .catch(error => {
-          app.loading = false
+        .catch((error) => {
+          this.loading = false
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          this.$message.error(error.response.data.error)
         })
     },
     fetchLikelihoods() {
-      const app = this
       const fetchEntryResource = new Resource('risk-assessment/fetch-likelihoods')
-      fetchEntryResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.likelihoods = response.likelihoods
+      fetchEntryResource
+        .list({ client_id: this.selectedClient.id })
+        .then((response) => {
+          this.likelihoods = response.likelihoods
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          this.$message.error(error.response.data.error)
         })
     },
     fetchRiskAssessments(load = true) {
-      const app = this
-      app.loading = load
+      this.loading = load
       const fetchRiskAssessmentsResource = new Resource('risk-assessment/fetch-risk-assessments')
-      fetchRiskAssessmentsResource.list({ client_id: app.selectedClient.id, standard_id: app.standardId, module: app.assessmentModule })
-        .then(response => {
-          app.riskAssessments = response.risk_assessments
-          app.risk_appetite = response.risk_appetite
-          app.loading = false
-        }).catch(() => { app.loading = false })
+      fetchRiskAssessmentsResource
+        .list({
+          client_id: this.selectedClient.id,
+          standard_id: this.standardId,
+          module: this.assessmentModule
+        })
+        .then((response) => {
+          this.riskAssessments = response.risk_assessments
+          this.risk_appetite = response.risk_appetite
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     updateField(value, field, assessment, subField = '') {
-      const app = this
       const params = {
-        field, value, sub_field: subField,
+        field,
+        value,
+        sub_field: subField
       }
-      // eslint-disable-next-line no-param-reassign
+
       // assessment.loader = true
       const fetchClientsResource = new Resource('risk-assessment/update-fields')
-      fetchClientsResource.update(assessment.id, params)
+      fetchClientsResource
+        .update(assessment.id, params)
         .then(() => {
-          // app.risk_assessments[assessment.index] = response
-          app.fetchRiskAssessments(false)
-          // eslint-disable-next-line no-param-reassign
+          // this.risk_assessments[assessment.index] = response
+          this.fetchRiskAssessments(false)
+
           assessment.loader = false
-        }).catch(() => {
-          // eslint-disable-next-line no-param-reassign
+        })
+        .catch(() => {
           assessment.loader = false
         })
     },
     treatRisk(assessment) {
-      const app = this
       const riskValue = assessment.overall_risk_rating
-      const riskAppetite = app.risk_appetite
+      const riskAppetite = this.risk_appetite
       if (riskValue <= riskAppetite) {
-        app.treatment_comment = `Your Risk Value of ${riskValue} satisfies your Risk Appetite of ${riskAppetite}. You might want to Accept the risk, it's up to you.`
-        app.treatment_alert_type = 'success'
-        app.showTreatmentOption = false
+        this.treatment_comment = `Your Risk Value of ${riskValue} satisfies your Risk Appetite of ${riskAppetite}. You might want to Accept the risk, it's up to you.`
+        this.treatment_alert_type = 'success'
+        this.showTreatmentOption = false
       } else {
-        app.treatment_comment = `Your Risk Value of ${riskValue} exceeds your Risk Appetite of ${riskAppetite}. Kindly pick an option to further treat the risk`
-        app.treatment_alert_type = 'error'
-        app.showTreatmentOption = true
+        this.treatment_comment = `Your Risk Value of ${riskValue} exceeds your Risk Appetite of ${riskAppetite}. Kindly pick an option to further treat the risk`
+        this.treatment_alert_type = 'error'
+        this.showTreatmentOption = true
       }
-      app.selectedAssessment = assessment
-      app.showTreatmentModal = true
+      this.selectedAssessment = assessment
+      this.showTreatmentModal = true
     },
     fetchAssetTypes() {
-      const app = this
-      const fetchEntryResource = new Resource('risk-assessment/fetch-asset-types')
-      app.loading = true
-      fetchEntryResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.asset_types = response.asset_types
+      const fetchEntryResource = new Resource('assets/fetch-asset-types')
+      this.loading = true
+      fetchEntryResource
+        .list({ client_id: this.selectedClient.id })
+        .then((response) => {
+          this.asset_types = response.asset_types
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
+          this.$message.error(error.response.data.error)
+          this.loading = false
         })
     },
     fetchAssets(assetTypeId) {
-      const app = this
       // const assetTypeId = event.target.value
       const fetchAssetsResource = new Resource('risk-assessment/fetch-assets')
-      fetchAssetsResource.list({ client_id: app.selectedClient.id, asset_type_id: assetTypeId })
-        .then(response => {
-          app.assets = response.assets
-          app.loading = false
-        }).catch(() => { app.loading = false })
+      fetchAssetsResource
+        .list({ client_id: this.selectedClient.id, asset_type_id: assetTypeId })
+        .then((response) => {
+          this.assets = response.assets
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     exportTableToExcel(id) {
-      const app = this
-      app.downloading = true
-      // const rawData = app.riskAssessments
+      // this.downloading = true
+      // const rawData = this.riskAssessments
       // import('@/vendor/Export2Excel').then(excel => {
       //   excel.export_table_to_excel(id)
       //   setTimeout(() => {
-      //     app.downloading = false
+      //     this.downloading = false
       //   }, 2000)
       // })
-      setTimeout(() => {
-        TableToExcel.convert(document.getElementById(id), {
-          name: 'RiskAssessmentTable.xlsx',
-          sheet: {
-            name: 'Sheet 1',
-          },
-        })
-      }, 1000)
-
-      setTimeout(() => {
-        app.downloading = false
-      }, 30000)
+      // setTimeout(() => {
+      //   TableToExcel.convert(document.getElementById(id), {
+      //     name: 'RiskAssessmentTable.xlsx',
+      //     sheet: {
+      //       name: 'Sheet 1'
+      //     }
+      //   })
+      // }, 1000)
+      // setTimeout(() => {
+      //   this.downloading = false
+      // }, 30000)
     },
     formatIds(value, option) {
-      const app = this
       const { likelihoods } = app
       const { impacts } = app
       let val = ''
       if (option === 'likelihood') {
-        likelihoods.forEach(likelihood => {
+        likelihoods.forEach((likelihood) => {
           if (value === likelihood.id) {
             val = `${likelihood.id}-${likelihood.name}`
           }
         })
       }
       if (option === 'impact') {
-        impacts.forEach(impact => {
+        impacts.forEach((impact) => {
           if (value === impact.id) {
             val = `${impact.id}-${impact.name}`
           }
         })
       }
       return val
-    },
-  },
+    }
+  }
 }
 </script>

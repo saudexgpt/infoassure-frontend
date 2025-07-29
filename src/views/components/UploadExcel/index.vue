@@ -6,17 +6,12 @@
       type="file"
       accept=".xlsx, .xls"
       @change="handleClick"
-    >
-    <div
-      class="drop"
-      @drop="handleDrop"
-      @dragover="handleDragover"
-      @dragenter="handleDragover"
-    >
+    />
+    <div class="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover">
       Drop excel file here or
       <el-button
         :loading="loading"
-        style="margin-left:16px;"
+        style="margin-left: 16px"
         size="mini"
         type="primary"
         @click="handleUpload"
@@ -28,11 +23,11 @@
 </template>
 
 <script>
-import XLSX from 'xlsx'
-
+// import XLSX from 'xlsx'
+import * as XLSX from 'xlsx/xlsx.mjs'
 export default {
   props: {
-    beforeUpload: Function, // eslint-disable-line
+    beforeUpload: Function,
     onSuccess: Function, // eslint-disable-line
   },
   data() {
@@ -40,15 +35,15 @@ export default {
       loading: false,
       excelData: {
         header: null,
-        results: null,
-      },
+        results: null
+      }
     }
   },
   methods: {
     generateData({ header, results }) {
       this.excelData.header = header
       this.excelData.results = results
-      // eslint-disable-next-line no-unused-expressions
+
       this.onSuccess && this.onSuccess(this.excelData)
     },
     handleDrop(e) {
@@ -66,7 +61,7 @@ export default {
 
       if (!this.isExcel(rawFile)) {
         this.$message.error('Only supports upload .xlsx, .xls, .csv suffix files')
-        // eslint-disable-next-line consistent-return
+
         return false
       }
       this.upload(rawFile)
@@ -103,10 +98,10 @@ export default {
     },
     readerData(rawFile) {
       this.loading = true
-      // eslint-disable-next-line no-unused-vars
+
       return new Promise((resolve, reject) => {
         const reader = new FileReader()
-        reader.onload = e => {
+        reader.onload = (e) => {
           const data = e.target.result
           const workbook = XLSX.read(data, { type: 'array' })
           const firstSheetName = workbook.SheetNames[0]
@@ -126,8 +121,9 @@ export default {
       let C
       const R = range.s.r
       /* start in the first row */
-      // eslint-disable-next-line no-plusplus
-      for (C = range.s.c; C <= range.e.c; ++C) { /* walk every column in the range */
+
+      for (C = range.s.c; C <= range.e.c; ++C) {
+        /* walk every column in the range */
         const cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })]
         /* find the cell in the first row */
         let hdr = `UNKNOWN ${C}` // <-- replace with your desired default
@@ -140,17 +136,17 @@ export default {
     },
     isExcel(file) {
       return /\.(xlsx|xls|csv)$/.test(file.name)
-    },
-  },
+    }
+  }
 }
 </script>
 
 <style scoped>
-.excel-upload-input{
+.excel-upload-input {
   display: none;
   z-index: -9999;
 }
-.drop{
+.drop {
   border: 2px dashed #bbb;
   width: 100%;
   height: 160px;

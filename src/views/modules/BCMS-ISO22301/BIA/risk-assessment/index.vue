@@ -1,19 +1,14 @@
 <template>
   <el-card>
     <div>
-      <b-tabs
-        content-class="mt-1"
-      >
-        <b-tab
-          lazy
-        >
+      <el-tabs content-class="mt-1">
+        <el-tab lazy>
           <template #title>
             <feather-icon icon="ListIcon" />
             <span>Risk Assessment Activity</span>
           </template>
 
           <assess-risk
-
             v-loading="loading"
             :client-id="clientId"
             :business-unit-id="businessUnitId"
@@ -34,10 +29,8 @@
             :matrix="matrix"
             @reload="fetchRiskAssessments(false)"
           />
-        </b-tab>
-        <b-tab
-          lazy
-        >
+        </el-tab>
+        <el-tab lazy>
           <template #title>
             <feather-icon icon="EyeIcon" />
             <span>Risk Assessment Summary</span>
@@ -47,8 +40,8 @@
             :business-unit-id="businessUnitId"
             :business-processes="business_processes"
           />
-        </b-tab>
-        <!-- <b-tab
+        </el-tab>
+        <!-- <el-tab
           lazy
         >
           <template #title>
@@ -56,16 +49,13 @@
             <span>Risk Ranking Matrix</span>
           </template>
           <risk-ranking-matrix :matrix="matrix" />
-        </b-tab> -->
-      </b-tabs>
+        </el-tab> -->
+      </el-tabs>
     </div>
   </el-card>
 </template>
 
 <script>
-import {
-  BTabs, BTab,
-} from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
 import AssessRisk from './AssessRisk.vue'
 import ViewRiskAssessment from './ViewRiskAssessment.vue'
@@ -75,22 +65,20 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
-    BTabs,
-    BTab,
     AssessRisk,
     ViewRiskAssessment,
     // RiskRankingMatrix,
-    RiskAssessmentSummary,
+    RiskAssessmentSummary
   },
   props: {
     businessUnitId: {
       type: Number,
-      default: null,
+      default: null
     },
     clientId: {
       type: Number,
-      default: null,
-    },
+      default: null
+    }
   },
   data() {
     return {
@@ -100,7 +88,7 @@ export default {
       likelihoods: [],
       risk_assessments: [],
       business_processes: [],
-      loading: false,
+      loading: false
     }
   },
   created() {
@@ -111,56 +99,62 @@ export default {
   methods: {
     checkPermission,
     fetchBusinessProcesses() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const fetchBusinessProcesssResource = new Resource('business-units/fetch-business-processes')
-      fetchBusinessProcesssResource.list({ business_unit_id: app.businessUnitId })
-        .then(response => {
-          app.business_processes = response.business_processes
-          app.loading = false
-        }).catch(() => { app.loading = false })
+      fetchBusinessProcesssResource
+        .list({ business_unit_id: this.businessUnitId })
+        .then((response) => {
+          this.business_processes = response.business_processes
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     fetchRiskAssessments(load = true) {
-      const app = this
-      app.loading = load
+      this.loading = load
       const fetchRiskAssessmentsResource = new Resource('bia/fetch-risk-assessment')
-      fetchRiskAssessmentsResource.list({ client_id: app.clientId, business_unit_id: app.businessUnitId })
-        .then(response => {
-          app.risk_assessments = response.risk_assessments
-          app.loading = false
-        }).catch(() => { app.loading = false })
+      fetchRiskAssessmentsResource
+        .list({ client_id: this.clientId, business_unit_id: this.businessUnitId })
+        .then((response) => {
+          this.risk_assessments = response.risk_assessments
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     setMatrix() {
       this.fetchImpacts()
       this.fetchLikelihoods()
     },
     fetchImpacts() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const fetchEntryResource = new Resource('risk-assessment/fetch-impacts')
-      fetchEntryResource.list({ client_id: app.clientId })
-        .then(response => {
-          app.loading = false
-          app.impacts = response.impacts
+      fetchEntryResource
+        .list({ client_id: this.clientId })
+        .then((response) => {
+          this.loading = false
+          this.impacts = response.impacts
         })
-        .catch(error => {
-          app.loading = false
+        .catch((error) => {
+          this.loading = false
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          this.$message.error(error.response.data.error)
         })
     },
     fetchLikelihoods() {
-      const app = this
       const fetchEntryResource = new Resource('risk-assessment/fetch-likelihoods')
-      fetchEntryResource.list({ client_id: app.clientId })
-        .then(response => {
-          app.likelihoods = response.likelihoods
+      fetchEntryResource
+        .list({ client_id: this.clientId })
+        .then((response) => {
+          this.likelihoods = response.likelihoods
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          this.$message.error(error.response.data.error)
         })
-    },
-  },
+    }
+  }
 }
 </script>

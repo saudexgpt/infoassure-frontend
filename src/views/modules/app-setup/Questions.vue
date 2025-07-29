@@ -1,64 +1,40 @@
 <template>
   <el-card>
     <div v-if="uploadBulk">
-      <b-button
-        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-        variant="gradient-danger"
-        @click="uploadBulk = false"
-      >
-        <feather-icon
-          icon="ArrowBackIcon"
-          class="mr-50"
-        />
+      <el-button variant="gradient-danger" @click="uploadBulk = false">
+        <icon icon="ArrowBackIcon" class="mr-50" />
         <span class="align-middle">Back</span>
-      </b-button>
-      <create-bulk-question
-        :standards="standards"
-        @save="updateTable"
-      />
+      </el-button>
+      <create-bulk-question :standards="standards" @save="updateTable" />
     </div>
     <div v-else>
-      <div slot="header">
-        <b-row>
-          <b-col
-            cols="6"
-          >
-            <h4>Manage Questions</h4>
-          </b-col>
-          <b-col
-            cols="6"
-          >
-            <span class="pull-right">
-              <b-button
-                v-if="checkPermission(['create-gap assessment'])"
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="gradient-primary"
-                @click="isCreateQuestionSidebarActive = true"
-              >
-                <feather-icon
-                  icon="PlusIcon"
-                  class="mr-50"
-                />
-                <span class="align-middle">Create</span>
-              </b-button>
-              &nbsp;
-              <b-button
-                v-if="checkPermission(['create-gap assessment'])"
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="gradient-dark"
-                @click="uploadBulk = true"
-              >
-                <feather-icon
-                  icon="UploadIcon"
-                  class="mr-50"
-                />
-                <span class="align-middle">Upload Bulk Questions</span>
-              </b-button>
-            </span>
-          </b-col>
-        </b-row>
-      </div>
-      <hr>
+      <el-row>
+        <el-col cols="6">
+          <h4>Manage Questions</h4>
+        </el-col>
+        <el-col cols="6">
+          <span class="pull-right">
+            <el-button
+              v-if="checkPermission(['create-gap assessment'])"
+              variant="gradient-primary"
+              @click="isCreateQuestionSidebarActive = true"
+            >
+              <icon icon="PlusIcon" class="mr-50" />
+              <span class="align-middle">Create</span>
+            </el-button>
+            &nbsp;
+            <el-button
+              v-if="checkPermission(['create-gap assessment'])"
+              variant="gradient-dark"
+              @click="uploadBulk = true"
+            >
+              <icon icon="UploadIcon" class="mr-50" />
+              <span class="align-middle">Upload Bulk Questions</span>
+            </el-button>
+          </span>
+        </el-col>
+      </el-row>
+      <hr />
       <!-- table -->
       <aside>
         <el-row :gutter="10">
@@ -95,7 +71,7 @@
               />
             </el-select>
           </el-col>
-        <!-- <el-col :lg="6">
+          <!-- <el-col :lg="6">
           <el-button
             type="primary"
             :disabled="query.clause_id === ''"
@@ -106,79 +82,52 @@
         </el-col> -->
         </el-row>
       </aside>
-      <!-- <span>Click on the <feather-icon
+      <!-- <span>Click on the <icon
         icon="PlusIcon"
         class="mr-50"
       /> sign to view questions</span> -->
-      <v-client-table
-        v-model="questions"
-        v-loading="loading"
-        :columns="columns"
-        :options="options"
-      >
-        <div
-          slot="question"
-          slot-scope="{row}"
-        >
-          <ckeditor
-            id="question"
-            v-model="row.question"
-            :editor="editor"
-            :config="editorConfig"
-            disabled
-          />
-        </div>
-        <div
-          slot="upload_evidence"
-          slot-scope="{row}"
-        >
-          {{ (row.upload_evidence === 1) ? 'Yes' : 'No' }}
-        </div>
-        <div
-          slot="can_have_exception"
-          slot-scope="{row}"
-        >
-          {{ (row.can_have_exception === 1) ? 'Yes' : 'No' }}
-        </div>
-        <div
-          slot="question"
-          slot-scope="{row}"
-        >
-          <el-input
-            v-model="row.question"
-            type="textarea"
-            :autosize="{ minRows: 10 }"
-            readonly
-          />
-        </div>
-        <div
-          slot="action"
-          slot-scope="props"
-        >
-          <b-button
-            v-if="checkPermission(['update-gap assessment'])"
-            variant="gradient-warning"
-            class="btn-icon rounded-circle"
-            @click="editThisRow(props.row)"
-          >
-            <feather-icon icon="EditIcon" />
-          </b-button>
-          <b-button
-            v-if="checkPermission(['delete-gap assessment'])"
-            variant="gradient-danger"
-            class="btn-icon rounded-circle"
-            @click="destroyRow(props.row)"
-          >
-            <feather-icon icon="TrashIcon" />
-          </b-button>
-        </div>
+      <v-client-table :data="questions" v-loading="loading" :columns="columns" :options="options">
+        <!-- Removed duplicate question slot: using textarea below -->
+        <template v-slot:upload_evidence="{ row }">
+          <div>
+            {{ row.upload_evidence === 1 ? 'Yes' : 'No' }}
+          </div>
+        </template>
+        <template v-slot:can_have_exception="{ row }">
+          <div>
+            {{ row.can_have_exception === 1 ? 'Yes' : 'No' }}
+          </div>
+        </template>
+        <template v-slot:question="{ row }">
+          <el-input v-model="row.question" type="textarea" :autosize="{ minRows: 10 }" readonly />
+        </template>
+        <template v-slot:action="props">
+          <div>
+            <el-button
+              v-if="checkPermission(['update-gap assessment'])"
+              variant="gradient-warning"
+              class="btn-icon rounded-circle"
+              @click="editThisRow(props.row)"
+            >
+              <icon icon="EditIcon" />
+            </el-button>
+            <el-button
+              v-if="checkPermission(['delete-gap assessment'])"
+              variant="gradient-danger"
+              class="btn-icon rounded-circle"
+              @click="destroyRow(props.row)"
+            >
+              <icon icon="TrashIcon" />
+            </el-button>
+          </div>
+        </template>
       </v-client-table>
       <el-row :gutter="20">
         <pagination
           v-show="total > 0"
           :total="total"
-          :page.sync="query.page"
-          :limit.sync="query.limit"
+          v-model:page="query.page"
+          v-model:limit="query.limit"
           @pagination="fetchQuestions"
         />
       </el-row>
@@ -200,17 +149,12 @@
 </template>
 
 <script>
-import {
-  BButton, BRow, BCol,
-} from 'bootstrap-vue'
-// import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+// import { Editor } from '@/components/Editor'
 import Resource from '@/api/resource'
 import CreateQuestion from './partials/CreateQuestion.vue'
 import EditQuestion from './partials/EditQuestion.vue'
 import CreateBulkQuestion from './partials/CreateBulkQuestion.vue'
-import Pagination from '@/views/components/Pagination-main/index.vue'
+import Pagination from '@/views/Components/Pagination-main/index.vue'
 import checkPermission from '@/utils/permission'
 
 export default {
@@ -219,17 +163,8 @@ export default {
     Pagination,
     CreateQuestion,
     CreateBulkQuestion,
-    EditQuestion,
-    BButton,
-    // BPagination,
-    // BFormGroup,
-    // BFormInput,
-    // BFormSelect,
-    BRow,
-    BCol,
-  },
-  directives: {
-    Ripple,
+    EditQuestion
+    // Editor
   },
   data() {
     return {
@@ -247,35 +182,27 @@ export default {
         'answer_type',
         'upload_evidence',
         'can_have_exception',
-        'action',
+        'action'
       ],
 
       options: {
         headings: {
           'standard.name': 'Standard',
           'clause.name': 'Clause',
-          upload_evidence: 'Can Upload Evidence',
+          upload_evidence: 'Can Upload Evidence'
         },
         pagination: {
           dropdown: true,
-          chunk: 10,
+          chunk: 10
         },
         perPage: 10,
         filterByColumn: false,
         texts: {
-          filter: 'Search:',
+          filter: 'Search:'
         },
-        sortable: [
-          'name',
-          'standard.name',
-          'clause.name',
-        ],
+        sortable: ['name', 'standard.name', 'clause.name'],
         // filterable: false,
-        filterable: [
-          'name',
-          'standard.name',
-          'clause.name',
-        ],
+        filterable: ['name', 'standard.name', 'clause.name']
       },
       questions: [],
       searchTerm: '',
@@ -287,13 +214,13 @@ export default {
       query: {
         page: 1,
         limit: 10,
-        clause_id: '',
+        clause_id: ''
       },
       total: 0,
       editor: ClassicEditor,
       editorConfig: {
         // The configuration of the editor.
-      },
+      }
     }
   },
   created() {
@@ -303,66 +230,51 @@ export default {
   methods: {
     checkPermission,
     fetchStandards() {
-      const app = this
       const fetchStandardsResource = new Resource('standards/with-clauses')
-      fetchStandardsResource.list()
-        .then(response => {
-          app.standards = response.standards
-        })
+      fetchStandardsResource.list().then((response) => {
+        this.standards = response.standards
+      })
     },
     setClause() {
-      const app = this
-      app.query.clause_id = ''
-      app.clauses = app.selectedStandard.clauses
+      this.query.clause_id = ''
+      this.clauses = this.selectedStandard.clauses
     },
     fetchQuestions() {
-      const app = this
       const { limit, page } = this.query
-      app.loading = true
+      this.loading = true
       const fetchQuestionsResource = new Resource('questions')
-      fetchQuestionsResource.list(this.query)
-        .then(response => {
-          app.questions = response.questions.data
-          app.questions.forEach((element, index) => {
-            // eslint-disable-next-line no-param-reassign, dot-notation
-            element['index'] = (page - 1) * limit + index + 1
-          })
-          app.total = response.questions.total
-          app.loading = false
+      fetchQuestionsResource.list(this.query).then((response) => {
+        this.questions = response.questions.data
+        this.questions.forEach((element, index) => {
+          element['index'] = (page - 1) * limit + index + 1
         })
+        this.total = response.questions.total
+        this.loading = false
+      })
     },
     updateTable() {
-      const app = this
-      app.fetchQuestions()
+      this.fetchQuestions()
     },
     editThisRow(selectedRow) {
       // console.log(props)
-      const app = this
+
       // const editableRow = selected_row;
-      app.editable_row = selectedRow
-      app.isEditQuestionSidebarActive = true
+      this.editable_row = selectedRow
+      this.isEditQuestionSidebarActive = true
     },
     destroyRow(row) {
-      const app = this
-
-      // eslint-disable-next-line no-alert
       if (window.confirm('Are you sure you want to delete this entry?')) {
-        app.loading = true
+        this.loading = true
         const destroyQuestionsResource = new Resource('questions/destroy')
-        destroyQuestionsResource.destroy(row.id)
-          .then(() => {
-            app.fetchQuestions()
-            app.loading = false
-          })
+        destroyQuestionsResource.destroy(row.id).then(() => {
+          this.fetchQuestions()
+          this.loading = false
+        })
       }
     },
     updateEditedTableRow() {
-      const app = this
-      app.fetchQuestions()
-    },
-  },
+      this.fetchQuestions()
+    }
+  }
 }
 </script>
-<style lang="scss" >
-@import '@core/scss/vue/libs/vue-good-table.scss';
-</style>

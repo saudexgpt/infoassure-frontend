@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-sidebar
+    <el-sidebar
       id="sidebar-task-handler"
       sidebar-class="sidebar-lg"
       :visible="isEditClauseSidebarActive"
@@ -12,33 +12,21 @@
       @change="(val) => $emit('update:is-edit-clause-sidebar-active', val)"
     >
       <template #default="{ hide }">
-        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
-          <h5 class="mb-0">
-            Edit Clause
-          </h5>
+        <div
+          class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1"
+        >
+          <h5 class="mel-0"> Edit Clause </h5>
           <div>
-            <b-button
-              variant="gradient-danger"
-              class="btn-icon"
-              @click="hide"
-            >
-              <feather-icon
-                icon="XIcon"
-              />
-            </b-button>
+            <el-button variant="gradient-danger" class="btn-icon" @click="hide">
+              <feather-icon icon="XIcon" />
+            </el-button>
           </div>
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
-          <b-row v-loading="loading">
-            <b-col cols="12">
-              <b-form-group
-                label="Select Standard"
-                label-for="v-standard"
-              >
-                <el-select
-                  v-model="form.standard_id"
-                  style="width: 100%"
-                >
+          <el-row v-loading="loading">
+            <el-col cols="12">
+              <el-form-group label="Select Standard" label-for="v-standard">
+                <el-select v-model="form.standard_id" style="width: 100%">
                   <el-option
                     v-for="(standard, index) in standards"
                     :key="index"
@@ -46,80 +34,46 @@
                     :label="standard.name"
                   />
                 </el-select>
-              </b-form-group>
-            </b-col>
+              </el-form-group>
+            </el-col>
             <!-- first name -->
-            <b-col cols="12">
-              <b-form-group
-                label="Update Clause"
-                label-for="v-level_group"
-              >
-                <b-form-input
-                  v-model="form.name"
-                  placeholder="example: ISO 27001"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col cols="12">
-              <b-form-group
-                label="Will clauses stated above have audit questions for clients?"
-              >
-                <el-radio-group
-                  v-model="form.will_have_audit_questions"
-                  size="mini"
-                >
-                  <el-radio
-                    :label="1"
-                    border
-                  >
-                    YES
-                  </el-radio>
-                  <el-radio
-                    :label="0"
-                    border
-                  >
-                    NO
-                  </el-radio>
+            <el-col cols="12">
+              <el-form-group label="Update Clause" label-for="v-level_group">
+                <el-form-input v-model="form.name" placeholder="example: ISO 27001" />
+              </el-form-group>
+            </el-col>
+            <el-col cols="12">
+              <el-form-group label="Will clauses stated above have audit questions for clients?">
+                <el-radio-group v-model="form.will_have_audit_questions" size="mini">
+                  <el-radio :label="1" border> YES </el-radio>
+                  <el-radio :label="0" border> NO </el-radio>
                 </el-radio-group>
-              </b-form-group>
-            </b-col>
-            <b-col cols="12">
-              <b-form-group
+              </el-form-group>
+            </el-col>
+            <el-col cols="12">
+              <el-form-group
                 label="Will clauses stated above require document uploads from clients?"
               >
-                <el-radio-group
-                  v-model="form.requires_document_upload"
-                  size="mini"
-                >
-                  <el-radio
-                    :label="1"
-                    border
-                  >
-                    YES
-                  </el-radio>
-                  <el-radio
-                    :label="0"
-                    border
-                  >
-                    NO
-                  </el-radio>
+                <el-radio-group v-model="form.requires_document_upload" size="mini">
+                  <el-radio :label="1" border> YES </el-radio>
+                  <el-radio :label="0" border> NO </el-radio>
                 </el-radio-group>
-              </b-form-group>
-            </b-col>
-            <!-- <b-col cols="12">
-              <b-form-group
+              </el-form-group>
+            </el-col>
+            <!-- <el-col cols="12">
+              <el-form-group
                 label="Clause Description"
                 label-for="v-level_group"
               >
-                <b-form-textarea
+                <el-form-textarea
                   v-model="form.description"
                   placeholder="Briefly describe this clause"
                 />
-              </b-form-group>
-            </b-col> -->
+              </el-form-group>
+            </el-col> -->
             <!-- submit and reset -->
-            <b-col cols="12">
-              <b-button
+            <el-col cols="12">
+              <el-button
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                 type="submit"
                 variant="warning"
@@ -127,77 +81,57 @@
                 @click="update()"
               >
                 Update
-              </b-button>
-            </b-col>
-            <b-col
-              v-if="error"
-              cols="12"
-            >
-              <b-alert
-                variant="danger"
-                show
-              >
+              </el-button>
+            </el-col>
+            <el-col v-if="error" cols="12">
+              <el-alert variant="danger" show>
                 <div class="alert-body">
-                  <span><strong>{{ error_message }}</strong></span>
+                  <span
+                    ><strong>{{ error_message }}</strong></span
+                  >
                 </div>
-              </b-alert>
-            </b-col>
-          </b-row>
+              </el-alert>
+            </el-col>
+          </el-row>
         </div>
       </template>
-    </b-sidebar>
+    </el-sidebar>
   </div>
 </template>
 
 <script>
-import {
-  BSidebar, BRow, BCol, BFormGroup, BFormInput, BButton, BAlert,
-} from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    // BFormTextarea,
-    BAlert,
-    BSidebar,
-    BRow,
-    BCol,
-    BFormGroup,
-    BFormInput,
-    BButton,
-  },
-  directives: {
-    Ripple,
-  },
+  components: {},
   model: {
     prop: 'isEditClauseSidebarActive',
-    event: 'update:is-edit-clause-sidebar-active',
+    event: 'update:is-edit-clause-sidebar-active'
   },
   props: {
     isEditClauseSidebarActive: {
       type: Boolean,
-      required: true,
+      required: true
     },
     selectedClause: {
       type: Object,
-      default: () => (null),
+      default: () => null
     },
     standards: {
       type: Array,
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
       form: {
         name: '',
         description: '',
-        clause_id: '',
+        clause_id: ''
       },
       loading: false,
       error: false,
-      error_message: '',
+      error_message: ''
     }
   },
   created() {
@@ -205,20 +139,15 @@ export default {
   },
   methods: {
     update() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const updateCurriculumSetupResource = new Resource('clauses/update')
-      const param = app.form
-      updateCurriculumSetupResource.update(param.id, param)
-        .then(response => {
-          app.loading = false
-          app.$emit('update', response)
-          app.$emit('update:is-edit-clause-sidebar-active', false)
-        })
-    },
-  },
+      const param = this.form
+      updateCurriculumSetupResource.update(param.id, param).then((response) => {
+        this.loading = false
+        this.$emit('update', response)
+        this.$emit('update:is-edit-clause-sidebar-active', false)
+      })
+    }
+  }
 }
 </script>
-<style lang="scss" scoped>
-@import '~@core/scss/base/bootstrap-extended/include';
-</style>

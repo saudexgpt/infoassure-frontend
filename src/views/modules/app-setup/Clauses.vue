@@ -1,32 +1,27 @@
 <template>
   <el-card>
-    <div slot="header">
-      <b-row>
-        <b-col
-          cols="6"
-        >
-          <h4>Manage Clauses</h4>
-        </b-col>
-        <b-col
-          cols="6"
-        >
-          <span class="pull-right">
-            <b-button
-              v-if="checkPermission(['create-clauses'])"
-              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="gradient-primary"
-              @click="isCreateClauseSidebarActive = true"
-            >
-              <feather-icon
-                icon="PlusIcon"
-                class="mr-50"
-              />
-              <span class="align-middle">Create</span>
-            </b-button>
-          </span>
-        </b-col>
-      </b-row>
-    </div>
+    <template v-slot:header>
+      <div>
+        <el-row>
+          <el-col cols="6">
+            <h4>Manage Clauses</h4>
+          </el-col>
+          <el-col cols="6">
+            <span class="pull-right">
+              <el-button
+                v-if="checkPermission(['create-clauses'])"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="gradient-primary"
+                @click="isCreateClauseSidebarActive = true"
+              >
+                <icon icon="PlusIcon" class="mr-50" />
+                <span class="align-middle">Create</span>
+              </el-button>
+            </span>
+          </el-col>
+        </el-row>
+      </div>
+    </template>
     <el-row :gutter="10">
       <el-col :lg="12">
         <el-select
@@ -45,21 +40,11 @@
         </el-select>
       </el-col>
     </el-row>
-    <br>
+    <br />
     <!-- table -->
-    <el-alert v-if="clauses.length > 0">
-      Click on the + sign to view document templates
-    </el-alert>
-    <v-client-table
-      v-model="clauses"
-      v-loading="loading"
-      :columns="columns"
-      :options="options"
-    >
-      <template
-        slot="child_row"
-        slot-scope="props"
-      >
+    <el-alert v-if="clauses.length > 0"> Click on the + sign to view document templates </el-alert>
+    <v-client-table v-model="clauses" v-loading="loading" :columns="columns" :options="options">
+      <template v-slot:child_row="props">
         <strong>Document Templates for {{ props.row.name }}</strong>
         <aside>
           <v-client-table
@@ -67,129 +52,97 @@
             :columns="['title', 'action']"
             :options="{}"
           >
-            <div
-              slot="action"
-              slot-scope="{row}"
-            >
-              <a
-                :href="baseServerUrl+'storage/'+row.link"
-                target="_blank"
-              >
-                <b-button
-                  variant="gradient-warning"
+            <template v-slot:action="{ row }">
+              <div>
+                <a :href="baseServerUrl + 'storage/' + row.link" target="_blank">
+                  <el-button variant="gradient-warning" class="btn-icon rounded-circle">
+                    <icon icon="DownloadIcon" />
+                  </el-button>
+                </a>
+                <el-button
+                  variant="gradient-danger"
                   class="btn-icon rounded-circle"
+                  @click="destroyTemplate(row)"
                 >
-                  <feather-icon icon="DownloadIcon" />
-                </b-button>
-              </a>
-              <b-button
-                variant="gradient-danger"
-                class="btn-icon rounded-circle"
-                @click="destroyTemplate(row)"
-              >
-                <feather-icon icon="XIcon" />
-              </b-button>
-            </div>
+                  <icon icon="XIcon" />
+                </el-button>
+              </div>
+            </template>
           </v-client-table>
         </aside>
       </template>
-      <div
-        slot="sort_by"
-        slot-scope="{row}"
-      >
-        <input
-          v-model="row.sort_by"
-          placeholder="Enter Sort Value"
-          type="number"
-          class="form-control"
-          @change="setSortValue($event, row.id)"
-        >
-      </div>
-      <div
-        slot="will_have_audit_questions"
-        slot-scope="props"
-      >
-        {{ (props.row.will_have_audit_questions === 1) ? 'YES' : 'NO' }}
-      </div>
-      <div
-        slot="requires_document_upload"
-        slot-scope="props"
-      >
-        {{ (props.row.requires_document_upload === 1) ? 'YES' : 'NO' }}
-      </div>
-      <div
-        slot="action"
-        slot-scope="props"
-      >
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="Add document template"
-          placement="top-start"
-        >
-          <b-button
-            variant="gradient-primary"
-            class="btn-icon rounded-circle"
-            @click="addDocumentTemplate(props.row)"
+      <template v-slot:sort_by="{ row }">
+        <div>
+          <input
+            v-model="row.sort_by"
+            placeholder="Enter Sort Value"
+            type="number"
+            class="form-control"
+            @change="setSortValue($event, row.id)"
+          />
+        </div>
+      </template>
+      <template v-slot:will_have_audit_questions="props">
+        <div>
+          {{ props.row.will_have_audit_questions === 1 ? 'YES' : 'NO' }}
+        </div>
+      </template>
+      <template v-slot:requires_document_upload="props">
+        <div>
+          {{ props.row.requires_document_upload === 1 ? 'YES' : 'NO' }}
+        </div>
+      </template>
+      <template v-slot:action="props">
+        <div>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="Add document template"
+            placement="top-start"
           >
-            <feather-icon icon="UploadIcon" />
-          </b-button>
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="Edit Clause"
-          placement="top-start"
-        >
-          <b-button
-            v-if="checkPermission(['update-clauses'])"
-            variant="gradient-warning"
-            class="btn-icon rounded-circle"
-            @click="editThisRow(props.row)"
-          >
-            <feather-icon icon="EditIcon" />
-          </b-button>
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="Remove Clause"
-          placement="top-start"
-        >
-          <b-button
-            v-if="checkPermission(['delete-clauses'])"
-            variant="gradient-danger"
-            class="btn-icon rounded-circle"
-            @click="destroyRow(props.row)"
-          >
-            <feather-icon icon="TrashIcon" />
-          </b-button>
-        </el-tooltip>
-      </div>
+            <el-button
+              variant="gradient-primary"
+              class="btn-icon rounded-circle"
+              @click="addDocumentTemplate(props.row)"
+            >
+              <icon icon="UploadIcon" />
+            </el-button>
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="Edit Clause" placement="top-start">
+            <el-button
+              v-if="checkPermission(['update-clauses'])"
+              variant="gradient-warning"
+              class="btn-icon rounded-circle"
+              @click="editThisRow(props.row)"
+            >
+              <icon icon="EditIcon" />
+            </el-button>
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="Remove Clause" placement="top-start">
+            <el-button
+              v-if="checkPermission(['delete-clauses'])"
+              variant="gradient-danger"
+              class="btn-icon rounded-circle"
+              @click="destroyRow(props.row)"
+            >
+              <icon icon="TrashIcon" />
+            </el-button>
+          </el-tooltip>
+        </div>
+      </template>
     </v-client-table>
     <el-row :gutter="20">
       <pagination
         v-show="total > 0"
         :total="total"
-        :page.sync="query.page"
-        :limit.sync="query.limit"
+        v-model:page="query.page"
+        v-model:limit="query.limit"
         @pagination="fetchClauses"
       />
     </el-row>
-    <b-modal
-      v-model="showModal"
-      title="Add Document Template"
-      centered
-      size="lg"
-      hide-footer
-    >
-
-      <add-document-template
-        :clause="selectedClause"
-        @reload="fetchClauses"
-      />
-
-    </b-modal>
+    <el-modal v-model="showModal" title="Add Document Template" centered size="lg" hide-footer>
+      <add-document-template :clause="selectedClause" @reload="fetchClauses" />
+    </el-modal>
     <create-clauses
       v-if="isCreateClauseSidebarActive"
       v-model="isCreateClauseSidebarActive"
@@ -207,15 +160,10 @@
 </template>
 
 <script>
-import {
-  BButton, BRow, BCol, BModal,
-} from 'bootstrap-vue'
-// import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import CreateClauses from './partials/CreateClauses.vue'
 import EditClause from './partials/EditClause.vue'
-import Pagination from '@/views/components/Pagination-main/index.vue'
+import Pagination from '@/views/Components/Pagination-main/index.vue'
 import AddDocumentTemplate from './partials/AddDocumentTemplate.vue'
 import checkPermission from '@/utils/permission'
 
@@ -225,17 +173,7 @@ export default {
     AddDocumentTemplate,
     CreateClauses,
     EditClause,
-    BButton,
-    Pagination,
-    // BFormGroup,
-    // BFormInput,
-    // BFormSelect,
-    BRow,
-    BCol,
-    BModal,
-  },
-  directives: {
-    Ripple,
+    Pagination
   },
   data() {
     return {
@@ -254,31 +192,27 @@ export default {
         'standard.name',
         'will_have_audit_questions',
         'requires_document_upload',
-        'action',
+        'action'
       ],
 
       options: {
         headings: {
           'standard.name': 'Standard',
           requires_document_upload: 'Requires Document Upload',
-          will_have_audit_questions: 'Has Audit Question',
+          will_have_audit_questions: 'Has Audit Question'
         },
         pagination: {
           dropdown: true,
-          chunk: 10,
+          chunk: 10
         },
         perPage: 10,
         filterByColumn: true,
         texts: {
-          filter: 'Search:',
+          filter: 'Search:'
         },
-        sortable: [
-          'name',
-        ],
+        sortable: ['name'],
         // filterable: false,
-        filterable: [
-          'name',
-        ],
+        filterable: ['name']
       },
       clauses: [],
       searchTerm: '',
@@ -288,15 +222,15 @@ export default {
       query: {
         page: 1,
         limit: 10,
-        standard_id: '',
+        standard_id: ''
       },
-      total: 0,
+      total: 0
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
-    },
+    }
   },
   created() {
     // this.fetchClauses()
@@ -305,98 +239,85 @@ export default {
   methods: {
     checkPermission,
     setSortValue(event, id) {
-      const app = this
       const { value } = event.target
       if (value > 0) {
         const sortResource = new Resource('clauses/set-sort-value')
-        sortResource.update(id, { value })
-          .then(() => {
-          }).catch(e => {
-            app.$message(e.response.data.message)
+        sortResource
+          .update(id, { value })
+          .then(() => {})
+          .catch((e) => {
+            this.$message(e.response.data.message)
           })
       }
     },
     fetchStandards() {
-      const app = this
       const fetchStandardsResource = new Resource('standards')
-      fetchStandardsResource.list()
-        .then(response => {
-          app.standards = response.standards
-        })
+      fetchStandardsResource.list().then((response) => {
+        this.standards = response.standards
+      })
     },
     fetchClauses() {
-      const app = this
       const { limit, page } = this.query
-      app.loading = true
+      this.loading = true
       const fetchClausesResource = new Resource('clauses')
-      fetchClausesResource.list(this.query)
-        .then(response => {
-          app.clauses = response.clauses.data
-          app.clauses.forEach((element, index) => {
-            // eslint-disable-next-line no-param-reassign, dot-notation
-            element['index'] = (page - 1) * limit + index + 1
-          })
-          app.total = response.clauses.total
-          app.loading = false
+      fetchClausesResource.list(this.query).then((response) => {
+        this.clauses = response.clauses.data
+        this.clauses.forEach((element, index) => {
+          element['index'] = (page - 1) * limit + index + 1
         })
+        this.total = response.clauses.total
+        this.loading = false
+      })
     },
     updateTable() {
-      const app = this
-      app.fetchClauses()
+      this.fetchClauses()
     },
     addDocumentTemplate(selectedRow) {
-      const app = this
-      app.selectedClause = selectedRow
-      app.showModal = true
+      this.selectedClause = selectedRow
+      this.showModal = true
     },
     editThisRow(selectedRow) {
       // console.log(props)
-      const app = this
+
       // const editableRow = selected_row;
-      app.editable_row = selectedRow
-      app.isEditClauseSidebarActive = true
+      this.editable_row = selectedRow
+      this.isEditClauseSidebarActive = true
     },
     destroyRow(row) {
-      const app = this
-
-      // eslint-disable-next-line no-alert
       if (window.confirm('Are you sure you want to delete this entry?')) {
-        app.loading = true
+        this.loading = true
         const destroyClausesResource = new Resource('clauses/destroy')
-        destroyClausesResource.destroy(row.id)
+        destroyClausesResource
+          .destroy(row.id)
           .then(() => {
-            app.fetchClauses()
-            app.loading = false
-          }).catch(e => {
-            app.load = false
-            app.$message(e.response.message)
+            this.fetchClauses()
+            this.loading = false
+          })
+          .catch((e) => {
+            this.load = false
+            this.$message(e.response.message)
           })
       }
     },
     destroyTemplate(row) {
-      const app = this
-
-      // eslint-disable-next-line no-alert
       if (window.confirm('Are you sure you want to delete this template?')) {
-        app.loading = true
+        this.loading = true
         const destroyTemplateResource = new Resource('clauses/destroy-template')
-        destroyTemplateResource.destroy(row.id)
+        destroyTemplateResource
+          .destroy(row.id)
           .then(() => {
-            app.fetchClauses()
-            app.loading = false
-          }).catch(e => {
-            app.load = false
-            app.$message(e.response.message)
+            this.fetchClauses()
+            this.loading = false
+          })
+          .catch((e) => {
+            this.load = false
+            this.$message(e.response.message)
           })
       }
     },
     updateEditedTableRow() {
-      const app = this
-      app.fetchClauses()
-    },
-  },
+      this.fetchClauses()
+    }
+  }
 }
 </script>
-<style lang="scss" >
-@import '@core/scss/vue/libs/vue-good-table.scss';
-</style>

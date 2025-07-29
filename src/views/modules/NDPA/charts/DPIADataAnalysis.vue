@@ -1,32 +1,22 @@
 <template>
-  <aside
-    style="min-height: 200px"
-  >
+  <aside style="min-height: 200px">
     <b-row class="match-height">
       <b-col lg="8">
-        <highcharts
-          v-if="showChart"
-          :options="chart_report"
-        />
-        <hr>
+        <highcharts v-if="showChart" :options="chart_report" />
+        <hr />
         <risk-ranking-matrix :matrix="matrix" />
       </b-col>
       <b-col lg="4">
-        <highcharts
-          v-if="showChart"
-          :options="riskSeverityChart"
-        />
-        <hr>
+        <highcharts v-if="showChart" :options="riskSeverityChart" />
+        <hr />
         <el-card>
-
           <div align="center">
             <h4>Average Compliance Rating</h4>
-            <img
-              :src="changeImpactImage(risk_level)"
-            >
+            <img :src="changeImpactImage(risk_level)" />
           </div>
           <p>
-            Risk Score: <strong>{{ risk_score }}</strong><br>
+            Risk Score: <strong>{{ risk_score }}</strong
+            ><br />
             Risk Level: <strong>{{ risk_level }}</strong>
           </p>
         </el-card>
@@ -35,23 +25,18 @@
   </aside>
 </template>
 <script>
-import {
-  BRow, BCol,
-} from 'bootstrap-vue'
 import RiskRankingMatrix from '@/views/modules/RiskAndThreats/partials/RiskRankingMatrix.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    BRow,
-    BCol,
-    RiskRankingMatrix,
+    RiskRankingMatrix
   },
   props: {
     selectedClient: {
       type: Object,
-      default: () => (null),
-    },
+      default: () => null
+    }
   },
   data() {
     return {
@@ -64,7 +49,7 @@ export default {
             alpha: 0,
             beta: 0,
             depth: 100,
-            viewDistance: 25,
+            viewDistance: 25
           },
           // scrollablePlotArea: {
           //   minWidth: 900,
@@ -72,72 +57,78 @@ export default {
           // },
           events: {
             drilldown(e) {
-              this.setTitle({ text: 'Risk Analysis by Business Process' }, { text: `Data showing risk analysis for ${e.point.name}` })
+              this.setTitle(
+                { text: 'Risk Analysis by Business Process' },
+                { text: `Data showing risk analysis for ${e.point.name}` }
+              )
             },
             drillup() {
-              this.setTitle({ text: 'DPIA Risk Analysis by Business Unit' }, { text: 'Drilldown to view details for each Business Process' })
-            },
-          },
+              this.setTitle(
+                { text: 'DPIA Risk Analysis by Business Unit' },
+                { text: 'Drilldown to view details for each Business Process' }
+              )
+            }
+          }
         },
         title: {
-          text: 'DPIA Risk Analysis by Business Unit',
+          text: 'DPIA Risk Analysis by Business Unit'
         },
         subtitle: {
-          text: 'Drilldown to view details for each Business Process',
+          text: 'Drilldown to view details for each Business Process'
         },
         xAxis: {
           type: 'category', // categories: [],
           labels: {
             skew3d: false,
             style: {
-              fontSize: '14px',
-            },
+              fontSize: '14px'
+            }
           },
           title: {
-            text: 'Asset Types',
+            text: 'Asset Types'
           },
           min: 0,
           max: undefined,
           scrollbar: {
-            enabled: false,
-          },
+            enabled: false
+          }
         },
         yAxis: {
           min: 0,
           max: undefined,
           tickInterval: 5,
           title: {
-            text: 'Risk Count',
+            text: 'Risk Count'
           },
           stackLabels: {
             enabled: false,
             style: {
               fontWeight: 'bold',
-              color: 'gray',
-            },
-          },
+              color: 'gray'
+            }
+          }
         },
         plotOptions: {
           series: {
             // stacking: 'normal',
             dataLabels: {
-              enabled: false,
+              enabled: false
               // rotation: 180,
-            },
+            }
             // borderRadius: 7,
-          },
+          }
         },
         colors: [],
         series: [],
         drilldown: {
           allowPointDrilldown: true,
-          series: [],
+          series: []
         },
 
         // colors: ['#063', '#910000'],
         credits: {
-          enabled: false,
-        },
+          enabled: false
+        }
       },
       riskSeverityChart: {
         chart: {
@@ -145,24 +136,24 @@ export default {
           options3d: {
             enabled: false,
             alpha: 10,
-            beta: 0,
-          },
+            beta: 0
+          }
         },
         title: {
           text: 'Risk Severity',
-          align: 'center',
+          align: 'center'
         },
         subtitle: {
-          text: '',
+          text: ''
         },
         tooltip: {
-          pointFormat: '{series.name}:<b>{point.y}</b><br>{point.percentage:.1f}%',
+          pointFormat: '{series.name}:<b>{point.y}</b><br>{point.percentage:.1f}%'
           // pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
         },
         accessibility: {
           point: {
             // valueSuffix: '%',
-          },
+          }
         },
         plotOptions: {
           pie: {
@@ -171,33 +162,35 @@ export default {
             depth: 50,
             // innerSize: 100, // what makes it donut
             dataLabels: {
-              enabled: false,
+              enabled: false
               // format: '<b>{point.name}:</b> {point.y}<br>{point.percentage:.1f} %',
               // format: '<b>{point.name}</b>: {point.percentage:.1f} %',
             },
-            showInLegend: true,
-          },
+            showInLegend: true
+          }
         },
-        series: [{
-          name: 'Value Count',
-          colorByPoint: true,
-          data: [],
-        }],
+        series: [
+          {
+            name: 'Value Count',
+            colorByPoint: true,
+            data: []
+          }
+        ],
         credits: {
-          enabled: false,
-        },
+          enabled: false
+        }
       },
       risk_level: '',
       risk_score: 0,
       load: false,
       showChart: false,
-      matrix: '3x3',
+      matrix: '3x3'
     }
   },
   watch: {
     selectedClient() {
       this.fetchReportSummary()
-    },
+    }
   },
   mounted() {
     if (this.selectedClient.id !== null) {
@@ -212,50 +205,54 @@ export default {
       return 'images/project-icons/no-impact-level.png'
     },
     fetchReportSummary() {
-      const app = this
-      app.load = true
-      app.showChart = false
-      const param = { client_id: app.selectedClient.id, module: 'ndpa' }
+      this.load = true
+      this.showChart = false
+      const param = { client_id: this.selectedClient.id, module: 'ndpa' }
       const fetchConsultingsResource = new Resource('reports/process-risk-analysis')
-      fetchConsultingsResource.list(param)
-        .then(response => {
-          app.matrix = response.matrix
-          app.chart_report.series = response.series
-          // app.chart_report.xAxis.categories = response.categories
-          // app.chart_report.subtitle.text = response.subtitle
+      fetchConsultingsResource
+        .list(param)
+        .then((response) => {
+          this.matrix = response.matrix
+          this.chart_report.series = response.series
+          // this.chart_report.xAxis.categories = response.categories
+          // this.chart_report.subtitle.text = response.subtitle
 
-          app.chart_report.drilldown.series = response.drilldown_series
-          // app.chart_report.subtitle.text = response.subtitle
-          // app.chart_report.title.text = response.title
+          this.chart_report.drilldown.series = response.drilldown_series
+          // this.chart_report.subtitle.text = response.subtitle
+          // this.chart_report.title.text = response.title
 
-          app.risk_level = response.risk_level
-          app.risk_score = response.risk_score
-          app.riskSeverityChart.series = [
+          this.risk_level = response.risk_level
+          this.risk_score = response.risk_score
+          this.riskSeverityChart.series = [
             {
               name: 'Severity Count',
               colorByPoint: true,
-              data: [{
-                name: 'Low',
-                y: response.total_low,
-                color: '#00a65a',
-                sliced: true,
-                selected: true,
-              }, {
-                name: 'Medium',
-                y: response.total_medium,
-                color: '#FFFF00',
-              }, {
-                name: 'High',
-                y: response.total_high,
-                color: '#DD2C2C',
-              }],
-            },
+              data: [
+                {
+                  name: 'Low',
+                  y: response.total_low,
+                  color: '#00a65a',
+                  sliced: true,
+                  selected: true
+                },
+                {
+                  name: 'Medium',
+                  y: response.total_medium,
+                  color: '#FFFF00'
+                },
+                {
+                  name: 'High',
+                  y: response.total_high,
+                  color: '#DD2C2C'
+                }
+              ]
+            }
           ]
-          app.load = false
-          app.showChart = true
-        }).catch(app.load = false)
-    },
-  },
-
+          this.load = false
+          this.showChart = true
+        })
+        .catch((this.load = false))
+    }
+  }
 }
 </script>

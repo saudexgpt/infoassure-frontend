@@ -24,34 +24,16 @@
         </el-col>
         <el-col :md="4">
           <label>&nbsp;</label>
-          <el-button
-            type="success"
-            style="width: 100%"
-            @click="submitEntry()"
-          >
-            Submit
-          </el-button>
+          <el-button type="success" style="width: 100%" @click="submitEntry()"> Submit </el-button>
         </el-col>
       </el-row>
-
     </aside>
-    <v-client-table
-      v-model="likelihoods"
-      v-loading="loading"
-      :columns="columns"
-      :options="options"
-    >
-      <div
-        slot="action"
-        slot-scope="props"
-      >
-        <el-button
-          type="danger"
-          icon="el-icon-delete"
-          circle
-          @click="deleteEntry(props.row)"
-        />
-      </div>
+    <v-client-table :data="likelihoods" v-loading="loading" :columns="columns" :options="options">
+      <template v-slot:action="props">
+        <div>
+          <el-button type="danger" icon="el-icon-delete" circle @click="deleteEntry(props.row)" />
+        </div>
+      </template>
     </v-client-table>
   </div>
 </template>
@@ -64,16 +46,13 @@ export default {
       form: { names: [] },
       likelihoods: [],
       loading: false,
-      columns: [
-        'name',
-        'action',
-      ],
+      columns: ['name', 'action'],
       options: {
         headings: {},
         filterByColumn: false,
         sortable: [],
-        filterable: [],
-      },
+        filterable: []
+      }
     }
   },
   created() {
@@ -81,54 +60,53 @@ export default {
   },
   methods: {
     fetchLikelihoods() {
-      const app = this
       const fetchEntryResource = new Resource('risk-assessment/fetch-likelihoods')
-      app.loading = true
-      fetchEntryResource.list()
-        .then(response => {
-          app.likelihoods = response.likelihoods
-          app.loading = false
+      this.loading = true
+      fetchEntryResource
+        .list()
+        .then((response) => {
+          this.likelihoods = response.likelihoods
+          this.loading = false
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
+          this.$message.error(error.response.data.error)
+          this.loading = false
         })
     },
     submitEntry() {
-      const app = this
       const saveEntryResource = new Resource('risk-assessment/save-likelihoods')
-      app.loading = true
-      saveEntryResource.store(app.form)
+      this.loading = true
+      saveEntryResource
+        .store(this.form)
         .then(() => {
-          app.fetchLikelihoods()
-          app.loading = false
-          app.form = { names: [] }
+          this.fetchLikelihoods()
+          this.loading = false
+          this.form = { names: [] }
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
+          this.$message.error(error.response.data.error)
+          this.loading = false
         })
     },
     deleteEntry(row) {
-      const app = this
-      // eslint-disable-next-line no-alert
       if (window.confirm('Click OK to confirm delete action')) {
         const saveEntryResource = new Resource('risk-assessment/delete-likelihood')
-        app.loading = true
-        saveEntryResource.destroy(row.id)
+        this.loading = true
+        saveEntryResource
+          .destroy(row.id)
           .then(() => {
-            app.fetchLikelihoods()
-            app.loading = false
+            this.fetchLikelihoods()
+            this.loading = false
           })
-          .catch(error => {
-          // console.log(error.response)
-            app.$message.error(error.response.data.error)
-            app.loading = false
+          .catch((error) => {
+            // console.log(error.response)
+            this.$message.error(error.response.data.error)
+            this.loading = false
           })
       }
-    },
-  },
+    }
+  }
 }
 </script>

@@ -1,12 +1,10 @@
 <template>
   <div v-loading="loading">
     <div>
-      <b-row>
-        <b-col md="6">
-          <b-form-group
-            label="Name of Controller"
-          >
-            <b-tooltip
+      <el-row>
+        <el-col :md="12">
+          <el-form-group label="Name of Controller">
+            <el-tooltip
               target="controller_name"
               title="Who is the controller of the data i.e. the natural or legal person, public authority, agency or other body which, alone or jointly with others, determines the purposes and means of the processing of personal data"
             />
@@ -14,15 +12,13 @@
               id="controller_name"
               v-model="form.controller_name"
               class="form-control"
-              @blur="updateField($event.target.value, 'controller_name');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Contact Details of Controller"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'controller_name')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Contact Details of Controller">
+            <el-tooltip
               target="controller_contact_details"
               title="State the contact details of the Controller"
             />
@@ -30,15 +26,13 @@
               id="controller_contact_details"
               v-model="form.controller_contact_details"
               class="form-control"
-              @blur="updateField($event.target.value, 'controller_contact_details');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Name of Joint Controller"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'controller_contact_details')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Name of Joint Controller">
+            <el-tooltip
               target="joint_controller_name"
               title="Who is the joint controller (if any) of the data. This applies where two or more controllers jointly determine the purposes and means of processing"
             />
@@ -46,15 +40,13 @@
               id="joint_controller_name"
               v-model="form.joint_controller_name"
               class="form-control"
-              @blur="updateField($event.target.value, 'joint_controller_name');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Contact Details of Controller"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'joint_controller_name')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Contact Details of Controller">
+            <el-tooltip
               target="joint_controller_contact_details"
               title="State the contact details of the joint controller"
             />
@@ -62,15 +54,13 @@
               id="joint_controller_contact_details"
               v-model="form.joint_controller_contact_details"
               class="form-control"
-              @blur="updateField($event.target.value, 'joint_controller_contact_details');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Name of Controller's Representative"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'joint_controller_contact_details')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Name of Controller's Representative">
+            <el-tooltip
               target="controller_rep_name"
               title="Where the controller is not established in the European Union"
             />
@@ -78,15 +68,13 @@
               id="controller_rep_name"
               v-model="form.controller_rep_name"
               class="form-control"
-              @blur="updateField($event.target.value, 'controller_rep_name');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Contact Details of Controller's Representative"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'controller_rep_name')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Contact Details of Controller's Representative">
+            <el-tooltip
               target="controller_rep_contact_details"
               title="State the contact details of the controller's representative"
             />
@@ -94,15 +82,13 @@
               id="controller_rep_contact_details"
               v-model="form.controller_rep_contact_details"
               class="form-control"
-              @blur="updateField($event.target.value, 'controller_rep_contact_details');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Name of Data Protection Officer"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'controller_rep_contact_details')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Name of Data Protection Officer">
+            <el-tooltip
               target="dpo_name"
               title="If applicable - where there is a requirement to appoint a data protection officer"
             />
@@ -110,15 +96,13 @@
               id="dpo_name"
               v-model="form.dpo_name"
               class="form-control"
-              @blur="updateField($event.target.value, 'dpo_name');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Contact Details of Data Protection Officer"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'dpo_name')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Contact Details of Data Protection Officer">
+            <el-tooltip
               target="dpo_details"
               title="State the contact details of the data protection officer"
             />
@@ -126,15 +110,13 @@
               id="dpo_details"
               v-model="form.dpo_details"
               class="form-control"
-              @blur="updateField($event.target.value, 'dpo_details');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Purpose of Processing"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'dpo_details')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Purpose of Processing">
+            <el-tooltip
               target="processing_purpose"
               title="The reasons for which the processing is carried out"
             />
@@ -142,16 +124,13 @@
               id="processing_purpose"
               v-model="form.processing_purpose"
               class="form-control"
-              @blur="updateField($event.target.value, 'processing_purpose');"
-            />
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Category of Data Subjects"
-          >
-
-            <b-tooltip
+              @blur="updateField($event.target.value, 'processing_purpose')"
+            ></textarea>
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Category of Data Subjects">
+            <el-tooltip
               target="data_subject_categories"
               title="Define who the data subjects are e.g. by country, gender, service recipients"
             />
@@ -159,15 +138,13 @@
               id="data_subject_categories"
               v-model="form.data_subject_categories"
               class="form-control"
-              @blur="updateField($event.target.value, 'data_subject_categories');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Categories of Personal Data"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'data_subject_categories')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Categories of Personal Data">
+            <el-tooltip
               target="personal_data_categories"
               title="Define the types of data items that are involved, particularly if special categories such as biometric data"
             />
@@ -175,15 +152,13 @@
               id="personal_data_categories"
               v-model="form.personal_data_categories"
               class="form-control"
-              @blur="updateField($event.target.value, 'personal_data_categories');"
-            />
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Categories of Data Recipients"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'personal_data_categories')"
+            ></textarea>
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Categories of Data Recipients">
+            <el-tooltip
               target="data_recipients_categories"
               title="Who is the data regularly shared with or who has access to it?"
             />
@@ -191,17 +166,13 @@
               id="data_recipients_categories"
               v-model="form.data_recipients_categories"
               class="form-control"
-              @blur="updateField($event.target.value, 'data_recipients_categories');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col
-          md="6"
-        >
-          <b-form-group
-            label="International Transfer Destination"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'data_recipients_categories')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="International Transfer Destination">
+            <el-tooltip
               target="international_transfer_destination"
               title="Countries or international organisations to whom the data are regularly transferred"
             />
@@ -209,17 +180,13 @@
               id="international_transfer_destination"
               v-model="form.international_transfer_destination"
               class="form-control"
-              @blur="updateField($event.target.value, 'international_transfer_destination');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col
-          md="6"
-        >
-          <b-form-group
-            label="Time Limit for Erasure"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'international_transfer_destination')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Time Limit for Erasure">
+            <el-tooltip
               target="erasure_time_limit"
               title="How long will the personal data be held for before it is erased?"
             />
@@ -227,15 +194,13 @@
               id="erasure_time_limit"
               v-model="form.erasure_time_limit"
               class="form-control"
-              @blur="updateField($event.target.value, 'erasure_time_limit');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Technical and Organisational Security Measures Applied"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'erasure_time_limit')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Technical and Organisational Security Measures Applied">
+            <el-tooltip
               target="security_measures_applied"
               title="A brief description of the controls used to protect the personal data (refer to additional information if required)"
             />
@@ -243,17 +208,13 @@
               id="security_measures_applied"
               v-model="form.security_measures_applied"
               class="form-control"
-              @blur="updateField($event.target.value, 'security_measures_applied');"
-            >
-          </b-form-group>
-        </b-col>
-        <b-col
-          md="6"
-        >
-          <b-form-group
-            label="Comments"
-          >
-            <b-tooltip
+              @blur="updateField($event.target.value, 'security_measures_applied')"
+            />
+          </el-form-group>
+        </el-col>
+        <el-col :md="12">
+          <el-form-group label="Comments">
+            <el-tooltip
               target="comments"
               title="Any other comments you would like to make about the information"
             />
@@ -261,53 +222,51 @@
               id="comments"
               v-model="form.comments"
               class="form-control"
-              @blur="updateField($event.target.value, 'comments');"
-            />
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <el-button
-        type="primary"
-        @click="$emit('updated')"
-      >
-        Update
-      </el-button>
+              @blur="updateField($event.target.value, 'comments')"
+            ></textarea>
+          </el-form-group>
+        </el-col>
+      </el-row>
+      <el-button type="primary" @click="$emit('updated')"> Update </el-button>
     </div>
   </div>
 </template>
 <script>
-import {
-  BRow, BCol, BFormGroup, BTooltip,
-} from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    BRow,
-    BCol,
-    BFormGroup,
-    BTooltip,
-    // BButton,
-  },
-  directives: {
-    Ripple,
-  },
+  components: {},
   props: {
     selectedData: {
       type: Object,
-      required: true,
+      required: true
     },
     countries: {
       type: Array,
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
       yes_no: ['Yes', 'No'],
-      lawful_bases: ['Consent-based', 'Contractual', 'Legal Obligation', 'Vital Interests', 'Public Interests', 'Legitimate Interests'],
-      exceptions: ['Explicit Consent', 'Legal Obligation', 'Public Data', 'Legal Claims', 'Public Interest', 'Health Purposes', 'Public Health', 'Archiving and Research'],
+      lawful_bases: [
+        'Consent-based',
+        'Contractual',
+        'Legal Obligation',
+        'Vital Interests',
+        'Public Interests',
+        'Legitimate Interests'
+      ],
+      exceptions: [
+        'Explicit Consent',
+        'Legal Obligation',
+        'Public Data',
+        'Legal Claims',
+        'Public Interest',
+        'Health Purposes',
+        'Public Health',
+        'Archiving and Research'
+      ],
       form: {
         client_id: '',
         standard_id: '',
@@ -327,13 +286,13 @@ export default {
         international_transfer_destination: '',
         erasure_time_limit: '',
         security_measures_applied: '',
-        comments: '',
+        comments: ''
       },
       business_units: [],
       business_processes: [],
       loading: false,
       selectedClient: {},
-      uploadableFile: null,
+      uploadableFile: null
     }
   },
   created() {
@@ -341,28 +300,24 @@ export default {
   },
   methods: {
     updateField(value, field) {
-      const app = this
       const params = {
-        field, value,
+        field,
+        value
       }
       const updateResources = new Resource('ropa/update')
-      updateResources.update(app.selectedData.id, params)
-        .then(response => {
-          app.form = response.ropa
-          // app.$message('Updated')
-        }).catch()
-    },
-  },
+      updateResources
+        .update(this.selectedData.id, params)
+        .then((response) => {
+          this.form = response.ropa
+          // this.$message('Updated')
+        })
+        .catch()
+    }
+  }
 }
 </script>
-      <style lang="scss" scoped>
-      @import '~@core/scss/base/bootstrap-extended/include';
-      </style>
-      <style lang="scss">
-      @import '@core/scss/vue/pages/page-auth.scss';
-      </style>
-      <style scoped>
-      .no-padding {
-        padding: 0 !important;
-      }
-      </style>
+<style scoped>
+.no-padding {
+  padding: 0 !important;
+}
+</style>

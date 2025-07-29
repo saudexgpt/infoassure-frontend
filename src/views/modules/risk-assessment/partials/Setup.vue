@@ -1,41 +1,29 @@
 <template>
   <el-card>
-    <b-tabs
-      vertical
-      content-class="mt-1"
-    >
-      <b-tab
-        lazy
-        title="Asset Types"
-      >
+    <el-tabs vertical content-class="mt-1">
+      <el-tab lazy title="Asset Types">
         <asset-types />
-      </b-tab>
-      <b-tab
-        lazy
-        title="Categories"
-      >
+      </el-tab>
+      <el-tab lazy title="Categories">
         <categories />
-      </b-tab>
-      <!-- <b-tab
+      </el-tab>
+      <!-- <el-tab
         lazy
         title="Impacts"
       >
         <impacts />
-      </b-tab>
-      <b-tab
+      </el-tab>
+      <el-tab
         lazy
         title="Likelihoods"
       >
         <likelihoods />
-      </b-tab> -->
-    </b-tabs>
+      </el-tab> -->
+    </el-tabs>
   </el-card>
 </template>
 
 <script>
-import {
-  BTabs, BTab,
-} from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
 import AssetTypes from './AssetTypes.vue'
 import Categories from './Categories.vue'
@@ -44,20 +32,16 @@ import Categories from './Categories.vue'
 
 export default {
   components: {
-    BTabs,
-    BTab,
     AssetTypes,
-    Categories,
+    Categories
     // Likelihoods,
     // Impacts,
   },
   data() {
-    return {
-
-    }
+    return {}
   },
   methods: {
-    checkPermission,
-  },
+    checkPermission
+  }
 }
 </script>

@@ -12,64 +12,37 @@
       @change="(val) => $emit('update:is-edit-level-sidebar-active', val)"
     >
       <template #default="{ hide }">
-        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
-          <h5 class="mb-0">
-            Edit Role
-          </h5>
+        <div
+          class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1"
+        >
+          <h5 class="mb-0"> Edit Role </h5>
           <div>
-            <b-button
-              variant="gradient-danger"
-              class="btn-icon"
-              @click="hide"
-            >
-              <feather-icon
-                icon="XIcon"
-              />
+            <b-button variant="gradient-danger" class="btn-icon" @click="hide">
+              <feather-icon icon="XIcon" />
             </b-button>
           </div>
         </div>
-        <div
-          class="justify-content-between align-items-center px-2 py-1"
-        >
+        <div class="justify-content-between align-items-center px-2 py-1">
           <b-row v-loading="loading">
-
             <!-- Role Name -->
             <b-col cols="12">
-              <b-form-group
-                label="Role Name"
-                label-for="role"
-              >
-                <b-form-input
-                  v-model="form.name"
-                  placeholder="Enter role..."
-                />
+              <b-form-group label="Role Name" label-for="role">
+                <b-form-input v-model="form.name" placeholder="Enter role..." />
               </b-form-group>
             </b-col>
             <!-- Abbrev -->
             <b-col cols="12">
-              <b-form-group
-                label="Role Abbreviation"
-                label-for="description"
-              >
-                <b-form-input
-                  v-model="form.description"
-                  placeholder="Briefly describe role..."
-                />
+              <b-form-group label="Role Abbreviation" label-for="description">
+                <b-form-input v-model="form.description" placeholder="Briefly describe role..." />
               </b-form-group>
             </b-col>
-            <b-col
-              v-if="curriculum_level_groups.length > 0"
-              cols="12"
-            >
-              <b-form-group
-                label="Select Level Group"
-                label-for="v-curriculum"
-              >
+            <b-col v-if="curriculum_level_groups.length > 0" cols="12">
+              <b-form-group label="Select Level Group" label-for="v-curriculum">
                 <el-select
                   v-model="form.level_groups"
                   multiple
                   collapse-tags
-                  style="width: 100%;"
+                  style="width: 100%"
                   placeholder="Select Level Group"
                 >
                   <el-option
@@ -101,37 +74,23 @@
 </template>
 
 <script>
-import {
-  BSidebar, BRow, BCol, BFormGroup, BFormInput, BButton,
-} from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    BSidebar,
-    BRow,
-    BCol,
-    BFormGroup,
-    BFormInput,
-    BButton,
-  },
-  directives: {
-    Ripple,
-  },
+  components: {},
   model: {
     prop: 'isEditRoleSidebarActive',
-    event: 'update:is-edit-level-sidebar-active',
+    event: 'update:is-edit-level-sidebar-active'
   },
   props: {
     isEditRoleSidebarActive: {
       type: Boolean,
-      required: true,
+      required: true
     },
     selectedRole: {
       type: Object,
-      default: () => (null),
-    },
+      default: () => null
+    }
   },
   data() {
     return {
@@ -139,10 +98,10 @@ export default {
         id: '',
         name: '',
         description: '',
-        level_groups: [],
+        level_groups: []
       },
       loading: false,
-      curriculum_level_groups: [],
+      curriculum_level_groups: []
     }
   },
   created() {
@@ -153,30 +112,29 @@ export default {
   },
   methods: {
     fetchCurriculumLevels() {
-      const app = this
-      const fetchCurriculumSetupResource = new Resource('school-setup/fetch-specific-curriculum-level-groups')
-      fetchCurriculumSetupResource.list()
-        .then(response => {
-          app.curriculum_level_groups = response.curriculum_level_groups
+      const fetchCurriculumSetupResource = new Resource(
+        'school-setup/fetch-specific-curriculum-level-groups'
+      )
+      fetchCurriculumSetupResource.list().then((response) => {
+        this.curriculum_level_groups = response.curriculum_level_groups
 
-          app.form.level_groups = (app.selectedRole.curriculum_level_group_ids) ? app.selectedRole.curriculum_level_group_ids.split('~').map(item => parseInt(item, 10)) : []
-        })
+        this.form.level_groups = this.selectedRole.curriculum_level_group_ids
+          ? this.selectedRole.curriculum_level_group_ids
+              .split('~')
+              .map((item) => parseInt(item, 10))
+          : []
+      })
     },
     update() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const updateCurriculumSetupResource = new Resource('acl/roles/update')
-      const param = app.form
-      updateCurriculumSetupResource.update(param.id, param)
-        .then(response => {
-          app.loading = false
-          app.$emit('update', response.roles)
-          app.$emit('update:is-edit-level-sidebar-active', false)
-        })
-    },
-  },
+      const param = this.form
+      updateCurriculumSetupResource.update(param.id, param).then((response) => {
+        this.loading = false
+        this.$emit('update', response.roles)
+        this.$emit('update:is-edit-level-sidebar-active', false)
+      })
+    }
+  }
 }
 </script>
-<style lang="scss" scoped>
-@import '~@core/scss/base/bootstrap-extended/include';
-</style>

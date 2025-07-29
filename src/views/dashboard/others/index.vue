@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard-container">
-
     <component :is="currentRole" />
   </div>
 </template>
@@ -12,22 +11,21 @@ import ClientDashboard from './partials/ClientDashboard.vue'
 
 export default {
   components: {
-    UserDashboard, ClientDashboard,
+    UserDashboard,
+    ClientDashboard
   },
   data() {
     return {
-      currentRole: 'UserDashboard',
+      currentRole: 'UserDashboard'
     }
   },
   computed: {
-    ...mapGetters([
-      'userData',
-    ]),
+    ...mapGetters(['userData'])
   },
   created() {
     if (this.userData.login_as === 'client') {
       this.currentRole = 'ClientDashboard'
     }
-  },
+  }
 }
 </script>

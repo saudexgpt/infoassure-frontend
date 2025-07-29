@@ -1,32 +1,20 @@
 <template>
   <el-tabs type="border-card">
-    <el-tab-pane
-      v-if="checkPermission(['manage-project-phases'])"
-      lazy
-    >
-      <template slot="label">
-        <!-- <feather-icon icon="BarChartIcon" /> -->
+    <el-tab-pane v-if="checkPermission(['manage-project-phases'])" lazy>
+      <template v-slot:label>
         <span>Manage Project Phases</span>
       </template>
       <project-phases />
     </el-tab-pane>
-    <el-tab-pane
-      v-if="checkPermission(['manage-project-plan'])"
-      lazy
-    >
-      <template slot="label">
-        <!-- <feather-icon icon="LayersIcon" /> -->
+    <el-tab-pane v-if="checkPermission(['manage-project-plan'])" lazy>
+      <template v-slot:label>
         <span>Manage Project Plan</span>
       </template>
       <project-plan />
     </el-tab-pane>
-    <el-tab-pane
-      v-if="checkPermission(['manage-client-projects'])"
-      lazy
-    >
-      <template slot="label">
-        <!-- <feather-icon icon="ListIcon" /> -->
-        <span>Manage Client Projects</span>
+    <el-tab-pane v-if="checkPermission(['manage-client-projects'])" lazy>
+      <template v-slot:label>
+        <span>Manage Projects</span>
       </template>
       <client-projects />
     </el-tab-pane>
@@ -34,8 +22,6 @@
 </template>
 
 <script>
-import {
-} from 'bootstrap-vue'
 import ClientProjects from './ClientProjects.vue'
 import ProjectPhases from './ProjectPhases.vue'
 import ProjectPlan from './ProjectPlan.vue'
@@ -45,10 +31,10 @@ export default {
   components: {
     ClientProjects,
     ProjectPhases,
-    ProjectPlan,
+    ProjectPlan
   },
   methods: {
-    checkPermission,
-  },
+    checkPermission
+  }
 }
 </script>

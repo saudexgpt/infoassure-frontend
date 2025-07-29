@@ -1,36 +1,29 @@
 <!-- eslint-disable vue/html-indent -->
 <template>
   <div>
-    <h3 v-if="isEdit">
-        Edit
-    </h3>
-    <h3 v-else>
-        Create New
-    </h3>
-  <table class="table table-bordered">
-    <tr>
-      <td>Title</td>
-      <td>
-        <el-input
-            v-model="form.name"
-            placeholder="Enter Category Title"
-        />
-      </td>
-    </tr>
-    <tr>
-      <td>Sub-Categories</td>
-      <td>
-        <el-tag
+    <h3 v-if="isEdit"> Edit </h3>
+    <h3 v-else> Create New </h3>
+    <table class="table table-bordered">
+      <tr>
+        <td>Title</td>
+        <td>
+          <el-input v-model="form.name" placeholder="Enter Category Title" />
+        </td>
+      </tr>
+      <tr>
+        <td>Sub-Categories</td>
+        <td>
+          <el-tag
             v-for="sub_category in sub_categories"
             :key="sub_category"
             closable
             type="success"
             :disable-transitions="false"
             @close="handleClose(sub_category)"
-        >
+          >
             {{ sub_category }}
-        </el-tag>
-        <el-input
+          </el-tag>
+          <el-input
             v-if="inputVisible"
             ref="saveTagInput"
             v-model="inputValue"
@@ -38,42 +31,36 @@
             placeholder="Type sub category"
             size="mini"
             style="width: 70%"
-            @keyup.enter.native="handleInputConfirm"
+            @keyup.enter="handleInputConfirm"
             @blur="handleInputConfirm"
-        />
-        <a
-            v-else
-            style="color: #409EFF"
-            @click="showInput"
-            >
-            + Add New
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="2">
-        <el-button
+          />
+          <a v-else style="color: #409eff" @click="showInput"> + Add New </a>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <el-button
             v-if="isEdit"
             :disabled="form.name === ''"
             type="primary"
             style="width: 30%"
             @click="updateEntry(form.id)"
-        >
+          >
             Update
-        </el-button>
-        <el-button
+          </el-button>
+          <el-button
             v-else
             type="success"
             :disabled="form.name === ''"
             style="width: 30%"
             @click="submitEntry()"
-        >
+          >
             Save
-        </el-button>
-      </td>
-    </tr>
-  </table>
-</div>
+          </el-button>
+        </td>
+      </tr>
+    </table>
+  </div>
 </template>
 <script>
 import Resource from '@/api/resource'
@@ -82,16 +69,16 @@ export default {
   props: {
     clientId: {
       type: Number,
-      default: () => (null),
+      default: () => null
     },
     selectedData: {
       type: Object,
-      default: () => (null),
+      default: () => null
     },
     isEdit: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
@@ -100,14 +87,14 @@ export default {
       sub_categories: [],
       loading: false,
       inputVisible: false,
-      inputValue: '',
+      inputValue: ''
     }
   },
   watch: {
     isEdit() {
       this.form = this.selectedData
       this.setSubCategories()
-    },
+    }
   },
   created() {
     this.form = this.selectedData
@@ -115,11 +102,10 @@ export default {
   },
   methods: {
     setSubCategories() {
-      const app = this
       const category = this.selectedData
       const subCategories = []
       if (category.sub_categories !== null) {
-        category.sub_categories.forEach(subCat => {
+        category.sub_categories.forEach((subCat) => {
           subCategories.push(subCat.name)
         })
       }
@@ -145,84 +131,83 @@ export default {
       this.inputValue = ''
     },
     submitEntry() {
-      const app = this
       const saveEntryResource = new Resource('risk-assessment/save-categories')
       app.loading = true
       const { form } = app
       form.client_id = app.clientId
       form.sub_categories = app.sub_categories
-      saveEntryResource.store(form)
+      saveEntryResource
+        .store(form)
         .then(() => {
           app.$emit('saved')
           app.loading = false
           app.$notify({
             title: 'Saved',
-            type: 'success',
+            type: 'success'
           })
           app.form = { name: '', sub_categories: [] }
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
           app.$message.error(error.response.data.error)
           app.loading = false
         })
     },
     updateEntry(id) {
-      const app = this
       const saveEntryResource = new Resource('risk-assessment/update-category')
       app.loading = true
       const { form } = app
       form.client_id = app.clientId
       form.sub_categories = app.sub_categories
-      saveEntryResource.update(id, form)
+      saveEntryResource
+        .update(id, form)
         .then(() => {
           app.$notify({
             title: 'Updated',
-            type: 'success',
+            type: 'success'
           })
           app.$emit('saved')
           app.loading = false
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
           app.$message.error(error.response.data.error)
           app.loading = false
         })
     },
     deleteEntry(row) {
-      const app = this
-      // eslint-disable-next-line no-alert
       if (window.confirm('Click OK to confirm delete action')) {
         const saveEntryResource = new Resource('risk-assessment/delete-category')
         app.loading = true
-        saveEntryResource.destroy(row.id)
+        saveEntryResource
+          .destroy(row.id)
           .then(() => {
             app.loading = false
           })
-          .catch(error => {
+          .catch((error) => {
             // console.log(error.response)
             app.$message.error(error.response.data.error)
             app.loading = false
           })
       }
-    },
-  },
+    }
+  }
 }
 </script>
-  <style>
-    .el-tag + .el-tag {
-      margin-left: 10px;
-    }
-    .button-new-tag {
-      margin-left: 10px;
-      height: 32px;
-      line-height: 30px;
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-    .input-new-tag {
-      width: 90px;
-      margin-left: 10px;
-      vertical-align: bottom;
-    }
-  </style>
+<style>
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+</style>

@@ -7,15 +7,12 @@
     >
       Export
     </el-button>
-    <table
-      id="riskAssessmentTable"
-      class="table table-bordered table-striped table-responsive"
-    >
+    <table id="riskAssessmentTable" class="table table-bordered table-striped table-responsive">
       <thead>
         <tr>
           <th
             colspan="4"
-            style="font-size: 18px; text-align: center;"
+            style="font-size: 18px; text-align: center"
             data-f-sz="18"
             data-fill-color="45058d"
             data-f-color="ffffff"
@@ -24,7 +21,7 @@
           </th>
           <th
             colspan="7"
-            style="font-size: 18px; text-align: center;"
+            style="font-size: 18px; text-align: center"
             data-f-sz="18"
             data-fill-color="45058d"
             data-f-color="ffffff"
@@ -33,7 +30,7 @@
           </th>
           <th
             colspan="6"
-            style="font-size: 18px; text-align: center;"
+            style="font-size: 18px; text-align: center"
             data-f-sz="18"
             data-fill-color="45058d"
             data-f-color="ffffff"
@@ -42,7 +39,7 @@
           </th>
           <th
             colspan="7"
-            style="font-size: 18px; text-align: center;"
+            style="font-size: 18px; text-align: center"
             data-f-sz="18"
             data-fill-color="45058d"
             data-f-color="ffffff"
@@ -51,143 +48,58 @@
           </th>
         </tr>
         <tr>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >REF</th>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Business Process Name</th>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Risk Owner</th>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Risk Description</th>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Existing Treatment</th>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Likelihood</th>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Likelihood Rationale</th>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Impact</th>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Impact Rationale</th>
-          <th
-
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Risk Score</th>
-          <th
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Risk Level</th>
-          <th
-            style="font-size: 14px;"
-            data-f-sz="14"
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Treatment Option</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Outage Scenario</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Treatment</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Responsible</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Present Status</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Timeline</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Likelihood</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Likelihood Rationale</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Impact</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Impact Rationale</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Risk Score</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Risk Level</th>
-          <th
-            data-fill-color="333333"
-            data-f-color="ffffff"
-          >Residual Risk</th>
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >REF</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Business Process Name</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Risk Owner</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Risk Description</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Existing Treatment</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Likelihood</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Likelihood Rationale</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Impact</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Impact Rationale</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Risk Score</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Risk Level</th
+          >
+          <th style="font-size: 14px" data-f-sz="14" data-fill-color="333333" data-f-color="ffffff"
+            >Treatment Option</th
+          >
+          <th data-fill-color="333333" data-f-color="ffffff">Outage Scenario</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Treatment</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Responsible</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Present Status</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Timeline</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Likelihood</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Likelihood Rationale</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Impact</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Impact Rationale</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Risk Score</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Risk Level</th>
+          <th data-fill-color="333333" data-f-color="ffffff">Residual Risk</th>
         </tr>
       </thead>
       <tbody v-if="!downloading">
-        <tr
-          v-for="(assessment, index) in riskAssessments"
-          :key="index"
-        >
+        <tr v-for="(assessment, index) in riskAssessments" :key="index">
           <td>{{ assessment.ra_id }}</td>
           <td>
             <select
@@ -200,38 +112,31 @@
                 :key="process_index"
                 :label="process.name"
                 :value="process.id"
-              />
+              ></option>
             </select>
           </td>
           <td>
-
             <input
               v-model="assessment.risk_owner"
               type="text"
               @blur="updateField($event, 'risk_owner', assessment)"
-            >
-
+            />
           </td>
           <td>
-
             <input
               v-model="assessment.risk_description"
               type="text"
               @blur="updateField($event, 'risk_description', assessment)"
-            >
-
+            />
           </td>
           <td>
-
             <input
               v-model="assessment.existing_treatment"
               type="text"
               @blur="updateField($event, 'existing_treatment', assessment)"
-            >
-
+            />
           </td>
           <td>
-
             <select
               v-model="assessment.likelihood"
               placeholder="Select Likelihood Value"
@@ -242,21 +147,17 @@
                 :key="l_index"
                 :label="`${likelihood.value}-${likelihood.name}`"
                 :value="likelihood.value"
-              />
+              ></option>
             </select>
-
           </td>
           <td>
-
             <input
               v-model="assessment.likelihood_rationale"
               type="text"
               @blur="updateField($event, 'likelihood_rationale', assessment)"
-            >
-
+            />
           </td>
           <td>
-
             <select
               v-model="assessment.impact"
               filterable
@@ -269,32 +170,23 @@
                 :key="impact_index"
                 :label="`${impact.value}-${impact.name}`"
                 :value="impact.value"
-              />
+              ></option>
             </select>
-
           </td>
           <td>
-
             <input
               v-model="assessment.impact_rationale"
               type="text"
               @blur="updateField($event, 'impact_rationale', assessment)"
-            >
-
+            />
           </td>
           <td>
-
             <span v-loading="assessment.loader">{{ assessment.risk_score }}</span>
-
           </td>
           <td :style="`background: #${customClass(assessment, 'risk_level')}`">
-            <div
-              v-loading="assessment.loader"
-            >{{ assessment.risk_level }}
-            </div>
+            <div v-loading="assessment.loader">{{ assessment.risk_level }} </div>
           </td>
           <td>
-
             <select
               v-model="assessment.treatment_option"
               placeholder="Select"
@@ -305,12 +197,10 @@
                 :key="option_index"
                 :label="assessment_option"
                 :value="assessment_option"
-              />
+              ></option>
             </select>
-
           </td>
           <td>
-
             <select
               v-model="assessment.outage_scenerio"
               placeholder="Select"
@@ -321,23 +211,22 @@
                 :key="option_index"
                 :label="outage_scenerio"
                 :value="outage_scenerio"
-              />
+              ></option>
             </select>
-
           </td>
           <td>
             <input
               v-model="assessment.treatment"
               type="text"
               @blur="updateField($event, 'treatment', assessment)"
-            >
+            />
           </td>
           <td>
             <input
               v-model="assessment.responsible"
               type="text"
               @blur="updateField($event, 'responsible', assessment)"
-            >
+            />
           </td>
           <td>
             <select
@@ -350,7 +239,7 @@
                 :key="status_index"
                 :label="status"
                 :value="status"
-              />
+              ></option>
             </select>
           </td>
           <td>
@@ -359,7 +248,7 @@
               placeholder="Timeline"
               type="text"
               @blur="updateField($event, 'target_date_for_closure', assessment)"
-            >
+            />
           </td>
           <td>
             <select
@@ -372,11 +261,8 @@
                 :key="l_index"
                 :label="`${likelihood.value}-${likelihood.name}`"
                 :value="likelihood.value"
-              />
-              <option
-                value="0"
-                label="N/A"
-              />
+              ></option>
+              <option value="0" label="N/A"></option>
             </select>
           </td>
           <td>
@@ -384,7 +270,7 @@
               v-model="assessment.post_treatment_likelihood_rationale"
               type="text"
               @blur="updateField($event, 'post_treatment_likelihood_rationale', assessment)"
-            >
+            />
           </td>
           <td>
             <select
@@ -397,30 +283,22 @@
                 :key="c_index"
                 :label="`${impact.value}-${impact.name}`"
                 :value="impact.value"
-              />
-              <option
-                value="0"
-                label="N/A"
-              />
+              ></option>
+              <option value="0" label="N/A"></option>
             </select>
-
           </td>
           <td>
             <input
               v-model="assessment.post_treatment_impact_rationale"
               type="text"
               @blur="updateField($event, 'post_treatment_impact_rationale', assessment)"
-            >
+            />
           </td>
           <td>
             <span v-loading="assessment.loader">{{ assessment.post_treatment_risk_score }}</span>
-
           </td>
           <td :style="`background: #${customClass(assessment, 'post_treatment_risk_level')}`">
-            <div
-              v-loading="assessment.loader"
-            >{{ assessment.post_treatment_risk_level }}
-            </div>
+            <div v-loading="assessment.loader">{{ assessment.post_treatment_risk_level }} </div>
           </td>
           <td>
             <input
@@ -428,15 +306,12 @@
               placeholder=""
               type="text"
               @blur="updateField($event, 'risk_treatment_plan_residual', assessment)"
-            >
+            />
           </td>
         </tr>
       </tbody>
       <tbody v-else>
-        <tr
-          v-for="(assessment, index) in riskAssessments"
-          :key="index"
-        >
+        <tr v-for="(assessment, index) in riskAssessments" :key="index">
           <td>{{ assessment.ra_id }}</td>
           <td>{{ assessment.business_process.name }}</td>
           <td>{{ assessment.risk_owner }}</td>
@@ -482,49 +357,40 @@
 </template>
 
 <script>
-import {
-} from 'bootstrap-vue'
-import TableToExcel from '@linways/table-to-excel'
-// import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
 
 export default {
-  components: {
-  },
-  directives: {
-    Ripple,
-  },
+  components: {},
   props: {
     businessUnitId: {
       type: Number,
-      default: null,
+      default: null
     },
     clientId: {
       type: Number,
-      default: null,
+      default: null
     },
     businessProcesses: {
       type: Array,
-      default: () => ([]),
+      default: () => []
     },
     riskAssessments: {
       type: Array,
-      default: () => ({}),
+      default: () => []
     },
     likelihoods: {
       type: Array,
-      default: () => ({}),
+      default: () => []
     },
     impacts: {
       type: Array,
-      default: () => ({}),
+      default: () => []
     },
     matrix: {
       type: String,
-      default: '3x3',
-    },
+      default: '3x3'
+    }
   },
   data() {
     return {
@@ -538,19 +404,27 @@ export default {
       categories: [],
       asset_types: [],
       assessment_options: ['Avoid', 'Mitigate', 'Transfer', 'Accept'],
-      outage_scenerios: ['Premise', 'Technology', 'People', 'Transport', 'Vendor', 'Utility', 'Other'],
-      downloading: false,
+      outage_scenerios: [
+        'Premise',
+        'Technology',
+        'People',
+        'Transport',
+        'Vendor',
+        'Utility',
+        'Other'
+      ],
+      downloading: false
     }
   },
-  created() {
-  },
+  created() {},
   methods: {
     checkPermission,
     customClass(row, opt) {
       if (opt === 'risk_level') {
         if (row.risk_level === 'High') {
           return 'DD2C2C'
-        } if (row.risk_level === 'Medium') {
+        }
+        if (row.risk_level === 'Medium') {
           return 'F0C63E'
         }
         if (row.risk_level === 'Low') {
@@ -560,7 +434,8 @@ export default {
       if (opt === 'post_treatment_risk_level') {
         if (row.post_treatment_risk_level === 'High') {
           return 'DD2C2C'
-        } if (row.post_treatment_risk_level === 'Medium') {
+        }
+        if (row.post_treatment_risk_level === 'Medium') {
           return 'F0C63E'
         }
         if (row.post_treatment_risk_level === 'Low') {
@@ -570,25 +445,23 @@ export default {
       return ''
     },
     updateField($event, field, assessment) {
-      const app = this
       // const valuesArray = [assessment.confidentiality, assessment.integrity, assessment.availability]
-      // const impactVal = app.maxValue(valuesArray)
+      // const impactVal = this.maxValue(valuesArray)
       // const riskVal = assessment.risk_likelihood_id * impactVal
-      // const riskCategory = app.analyzeRiskCategory(riskVal)
+      // const riskCategory = this.analyzeRiskCategory(riskVal)
       // const params = {
       //   field, value: $event.target.value, impact_value: impactVal, risk_value: riskVal, risk_level: riskCategory,
       // }
-      const params = { field, value: $event.target.value, matrix: app.matrix }
-      // eslint-disable-next-line no-param-reassign
+      const params = { field, value: $event.target.value, matrix: this.matrix }
+
       assessment.loader = true
       const fetchClientsResource = new Resource('bia/update-risk-assessment-field')
-      fetchClientsResource.update(assessment.id, params)
-        .then(() => {
-          // app.risk_assessments[assessment.index] = response
-          app.$emit('reload')
-          // eslint-disable-next-line no-param-reassign
-          assessment.loader = false
-        })
+      fetchClientsResource.update(assessment.id, params).then(() => {
+        // this.risk_assessments[assessment.index] = response
+        this.$emit('reload')
+
+        assessment.loader = false
+      })
     },
     // maxValue(arrayNums) {
     //   let max = 0
@@ -609,52 +482,47 @@ export default {
     //   return 'Low'
     // },
     exportTableToExcel(id) {
-      const app = this
-      app.downloading = true
-      // const rawData = app.riskAssessments
+      this.downloading = true
+      // const rawData = this.riskAssessments
       // import('@/vendor/Export2Excel').then(excel => {
       //   excel.export_table_to_excel(id)
       //   setTimeout(() => {
-      //     app.downloading = false
+      //     this.downloading = false
       //   }, 2000)
       // })
       setTimeout(() => {
         TableToExcel.convert(document.getElementById(id), {
           name: 'BIARiskAssessmentTable.xlsx',
           sheet: {
-            name: 'Sheet 1',
-          },
+            name: 'Sheet 1'
+          }
         })
       }, 1000)
 
       setTimeout(() => {
-        app.downloading = false
+        this.downloading = false
       }, 30000)
     },
     formatIds(value, option) {
-      const app = this
       const { likelihoods } = app
       const { impacts } = app
       let val = ''
       if (option === 'likelihood') {
-        likelihoods.forEach(likelihood => {
+        likelihoods.forEach((likelihood) => {
           if (value === likelihood.id) {
             val = `${likelihood.id}-${likelihood.name}`
           }
         })
       }
       if (option === 'impact') {
-        impacts.forEach(impact => {
+        impacts.forEach((impact) => {
           if (value === impact.id) {
             val = `${impact.id}-${impact.name}`
           }
         })
       }
       return val
-    },
-  },
+    }
+  }
 }
 </script>
-<style lang="scss" >
-@import '@core/scss/vue/libs/vue-good-table.scss';
-</style>

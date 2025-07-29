@@ -1,11 +1,7 @@
 <template>
   <div v-if="project_phases !== '{}'">
-    <app-collapse
-      v-loading="loading"
-      accordion
-      type="border"
-    >
-      <app-collapse-item
+    <el-collapse v-loading="loading" accordion type="border">
+      <el-collapse-item
         v-for="(project_phase_array, title) in project_phases"
         :key="title"
         :title="title"
@@ -23,12 +19,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="(project_phase, index) in project_phase_array"
-              :key="index"
-            >
+            <tr v-for="(project_phase, index) in project_phase_array" :key="index">
               <td>{{ project_phase.general_project_plan.task }}</td>
-              <td>{{ project_phase.general_project_plan.responsibility.replace("Client", selectedProject.client.name) }}</td>
+              <td>{{
+                project_phase.general_project_plan.responsibility.replace(
+                  'Client',
+                  selectedProject.client.name
+                )
+              }}</td>
               <td>{{ project_phase.general_project_plan.resource }}</td>
               <td v-if="isAdmin">
                 <select
@@ -40,12 +38,10 @@
                     :key="count_index"
                     :label="`${count}%`"
                     :value="count"
-                  />
+                  ></option>
                 </select>
               </td>
-              <td v-else>
-                {{ project_phase.progress }}%
-              </td>
+              <td v-else> {{ project_phase.progress }}% </td>
               <td v-if="isAdmin">
                 <select
                   v-model="project_phase.status"
@@ -56,7 +52,7 @@
                     :key="status_index"
                     :label="status"
                     :value="status"
-                  />
+                  ></option>
                 </select>
               </td>
               <td v-else>
@@ -66,7 +62,7 @@
                 <textarea
                   v-model="project_phase.pending_items"
                   @blur="updateFields('pending_items', $event, project_phase.id)"
-                />
+                ></textarea>
               </td>
               <td v-else>
                 {{ project_phase.pending_items }}
@@ -75,7 +71,7 @@
                 <textarea
                   v-model="project_phase.risk"
                   @blur="updateFields('risk', $event, project_phase.id)"
-                />
+                ></textarea>
               </td>
               <td v-else>
                 {{ project_phase.risk }}
@@ -83,34 +79,25 @@
             </tr>
           </tbody>
         </table>
-      </app-collapse-item>
-    </app-collapse>
+      </el-collapse-item>
+    </el-collapse>
   </div>
-  <el-empty
-    v-else
-  ><h3>Project Plan is yet to be set up</h3></el-empty>
+  <el-empty v-else><h3>Project Plan is yet to be set up</h3></el-empty>
 </template>
 <script>
-import {
-} from 'bootstrap-vue'
-import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
-import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    AppCollapse,
-    AppCollapseItem,
-  },
+  components: {},
   props: {
     selectedProject: {
       type: Object,
-      required: true,
+      required: true
     },
     isAdmin: {
       type: Boolean,
-      default: () => false,
-    },
+      default: () => false
+    }
   },
   data() {
     return {
@@ -124,69 +111,70 @@ export default {
         'progress',
         'status',
         'pending_items',
-        'risk',
+        'risk'
       ],
       options: {
         headings: {
           'general_project_plan.project_phase.title': 'Phase',
           'general_project_plan.task': 'Task',
           'general_project_plan.responsibility': 'Responsible',
-          'general_project_plan.resource': 'Resource',
+          'general_project_plan.resource': 'Resource'
         },
         sortable: [],
         // filterable: false,
-        filterable: false,
+        filterable: false
       },
       progress: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      statuses: ['Not Started', 'In Progress', 'Completed'],
+      statuses: ['Not Started', 'In Progress', 'Completed']
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
-    },
+    }
   },
   created() {
     this.fetchClientProjectPlan()
   },
   methods: {
-
     fetchClientProjectPlan() {
-      const app = this
       const params = {
-        project_id: app.selectedProject.id,
-        client_id: app.selectedProject.client_id,
+        project_id: this.selectedProject.id,
+        client_id: this.selectedProject.client_id
       }
-      app.loading = true
+      this.loading = true
       const clientProjectPlanResource = new Resource('project-plans/fetch-client-project-plan')
-      clientProjectPlanResource.list(params)
-        .then(response => {
-          app.project_phases = response.project_phases
-          app.loading = false
-        }).catch(e => {
-          app.loading = false
-          app.$message(e.response.message)
+      clientProjectPlanResource
+        .list(params)
+        .then((response) => {
+          this.project_phases = response.project_phases
+          this.loading = false
+        })
+        .catch((e) => {
+          this.loading = false
+          this.$message(e.response.message)
         })
     },
     updateFields(field, event, id) {
-      const app = this
       const params = {
         field,
-        value: event.target.value,
+        value: event.target.value
       }
-      // app.loading = true
-      const clientProjectPlanResource = new Resource('project-plans/update-client-project-plan-fields')
-      clientProjectPlanResource.update(id, params)
+      // this.loading = true
+      const clientProjectPlanResource = new Resource(
+        'project-plans/update-client-project-plan-fields'
+      )
+      clientProjectPlanResource
+        .update(id, params)
         .then(() => {
-          app.loading = false
-        }).catch(e => {
-          app.loading = false
-          app.$message(e.response.message)
+          this.loading = false
         })
-    },
-
-  },
-
+        .catch((e) => {
+          this.loading = false
+          this.$message(e.response.message)
+        })
+    }
+  }
 }
 </script>
 <style scoped>

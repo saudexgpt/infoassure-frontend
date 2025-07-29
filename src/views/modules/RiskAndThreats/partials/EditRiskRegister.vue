@@ -1,167 +1,96 @@
 <template>
-  <div>
-    <b-sidebar
-      id="sidebar-task-handler"
-      sidebar-class="sidebar-lg"
-      :visible="isCreateRiskSidebarActive"
-      bg-variant="white"
-      shadow
-      backdrop
-      no-header
-      right
-      @change="(val) => $emit('update:is-create-risk-sidebar-active', val)"
-    >
-      <template #default="{ hide }">
-        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
-          <h5 class="mb-0">
-            Edit Risk Register
-          </h5>
-          <div>
-            <b-button
-              variant="gradient-danger"
-              class="btn-icon"
-              @click="hide"
-            >
-              <feather-icon
-                icon="XIcon"
-              />
-            </b-button>
-          </div>
-        </div>
-        <div class="justify-content-between align-items-center px-2 py-1">
-          <b-row v-loading="loading">
-            <b-col
-              cols="12"
-            >
-              <b-form-group
-                label="Risk Type"
-              >
-                <!-- <el-input
+  <el-row :gutter="20" v-loading="loading">
+    <el-col :md="12">
+      <el-form-group label="Risk Type">
+        <!-- <el-input
                   v-model="form.risk_type"
                   type="text"
                   outline
                   placeholder="Risk Type"
                 /> -->
-                <el-select
-                  v-model="form.risk_type"
-                  placeholder="Risk Type"
-                  style="width: 100%"
-                >
-                  <el-option
-                    v-for="(risk_type, type_index) in risk_types"
-                    :key="type_index"
-                    :value="risk_type"
-                    :label="risk_type"
-                  />
-                </el-select>
-              </b-form-group>
-            </b-col>
-            <b-col
-              cols="12"
-            >
-              <b-form-group
-                label="Vulnerability Description"
-              >
-                <el-input
-                  v-model="form.vunerability_description"
-                  type="textarea"
-                  outline
-                  placeholder="Describe Risk/Threat"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col
-              cols="12"
-            >
-              <b-form-group
-                label="Impact/Outcome Description"
-              >
-                <el-input
-                  v-model="form.threat_impact_description"
-                  type="textarea"
-                  placeholder="State impact outcome"
-                  style="width: 100%;"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col
-              cols="12"
-            >
-              <b-form-group
-                label="Existing Control"
-              >
-                <el-input
-                  v-model="form.existing_controls"
-                  placeholder="What controls are in place"
-                  type="textarea"
-                  style="width: 100%;"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col
-              cols="12"
-            >
-              <b-form-group
-                label="Risk Owner"
-              >
-                <el-input
-                  v-model="form.risk_owner"
-                  placeholder="State the Risk owner"
-                  type="text"
-                  style="width: 100%;"
-                />
-              </b-form-group>
-            </b-col>
-            <!-- submit and reset -->
-            <b-col cols="12">
-              <b-button
-                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                type="submit"
-                variant="primary"
-                class="mr-1"
-                @click="update()"
-              >
-                Update
-              </b-button>
-            </b-col>
-          </b-row>
-        </div>
-      </template>
-    </b-sidebar>
-  </div>
+        <el-select v-model="form.risk_type" placeholder="Risk Type" style="width: 100%">
+          <el-option
+            v-for="(risk_type, type_index) in risk_types"
+            :key="type_index"
+            :value="risk_type"
+            :label="risk_type"
+          />
+        </el-select>
+      </el-form-group>
+    </el-col>
+    <el-col :md="12">
+      <el-form-group label="Vulnerability Description">
+        <el-input
+          v-model="form.vunerability_description"
+          type="textarea"
+          outline
+          placeholder="Describe Risk/Threat"
+        />
+      </el-form-group>
+    </el-col>
+    <el-col :md="12">
+      <el-form-group label="Impact/Outcome Description">
+        <el-input
+          v-model="form.threat_impact_description"
+          type="textarea"
+          placeholder="State impact outcome"
+          style="width: 100%"
+        />
+      </el-form-group>
+    </el-col>
+    <el-col :md="12">
+      <el-form-group label="Existing Control">
+        <el-input
+          v-model="form.existing_controls"
+          placeholder="What controls are in place"
+          type="textarea"
+          style="width: 100%"
+        />
+      </el-form-group>
+    </el-col>
+    <el-col :md="12">
+      <el-form-group label="Risk Owner">
+        <el-input
+          v-model="form.risk_owner"
+          placeholder="State the Risk owner"
+          type="text"
+          style="width: 100%"
+        />
+      </el-form-group>
+    </el-col>
+    <!-- submit and reset -->
+    <el-col :md="12">
+      <el-button
+        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+        type="submit"
+        variant="primary"
+        class="mr-1"
+        @click="update()"
+      >
+        Update
+      </el-button>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
-import {
-  BSidebar, BRow, BCol, BFormGroup, BButton,
-} from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    BSidebar,
-    BRow,
-    BCol,
-    BFormGroup,
-    BButton,
-  },
-  directives: {
-    Ripple,
-  },
+  components: {},
   model: {
     prop: 'isCreateRiskSidebarActive',
-    event: 'update:is-create-risk-sidebar-active',
+    event: 'update:is-create-risk-sidebar-active'
   },
   props: {
     isCreateRiskSidebarActive: {
       type: Boolean,
-      required: true,
+      required: true
     },
     selectedRisk: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
     // registeredRisks: {
     //   type: Array,
     //   required: true,
@@ -177,11 +106,11 @@ export default {
         vunerability_description: '',
         threat_impact_description: '',
         existing_controls: '',
-        risk_owner: '',
+        risk_owner: ''
       },
       business_units: [],
       loading: false,
-      risk_types: ['Financial', 'Legal, Compliance & Regulatory', 'Operational', 'Strategic'],
+      risk_types: ['Financial', 'Legal, Compliance & Regulatory', 'Operational', 'Strategic']
     }
   },
   created() {
@@ -189,26 +118,24 @@ export default {
   },
   methods: {
     update() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const saveRisksResource = new Resource('update-risk-register')
-      saveRisksResource.update(app.form.id, app.form)
+      saveRisksResource
+        .update(this.form.id, this.form)
         .then(() => {
-          app.loading = false
-          // app.$message('Action Successful')
-          app.$notify({
-            title: 'Action Successful',
+          this.loading = false
+          // this.$message('Action Successful')
+          this.$notify({
+            title: 'Action Successful'
           })
-          app.$emit('update')
-          // app.$emit('update:is-create-risk-sidebar-active', false)
-        }).catch(error => {
-          app.loading = false
-          app.$message(error.response.data.error)
+          this.$emit('update')
+          // this.$emit('update:is-create-risk-sidebar-active', false)
         })
-    },
-  },
+        .catch((error) => {
+          this.loading = false
+          this.$message(error.response.data.error)
+        })
+    }
+  }
 }
 </script>
-    <style lang="scss" scoped>
-    @import '~@core/scss/base/bootstrap-extended/include';
-    </style>

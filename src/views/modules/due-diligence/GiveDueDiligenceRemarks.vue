@@ -12,73 +12,50 @@
       @change="(val) => $emit('update:is-create-standard-sidebar-active', val)"
     >
       <template #default="{ hide }">
-        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
-          <h5
-            v-if="isAdmin"
-            class="mb-0"
-          >
-            Fill the fields as applicable
-          </h5>
-          <h5
-            v-else
-            class="mb-0"
-          >
-            Consultant's Remarks
-          </h5>
+        <div
+          class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1"
+        >
+          <h5 v-if="isAdmin" class="mb-0"> Fill the fields as applicable </h5>
+          <h5 v-else class="mb-0"> Consultant's Remarks </h5>
           <div>
-            <b-button
-              variant="gradient-danger"
-              class="btn-icon"
-              @click="hide"
-            >
-              <feather-icon
-                icon="XIcon"
-              />
+            <b-button variant="gradient-danger" class="btn-icon" @click="hide">
+              <feather-icon icon="XIcon" />
             </b-button>
           </div>
         </div>
-        <div
-          v-if="isAdmin"
-          class="justify-content-between align-items-center px-2 py-1"
-        >
+        <div v-if="isAdmin" class="justify-content-between align-items-center px-2 py-1">
           <b-row v-loading="loading">
             <b-col cols="12">
               <label>Observations</label>
-              <b-form-group
-                label-for="v-findings"
-              >
+              <b-form-group label-for="v-findings">
                 <el-input
                   v-model="form.observation"
                   type="textarea"
                   placeholder="State your findings..."
-                  style="width: 100%;"
+                  style="width: 100%"
                   @blur="saveRemark('observation')"
                 />
               </b-form-group>
             </b-col>
             <b-col cols="12">
               <label>Recommendations</label>
-              <b-form-group
-                label-for="v-recommendations"
-              >
+              <b-form-group label-for="v-recommendations">
                 <el-input
                   v-model="form.recommendations"
                   type="textarea"
                   placeholder="State your recommendations..."
-                  style="width: 100%;"
+                  style="width: 100%"
                   @blur="saveRemark('recommendations')"
                 />
               </b-form-group>
             </b-col>
             <b-col cols="12">
               <label>Risk Score</label>
-              <b-form-group
-                label-for="v-risk_score"
-              >
+              <b-form-group label-for="v-risk_score">
                 <el-select
                   v-model="form.risk_score"
                   placeholder="Select Risk Score"
-                  style="width: 100%;"
+                  style="width: 100%"
                   @input="saveRemark('risk_score')"
                 >
                   <el-option
@@ -92,13 +69,11 @@
             </b-col>
             <b-col cols="12">
               <label>Impact</label>
-              <b-form-group
-                label-for="v-impact"
-              >
+              <b-form-group label-for="v-impact">
                 <el-input
                   v-model="form.impact"
                   placeholder="State Impact"
-                  style="width: 100%;"
+                  style="width: 100%"
                   @blur="saveRemark('impact')"
                 />
                 <!-- <el-select
@@ -117,27 +92,15 @@
               </b-form-group>
             </b-col>
             <!-- submit and reset -->
-            <b-col
-              cols="12"
-            >
-              <b-button
-                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                type="submit"
-                variant="primary"
-                class="mr-1"
-                @click="$emit('reload')"
-              >
+            <b-col cols="12">
+              <b-button type="submit" variant="primary" class="mr-1" @click="$emit('reload')">
                 Submit
               </b-button>
             </b-col>
           </b-row>
         </div>
-        <div
-          v-else
-          class="justify-content-between align-items-center px-2 py-1"
-        >
+        <div v-else class="justify-content-between align-items-center px-2 py-1">
           <b-row v-loading="loading">
-
             <b-col cols="12">
               <label>Observation</label>
               <p>{{ form.observation }}</p>
@@ -162,40 +125,26 @@
 </template>
 
 <script>
-import {
-  BSidebar, BRow, BCol, BFormGroup, BButton,
-} from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    BSidebar,
-    BRow,
-    BCol,
-    BFormGroup,
-    BButton,
-  },
-  directives: {
-    Ripple,
-  },
   model: {
     prop: 'isCreateStandardSidebarActive',
-    event: 'update:is-create-standard-sidebar-active',
+    event: 'update:is-create-standard-sidebar-active'
   },
   props: {
     isCreateStandardSidebarActive: {
       type: Boolean,
-      required: true,
+      required: true
     },
     answer: {
       type: Object,
-      required: true,
+      required: true
     },
     isAdmin: {
       type: Boolean,
-      default: () => false,
-    },
+      default: () => false
+    }
   },
   data() {
     return {
@@ -205,16 +154,16 @@ export default {
         findings: '',
         recommendations: '',
         status: '',
-        remark: '',
+        remark: ''
       },
       loading: false,
       risk_scores: [
         { value: 1, label: '1-Low' },
         { value: 2, label: '2-Medium' },
-        { value: 3, label: '3-High' },
+        { value: 3, label: '3-High' }
       ],
       statuses: ['Open', 'Work In Progress', 'Closed'],
-      selectedConsulting: {},
+      selectedConsulting: {}
     }
   },
   created() {
@@ -222,17 +171,12 @@ export default {
   },
   methods: {
     saveRemark(field) {
-      const app = this
-      const { form } = app
+      const { form } = this
       // console.log(answer[field])
       const param = { answer: form[field], field }
       const fetchConsultingsResource = new Resource('due-diligence/answers/update')
-      fetchConsultingsResource.update(form.id, param)
-        .then(() => {})
-    },
-  },
+      fetchConsultingsResource.update(form.id, param).then(() => {})
+    }
+  }
 }
 </script>
-<style lang="scss" scoped>
-@import '~@core/scss/base/bootstrap-extended/include';
-</style>

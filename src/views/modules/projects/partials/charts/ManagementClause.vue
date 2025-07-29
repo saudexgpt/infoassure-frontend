@@ -7,13 +7,12 @@
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-  },
+  components: {},
   props: {
     selectedProject: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
@@ -21,64 +20,64 @@ export default {
         chart: {
           type: 'column',
           options3d: {
-            enabled: true,
-          },
+            enabled: true
+          }
         },
         title: {
           text: 'Management Clause',
-          align: 'center',
+          align: 'center'
         },
         subtitle: {
-          text: '',
+          text: ''
         },
         plotOptions: {
           column: {
-            stacking: 'normal',
-          },
+            stacking: 'normal'
+          }
         },
         xAxis: {
-          categories: [],
+          categories: []
         },
         yAxis: {
           allowDecimals: false,
           min: 0,
           title: {
-            text: 'Scale',
+            text: 'Scale'
           },
           stackLabels: {
-            enabled: true,
-          },
+            enabled: true
+          }
         },
         series: [],
         credits: {
-          enabled: false,
-        },
-      },
+          enabled: false
+        }
+      }
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
-    },
+    }
   },
   created() {
     this.fetchReportSummary()
   },
   methods: {
     fetchReportSummary() {
-      const app = this
-      app.loading = true
-      const param = { project_id: app.selectedProject.id, client_id: app.selectedProject.client_id }
+      this.loading = true
+      const param = {
+        project_id: this.selectedProject.id,
+        client_id: this.selectedProject.client_id
+      }
       const fetchConsultingsResource = new Resource('reports/clause-report')
-      fetchConsultingsResource.list(param)
-        .then(response => {
-          app.chart_report.series = response.series
-          app.chart_report.xAxis.categories = response.categories
-          app.chart_report.subtitle.text = response.subtitle
-          app.loading = false
-        })
-    },
-  },
-
+      fetchConsultingsResource.list(param).then((response) => {
+        this.chart_report.series = response.series
+        this.chart_report.xAxis.categories = response.categories
+        this.chart_report.subtitle.text = response.subtitle
+        this.loading = false
+      })
+    }
+  }
 }
 </script>

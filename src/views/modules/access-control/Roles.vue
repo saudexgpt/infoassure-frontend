@@ -1,39 +1,29 @@
 <template>
   <el-card>
-    <div slot="header">
-      <b-row>
-        <b-col
-          cols="6"
-        >
-          <h4>Available Roles</h4>
-        </b-col>
-        <b-col
-          cols="6"
-        >
-          <span class="pull-right">
-            <b-button
-              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="gradient-primary"
-              @click="isCreateRoleSidebarActive = true"
-            >
-              <feather-icon
-                icon="FilePlusIcon"
-                class="mr-50"
-              />
-              <span class="align-middle">Create Role</span>
-            </b-button>
-          </span>
-        </b-col>
-      </b-row>
-    </div>
+    <template v-slot:header>
+      <div>
+        <el-row>
+          <el-col cols="6">
+            <h4>Available Roles</h4>
+          </el-col>
+          <el-col cols="6">
+            <span class="pull-right">
+              <el-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="gradient-primary"
+                @click="isCreateRoleSidebarActive = true"
+              >
+                <feather-icon icon="FilePlusIcon" class="mr-50" />
+                <span class="align-middle">Create Role</span>
+              </el-button>
+            </span>
+          </el-col>
+        </el-row>
+      </div>
+    </template>
     <aside>
       <el-row :gutter="5">
-        <el-col
-          :lg="12"
-          :md="12"
-          :sm="12"
-          :xs="12"
-        >
+        <el-col :lg="12" :md="12" :sm="12" :xs="12">
           <small>Select Role</small>
           <el-select
             v-model="selected_role_index"
@@ -53,16 +43,11 @@
               :key="index"
               :value="index"
               :label="role.display_name"
-              :disabled="role.name ==='super'"
+              :disabled="role.name === 'super'"
             />
           </el-select>
         </el-col>
-        <el-col
-          :lg="12"
-          :md="12"
-          :sm="12"
-          :xs="12"
-        >
+        <el-col :lg="12" :md="12" :sm="12" :xs="12">
           <small>Select relevant permissions to assign to selected role</small>
           <el-select
             v-model="new_permissions"
@@ -84,49 +69,38 @@
     </aside>
     <!-- table -->
 
-    <v-client-table
-      v-model="roles"
-      v-loading="loading"
-      :columns="columns"
-      :options="options"
-    >
-      <div
-        slot="assigned_permissions"
-        slot-scope="props"
-      >
-        <span
-          v-for="(permission, perm_index) in props.row.permissions"
-          :key="perm_index"
-        >
-          <el-tag>{{ perm_index + 1 + ') ' + permission.display_name }}</el-tag>&nbsp;
-        </span>
-      </div>
-      <div
-        slot="action"
-        slot-scope="props"
-      >
-        <template v-if="school">
-
-          <b-button
-            v-if="school.id === props.row.school_id"
-            variant="gradient-warning"
-            class="btn-icon rounded-circle"
-            @click="editThisRow(props.row)"
-          >
-            <feather-icon icon="EditIcon" />
-          </b-button>
-        </template>
-        <template v-else>
-
-          <b-button
-            variant="gradient-warning"
-            class="btn-icon rounded-circle"
-            @click="editThisRow(props.row)"
-          >
-            <feather-icon icon="EditIcon" />
-          </b-button>
-        </template>
-      </div>
+    <v-client-table :data="roles" v-loading="loading" :columns="columns" :options="options">
+      <template v-slot:assigned_permissions="props">
+        <div>
+          <span v-for="(permission, perm_index) in props.row.permissions" :key="perm_index">
+            <el-tag>{{ perm_index + 1 + ') ' + permission.display_name }}</el-tag
+            >&nbsp;
+          </span>
+        </div>
+      </template>
+      <template v-slot:action="props">
+        <div>
+          <template v-if="school">
+            <el-button
+              v-if="school.id === props.row.school_id"
+              variant="gradient-warning"
+              class="btn-icon rounded-circle"
+              @click="editThisRow(props.row)"
+            >
+              <feather-icon icon="EditIcon" />
+            </el-button>
+          </template>
+          <template v-else>
+            <el-button
+              variant="gradient-warning"
+              class="btn-icon rounded-circle"
+              @click="editThisRow(props.row)"
+            >
+              <feather-icon icon="EditIcon" />
+            </el-button>
+          </template>
+        </div>
+      </template>
     </v-client-table>
     <create-role
       v-if="isCreateRoleSidebarActive"
@@ -143,11 +117,6 @@
 </template>
 
 <script>
-import {
-  BButton, BRow, BCol,
-} from 'bootstrap-vue'
-// import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import CreateRole from './partials/AddRole.vue'
 import EditRole from './partials/EditRole.vue'
@@ -156,17 +125,7 @@ export default {
   components: {
     // VueGoodTable,
     CreateRole,
-    EditRole,
-    BButton,
-    // BPagination,
-    // BFormGroup,
-    // BFormInput,
-    // BFormSelect,
-    BRow,
-    BCol,
-  },
-  directives: {
-    Ripple,
+    EditRole
   },
   data() {
     return {
@@ -180,14 +139,14 @@ export default {
         'display_name',
         'description',
         'assigned_permissions',
-        'action',
+        'action'
       ],
 
       options: {
         headings: {
           display_name: 'Role',
           assigned_permissions: 'Assigned Permissions',
-          action: '',
+          action: ''
 
           // id: 'S/N',
         },
@@ -198,19 +157,19 @@ export default {
         perPage: 10,
         // filterByColumn: true,
         texts: {
-          filter: 'Search:',
+          filter: 'Search:'
         },
         sortable: [
           // 'name',
           'display_name',
-          'description',
+          'description'
         ],
         // filterable: false,
         filterable: [
           // 'name',
           'display_name',
-          'description',
-        ],
+          'description'
+        ]
       },
       roles: [],
       permissions: [],
@@ -219,7 +178,7 @@ export default {
       selected_row_index: '',
       school: '',
       selected_role_index: '',
-      new_permissions: [],
+      new_permissions: []
     }
   },
   created() {
@@ -228,60 +187,48 @@ export default {
   },
   methods: {
     fetchRoles() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const fetchCurriculumSetupResource = new Resource('acl/roles/index')
-      fetchCurriculumSetupResource.list()
-        .then(response => {
-          app.roles = response.roles
-          app.school = response.school
-          app.loading = false
-        })
+      fetchCurriculumSetupResource.list().then((response) => {
+        this.roles = response.roles
+        this.school = response.school
+        this.loading = false
+      })
     },
     fetchPermissions() {
-      const app = this
       const fetchCurriculumSetupResource = new Resource('acl/permissions/index')
-      fetchCurriculumSetupResource.list()
-        .then(response => {
-          app.permissions = response.permissions
-        })
+      fetchCurriculumSetupResource.list().then((response) => {
+        this.permissions = response.permissions
+      })
     },
     updateTable(roles) {
-      const app = this
-      app.roles = roles
+      this.roles = roles
     },
     editThisRow(selectedRow) {
       // console.log(props)
-      const app = this
+
       // const editableRow = selected_row;
-      app.editable_row = selectedRow
-      app.isEditRoleSidebarActive = true
+      this.editable_row = selectedRow
+      this.isEditRoleSidebarActive = true
     },
     updateEditedTableRow() {
-      const app = this
-      app.fetchRoles()
+      this.fetchRoles()
     },
     setPermissions() {
-      const app = this
-      const roleIndex = app.selected_role_index
-      const rolePermissions = app.roles[roleIndex].permissions
-      rolePermissions.forEach(permission => {
-        app.new_permissions.push(permission.id)
+      const roleIndex = this.selected_role_index
+      const rolePermissions = this.roles[roleIndex].permissions
+      rolePermissions.forEach((permission) => {
+        this.new_permissions.push(permission.id)
       })
     },
     assignPermissions() {
-      const app = this
-      const roleId = app.roles[app.selected_role_index].id
+      const roleId = this.roles[this.selected_role_index].id
       const fetchCurriculumSetupResource = new Resource('acl/permissions/assign-role')
-      const param = { role_id: roleId, permissions: app.new_permissions }
-      fetchCurriculumSetupResource.store(param)
-        .then(response => {
-          app.roles[app.selected_role_index].permissions = response.permissions
-        })
-    },
-  },
+      const param = { role_id: roleId, permissions: this.new_permissions }
+      fetchCurriculumSetupResource.store(param).then((response) => {
+        this.roles[this.selected_role_index].permissions = response.permissions
+      })
+    }
+  }
 }
 </script>
-<style lang="scss" >
-@import '@core/scss/vue/libs/vue-good-table.scss';
-</style>

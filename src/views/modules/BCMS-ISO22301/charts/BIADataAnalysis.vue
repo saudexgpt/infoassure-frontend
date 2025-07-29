@@ -1,18 +1,12 @@
 <template>
-  <div
-    style="min-height: 200px"
-  >
+  <div style="min-height: 200px">
     <el-row :gutter="10">
-      <el-col
-        :xs="24"
-        :sm="12"
-        :md="12"
-      >
+      <el-col :xs="24" :sm="12" :md="12">
         <aside>
           <el-select
             v-model="business_unit_id"
             placeholder="Select Business Unit"
-            style="width: 100%;"
+            style="width: 100%"
             filterable
             @input="fetchReportSummary()"
           >
@@ -26,44 +20,30 @@
         </aside>
       </el-col>
     </el-row>
-    <b-row
-      v-if="business_unit_id !== null"
-      v-loading="loading"
-      class="match-height"
-    >
-      <b-col lg="8">
+    <el-row v-if="business_unit_id !== null" v-loading="loading" class="match-height">
+      <el-col lg="8">
         <aside>
-          <highcharts
-            :options="chart_report"
-          />
+          <highcharts :options="chart_report" />
         </aside>
-      </b-col>
-      <b-col lg="4">
+      </el-col>
+      <el-col lg="4">
         <aside>
-          <highcharts
-            :options="riskSeverityChart"
-          />
+          <highcharts :options="riskSeverityChart" />
         </aside>
-      </b-col>
-    </b-row>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
-import {
-  BRow, BCol,
-} from 'bootstrap-vue'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    BRow,
-    BCol,
-  },
+  components: {},
   props: {
     selectedClient: {
       type: Object,
-      default: () => (null),
-    },
+      default: () => null
+    }
   },
   data() {
     return {
@@ -77,74 +57,80 @@ export default {
             alpha: 0,
             beta: 0,
             depth: 100,
-            viewDistance: 25,
+            viewDistance: 25
           },
           events: {
             drilldown(e) {
-              this.setTitle({ text: e.point.name }, { text: 'Data Showing Time-Bound Disruption for each Impact Area' })
+              this.setTitle(
+                { text: e.point.name },
+                { text: 'Data Showing Time-Bound Disruption for each Impact Area' }
+              )
             },
             drillup() {
-              this.setTitle({ text: 'BIA Data Analysis for each Business Process' }, { text: 'Drilldown to view Time-Bound Disruption to Process' })
-            },
-          },
+              this.setTitle(
+                { text: 'BIA Data Analysis for each Business Process' },
+                { text: 'Drilldown to view Time-Bound Disruption to Process' }
+              )
+            }
+          }
         },
         title: {
-          text: 'BIA Data Analysis for each Business Process',
+          text: 'BIA Data Analysis for each Business Process'
         },
         subtitle: {
-          text: 'Drilldown to view Time-Bound Disruption to Process',
+          text: 'Drilldown to view Time-Bound Disruption to Process'
         },
         accessibility: {
           announceNewData: {
-            enabled: true,
-          },
+            enabled: true
+          }
         },
         xAxis: {
           type: 'category', // categories: [],
           labels: {
             skew3d: false,
             style: {
-              fontSize: '14px',
-            },
+              fontSize: '14px'
+            }
           },
           title: {
-            text: 'Business Process',
+            text: 'Business Process'
           },
           scrollbar: {
-            enabled: true,
-          },
+            enabled: true
+          }
         },
         yAxis: {
           min: 0,
           max: 5,
           tickInterval: 1,
           title: {
-            text: 'Impact Level',
-          },
+            text: 'Impact Level'
+          }
         },
         plotOptions: {
-        //   column: {
-        //     pointPadding: 0.2,
-        //     borderWidth: 0,
-        //   },
+          //   column: {
+          //     pointPadding: 0.2,
+          //     borderWidth: 0,
+          //   },
           series: {
             dataLabels: {
-              enabled: false,
+              enabled: false
               // rotation: 180,
-            },
+            }
             // borderRadius: 7,
-          },
+          }
         },
         series: [],
         drilldown: {
           allowPointDrilldown: true,
-          series: [],
+          series: []
         },
 
         // colors: ['#063', '#910000'],
         credits: {
-          enabled: false,
-        },
+          enabled: false
+        }
       },
       riskSeverityChart: {
         chart: {
@@ -152,27 +138,27 @@ export default {
           options3d: {
             enabled: false,
             alpha: 10,
-            beta: 0,
-          },
+            beta: 0
+          }
         },
         title: {
           text: 'Priority Count',
-          align: 'center',
+          align: 'center'
         },
         subtitle: {
-          text: '',
+          text: ''
         },
         tooltip: {
-          pointFormat: '{series.name}:<b>{point.y}</b><br>{point.percentage:.1f}%',
+          pointFormat: '{series.name}:<b>{point.y}</b><br>{point.percentage:.1f}%'
           // pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
         },
         accessibility: {
           announceNewData: {
-            enabled: true,
+            enabled: true
           },
           point: {
             // valueSuffix: '%',
-          },
+          }
         },
         plotOptions: {
           pie: {
@@ -181,31 +167,31 @@ export default {
             depth: 50,
             // innerSize: 100, // what makes it donut
             dataLabels: {
-              enabled: false,
+              enabled: false
               // format: '<b>{point.name}:</b> {point.y}<br>{point.percentage:.1f} %',
               // format: '<b>{point.name}</b>: {point.percentage:.1f} %',
             },
-            showInLegend: true,
-          },
+            showInLegend: true
+          }
         },
         series: [],
         credits: {
-          enabled: false,
-        },
+          enabled: false
+        }
       },
       risk_level: '',
       risk_score: 0,
       showChart: false,
       matrix: '3x3',
       business_units: [],
-      business_unit_id: null,
+      business_unit_id: null
     }
   },
   watch: {
     selectedClient() {
       this.business_unit_id = null
       this.fetchBusinessUnits()
-    },
+    }
   },
   mounted() {
     if (this.selectedClient.id !== null) {
@@ -214,17 +200,20 @@ export default {
   },
   methods: {
     fetchBusinessUnits() {
-      const app = this
-      app.business_unit_id = null
+      this.business_unit_id = null
       const fetchBUResource = new Resource('business-units/fetch-business-units')
-      fetchBUResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.business_units = response.business_units
-          if (app.business_units.length > 0) {
-            app.business_unit_id = app.business_units[0].id
-            app.fetchReportSummary()
+      fetchBUResource
+        .list({ client_id: this.selectedClient.id })
+        .then((response) => {
+          this.business_units = response.business_units
+          if (this.business_units.length > 0) {
+            this.business_unit_id = this.business_units[0].id
+            this.fetchReportSummary()
           }
-        }).catch(() => { app.loading = false })
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     changeImpactImage(str) {
       if (str) {
@@ -233,28 +222,28 @@ export default {
       return 'images/project-icons/no-impact-level.png'
     },
     fetchReportSummary() {
-      const app = this
-      app.loading = true
-      app.showChart = false
-      const param = { client_id: app.selectedClient.id, business_unit_id: app.business_unit_id }
+      this.loading = true
+      this.showChart = false
+      const param = { client_id: this.selectedClient.id, business_unit_id: this.business_unit_id }
       const fetchConsultingsResource = new Resource('reports/bia-data-analysis')
-      fetchConsultingsResource.list(param)
-        .then(response => {
-          app.matrix = response.matrix
-          app.chart_report.series = response.series
-          app.chart_report.drilldown.series = response.drilldown_series
-          // app.chart_report.xAxis.categories = response.categories
-          // app.chart_report.subtitle.text = response.subtitle
-          //  app.chart_report.title.text = response.title
+      fetchConsultingsResource
+        .list(param)
+        .then((response) => {
+          this.matrix = response.matrix
+          this.chart_report.series = response.series
+          this.chart_report.drilldown.series = response.drilldown_series
+          // this.chart_report.xAxis.categories = response.categories
+          // this.chart_report.subtitle.text = response.subtitle
+          //  this.chart_report.title.text = response.title
 
-          app.risk_level = response.risk_level
-          app.risk_score = response.risk_score
-          app.riskSeverityChart.series = response.pie_chart_series
-          app.loading = false
-          app.showChart = true
-        }).catch()
-    },
-  },
-
+          this.risk_level = response.risk_level
+          this.risk_score = response.risk_score
+          this.riskSeverityChart.series = response.pie_chart_series
+          this.loading = false
+          this.showChart = true
+        })
+        .catch()
+    }
+  }
 }
 </script>

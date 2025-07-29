@@ -1,92 +1,53 @@
 <template>
-  <el-card
-    v-loading="loading"
-  >
-    <div slot="header">
-      <span
-        v-if="display === 'details'"
-        class="pull-right"
-      >
-        <el-button
-          type="success"
-          size="mini"
-          @click="display='create'"
-        >
-          Create New
-        </el-button>
-        <el-button
-          type="primary"
-          size="mini"
-          :loading="downloading"
-          @click="display='summary'"
-        >
-          View Summary Sheet
-        </el-button>
-      </span>
-      <span
-        v-if="display==='summary'"
-        class="pull-right"
-      >
-        <el-button
-          type="danger"
-          size="mini"
-          @click="display='details'"
-        >
-          View Details
-        </el-button>
-        <el-button
-          type="primary"
-          size="mini"
-          :loading="downloading"
-          @click="exportToExcel('RoPASheet')"
-        >
-          Export
-        </el-button>
-      </span>
-      <span
-        v-if="display==='create'"
-        class="pull-right"
-      >
-        <el-button
-          type="danger"
-          size="mini"
-          @click="display='details'"
-        >
-          Close Form
-        </el-button>
-      </span>
-      <h3>Records of Processing Activities</h3>
-    </div>
+  <el-card v-loading="loading">
+    <template v-slot:header>
+      <div>
+        <span v-if="display === 'details'" class="pull-right">
+          <el-button type="success" size="mini" @click="display = 'create'"> Create New </el-button>
+          <el-button type="primary" size="mini" :loading="downloading" @click="display = 'summary'">
+            View Summary Sheet
+          </el-button>
+        </span>
+        <span v-if="display === 'summary'" class="pull-right">
+          <el-button type="danger" size="mini" @click="display = 'details'">
+            View Details
+          </el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            :loading="downloading"
+            @click="exportToExcel('RoPASheet')"
+          >
+            Export
+          </el-button>
+        </span>
+        <span v-if="display === 'create'" class="pull-right">
+          <el-button type="danger" size="mini" @click="display = 'details'"> Close Form </el-button>
+        </span>
+        <h3>Records of Processing Activities</h3>
+      </div>
+    </template>
     <div v-if="display === 'details'">
-      <p />
-      <app-collapse
-        accordion
-        type="border"
-      >
-        <app-collapse-item
+      <p></p>
+      <el-collapse accordion type="border">
+        <el-collapse-item
           v-for="(ropa, index) in ropas"
           :key="index"
           :title="`${ropa.business_unit} - ${ropa.controller_name}`"
         >
-
           <edit-ro-p-a
             :selected-data="ropa"
             :countries="countries"
-            @updated="$notify({ title: 'Data Updated'}); fetchRoPA()"
+            @updated="($notify({ title: 'Data Updated' }), fetchRoPA())"
           />
-        </app-collapse-item>
-      </app-collapse>
+        </el-collapse-item>
+      </el-collapse>
     </div>
-    <div v-if="display=== 'summary'">
-      <p />
-      <ro-p-a-table
-        id="RoPASheet"
-        :table-data="ropas"
-      />
+    <div v-if="display === 'summary'">
+      <p></p>
+      <ro-p-a-table id="RoPASheet" :table-data="ropas" />
     </div>
-    <div
-      v-if="display==='create'"
-    >
+    <div v-if="display === 'create'">
       <create-ro-p-a
         :client-id="selectedClient.id"
         :standard-id="standardId"
@@ -96,11 +57,7 @@
   </el-card>
 </template>
 <script>
-import {
-} from 'bootstrap-vue'
-import TableToExcel from '@linways/table-to-excel'
-import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
-import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
+// import TableToExcel from '@linways/table-to-excel'
 import CreateRoPA from './partials/CreateRoPA.vue'
 import EditRoPA from './partials/EditRoPA.vue'
 import RoPATable from './RoPATable.vue'
@@ -108,21 +65,19 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
-    AppCollapse,
-    AppCollapseItem,
     CreateRoPA,
     EditRoPA,
-    RoPATable,
+    RoPATable
   },
   props: {
     selectedClient: {
       type: Object,
-      required: true,
+      required: true
     },
     standardId: {
       type: Number,
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
@@ -130,7 +85,7 @@ export default {
       ropas: [],
       countries: [],
       loading: false,
-      downloading: false,
+      downloading: false
     }
   },
   created() {
@@ -139,45 +94,46 @@ export default {
   },
   methods: {
     fetchCountries() {
-      const app = this
       const countriesResources = new Resource('countries')
-      countriesResources.list()
-        .then(response => {
-          app.countries = response.countries
-        }).catch(() => { app.loading = false })
+      countriesResources
+        .list()
+        .then((response) => {
+          this.countries = response.countries
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     fetchRoPA(load = true) {
-      const app = this
-      app.loading = load
-      const clientId = app.selectedClient.id
+      this.loading = load
+      const clientId = this.selectedClient.id
       const ropaResource = new Resource('ropa')
-      ropaResource.list({
-        client_id: clientId,
-      })
-        .then(response => {
-          app.ropas = response.ropas
-          app.loading = false
+      ropaResource
+        .list({
+          client_id: clientId
+        })
+        .then((response) => {
+          this.ropas = response.ropas
+          this.loading = false
         })
     },
     exportToExcel(id) {
-      const app = this
-      app.downloading = true
-      setTimeout(() => {
-        TableToExcel.convert(document.getElementById(id), {
-          name: 'RoPA-Sheet.xlsx',
-          sheet: {
-            name: 'Records of Processing Activities',
-          },
-        })
-      }, 1000)
-
-      setTimeout(() => {
-        app.downloading = false
-      }, 5000)
-    },
+      // this.downloading = true
+      // setTimeout(() => {
+      //   TableToExcel.convert(document.getElementById(id), {
+      //     name: 'RoPA-Sheet.xlsx',
+      //     sheet: {
+      //       name: 'Records of Processing Activities'
+      //     }
+      //   })
+      // }, 1000)
+      // setTimeout(() => {
+      //   this.downloading = false
+      // }, 5000)
+    }
     // exportToExcel(id1, id2) {
-    //   const app = this
-    //   app.downloading = true
+    //
+    //   this.downloading = true
     //   setTimeout(() => {
     //     const table1 = document.getElementById(id1)
     //     const table2 = document.getElementById(id2)
@@ -187,9 +143,9 @@ export default {
     //   }, 1000)
 
     //   setTimeout(() => {
-    //     app.downloading = false
+    //     this.downloading = false
     //   }, 30000)
     // },
-  },
+  }
 }
 </script>

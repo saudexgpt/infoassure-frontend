@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-sidebar
+    <el-sidebar
       id="sidebar-task-handler"
       sidebar-class="sidebar-lg"
       :visible="isEditQuestionSidebarActive"
@@ -12,30 +12,26 @@
       @change="(val) => $emit('update:is-edit-question-sidebar-active', val)"
     >
       <template #default="{ hide }">
-        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
-          <h5 class="mb-0">
-            Edit Question
-          </h5>
+        <div
+          class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1"
+        >
+          <h5 class="mb-0"> Edit Question </h5>
           <div>
-            <b-button
-              variant="gradient-danger"
-              class="btn-icon"
-              @click="hide"
-            >
-              <feather-icon
-                icon="XIcon"
-              />
-            </b-button>
+            <el-button variant="gradient-danger" class="btn-icon" @click="hide">
+              <feather-icon icon="XIcon" />
+            </el-button>
           </div>
         </div>
         <div class="justify-content-between align-items-center px-2 py-1">
-          <b-row v-loading="loading">
-            <b-col cols="12">
-              <b-form-group
-                label="Type Question"
-                label-for="v-question"
-              >
-                <!-- <b-form-textarea
+          <el-row v-loading="loading">
+            <el-col cols="12">
+              <el-form-group label="Domain/Category" label-for="v-domain">
+                <el-input v-model="form.domain" style="width: 100%" placeholder="Input domain" />
+              </el-form-group>
+            </el-col>
+            <el-col cols="12">
+              <el-form-group label="Type Question" label-for="v-question">
+                <!-- <el-form-textarea
                   v-model="form.question"
                   placeholder="Give question for the selected clause here..."
                 /> -->
@@ -46,122 +42,101 @@
                   placeholder="Type questions here..."
                   :config="editorConfig"
                 />
-              </b-form-group>
-            </b-col>
-            <b-col cols="12">
-              <b-form-group
-                label="Needs evidence/reference document upload?"
-                label-for="v-upload_evidence"
-              >
-
+              </el-form-group>
+            </el-col>
+            <el-col cols="12">
+              <el-form-group label="Key/Hint to question for clarity" label-for="v-upload_evidence">
                 <el-input
                   v-model="form.key"
                   style="width: 100%"
                   placeholder="Input question key/insight"
                 />
-              </b-form-group>
-            </b-col>
-            <!-- submit and reset -->
-            <b-col cols="12">
-              <b-button
-                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                type="submit"
-                variant="primary"
-                class="mr-1"
-                @click="update()"
+              </el-form-group>
+            </el-col>
+            <el-col cols="12">
+              <el-form-group label="Answer Type">
+                <el-select v-model="form.answer_type" style="width: 100%">
+                  <el-option value="open_ended" label="Open Ended" />
+                  <el-option value="yes-no" label="Yes/No Response" />
+                  <el-option value="both" label="Both" />
+                </el-select>
+              </el-form-group>
+            </el-col>
+            <el-col cols="12">
+              <el-form-group
+                label="Does question need evidence/reference document upload?"
+                label-for="v-upload_evidence"
               >
+                <el-switch
+                  v-model="form.upload_evidence"
+                  style="display: block"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  active-text="Yes"
+                  inactive-text="No"
+                  :active-value="1"
+                  :inactive-value="0"
+                />
+              </el-form-group>
+            </el-col>
+            <!-- submit and reset -->
+            <el-col cols="12">
+              <el-button type="submit" variant="primary" class="mr-1" @click="update()">
                 Update
-              </b-button>
-            </b-col>
-          </b-row>
+              </el-button>
+            </el-col>
+          </el-row>
         </div>
       </template>
-    </b-sidebar>
+    </el-sidebar>
   </div>
 </template>
 
 <script>
-import {
-  BSidebar, BRow, BCol, BFormGroup, BButton,
-} from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    // BFormTextarea,
-    BSidebar,
-    BRow,
-    BCol,
-    BFormGroup,
-    BButton,
-  },
-  directives: {
-    Ripple,
-  },
   model: {
     prop: 'isEditQuestionSidebarActive',
-    event: 'update:is-edit-question-sidebar-active',
+    event: 'update:is-edit-question-sidebar-active'
   },
   props: {
     isEditQuestionSidebarActive: {
       type: Boolean,
-      required: true,
+      required: true
     },
     selectedQuestion: {
       type: Object,
-      default: () => (null),
-    },
-    standards: {
-      type: Array,
-      required: true,
-    },
+      default: () => null
+    }
   },
   data() {
     return {
       form: {
         question: '',
-        key: '',
+        key: ''
       },
-      selectedStandard: {},
       clauses: [],
       loading: false,
       error: false,
-      error_message: '',
-      editor: ClassicEditor,
-      editorConfig: {
-        // The configuration of the editor.
-      },
+      error_message: ''
     }
   },
   created() {
     this.form = this.selectedQuestion
-    const index = this.standards.map(object => object.id).indexOf(this.form.standard_id)
-    this.selectedStandard = this.standards[index]
-    this.setQuestion()
   },
   methods: {
-    setQuestion() {
-      const app = this
-      app.form.standard_id = app.selectedStandard.id
-      app.clauses = app.selectedStandard.clauses
-    },
     update() {
-      const app = this
-      app.loading = true
-      const updateCurriculumSetupResource = new Resource('due-diligence/questions/update')
-      const param = app.form
-      updateCurriculumSetupResource.update(param.id, param)
-        .then(response => {
-          app.loading = false
-          app.$emit('update', response)
-          app.$emit('update:is-edit-question-sidebar-active', false)
-        })
-    },
-  },
+      this.loading = true
+      const updateQuestionResource = new Resource('vdd/questions/update-default-question')
+      const param = this.form
+      updateQuestionResource.update(param.id, param).then((response) => {
+        this.loading = false
+        this.$message('Update Successful')
+        this.$emit('update', response)
+        this.$emit('update:is-edit-question-sidebar-active', false)
+      })
+    }
+  }
 }
 </script>
-<style lang="scss" scoped>
-@import '~@core/scss/base/bootstrap-extended/include';
-</style>

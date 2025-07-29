@@ -32,7 +32,7 @@
         </el-select>
       </el-col>
     </el-row>
-    <br>
+    <br />
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -43,10 +43,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(detail, index) in details"
-          :key="index"
-        >
+        <tr v-for="(detail, index) in details" :key="index">
           <td>
             <span>
               <el-button
@@ -66,11 +63,7 @@
             </span>
           </td>
           <td>
-            <el-input
-              v-model="detail.task"
-              placeholder="Enter Task"
-              type="text"
-            />
+            <el-input v-model="detail.task" placeholder="Enter Task" type="text" />
           </td>
           <td>
             <el-input
@@ -80,32 +73,20 @@
             />
           </td>
           <td>
-            <el-input
-              v-model="detail.resource"
-              placeholder="Enter Resource"
-              type="text"
-            />
+            <el-input v-model="detail.resource" placeholder="Enter Resource" type="text" />
           </td>
         </tr>
         <tr v-if="fill_fields_error">
           <td colspan="4">
-            <label
-              class="label label-danger"
-            >Please fill all empty fields before adding another row</label>
+            <label class="label label-danger"
+              >Please fill all empty fields before adding another row</label
+            >
           </td>
         </tr>
         <tr v-if="!isRowEmpty()">
-          <td colspan="3">
-            &nbsp;
-          </td>
+          <td colspan="3"> &nbsp; </td>
           <td>
-            <el-button
-              round
-              type="success"
-              @click="submit()"
-            >
-              Submit
-            </el-button>
+            <el-button round type="success" @click="submit()"> Submit </el-button>
           </td>
         </tr>
       </tbody>
@@ -116,13 +97,12 @@
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-  },
+  components: {},
   props: {
     standards: {
       type: Array,
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
@@ -135,9 +115,9 @@ export default {
       rowIndex: '',
       form: {
         project_phase_id: '',
-        standard_id: '',
+        standard_id: ''
       },
-      project_phases: [],
+      project_phases: []
     }
   },
   created() {
@@ -145,20 +125,16 @@ export default {
   },
   methods: {
     fetchProjectPhases() {
-      const app = this
-      app.loadProjectPhase = true
+      this.loadProjectPhase = true
       const fetchProjectsResource = new Resource('project-plans/fetch-project-phases')
-      fetchProjectsResource.list({ standard_id: app.form.standard_id })
-        .then(response => {
-          app.loadProjectPhase = false
-          app.project_phases = response.project_phases
-        })
+      fetchProjectsResource.list({ standard_id: this.form.standard_id }).then((response) => {
+        this.loadProjectPhase = false
+        this.project_phases = response.project_phases
+      })
     },
     isRowEmpty() {
       const checkEmptyLines = this.details.filter(
-        detail => detail.task === ''
-          || detail.responsibility === ''
-          || detail.resource === '',
+        (detail) => detail.task === '' || detail.responsibility === '' || detail.resource === ''
         // detail.rep_coordinate === ''
       )
       if (checkEmptyLines.length > 0) {
@@ -175,7 +151,7 @@ export default {
         this.details.push({
           task: '',
           responsibility: '',
-          resource: '',
+          resource: ''
         })
       }
     },
@@ -186,46 +162,52 @@ export default {
       }
     },
     submit() {
-      const app = this
-      app.$confirm('Are you sure you want to submit these entries?', 'Warning', {
+      this.$confirm('Are you sure you want to submit these entries?', 'Warning', {
         confirmButtonText: 'Yes Submit',
         cancelButtonText: 'Cancel',
-        type: 'warning',
-      }).then(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: 'Sending...',
-        // });
-        app.load = true
-        if (app.details.length > 0) {
-          const { form } = app
-          form.details = app.details
-          const submitResource = new Resource('project-plans/store-gen-project-plans')
-          submitResource.store(form).then(() => {
-            this.$message({
-              type: 'success',
-              message: 'Action Successful',
-            })
-            app.details = [{
-              task: '',
-              responsibility: '',
-              resource: '',
-            }]
-            app.form.project_phase_id = ''
-            app.load = false
-          }).catch(() => {
-            this.$message({
-              type: 'danger',
-              message: 'An error Occured',
-            })
-            app.load = false
-          })
-        }
-        // app.loadForm = false;
-      }).catch(() => {
-        app.load = false
+        type: 'warning'
       })
-    },
-  },
+        .then(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: 'Sending...',
+          // });
+          this.load = true
+          if (this.details.length > 0) {
+            const { form } = app
+            form.details = this.details
+            const submitResource = new Resource('project-plans/store-gen-project-plans')
+            submitResource
+              .store(form)
+              .then(() => {
+                this.$message({
+                  type: 'success',
+                  message: 'Action Successful'
+                })
+                this.details = [
+                  {
+                    task: '',
+                    responsibility: '',
+                    resource: ''
+                  }
+                ]
+                this.form.project_phase_id = ''
+                this.load = false
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'danger',
+                  message: 'An error Occured'
+                })
+                this.load = false
+              })
+          }
+          // this.loadForm = false;
+        })
+        .catch(() => {
+          this.load = false
+        })
+    }
+  }
 }
 </script>

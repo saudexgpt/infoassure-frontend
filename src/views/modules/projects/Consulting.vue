@@ -1,99 +1,73 @@
 <template>
   <el-card>
-
     <div v-if="showManageProject">
-      <div slot="header">
-        <b-row>
-          <b-col
-            cols="6"
-          >
+      <div>
+        <el-row>
+          <el-col cols="6">
             <h4>Manage {{ selected_project.standard.name }}</h4>
-          </b-col>
-          <b-col
-            cols="6"
-          >
+          </el-col>
+          <el-col cols="6">
             <span class="pull-right">
-              <b-button
+              <el-button
                 v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                 variant="gradient-danger"
                 size="sm"
                 @click="showManageProject = false"
               >
-                <feather-icon
-                  icon="ArrowLeftIcon"
-                  class="mr-50"
-                />
+                <icon icon="ArrowLeftIcon" class="mr-50" />
                 <span class="align-middle">Back</span>
-              </b-button>
+              </el-button>
             </span>
-          </b-col>
-          <hr>
-        </b-row>
+          </el-col>
+          <hr />
+        </el-row>
       </div>
-      <client-project-details
-        :selected-project="selected_project"
-      />
+      <client-project-details :selected-project="selected_project" />
     </div>
     <div v-else>
-      <div slot="header">
-        <b-row>
-          <b-col
-            cols="6"
-          >
+      <div>
+        <el-row>
+          <el-col cols="6">
             <h4>{{ consulting.name }}</h4>
-          </b-col>
-          <b-col
-            cols="6"
-          >
+          </el-col>
+          <el-col cols="6">
             <span class="pull-right">
-              <b-button
+              <el-button
                 v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                 variant="gradient-primary"
                 size="sm"
                 @click="isCreateConsultingSidebarActive = true"
               >
-                <feather-icon
-                  icon="PlusIcon"
-                  class="mr-50"
-                />
+                <icon icon="PlusIcon" class="mr-50" />
                 <span class="align-middle">Create</span>
-              </b-button>
+              </el-button>
             </span>
-          </b-col>
-        </b-row>
+          </el-col>
+        </el-row>
       </div>
       <!-- table -->
 
-      <v-client-table
-        v-model="projects"
-        v-loading="loading"
-        :columns="columns"
-        :options="options"
-      >
-        <div
-          slot="action"
-          slot-scope="props"
-        >
-          <el-tooltip
-            :content="`Manage ${props.row.standard.name}`"
-            placement="top"
-          >
-            <b-button
-              variant="gradient-danger"
-              class="btn-icon rounded-circle"
-              @click="manageProject(props.row)"
-            >
-              <feather-icon icon="SettingsIcon" />
-            </b-button>
-          </el-tooltip>
-        <!-- <b-button
+      <v-client-table v-model="projects" v-loading="loading" :columns="columns" :options="options">
+        <template v-slot:action="props">
+          <div>
+            <el-tooltip :content="`Manage ${props.row.standard.name}`" placement="top">
+              <el-button
+                variant="gradient-danger"
+                class="btn-icon rounded-circle"
+                @click="manageProject(props.row)"
+              >
+                <icon icon="SettingsIcon" />
+              </el-button>
+            </el-tooltip>
+            <!-- <el-button
           variant="gradient-danger"
           class="btn-icon rounded-circle"
           @click="destroyRow(props.row)"
         >
-          <feather-icon icon="TrashIcon" />
-        </b-button> -->
-        </div>
+          <icon icon="TrashIcon" />
+        </el-button> -->
+          </div>
+        </template>
       </v-client-table>
       <add-project
         v-if="isCreateConsultingSidebarActive"
@@ -107,11 +81,6 @@
 </template>
 
 <script>
-import {
-  BButton, BRow, BCol,
-} from 'bootstrap-vue'
-// import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 import AddProject from './partials/AddProject.vue'
 import ClientProjectDetails from './partials/ClientProjectDetails.vue'
@@ -119,19 +88,13 @@ import ClientProjectDetails from './partials/ClientProjectDetails.vue'
 export default {
   components: {
     AddProject,
-    ClientProjectDetails,
-    BButton,
-    BRow,
-    BCol,
-  },
-  directives: {
-    Ripple,
+    ClientProjectDetails
   },
   props: {
     consulting: {
       type: Object,
-      default: () => ({ id: '', name: '' }),
-    },
+      default: () => ({ id: '', name: '' })
+    }
   },
   data() {
     return {
@@ -139,37 +102,30 @@ export default {
       isCreateConsultingSidebarActive: false,
       pageLength: 10,
       dir: false,
-      columns: [
-        'standard.name',
-        'action',
-      ],
+      columns: ['standard.name', 'action'],
 
       options: {
         headings: {
-          'standard.name': 'Project',
+          'standard.name': 'Project'
         },
         pagination: {
           dropdown: true,
-          chunk: 10,
+          chunk: 10
         },
         perPage: 10,
         filterByColumn: true,
         texts: {
-          filter: 'Search:',
+          filter: 'Search:'
         },
-        sortable: [
-          'standard.name',
-        ],
+        sortable: ['standard.name'],
         // filterable: false,
-        filterable: [
-          'standard.name',
-        ],
+        filterable: ['standard.name']
       },
       projects: [],
       registeredStandardsIds: [],
       searchTerm: '',
       selected_project: '',
-      showManageProject: false,
+      showManageProject: false
     }
   },
   created() {
@@ -177,49 +133,39 @@ export default {
   },
   methods: {
     fetchProjects() {
-      const app = this
-      const { id } = app.consulting
-      app.loading = true
+      const { id } = this.consulting
+      this.loading = true
       const fetchProjectsResource = new Resource('projects')
-      fetchProjectsResource.list({ consulting_id: id })
-        .then(response => {
-          app.projects = response.projects // .data
-          const registeredStandardsIds = []
-          app.projects.forEach(project => {
-            registeredStandardsIds.push(project.standard.id)
-          })
-          app.registeredStandardsIds = registeredStandardsIds
-          app.loading = false
+      fetchProjectsResource.list({ consulting_id: id }).then((response) => {
+        this.projects = response.projects // .data
+        const registeredStandardsIds = []
+        this.projects.forEach((project) => {
+          registeredStandardsIds.push(project.standard.id)
         })
+        this.registeredStandardsIds = registeredStandardsIds
+        this.loading = false
+      })
     },
     updateTable() {
-      const app = this
-      app.fetchProjects()
+      this.fetchProjects()
     },
     manageProject(selectedRow) {
       // console.log(props)
-      const app = this
+
       // const editableRow = selected_row;
-      app.selected_project = selectedRow
-      app.showManageProject = true
+      this.selected_project = selectedRow
+      this.showManageProject = true
     },
     destroyRow(row) {
-      const app = this
-
-      // eslint-disable-next-line no-alert
       if (window.confirm('Are you sure you want to delete this entry?')) {
-        app.loading = true
+        this.loading = true
         const destroyConsultingsResource = new Resource('consultings/destroy')
-        destroyConsultingsResource.destroy(row.id)
-          .then(() => {
-            app.fetchConsultings()
-            app.loading = false
-          })
+        destroyConsultingsResource.destroy(row.id).then(() => {
+          this.fetchConsultings()
+          this.loading = false
+        })
       }
-    },
-  },
+    }
+  }
 }
 </script>
-<style lang="scss" >
-@import '@core/scss/vue/libs/vue-good-table.scss';
-</style>

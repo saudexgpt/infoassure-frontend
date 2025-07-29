@@ -1,12 +1,8 @@
 <template>
   <el-card>
     <div v-if="selectedClient !== ''">
-      <b-tabs
-        content-class="mt-1"
-      >
-        <b-tab
-          lazy
-        >
+      <el-tabs content-class="mt-1">
+        <el-tab lazy>
           <template #title>
             <feather-icon icon="ListIcon" />
             <span>View Assessments</span>
@@ -19,20 +15,15 @@
             :likelihoods="likelihoods"
             :assessment-module="assessmentModule"
           />
-        </b-tab>
-        <b-tab
-          lazy
-        >
+        </el-tab>
+        <el-tab lazy>
           <template #title>
             <feather-icon icon="EyeIcon" />
             <span>Assessment Summary</span>
           </template>
-          <risk-assessment-summary
-            :selected-client="selectedClient"
-            :standard-id="standardId"
-          />
-        </b-tab>
-        <!-- <b-tab
+          <risk-assessment-summary :selected-client="selectedClient" :standard-id="standardId" />
+        </el-tab>
+        <!-- <el-tab
           lazy
         >
           <template #title>
@@ -40,16 +31,13 @@
             <span>Risk Ranking Matrix</span>
           </template>
           <risk-ranking-matrix />
-        </b-tab> -->
-      </b-tabs>
+        </el-tab> -->
+      </el-tabs>
     </div>
   </el-card>
 </template>
 
 <script>
-import {
-  BTabs, BTab,
-} from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
 // import Assessment from './partials/Assessment.vue'
 import ViewRiskAssessment from './ViewRiskAssessment.vue'
@@ -59,26 +47,24 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
-    BTabs,
-    BTab,
     // Assessment,
     ViewRiskAssessment,
     // RiskRankingMatrix,
-    RiskAssessmentSummary,
+    RiskAssessmentSummary
   },
   props: {
     selectedClient: {
       type: Object,
-      required: true,
+      required: true
     },
     standardId: {
       type: Number,
-      required: true,
+      required: true
     },
     assessmentModule: {
       type: String,
-      default: () => ('ra'),
-    },
+      default: () => 'ra'
+    }
   },
   data() {
     return {
@@ -86,7 +72,7 @@ export default {
       impacts: [],
       likelihoods: [],
       risk_assessments: [],
-      loading: false,
+      loading: false
     }
   },
   created() {
@@ -95,48 +81,48 @@ export default {
   methods: {
     checkPermission,
     // fetchRiskAssessments(load = true) {
-    //   const app = this
-    //   app.loading = load
+    //
+    //   this.loading = load
     //   const fetchRiskAssessmentsResource = new Resource('risk-assessment/fetch-risk_assessments')
-    //   fetchRiskAssessmentsResource.list({ client_id: app.selectedClient.id, standard_id: app.standardId })
+    //   fetchRiskAssessmentsResource.list({ client_id: this.selectedClient.id, standard_id: this.standardId })
     //     .then(response => {
-    //       app.risk_assessments = response.risk_assessments
-    //       app.loading = false
-    //     }).catch(() => { app.loading = false })
+    //       this.risk_assessments = response.risk_assessments
+    //       this.loading = false
+    //     }).catch(() => { this.loading = false })
     // },
     setMatrix() {
       this.fetchImpacts()
       this.fetchLikelihoods()
     },
     fetchImpacts() {
-      const app = this
-      app.loading = true
-      const param = { client_id: app.selectedClient.id }
+      this.loading = true
+      const param = { client_id: this.selectedClient.id }
       const fetchEntryResource = new Resource('risk-assessment/fetch-impacts')
-      fetchEntryResource.list(param)
-        .then(response => {
-          app.loading = false
-          app.impacts = response.impacts
+      fetchEntryResource
+        .list(param)
+        .then((response) => {
+          this.loading = false
+          this.impacts = response.impacts
         })
-        .catch(error => {
-          app.loading = false
+        .catch((error) => {
+          this.loading = false
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          this.$message.error(error.response.data.error)
         })
     },
     fetchLikelihoods() {
-      const app = this
-      const param = { client_id: app.selectedClient.id }
+      const param = { client_id: this.selectedClient.id }
       const fetchEntryResource = new Resource('risk-assessment/fetch-likelihoods')
-      fetchEntryResource.list(param)
-        .then(response => {
-          app.likelihoods = response.likelihoods
+      fetchEntryResource
+        .list(param)
+        .then((response) => {
+          this.likelihoods = response.likelihoods
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
+          this.$message.error(error.response.data.error)
         })
-    },
-  },
+    }
+  }
 }
 </script>

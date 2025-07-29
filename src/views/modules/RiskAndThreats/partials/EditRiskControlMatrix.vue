@@ -9,25 +9,20 @@
       step-size="xs"
       finish-button-text="Submit"
       back-button-text="Previous"
-      class="wizard-vertical mb-3"
+      class="wizard-vertical mel-3"
       @on-complete="formSubmitted"
     >
-      <tab-content
-        title="Risk"
-      >
-        <b-row v-if="form.business_unit_id === 0">
-          <b-col md="6">
-            <b-form-group
-              label="Asset Type"
-              label-for="asset_type"
-            >
+      <tael-content title="Risk">
+        <el-row v-if="form.business_unit_id === 0">
+          <el-col md="6">
+            <el-form-group label="Asset Type" label-for="asset_type">
               <el-select
                 v-model="form.asset_type_id"
                 placeholder="Select Asset Type"
                 value-key="id"
                 style="width: 100%"
                 filterable
-                @change="fetchAssets($event);updateField($event, 'asset_type_id', form)"
+                @change="(fetchAssets($event), updateField($event, 'asset_type_id', form))"
               >
                 <el-option
                   v-for="(asset_type, type_index) in asset_types"
@@ -40,13 +35,10 @@
                 style="color: #409EFF"
                 @click="createAssetTypeModal = true"
               > <i class="el-icon-plus" /> Click to add new Asset Type</a> -->
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Asset"
-              label-for="asset"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Asset" label-for="asset">
               <el-select
                 v-model="form.asset_id"
                 placeholder="Select Asset"
@@ -67,18 +59,12 @@
                 style="color: #409EFF"
                 @click="createAssetModal = true"
               > <i class="el-icon-plus" /> Click to add new Asset</a> -->
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col
-            v-if="form.module === 'ndpa'"
-            md="6"
-          >
-            <b-form-group
-              label="Personal Data Item"
-              label-for="asset_name"
-            >
+            </el-form-group>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col v-if="form.module === 'ndpa'" md="6">
+            <el-form-group label="Personal Data Item" label-for="asset_name">
               <input
                 id="asset_name"
                 v-model="form.asset_name"
@@ -86,7 +72,7 @@
                 placeholder="Personal Data Item"
                 disabled
                 @blur="updateField($event.target.value, 'asset_name', form)"
-              >
+              />
               <!-- <el-select
                 v-model="form.business_process_id"
                 placeholder="Select Business process"
@@ -102,19 +88,16 @@
                   :label="business_process.name"
                 />
               </el-select> -->
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Risk Category"
-              label-for="risk_category"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Risk Category" label-for="risk_category">
               <el-select
                 v-model="form.type"
                 placeholder="Risk Category"
                 style="width: 100%"
                 :disabled="form.module === 'ndpa'"
-                @change="setRiskSubCategory($event); updateField($event, 'type', form)"
+                @change="(setRiskSubCategory($event), updateField($event, 'type', form))"
               >
                 <el-option
                   v-for="(risk_type, type_index) in risk_types"
@@ -123,16 +106,10 @@
                   :label="risk_type.name"
                 />
               </el-select>
-            </b-form-group>
-          </b-col>
-          <b-col
-            v-if="form.module !== 'ndpa'"
-            md="6"
-          >
-            <b-form-group
-              label="Risk Sub-Category"
-              label-for="sub_category"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col v-if="form.module !== 'ndpa'" md="6">
+            <el-form-group label="Risk Suel-Category" label-for="sub_category">
               <el-select
                 v-model="form.sub_type"
                 placeholder="Risk Sub Category"
@@ -146,13 +123,10 @@
                   :label="sub_type.name"
                 />
               </el-select>
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Threat (Search Applicable Threat)"
-              label-for="threat"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Threat (Search Applicable Threat)" label-for="threat">
               <el-select
                 v-model="form.threat"
                 filterable
@@ -169,33 +143,27 @@
                   :label="threat.threats"
                 />
               </el-select>
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Risk Owner"
-              label-for="risk_owner"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Risk Owner" label-for="risk_owner">
               <input
                 v-model="form.risk_owner"
                 placeholder="Risk Owner"
                 class="form-control"
                 @blur="updateField($event.target.value, 'risk_owner', form)"
-              >
-            </b-form-group>
-          </b-col>
-          <b-col md="12">
-            <b-form-group
-              label="Vulnerability/Risk Description"
-              label-for="risk_description"
-            >
+              />
+            </el-form-group>
+          </el-col>
+          <el-col md="12">
+            <el-form-group label="Vulnerability/Risk Description" label-for="risk_description">
               <textarea
                 id="risk_description"
                 v-model="form.vulnerability_description"
                 class="form-control"
                 placeholder="Describe Risk"
                 @blur="updateField($event.target.value, 'vulnerability_description', form)"
-              />
+              ></textarea>
               <!-- <ckeditor
                 id="vulnerability_description"
                 v-model="form.vulnerability_description"
@@ -204,10 +172,10 @@
                 placeholder="Describe Risk"
                 @blur="updateField(form.vulnerability_description, 'vulnerability_description', form)"
               /> -->
-            </b-form-group>
-          </b-col>
-          <!-- <b-col md="6">
-            <b-form-group
+            </el-form-group>
+          </el-col>
+          <!-- <el-col md="6">
+            <el-form-group
               label="Impact/Outcome"
               label-for="impact"
             >
@@ -219,49 +187,29 @@
                 placeholder="State the outcome of the risk"
                 @blur="updateField(form.outcome, 'outcome', form)"
               />
-            </b-form-group>
-          </b-col> -->
-        </b-row>
-      </tab-content>
-      <tab-content
-        title="Control"
-      >
-        <b-row>
-
-          <b-col md="6">
-            <b-form-group
-              label="Nature of Control"
-              label-for="nature_of_control"
-            >
+            </el-form-group>
+          </el-col> -->
+        </el-row>
+      </tael-content>
+      <tael-content title="Control">
+        <el-row>
+          <el-col md="6">
+            <el-form-group label="Nature of Control" label-for="nature_of_control">
               <el-select
                 v-model="form.nature_of_control"
                 placeholder="Select"
-                style="width: 100%;"
+                style="width: 100%"
                 @change="updateField($event, 'nature_of_control', form)"
               >
-                <el-option
-                  label="Automated"
-                  value="Automated"
-                />
-                <el-option
-                  label="Hybrid"
-                  value="Hybrid"
-                />
-                <el-option
-                  label="Manual"
-                  value="Manual"
-                />
-                <el-option
-                  label="N/A"
-                  value="N/A"
-                />
+                <el-option label="Automated" value="Automated" />
+                <el-option label="Hybrid" value="Hybrid" />
+                <el-option label="Manual" value="Manual" />
+                <el-option label="N/A" value="N/A" />
               </el-select>
-            </b-form-group>
-          </b-col>
-          <b-col
-            md="6"
-          >
-            <b-form-group
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group
               label="Name the application system used for execution of the control."
               label-for="application_used_for_control"
             >
@@ -270,16 +218,15 @@
                 v-model="form.application_used_for_control"
                 class="form-control"
                 placeholder="Enter application name"
-                :disabled="form.nature_of_control !== 'Automated' && form.nature_of_control !== 'Hybrid'"
+                :disabled="
+                  form.nature_of_control !== 'Automated' && form.nature_of_control !== 'Hybrid'
+                "
                 @blur="updateField($event.target.value, 'application_used_for_control', form)"
-              >
-            </b-form-group>
-          </b-col>
-          <b-col md="12">
-            <b-form-group
-              label="Control Description"
-              label-for="control_description"
-            >
+              />
+            </el-form-group>
+          </el-col>
+          <el-col md="12">
+            <el-form-group label="Control Description" label-for="control_description">
               <ckeditor
                 id="control_description"
                 v-model="form.control_description"
@@ -295,43 +242,28 @@
                 placeholder="Describe Control"
                 @blur="updateField($event.target.value, 'control_description', form)"
               /> -->
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Where is the control performed"
-              label-for="control_location"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Where is the control performed" label-for="control_location">
               <el-select
                 v-model="form.control_location"
                 placeholder="Select Location"
-                style="width: 100%;"
+                style="width: 100%"
                 @change="updateField($event, 'control_location', form)"
               >
-                <el-option
-                  label="Business Unit"
-                  value="Business Unit"
-                />
-                <el-option
-                  label="Centralised"
-                  value="Centralised"
-                />
-                <el-option
-                  label="N/A"
-                  value="N/A"
-                />
+                <el-option label="Business Unit" value="Business Unit" />
+                <el-option label="Centralised" value="Centralised" />
+                <el-option label="N/A" value="N/A" />
               </el-select>
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Control Frequency"
-              label-for="frequency"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Control Frequency" label-for="frequency">
               <el-select
                 v-model="form.control_frequency"
                 placeholder="Select Frequency"
-                style="width: 100%;"
+                style="width: 100%"
                 @change="updateField($event, 'control_frequency', form)"
               >
                 <el-option
@@ -341,87 +273,59 @@
                   :label="frequency"
                 />
               </el-select>
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Control Owner"
-              label-for="control_owner"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Control Owner" label-for="control_owner">
               <input
                 id="email"
                 v-model="form.control_owner"
                 placeholder="Control Owner"
                 class="form-control"
                 @blur="updateField($event.target.value, 'control_owner', form)"
-              >
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Control Type"
-              label-for="control_type"
-            >
+              />
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Control Type" label-for="control_type">
               <el-select
                 v-model="form.control_type"
                 placeholder="Select Type"
-                style="width: 100%;"
+                style="width: 100%"
                 @change="updateField($event, 'control_type', form)"
               >
-                <el-option
-                  label="Preventive"
-                  value="Preventive"
-                />
-                <el-option
-                  label="Detective"
-                  value="Detective"
-                />
-                <el-option
-                  label="N/A"
-                  value="N/A"
-                />
+                <el-option label="Preventive" value="Preventive" />
+                <el-option label="Detective" value="Detective" />
+                <el-option label="N/A" value="N/A" />
               </el-select>
-            </b-form-group>
-          </b-col>
-          <b-col
-            md="6"
-          >
-            <b-form-group
-              label="Any Compensating control?"
-              label-for="compensating_control"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Any Compensating control?" label-for="compensating_control">
               <textarea
                 v-model="form.compensating_control"
                 class="form-control"
                 placeholder="Enter Compensating control"
                 @blur="updateField($event.target.value, 'compensating_control', form)"
-              />
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </tab-content>
-      <tab-content
-        title="Testing Strategy"
-      >
-        <b-row>
-          <b-col md="6">
-            <b-form-group
-              label="Test Procedure"
-              label-for="test_procedures"
-            >
+              ></textarea>
+            </el-form-group>
+          </el-col>
+        </el-row>
+      </tael-content>
+      <tael-content title="Testing Strategy">
+        <el-row>
+          <el-col md="6">
+            <el-form-group label="Test Procedure" label-for="test_procedures">
               <textarea
                 v-model="form.test_procedures"
                 class="form-control"
                 placeholder="Test Procedure"
                 @blur="updateField($event.target.value, 'test_procedures', form)"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Sample Size"
-              label-for="sample_size"
-            >
+              ></textarea>
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Sample Size" label-for="sample_size">
               <input
                 id="sample_size"
                 v-model="form.sample_size"
@@ -430,14 +334,11 @@
                 :min="1"
                 placeholder="Sample Size"
                 @blur="updateField($event, 'sample_size', form)"
-              >
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Data Required"
-              label-for="data_required"
-            >
+              />
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Data Required" label-for="data_required">
               <ckeditor
                 id="data_required"
                 v-model="form.data_required"
@@ -452,74 +353,55 @@
                 placeholder="Data Required"
                 @blur="updateField($event.target.value, 'data_required', form)"
               /> -->
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Link to Evidence & Report"
-              label-for="link_to_evidence"
-            >
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Link to Evidence & Report" label-for="link_to_evidence">
               <a
-                :href="baseServerUrl+'storage/'+form.link_to_evidence"
+                :href="baseServerUrl + 'storage/' + form.link_to_evidence"
                 target="_blank"
-                style="color: #409EFF;"
-              >Click link to evidence</a>
+                style="color: #409eff"
+                >Click link to evidence</a
+              >
               <input
                 class="form-control"
                 type="file"
                 placeholder="Change Link to Evidence"
                 @change="onImageChange"
-              >
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Conclusion"
-              label-for="test_conclusion"
-            >
+              />
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Conclusion" label-for="test_conclusion">
               <el-select
                 v-model="form.test_conclusion"
                 placeholder="Select"
-                style="width: 100%;"
+                style="width: 100%"
                 @change="updateField($event, 'test_conclusion', form)"
               >
-                <el-option
-                  label="Adequate"
-                  value="Adequate"
-                />
-                <el-option
-                  label="Inadequate"
-                  value="Inadequate"
-                />
-                <el-option
-                  label="Sub-optimal"
-                  value="Sub-optimal"
-                />
+                <el-option label="Adequate" value="Adequate" />
+                <el-option label="Inadequate" value="Inadequate" />
+                <el-option label="Suel-optimal" value="Suel-optimal" />
               </el-select>
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </tab-content>
-      <tab-content
-        title="Gap"
-      >
-        <b-row>
-          <b-col md="6">
-            <b-form-group
-              label="Gap Description"
-              label-for="gap_description"
-            >
+            </el-form-group>
+          </el-col>
+        </el-row>
+      </tael-content>
+      <tael-content title="Gap">
+        <el-row>
+          <el-col md="6">
+            <el-form-group label="Gap Description" label-for="gap_description">
               <textarea
                 id="gap_description"
                 v-model="form.gap_description"
                 class="form-control"
                 placeholder="This is to document if there is any gap or deficiency in internal control based on the procedures performed"
                 @blur="updateField($event.target.value, 'gap_description', form)"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
+              ></textarea>
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group
               label="TOD Improvement Opportunity (if any)"
               label-for="tod_improvement_opportunity"
             >
@@ -529,102 +411,72 @@
                 class="form-control"
                 placeholder="TOD Improvement Opportunity"
                 @blur="updateField($event.target.value, 'tod_improvement_opportunity', form)"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Recommendation"
-              label-for="recommendation"
-            >
+              ></textarea>
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Recommendation" label-for="recommendation">
               <textarea
                 id="recommendation"
                 v-model="form.recommendation"
                 class="form-control"
                 placeholder="Recommendation"
                 @blur="updateField($event.target.value, 'recommendation', form)"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Responsibility"
-              label-for="responsibility"
-            >
+              ></textarea>
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Responsibility" label-for="responsibility">
               <input
                 id="responsibility"
                 v-model="form.responsibility"
                 placeholder="Responsibility"
                 class="form-control"
                 @blur="updateField($event.target.value, 'responsibility', form)"
-              >
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="Timeline"
-              label-for="timeline"
-            >
+              />
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="Timeline" label-for="timeline">
               <input
                 id="timeline"
                 v-model="form.timeline"
                 placeholder="Timeline"
                 class="form-control"
                 @blur="updateField($event.target.value, 'timeline', form)"
-              >
-            </b-form-group>
-          </b-col>
-          <b-col md="6">
-            <b-form-group
-              label="TOD Gap Status"
-              label-for="tod_gap_status"
-            >
+              />
+            </el-form-group>
+          </el-col>
+          <el-col md="6">
+            <el-form-group label="TOD Gap Status" label-for="tod_gap_status">
               <input
                 id="tod_gap_status"
                 v-model="form.tod_gap_status"
                 placeholder="TOD Gap Status"
                 class="form-control"
                 @blur="updateField($event.target.value, 'tod_gap_status', form)"
-              >
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </tab-content>
+              />
+            </el-form-group>
+          </el-col>
+        </el-row>
+      </tael-content>
     </form-wizard>
   </div>
 </template>
 <script>
-import {
-  BRow, BCol, BFormGroup,
-} from 'bootstrap-vue'
-import { FormWizard, TabContent } from 'vue-form-wizard'
-import { required } from '@validations'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
-import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 
 export default {
-  components: {
-    FormWizard,
-    TabContent,
-    BRow,
-    BCol,
-    BFormGroup,
-    // BButton,
-  },
-  directives: {
-    Ripple,
-  },
+  components: {},
   props: {
     clientId: {
       type: Number,
-      default: null,
+      default: null
     },
     selectedRiskRegister: {
       type: Object,
-      default: () => ({}),
-    },
+      default: () => ({})
+    }
   },
   data() {
     return {
@@ -676,7 +528,7 @@ export default {
         recommendation: '',
         responsibility: '',
         timeline: '',
-        tod_gap_status: '',
+        tod_gap_status: ''
       },
       empty_form: {
         id: '',
@@ -712,21 +564,32 @@ export default {
         recommendation: '',
         responsibility: '',
         timeline: '',
-        tod_gap_status: '',
+        tod_gap_status: ''
       },
-      control_frequencies: ['Per Transaction', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Biannually', 'Annually', 'N/A', 'Per Merchant', 'Per Terminal Request'],
+      control_frequencies: [
+        'Per Transaction',
+        'Daily',
+        'Weekly',
+        'Monthly',
+        'Quarterly',
+        'Biannually',
+        'Annually',
+        'N/A',
+        'Per Merchant',
+        'Per Terminal Request'
+      ],
       loading: false,
       uploadableFile: null,
       teams: [],
       asset_types: [],
       selectedAssetType: null,
-      assets: [],
+      assets: []
     }
   },
   computed: {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
-    },
+    }
   },
   created() {
     this.form = this.selectedRiskRegister
@@ -738,176 +601,174 @@ export default {
   },
   methods: {
     setRiskSubCategory() {
-      const app = this
       const { risk_types } = app
-      const value = app.form.type
-      app.sub_categories = []
-      risk_types.forEach(riskType => {
+      const value = this.form.type
+      this.sub_categories = []
+      risk_types.forEach((riskType) => {
         if (riskType.name === value) {
-          app.sub_categories = riskType.sub_categories
+          this.sub_categories = riskType.sub_categories
         }
       })
     },
     fetchAssetTypes() {
-      const app = this
       const fetchEntryResource = new Resource('risk-assessment/fetch-asset-types')
-      app.loading = true
-      fetchEntryResource.list({ client_id: app.clientId })
-        .then(response => {
-          app.asset_types = response.asset_types
-          app.loading = false
+      this.loading = true
+      fetchEntryResource
+        .list({ client_id: this.clientId })
+        .then((response) => {
+          this.asset_types = response.asset_types
+          this.loading = false
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
+          this.$message.error(error.response.data.error)
+          this.loading = false
         })
     },
     fetchAssets(assetTypeId) {
-      const app = this
       // const assetTypeId = event.target.value
       const fetchAssetsResource = new Resource('risk-assessment/fetch-assets')
-      fetchAssetsResource.list({ client_id: app.clientId, asset_type_id: assetTypeId })
-        .then(response => {
-          app.assets = response.assets
-          app.loading = false
-        }).catch(() => { app.loading = false })
+      fetchAssetsResource
+        .list({ client_id: this.clientId, asset_type_id: assetTypeId })
+        .then((response) => {
+          this.assets = response.assets
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     fetchThreats() {
-      const app = this
-      app.loadSearch = true
+      this.loadSearch = true
       const fetchEntryResource = new Resource('risk-library/fetch-threats')
-      fetchEntryResource.list()
-        .then(response => {
-          app.threats = response.threats
-          app.loadSearch = false
+      fetchEntryResource
+        .list()
+        .then((response) => {
+          this.threats = response.threats
+          this.loadSearch = false
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.console.log(error.response.data.error)
-          app.loadSearch = false
+          this.console.log(error.response.data.error)
+          this.loadSearch = false
         })
     },
     onImageChange(e) {
-      const app = this
-      // eslint-disable-next-line prefer-destructuring
-      app.uploadableFile = e.target.files[0]
+      this.uploadableFile = e.target.files[0]
     },
     fetchRiskCategories() {
-      const app = this
       const fetchEntryResource = new Resource('risk-assessment/fetch-categories')
-      fetchEntryResource.list({ client_id: app.clientId })
-        .then(response => {
-          app.risk_types = response.categories
-          app.setRiskSubCategory()
-          app.loading = false
+      fetchEntryResource
+        .list({ client_id: this.clientId })
+        .then((response) => {
+          this.risk_types = response.categories
+          this.setRiskSubCategory()
+          this.loading = false
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
+          this.$message.error(error.response.data.error)
+          this.loading = false
         })
     },
     fetchBusinessUnits() {
-      const app = this
-      app.business_units = []
+      this.business_units = []
       const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')
-      fetchBusinessUnitsResource.list({ client_id: app.clientId })
-        .then(response => {
-          app.business_units = response.business_units
-          app.loading = false
-        }).catch(() => { app.loading = false })
-    },
-    fetchBusinessProcesses() {
-      const app = this
-      app.business_processes = []
-      const fetchBusinessProcesssResource = new Resource('business-units/fetch-business-processes')
-      fetchBusinessProcesssResource.list({ business_unit_id: app.businessUnitId })
-        .then(response => {
-          app.business_processes = response.business_processes
-          app.loading = false
-        }).catch(() => { app.loading = false })
-    },
-    updateField(value, field, assessment) {
-      const app = this
-      const params = { field, value }
-      const updateResource = new Resource('update-risk-register')
-      updateResource.update(assessment.id, params)
-        .then(() => {
-          app.$emit('reload')
+      fetchBusinessUnitsResource
+        .list({ client_id: this.clientId })
+        .then((response) => {
+          this.business_units = response.business_units
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
         })
     },
+    fetchBusinessProcesses() {
+      this.business_processes = []
+      const fetchBusinessProcesssResource = new Resource('business-units/fetch-business-processes')
+      fetchBusinessProcesssResource
+        .list({ business_unit_id: this.businessUnitId })
+        .then((response) => {
+          this.business_processes = response.business_processes
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+    updateField(value, field, assessment) {
+      const params = { field, value }
+      const updateResource = new Resource('update-risk-register')
+      updateResource.update(assessment.id, params).then(() => {
+        this.$emit('reload')
+      })
+    },
     setFormVariables() {
-      const app = this
       const formData = new FormData()
-      formData.append('id', app.form.id)
-      formData.append('client_id', app.form.client_id)
-      formData.append('module', app.form.module)
-      formData.append('business_unit_id', app.form.business_unit_id)
-      formData.append('business_process_id', app.form.business_process_id)
-      formData.append('risk_unique_id', app.form.risk_unique_id)
-      formData.append('type', app.form.type)
-      formData.append('sub_type', app.form.sub_type)
-      formData.append('asset_type_id', app.form.asset_type_id)
-      formData.append('asset_id', app.form.asset_id)
-      formData.append('threat', app.form.threat)
-      formData.append('vulnerability_description', app.form.vulnerability_description)
-      formData.append('outcome', app.form.outcome)
-      formData.append('risk_owner', app.form.risk_owner)
-      formData.append('control_no', app.form.control_no)
-      formData.append('control_location', app.form.control_location)
-      formData.append('control_description', app.form.control_description)
-      formData.append('control_frequency', app.form.control_frequency)
-      formData.append('control_owner', app.form.control_owner)
-      formData.append('control_type', app.form.control_type)
-      formData.append('nature_of_control', app.form.nature_of_control)
-      formData.append('application_used_for_control', app.form.application_used_for_control)
-      formData.append('compensating_control', app.form.compensating_control)
-      formData.append('test_procedures', app.form.test_procedures)
-      formData.append('sample_size', app.form.sample_size)
-      formData.append('data_required', app.form.data_required)
-      formData.append('test_conclusion', app.form.test_conclusion)
-      formData.append('gap_description', app.form.gap_description)
-      formData.append('tod_improvement_opportunity', app.form.tod_improvement_opportunity)
-      formData.append('recommendation', app.form.recommendation)
-      formData.append('responsibility', app.form.responsibility)
-      formData.append('timeline', app.form.timeline)
-      formData.append('tod_gap_status', app.form.tod_gap_status)
-      formData.append('link_to_evidence', app.uploadableFile)
+      formData.append('id', this.form.id)
+      formData.append('client_id', this.form.client_id)
+      formData.append('module', this.form.module)
+      formData.append('business_unit_id', this.form.business_unit_id)
+      formData.append('business_process_id', this.form.business_process_id)
+      formData.append('risk_unique_id', this.form.risk_unique_id)
+      formData.append('type', this.form.type)
+      formData.append('sub_type', this.form.sub_type)
+      formData.append('asset_type_id', this.form.asset_type_id)
+      formData.append('asset_id', this.form.asset_id)
+      formData.append('threat', this.form.threat)
+      formData.append('vulnerability_description', this.form.vulnerability_description)
+      formData.append('outcome', this.form.outcome)
+      formData.append('risk_owner', this.form.risk_owner)
+      formData.append('control_no', this.form.control_no)
+      formData.append('control_location', this.form.control_location)
+      formData.append('control_description', this.form.control_description)
+      formData.append('control_frequency', this.form.control_frequency)
+      formData.append('control_owner', this.form.control_owner)
+      formData.append('control_type', this.form.control_type)
+      formData.append('nature_of_control', this.form.nature_of_control)
+      formData.append('application_used_for_control', this.form.application_used_for_control)
+      formData.append('compensating_control', this.form.compensating_control)
+      formData.append('test_procedures', this.form.test_procedures)
+      formData.append('sample_size', this.form.sample_size)
+      formData.append('data_required', this.form.data_required)
+      formData.append('test_conclusion', this.form.test_conclusion)
+      formData.append('gap_description', this.form.gap_description)
+      formData.append('tod_improvement_opportunity', this.form.tod_improvement_opportunity)
+      formData.append('recommendation', this.form.recommendation)
+      formData.append('responsibility', this.form.responsibility)
+      formData.append('timeline', this.form.timeline)
+      formData.append('tod_gap_status', this.form.tod_gap_status)
+      formData.append('link_to_evidence', this.uploadableFile)
       return formData
     },
     formSubmitted() {
-      const app = this
-      app.loading = true
-      const formData = app.setFormVariables()
+      this.loading = true
+      const formData = this.setFormVariables()
       formData.append('submit_mode', 'final')
       const saveRisksResource = new Resource('store-risk-registers')
-      saveRisksResource.store(formData)
+      saveRisksResource
+        .store(formData)
         .then(() => {
-          app.loading = false
-          // app.$message('Action Successful')
-          app.$notify({
+          this.loading = false
+          // this.$message('Action Successful')
+          this.$notify({
             title: 'Updated Successfully',
-            type: 'success',
+            type: 'success'
           })
-          app.$emit('done')
-          // app.$emit('update:is-create-business-process-sidebar-active', false)
-        }).catch(error => {
-          app.loading = false
-          app.$message(error.response.data.error)
+          this.$emit('done')
+          // this.$emit('update:is-create-business-process-sidebar-active', false)
         })
-    },
-  },
+        .catch((error) => {
+          this.loading = false
+          this.$message(error.response.data.error)
+        })
+    }
+  }
 }
 </script>
-  <style lang="scss" scoped>
-  @import '~@core/scss/base/bootstrap-extended/include';
-  </style>
-  <style lang="scss">
-  @import '@core/scss/vue/pages/page-auth.scss';
-  </style>
-  <style scoped>
-  .no-padding {
-    padding: 0 !important;
-  }
-  </style>
+<style scoped>
+.no-padding {
+  padding: 0 !important;
+}
+</style>

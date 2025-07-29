@@ -1,25 +1,27 @@
 import router from '@/router'
 // import store from './store'
-import store from '@/store'
+import store from '@/VuexStore'
 import { getToken, getUserRole } from '@/utils/auth' // get token from cookie
-import getPageTitle from '@/utils/get-page-title'
+// import getPageTitle from '@/utils/get-page-title'
 
 function setRoutes(userData) {
   const { roles, permissions, modules } = userData
-  store.dispatch('permission/generateRoutes', { roles, permissions, modules }).then(response => {
+  store.dispatch('permission/generateRoutes', { roles, permissions, modules }).then(routes => {
     // dynamically add accessible routes
-    // console.log(response)
-    router.addRoutes(response)
+    routes.forEach((route) => {
+      router.addRoute(route) // 动态添加可访问路由表
+    })
+//     console.log(router)
   })
 }
-const whiteList = ['/login', '/login-as', '/bia', '/rcsa', '/account/suspended', /* '/register', */ '/forgot-password', '/maintenance'] // no redirect whitelist
+const whiteList = ['/login', '/login-as', '/bia', '/vdd', '/vdd/mailbox/inbox', '/vdd/mailbox/sent', '/account/suspended', '/register', '/forgot-password', '/maintenance'] // no redirect whitelist
 router.beforeEach(async (to, from, next) => {
-  if (to.path === '/bia' || to.path === '/rcsa') {
+  if (to.path === '/bia' || to.path === '/vdd' || to.path === '/vdd/mailbox/inbox' || to.path === '/vdd/mailbox/sent') {
     store.dispatch('user/loadOtherUserData')
     next()
   } else {
     // set page title
-    document.title = getPageTitle(to.meta.title)
+    // document.title = getPageTitle(to.meta.title)
 
     // determine whether the user has logged in
     const hasToken = getToken()
@@ -31,20 +33,20 @@ router.beforeEach(async (to, from, next) => {
         const userRole = getUserRole()
         // console.log(userRole)
         // determine whether the user has an active role to login as
-        // eslint-disable-next-line no-lonely-if, camelcase
+         
         if (userRole === 'empty') {
           next('/login-as')
         } else {
-          // eslint-disable-next-line no-lonely-if
+           
           if (to.path === '/login') {
             // if is logged in, redirect to the home page
             next({ path: '/' })
           } else {
             const hasRoles = userData.roles && userData.roles.length > 0
-            // eslint-disable-next-line no-lonely-if
+             
             if (hasRoles) {
-              store.dispatch('clients/fetchClients')
               next()
+              store.dispatch('clients/fetchClients')
             } else {
               try {
               // get user info
@@ -67,7 +69,7 @@ router.beforeEach(async (to, from, next) => {
     } else {
       /* has no token */
       // console.log(whiteList.indexOf(to.matched[0] ? to.matched[0].path : ''))
-      // eslint-disable-next-line no-lonely-if
+       
       if (whiteList.includes(to.path)) {
         // in the free login whitelist, go directly
         next()

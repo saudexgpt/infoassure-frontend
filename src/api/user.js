@@ -9,7 +9,7 @@ class UserResource extends Resource {
   permissions(id) {
     return request({
       url: `/${this.uri}/${id}/permissions`,
-      method: 'get',
+      method: 'get'
     })
   }
 
@@ -17,7 +17,7 @@ class UserResource extends Resource {
     return request({
       url: `/${this.uri}/${id}/permissions`,
       method: 'put',
-      data: permissions,
+      data: permissions
     })
   }
 }

@@ -1,8 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <user-bio-data
-      :user="userData"
-    />
+    <UserBioData :user="userData" />
   </div>
 </template>
 
@@ -13,20 +11,17 @@ import UserBioData from '@/views/modules/user/UserBioData.vue'
 export default {
   // name: 'Dashboard',
   components: {
-    UserBioData,
+    UserBioData
   },
   data() {
     return {
       currentRoleId: null,
-      role: null,
+      role: null
     }
   },
   computed: {
-    ...mapGetters([
-      'userData',
-    ]),
+    ...mapGetters(['userData'])
   },
-  created() {
-  },
+  created() {}
 }
 </script>

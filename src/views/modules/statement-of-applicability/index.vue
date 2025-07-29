@@ -1,20 +1,14 @@
 <template>
   <el-card>
-    <b-tabs
-      content-class="mt-1"
-      pills
-    >
-      <b-tab
-        v-if="checkPermission(['manage-soa-settings'])"
-        lazy
-      >
+    <el-tabs content-class="mt-1" pills>
+      <el-tab v-if="checkPermission(['manage-soa-settings'])" lazy>
         <template #title>
-          <feather-icon icon="ToolIcon" />
+          <icon icon="tabler:settings" />
           <span>Setup</span>
         </template>
         <setup />
-      </b-tab>
-      <!-- <b-tab
+      </el-tab>
+      <!-- <el-tab
         lazy
       >
         <template #title>
@@ -22,8 +16,8 @@
           <span>Assess New Risk(s)</span>
         </template>
         <assessment />
-      </b-tab> -->
-      <!-- <b-tab
+      </el-tab> -->
+      <!-- <el-tab
         lazy
       >
         <template #title>
@@ -31,33 +25,26 @@
           <span>Statement of Applicability</span>
         </template>
         <statement-of-applicability />
-      </b-tab> -->
-    </b-tabs>
+      </el-tab> -->
+    </el-tabs>
   </el-card>
 </template>
 
 <script>
-import {
-  BTabs, BTab,
-} from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
 import Setup from './partials/Setup.vue'
 // import StatementOfApplicability from './StatementOfApplicability.vue'
 
 export default {
   components: {
-    BTabs,
-    BTab,
-    Setup,
+    Setup
     // StatementOfApplicability,
   },
   data() {
-    return {
-
-    }
+    return {}
   },
   methods: {
-    checkPermission,
-  },
+    checkPermission
+  }
 }
 </script>

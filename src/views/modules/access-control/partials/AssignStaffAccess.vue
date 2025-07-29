@@ -1,23 +1,16 @@
 <template>
   <div>
-    <div slot="header">
+    <div>
       <b-row>
         <b-col cols="7">
-          <h3>
-            List of Staff
-          </h3>
+          <h3> List of Staff </h3>
         </b-col>
       </b-row>
-      <hr>
+      <hr />
     </div>
     <aside>
       <el-row :gutter="5">
-        <el-col
-          :lg="8"
-          :md="8"
-          :sm="24"
-          :xs="24"
-        >
+        <el-col :lg="8" :md="8" :sm="24" :xs="24">
           <el-select
             v-model="selected_user_index"
             filterable
@@ -40,12 +33,7 @@
             />
           </el-select>
         </el-col>
-        <el-col
-          :lg="8"
-          :md="8"
-          :sm="24"
-          :xs="24"
-        >
+        <el-col :lg="8" :md="8" :sm="24" :xs="24">
           <el-select
             v-model="new_roles"
             multiple
@@ -63,12 +51,7 @@
             />
           </el-select>
         </el-col>
-        <el-col
-          :lg="8"
-          :md="8"
-          :sm="24"
-          :xs="24"
-        >
+        <el-col :lg="8" :md="8" :sm="24" :xs="24">
           <el-select
             v-model="new_permissions"
             multiple
@@ -89,98 +72,54 @@
       </el-row>
     </aside>
     <div>
-      <v-client-table
-        v-model="staff"
-        v-loading="loading"
-        :columns="columns"
-        :options="options"
-      >
-        <div
-          slot="name"
-          slot-scope="props"
-        >
+      <v-client-table v-model="staff" v-loading="loading" :columns="columns" :options="options">
+        <template v-slot:name="props">
           {{ props.row.user.first_name + ' ' + props.row.user.last_name }}
-        </div>
-        <div
-          slot="assigned_roles"
-          slot-scope="props"
-        >
-          <span
-            v-for="(role, role_index) in props.row.user.roles"
-            :key="role_index"
-          >
-            <small>{{ role_index + 1 + ') ' + role.display_name }}<br></small>
-          </span>
-        </div>
-        <div
-          slot="assigned_permissions"
-          slot-scope="props"
-        >
-          <span
-            v-for="(permission, perm_index) in props.row.user.permissions"
-            :key="perm_index"
-          >
-            <small>{{ perm_index + 1 + ') ' + permission.display_name }}<br></small>
-          </span>
-        </div>
-        <div
-          slot="name"
-          slot-scope="props"
-        >
-          {{ props.row.user.first_name + ' ' + props.row.user.last_name }}
-        </div>
+        </template>
+        <template v-slot:assigned_roles="props">
+          <div>
+            <span v-for="(role, role_index) in props.row.user.roles" :key="role_index">
+              <small>{{ role_index + 1 + ') ' + role.display_name }}<br /></small>
+            </span>
+          </div>
+        </template>
+        <template v-slot:assigned_permissions="props">
+          <div>
+            <span v-for="(permission, perm_index) in props.row.user.permissions" :key="perm_index">
+              <small>{{ perm_index + 1 + ') ' + permission.display_name }}<br /></small>
+            </span>
+          </div>
+        </template>
+        <!-- Removed deprecated slot and slot-scope, use v-slot above if needed -->
       </v-client-table>
     </div>
   </div>
 </template>
 <script>
-import { BRow, BCol, VBTooltip } from 'bootstrap-vue'
-// import vSelect from 'vue-select'
-// import { VueGoodTable } from 'vue-good-table'
-import Ripple from 'vue-ripple-directive'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    // VueGoodTable,
-    // vSelect,
-    // BAlert,
-    // BPagination,
-    // BFormGroup,
-    // BFormInput,
-    // BFormSelect,
-    BRow,
-    BCol,
-  },
-  directives: {
-    'b-tooltip': VBTooltip,
-    Ripple,
-  },
+  components: {},
   data() {
     return {
       isCreateClassSidebarActive: false,
       isEditClassSidebarActive: false,
       pageLength: 10,
       dir: false,
-      columns: [
-        'user.username',
-        'name',
-        'assigned_roles',
-        'assigned_permissions',
-      ],
+      columns: ['user.username', 'name', 'assigned_roles', 'assigned_permissions'],
 
       options: {
         headings: {
           'user.username': 'ID',
           name: 'Name',
           assigned_roles: 'Assigned Roles',
-          assigned_permissions: 'Assigned Permissions',
+          assigned_permissions: 'Assigned Permissions'
 
           // id: 'S/N',
         },
         sortable: ['user.username', 'user.last_name', 'user.first_name'],
         // filterable: false,
-        filterable: ['user.username', 'user.last_name', 'user.first_name'],
+        filterable: ['user.username', 'user.last_name', 'user.first_name']
       },
       staff: [],
       staff_roles: [],
@@ -188,7 +127,7 @@ export default {
       new_roles: [],
       new_permissions: [],
       selected_user_index: '',
-      loading: false,
+      loading: false
     }
   },
   created() {
@@ -199,7 +138,7 @@ export default {
   methods: {
     disableAdmin(roles) {
       let response = false
-      roles.forEach(role => {
+      roles.forEach((role) => {
         if (role.name === 'admin') {
           response = true
         }
@@ -207,64 +146,56 @@ export default {
       return response
     },
     fetchStaff() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const fetchStaffResource = new Resource('users/fetch-staff')
-      fetchStaffResource.list().then(response => {
-        app.staff = response.staff
-        app.loading = false
+      fetchStaffResource.list().then((response) => {
+        this.staff = response.staff
+        this.loading = false
       })
     },
     fetchPermissions() {
-      const app = this
       const fetchCurriculumSetupResource = new Resource('acl/permissions/index')
-      fetchCurriculumSetupResource.list().then(response => {
-        app.permissions = response.permissions
+      fetchCurriculumSetupResource.list().then((response) => {
+        this.permissions = response.permissions
       })
     },
     fetchRoles() {
-      const app = this
       const fetchCurriculumSetupResource = new Resource('acl/roles/index')
-      fetchCurriculumSetupResource.list({ option: 'staff' }).then(response => {
-        app.staff_roles = response.roles
+      fetchCurriculumSetupResource.list({ option: 'staff' }).then((response) => {
+        this.staff_roles = response.roles
       })
     },
     setRolesAndPermissions() {
-      const app = this
-      const userIndex = app.selected_user_index
-      app.new_permissions = []
-      app.new_roles = []
-      // console.log(app.staff[userIndex].user)
-      const userRoles = app.staff[userIndex].user.roles
-      userRoles.forEach(role => {
-        app.new_roles.push(role.id)
+      const userIndex = this.selected_user_index
+      this.new_permissions = []
+      this.new_roles = []
+      // console.log(this.staff[userIndex].user)
+      const userRoles = this.staff[userIndex].user.roles
+      userRoles.forEach((role) => {
+        this.new_roles.push(role.id)
       })
-      const userPermissions = app.staff[userIndex].user.permissions
-      userPermissions.forEach(permission => {
-        app.new_permissions.push(permission.id)
+      const userPermissions = this.staff[userIndex].user.permissions
+      userPermissions.forEach((permission) => {
+        this.new_permissions.push(permission.id)
       })
     },
     assignRoles() {
-      const app = this
-      const userId = app.staff[app.selected_user_index].user.id
+      const userId = this.staff[this.selected_user_index].user.id
       const fetchCurriculumSetupResource = new Resource('acl/roles/assign')
-      const param = { user_id: userId, roles: app.new_roles }
-      fetchCurriculumSetupResource.store(param).then(response => {
-        app.staff[app.selected_user_index].user.roles = response.roles
-        app.staff[app.selected_user_index].user.permissions = response.permissions
+      const param = { user_id: userId, roles: this.new_roles }
+      fetchCurriculumSetupResource.store(param).then((response) => {
+        this.staff[this.selected_user_index].user.roles = response.roles
+        this.staff[this.selected_user_index].user.permissions = response.permissions
       })
     },
     assignPermissions() {
-      const app = this
-      const userId = app.staff[app.selected_user_index].user.id
-      const fetchCurriculumSetupResource = new Resource(
-        'acl/permissions/assign-user',
-      )
-      const param = { user_id: userId, permissions: app.new_permissions }
-      fetchCurriculumSetupResource.store(param).then(response => {
-        app.staff[app.selected_user_index].user.permissions = response.permissions
+      const userId = this.staff[this.selected_user_index].user.id
+      const fetchCurriculumSetupResource = new Resource('acl/permissions/assign-user')
+      const param = { user_id: userId, permissions: this.new_permissions }
+      fetchCurriculumSetupResource.store(param).then((response) => {
+        this.staff[this.selected_user_index].user.permissions = response.permissions
       })
-    },
-  },
+    }
+  }
 }
 </script>

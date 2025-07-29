@@ -24,34 +24,16 @@
         </el-col>
         <el-col :md="4">
           <label>&nbsp;</label>
-          <el-button
-            type="success"
-            style="width: 100%"
-            @click="submitEntry()"
-          >
-            Submit
-          </el-button>
+          <el-button type="success" style="width: 100%" @click="submitEntry()"> Submit </el-button>
         </el-col>
       </el-row>
-
     </aside>
-    <v-client-table
-      v-model="areas"
-      v-loading="loading"
-      :columns="columns"
-      :options="options"
-    >
-      <div
-        slot="action"
-        slot-scope="props"
-      >
-        <el-button
-          type="danger"
-          icon="el-icon-delete"
-          circle
-          @click="deleteEntry(props.row)"
-        />
-      </div>
+    <v-client-table :data="areas" v-loading="loading" :columns="columns" :options="options">
+      <template v-slot:action="props">
+        <div>
+          <el-button type="danger" icon="el-icon-delete" circle @click="deleteEntry(props.row)" />
+        </div>
+      </template>
     </v-client-table>
   </div>
 </template>
@@ -64,18 +46,15 @@ export default {
       form: { names: [] },
       areas: [],
       loading: false,
-      columns: [
-        'name',
-        'action',
-      ],
+      columns: ['name', 'action'],
       options: {
         headings: {
-          name: 'Areas',
+          name: 'Areas'
         },
         filterByColumn: false,
         sortable: [],
-        filterable: [],
-      },
+        filterable: []
+      }
     }
   },
   created() {
@@ -83,54 +62,53 @@ export default {
   },
   methods: {
     fetchAreas() {
-      const app = this
       const fetchEntryResource = new Resource('soa/fetch-areas')
-      app.loading = true
-      fetchEntryResource.list()
-        .then(response => {
-          app.areas = response.areas
-          app.loading = false
+      this.loading = true
+      fetchEntryResource
+        .list()
+        .then((response) => {
+          this.areas = response.areas
+          this.loading = false
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
+          this.$message.error(error.response.data.error)
+          this.loading = false
         })
     },
     submitEntry() {
-      const app = this
       const saveEntryResource = new Resource('soa/save-areas')
-      app.loading = true
-      saveEntryResource.store(app.form)
+      this.loading = true
+      saveEntryResource
+        .store(this.form)
         .then(() => {
-          app.fetchAreas()
-          app.form = { names: [] }
-          app.loading = false
+          this.fetchAreas()
+          this.form = { names: [] }
+          this.loading = false
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
-          app.$message.error(error.response.data.error)
-          app.loading = false
+          this.$message.error(error.response.data.error)
+          this.loading = false
         })
     },
     deleteEntry(row) {
-      const app = this
-      // eslint-disable-next-line no-alert
       if (window.confirm('Click OK to confirm delete action')) {
         const saveEntryResource = new Resource('soa/delete-area')
-        app.loading = true
-        saveEntryResource.destroy(row.id)
+        this.loading = true
+        saveEntryResource
+          .destroy(row.id)
           .then(() => {
-            app.fetchAreas()
-            app.loading = false
+            this.fetchAreas()
+            this.loading = false
           })
-          .catch(error => {
-          // console.log(error.response)
-            app.$message.error(error.response.data.error)
-            app.loading = false
+          .catch((error) => {
+            // console.log(error.response)
+            this.$message.error(error.response.data.error)
+            this.loading = false
           })
       }
-    },
-  },
+    }
+  }
 }
 </script>

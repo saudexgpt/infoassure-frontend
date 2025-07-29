@@ -1,270 +1,213 @@
 <template>
   <div>
-    <div slot="header">
+    <div>
       <span>
-        <b-button
+        <el-button
           variant="outline-secondary"
           :loading="downloading"
-
           @click="exportTableToExcel('PDATable')"
         >
-          <feather-icon
-            icon="DownloadIcon"
-            class="mr-50"
-          />
+          <feather-icon icon="DownloadIcon" class="mr-50" />
           <span class="align-middle">Export</span>
-        </b-button>
+        </el-button>
       </span>
     </div>
-    <table
-      id="PDATable"
-      v-loading="loading"
-      class="table table-bordered table-responsive"
-    >
+    <table id="PDATable" v-loading="loading" class="table table-bordered table-responsive">
       <thead>
         <tr>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
             REF
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 150px">
-              UNIT/ DEPARTMENT
-            </div>
-          </th>
-          <th
-
-            data-fill-color="666666"
-            data-b-a-s="thin"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="12"
-          >
-            <div style="width: 250px">
-              PROJECT OR BUSINESS PROCESS
-            </div>
-          </th>
-          <th
-
-            data-fill-color="666666"
-            data-b-a-s="thin"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="12"
-          >
-            <div style="width: 250px">
-              PERSONAL DATA ITEM
-            </div>
-          </th>
-          <th
-
-            data-fill-color="666666"
-            data-b-a-s="thin"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="12"
-          >
-            <div style="width: 150px">
-              DESCRIPTION
-            </div>
-          </th>
-          <th
-
-            data-fill-color="666666"
-            data-b-a-s="thin"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="12"
-          >
-            <div style="width: 150px">
-              IS SENSITITVE PERSONAL DATA?
-            </div>
-          </th>
-          <th
-
-            data-fill-color="666666"
-            data-b-a-s="thin"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="12"
-          >
-            <div style="width: 250px">
-              ARTICLE 1.3(xxv) EXCEPTION USED (SENSITIVE DATA ONLY)
-            </div>
-          </th>
-          <th
-
-            data-fill-color="666666"
-            data-b-a-s="thin"
-            data-f-color="ffffff"
-            style="font-size: 14px;"
-            data-f-sz="12"
-          >
-            <div style="width: 250px">
-              OBTAINED FROM DATA SUBJECT?
-            </div>
+            <div style="width: 150px"> UNIT/ DEPARTMENT </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              OWNER
-            </div>
+            <div style="width: 250px"> PROJECT OR BUSINESS PROCESS </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              PROCESSING PURPOSE
-            </div>
+            <div style="width: 250px"> PERSONAL DATA ITEM </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              LAWFUL BASIS OF PROCESSING
-            </div>
+            <div style="width: 150px"> DESCRIPTION </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 100px">
-              IF CONSENT- BASED, HOW IS CONSENT OBTAINED?
-            </div>
+            <div style="width: 150px"> IS SENSITITVE PERSONAL DATA? </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              AUTOMATED DECISION-MAKING?
-            </div>
+            <div style="width: 250px"> ARTICLE 1.3(xxv) EXCEPTION USED (SENSITIVE DATA ONLY) </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              LEVEL OF DATA SUBJECT ACCESS
-            </div>
+            <div style="width: 250px"> OBTAINED FROM DATA SUBJECT? </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              LOCATION STORED
-            </div>
+            <div style="width: 250px"> OWNER </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              COUNTRY STORED IN
-            </div>
+            <div style="width: 250px"> PROCESSING PURPOSE </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              RETENTION PERIOD
-            </div>
+            <div style="width: 250px"> LAWFUL BASIS OF PROCESSING </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              ENCRYPTION LEVEL
-            </div>
+            <div style="width: 100px"> IF CONSENT- BASED, HOW IS CONSENT OBTAINED? </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              ACCESS CONTROLS
-            </div>
+            <div style="width: 250px"> AUTOMATED DECISION-MAKING? </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              THIRD PARTIES SHARED WITH
-            </div>
+            <div style="width: 250px"> LEVEL OF DATA SUBJECT ACCESS </div>
           </th>
           <th
             data-fill-color="666666"
-            data-b-a-s="thin"
+            data-el-a-s="thin"
             data-f-color="ffffff"
-            style="font-size: 14px;"
+            style="font-size: 14px"
             data-f-sz="12"
           >
-            <div style="width: 250px">
-              COMMENTS
-            </div>
+            <div style="width: 250px"> LOCATION STORED </div>
+          </th>
+          <th
+            data-fill-color="666666"
+            data-el-a-s="thin"
+            data-f-color="ffffff"
+            style="font-size: 14px"
+            data-f-sz="12"
+          >
+            <div style="width: 250px"> COUNTRY STORED IN </div>
+          </th>
+          <th
+            data-fill-color="666666"
+            data-el-a-s="thin"
+            data-f-color="ffffff"
+            style="font-size: 14px"
+            data-f-sz="12"
+          >
+            <div style="width: 250px"> RETENTION PERIOD </div>
+          </th>
+          <th
+            data-fill-color="666666"
+            data-el-a-s="thin"
+            data-f-color="ffffff"
+            style="font-size: 14px"
+            data-f-sz="12"
+          >
+            <div style="width: 250px"> ENCRYPTION LEVEL </div>
+          </th>
+          <th
+            data-fill-color="666666"
+            data-el-a-s="thin"
+            data-f-color="ffffff"
+            style="font-size: 14px"
+            data-f-sz="12"
+          >
+            <div style="width: 250px"> ACCESS CONTROLS </div>
+          </th>
+          <th
+            data-fill-color="666666"
+            data-el-a-s="thin"
+            data-f-color="ffffff"
+            style="font-size: 14px"
+            data-f-sz="12"
+          >
+            <div style="width: 250px"> THIRD PARTIES SHARED WITH </div>
+          </th>
+          <th
+            data-fill-color="666666"
+            data-el-a-s="thin"
+            data-f-color="ffffff"
+            style="font-size: 14px"
+            data-f-sz="12"
+          >
+            <div style="width: 250px"> COMMENTS </div>
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(report, index) in tableData"
-          :key="index"
-        >
+        <tr v-for="(report, index) in tableData" :key="index">
           <td>{{ index + 1 }}</td>
           <td>{{ report.business_unit }}</td>
           <td>{{ report.business_process }}</td>
@@ -322,21 +265,16 @@
   </div>
 </template>
 <script>
-import {
-  BButton,
-} from 'bootstrap-vue'
-import TableToExcel from '@linways/table-to-excel'
+// import TableToExcel from '@linways/table-to-excel'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    BButton,
-  },
+  components: {},
   data() {
     return {
       tableData: [],
       loading: false,
-      downloading: false,
+      downloading: false
     }
   },
   created() {
@@ -344,30 +282,29 @@ export default {
   },
   methods: {
     fetchPDA(load = true) {
-      const app = this
-      app.loading = load
+      this.loading = load
       const pdaResource = new Resource('pda')
-      pdaResource.list({
-        client_id: app.clientId,
-      })
-        .then(response => {
-          app.tableData = response.pdas
-          app.loading = false
+      pdaResource
+        .list({
+          client_id: this.clientId
+        })
+        .then((response) => {
+          this.tableData = response.pdas
+          this.loading = false
         })
     },
     exportTableToExcel(id) {
-      const app = this
-      app.downloading = true
-      setTimeout(() => {
-        TableToExcel.convert(document.getElementById(id), {
-          name: 'PDATable.xlsx',
-          sheet: {
-            name: 'Sheet 1',
-          },
-        })
-        app.downloading = false
-      }, 1000)
-    },
-  },
+      // this.downloading = true
+      // setTimeout(() => {
+      //   TableToExcel.convert(document.getElementById(id), {
+      //     name: 'PDATable.xlsx',
+      //     sheet: {
+      //       name: 'Sheet 1'
+      //     }
+      //   })
+      //   this.downloading = false
+      // }, 1000)
+    }
+  }
 }
 </script>

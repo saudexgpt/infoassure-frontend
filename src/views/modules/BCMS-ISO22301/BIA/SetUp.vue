@@ -1,52 +1,25 @@
 <template>
   <el-card>
-    <b-tabs
-      content-class="mt-1"
-      pills
-    >
-      <b-tab
-        lazy
-      >
-        <template #title>
-          <span>Business Units</span>
-        </template>
-        <business-units />
-      </b-tab>
-      <b-tab
-        lazy
-      >
-        <template #title>
-          <span>Manage Access</span>
-        </template>
-        <manage-access />
-      </b-tab>
-    </b-tabs>
+    <BusinessUnits />
   </el-card>
 </template>
 
 <script>
-import {
-  BTabs, BTab,
-} from 'bootstrap-vue'
 import checkPermission from '@/utils/permission'
-import BusinessUnits from './partials/BusinessUnitsTable.vue'
-import ManageAccess from './partials/ManageAccess.vue'
+import BusinessUnits from '@/views/modules/settings/partials/business-units/SetUp.vue'
+// import ManageAccess from './partials/ManageAccess.vue'
 
 export default {
   components: {
-    BTabs,
-    BTab,
-    BusinessUnits,
-    ManageAccess,
+    BusinessUnits
   },
   data() {
     return {
-      business_impact_analyses: [],
-      loading: false,
+      loading: false
     }
   },
   methods: {
-    checkPermission,
-  },
+    checkPermission
+  }
 }
 </script>

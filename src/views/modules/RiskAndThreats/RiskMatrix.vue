@@ -1,17 +1,8 @@
 <template>
   <div>
-    <div
-      v-if="selectedClient !== null"
-      v-loading="loading"
-    >
-      <el-row
-        :gutter="20"
-      >
-        <el-col
-          :xs="24"
-          :sm="16"
-          :md="16"
-        >
+    <div v-if="selectedClient !== null" v-loading="loading">
+      <el-row :gutter="20">
+        <el-col :xs="24" :sm="16" :md="16">
           <p>Select the matrix your company uses</p>
           <el-select
             v-model="risk_matrix.current_matrix"
@@ -25,25 +16,14 @@
               :value="matrix_val"
             />
           </el-select>
-          <p />
-          <table
-            v-if="risk_matrix !== null"
-            class="table table-bordered"
-          >
+          <p></p>
+          <table v-if="risk_matrix !== null" class="table table-bordered">
             <tr>
-              <th v-if="risk_matrix.proposed_matrix !== null">
-                Proposed Matrix
-              </th>
-              <th v-if="risk_matrix.proposed_matrix === null">
-                Active Matrix
-              </th>
-              <th v-if="risk_matrix.proposed_matrix !== null">
-                Proposed By
-              </th>
-              <th v-if="risk_matrix.proposed_matrix === null">
-                Approved By
-              </th>
-              <th v-if="risk_matrix.proposed_matrix !== null" />
+              <th v-if="risk_matrix.proposed_matrix !== null"> Proposed Matrix </th>
+              <th v-if="risk_matrix.proposed_matrix === null"> Active Matrix </th>
+              <th v-if="risk_matrix.proposed_matrix !== null"> Proposed By </th>
+              <th v-if="risk_matrix.proposed_matrix === null"> Approved By </th>
+              <th v-if="risk_matrix.proposed_matrix !== null"></th>
             </tr>
             <tr>
               <td v-if="risk_matrix.proposed_matrix !== null">
@@ -53,31 +33,28 @@
                 {{ risk_matrix.current_matrix }}
               </td>
               <td v-if="risk_matrix.proposed_matrix !== null">
-                {{ (risk_matrix.creator) ? risk_matrix.creator.name : '' }}
+                {{ risk_matrix.creator ? risk_matrix.creator.name : '' }}
               </td>
               <td v-if="risk_matrix.proposed_matrix === null">
-                {{ (risk_matrix.approver) ? risk_matrix.approver.name : '' }}
+                {{ risk_matrix.approver ? risk_matrix.approver.name : '' }}
               </td>
               <td v-if="risk_matrix.proposed_matrix !== null">
-                <el-button
-
-                  type="success"
-                  @click="approvematrix(risk_matrix.id)"
-                >
+                <el-button type="success" @click="approvematrix(risk_matrix.id)">
                   Click to approve
                 </el-button>
               </td>
             </tr>
           </table>
         </el-col>
-        <el-col
-          v-if="matrix !== '' && risk_matrix !== null"
-          :xs="24"
-          :sm="8"
-          :md="8"
-        >
+        <el-col v-if="matrix !== '' && risk_matrix !== null" :xs="24" :sm="8" :md="8">
           <div
-            style="background: #f7f0da; padding: 10px; border-radius: 5px; border-radius: 5px; text-align: center"
+            style="
+              background: #f7f0da;
+              padding: 10px;
+              border-radius: 5px;
+              border-radius: 5px;
+              text-align: center;
+            "
           >
             <strong>Set your Risk Appetite here</strong>
             <el-select
@@ -93,31 +70,19 @@
               />
             </el-select>
             <!-- <highcharts :options="riskAppetiteAnalytics" /> -->
-            <img
-              :src="changeImpactImage(risk_appetite)"
-            >
+            <img :src="changeImpactImage(risk_appetite)" />
           </div>
         </el-col>
       </el-row>
-      <el-tabs
-        v-if="matrix !== ''"
-        type="border-card"
-      >
+      <el-tabs v-if="matrix !== ''" type="border-card">
         <el-tab-pane :label="`${matrix} Matrix Risk Ratings`">
           <div>
             <p>You can modify the description to suite your company's need</p>
             <el-row :gutter="20">
-              <el-col
-                :xs="24"
-                :sm="8"
-                :md="8"
-              >
+              <el-col :xs="24" :sm="8" :md="8">
                 <h3>Impact Ratings</h3>
                 <aside>
-
-                  <table
-                    class="table table-bordered"
-                  >
+                  <table class="table table-bordered">
                     <tr>
                       <td>Rating</td>
                       <td>Description</td>
@@ -133,24 +98,16 @@
                           type="text"
                           class="form-control"
                           @blur="customizeRiskMatrix(content.id, 'impact', 'name', $event)"
-                        >
+                        />
                       </td>
                     </tr>
                   </table>
                 </aside>
               </el-col>
-              <el-col
-                :xs="24"
-                :sm="16"
-                :md="16"
-              >
+              <el-col :xs="24" :sm="16" :md="16">
                 <h3>Likelihood Ratings</h3>
                 <aside>
-
-                  <table
-                    class="table table-bordered"
-                    nowrap
-                  >
+                  <table class="table table-bordered" nowrap>
                     <tr>
                       <td>Rating</td>
                       <td>Description</td>
@@ -167,7 +124,7 @@
                           type="text"
                           class="form-control"
                           @blur="customizeRiskMatrix(content.id, 'likelihood', 'name', $event)"
-                        >
+                        />
                       </td>
                       <td>
                         <textarea
@@ -175,7 +132,7 @@
                           type="text"
                           class="form-control"
                           @blur="customizeRiskMatrix(content.id, 'likelihood', 'summary', $event)"
-                        />
+                        ></textarea>
                       </td>
                     </tr>
                   </table>
@@ -185,7 +142,6 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="Impact Analysis">
-
           <el-row>
             <el-col :col="12">
               <div class="table-responsive">
@@ -195,7 +151,8 @@
                       <th>Rating</th>
                       <th>Description</th>
                       <th
-                        v-for="(impact_on_area, impact_area_index1) in impact_matrices[matrix][0].impact_on_areas"
+                        v-for="(impact_on_area, impact_area_index1) in impact_matrices[matrix][0]
+                          .impact_on_areas"
                         :key="impact_area_index1"
                       >
                         {{ impact_on_area.impact_area.area }}
@@ -219,7 +176,7 @@
                             type="text"
                             :placeholder="`Enter ${impact_on_area.impact_area.area}`"
                             @blur="saveImpactOnAreas(impact_on_area.id, $event)"
-                          />
+                          ></textarea>
                         </div>
                       </td>
                     </tr>
@@ -229,11 +186,7 @@
             </el-col>
           </el-row>
         </el-tab-pane>
-        <el-tab-pane
-          label="Risk Ranking Matrix"
-          :lazy="true"
-        >
-
+        <el-tab-pane label="Risk Ranking Matrix" :lazy="true">
           <risk-ranking-matrix :matrix="matrix" />
         </el-tab-pane>
       </el-tabs>
@@ -246,7 +199,7 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
-    RiskRankingMatrix,
+    RiskRankingMatrix
   },
   data() {
     return {
@@ -340,25 +293,25 @@ export default {
       likelihood_matrices: [],
       form: {
         proposed_matrix: '',
-        client_id: '',
+        client_id: ''
       },
       risk_matrix: { current_matrix: '', risk_appetite: '' },
       matrix: '',
       risk_impact_areas: [],
       risk_appetite: '',
       loader: false,
-      loading: false,
+      loading: false
     }
   },
   computed: {
     selectedClient() {
       return this.$store.getters.selectedClient
-    },
+    }
   },
   watch: {
     selectedClient() {
       this.loadFunctions()
-    },
+    }
   },
   created() {
     this.loadFunctions()
@@ -369,23 +322,26 @@ export default {
       this.fetchRiskImpactAreas()
     },
     changeImpactImage(score) {
-      const app = this
-      const { matrix } = app
+      const { matrix } = this
       if (matrix === '3x3') {
         if (score >= 6) {
           return 'images/project-icons/high-impact-level.png'
-        } if (score >= 3 && score <= 5) {
+        }
+        if (score >= 3 && score <= 5) {
           return 'images/project-icons/medium-impact-level.png'
-        } if (score >= 1 && score <= 2) {
+        }
+        if (score >= 1 && score <= 2) {
           return 'images/project-icons/low-impact-level.png'
         }
       }
       if (matrix === '5x5') {
         if (score >= 12) {
           return 'images/project-icons/high-impact-level.png'
-        } if (score >= 5 && score <= 11) {
+        }
+        if (score >= 5 && score <= 11) {
           return 'images/project-icons/medium-impact-level.png'
-        } if (score >= 1 && score <= 4) {
+        }
+        if (score >= 1 && score <= 4) {
           return 'images/project-icons/low-impact-level.png'
         }
       }
@@ -393,69 +349,91 @@ export default {
       return 'images/project-icons/no-impact-level.png'
     },
     fetchRiskImpactAreas() {
-      const app = this
-      app.loading = true
+      this.loading = true
       const fetchRisksResource = new Resource('fetch-risk-impact-area')
-      fetchRisksResource.list({ client_id: app.selectedClient.id })
-        .then(response => {
-          app.risk_impact_areas = response.risk_impact_areas
-          app.loading = false
-        }).catch(() => { app.loading = false })
+      fetchRisksResource
+        .list({ client_id: this.selectedClient.id })
+        .then((response) => {
+          this.risk_impact_areas = response.risk_impact_areas
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     fetchRiskMatricesSetup() {
-      const app = this
       const fetchMatriceResource = new Resource('setup-risk-matrices')
-      fetchMatriceResource.list({ client_id: app.selectedClient.id }).then(response => {
-        app.impact_matrices = response.impact_matrices
-        app.likelihood_matrices = response.likelihood_matrices
-        app.risk_matrix = response.risk_matrix
-        app.matrix = response.risk_matrix.current_matrix
-        app.risk_appetite = response.risk_matrix.risk_appetite
-        app.matrices = response.matrices
-      }).catch()
+      fetchMatriceResource
+        .list({ client_id: this.selectedClient.id })
+        .then((response) => {
+          this.impact_matrices = response.impact_matrices
+          this.likelihood_matrices = response.likelihood_matrices
+          this.risk_matrix = response.risk_matrix
+          this.matrix = response.risk_matrix.current_matrix
+          this.risk_appetite = response.risk_matrix.risk_appetite
+          this.matrices = response.matrices
+        })
+        .catch()
     },
     customizeRiskMatrix(id, table, field, event) {
       const { value } = event.target
       const fetchMatriceResource = new Resource('customize-risk-matrix')
-      fetchMatriceResource.store({
-        id, table, field, value,
-      }).then().catch()
+      fetchMatriceResource
+        .store({
+          id,
+          table,
+          field,
+          value
+        })
+        .then()
+        .catch()
     },
     saveImpactOnAreas(id, event) {
       const { value } = event.target
       const approveMatrixResource = new Resource('update-risk-impact-on-area')
-      approveMatrixResource.update(id, { impact_level: value }).then(() => {
-      }).catch()
+      approveMatrixResource
+        .update(id, { impact_level: value })
+        .then(() => {})
+        .catch()
     },
     sendProposedMatrix(matrix) {
-      const app = this
-      app.loader = true
-      app.form.client_id = app.selectedClient.id
-      app.form.proposed_matrix = matrix
+      this.loader = true
+      this.form.client_id = this.selectedClient.id
+      this.form.proposed_matrix = matrix
       const proposedMatrixResource = new Resource('propose-matrix')
-      proposedMatrixResource.store(app.form).then(response => {
-        app.$notify({ message: `${matrix} Matrix activation request sent and awaiting approval`, type: 'success' })
-        app.risk_matrix = response.risk_matrix
-        app.loader = false
-      }).catch(app.loader = false)
+      proposedMatrixResource
+        .store(this.form)
+        .then((response) => {
+          this.$notify({
+            message: `${matrix} Matrix activation request sent and awaiting approval`,
+            type: 'success'
+          })
+          this.risk_matrix = response.risk_matrix
+          this.loader = false
+        })
+        .catch((this.loader = false))
     },
     approvematrix(id) {
-      const app = this
-      app.loader = true
+      this.loader = true
       const approveMatrixResource = new Resource('approve-matrix')
-      approveMatrixResource.update(id).then(() => {
-        app.loadFunctions()
-        app.loader = false
-      }).catch(app.loader = false)
+      approveMatrixResource
+        .update(id)
+        .then(() => {
+          this.loadFunctions()
+          this.loader = false
+        })
+        .catch((this.loader = false))
     },
     setRiskAppetite(id) {
-      const app = this
-      app.loader = true
+      this.loader = true
       const approveMatrixResource = new Resource('set-risk-appetite')
-      approveMatrixResource.update(id, { risk_appetite: app.risk_appetite }).then(response => {
-        app.risk_matrix = response.risk_matrix
-        app.loader = false
-      }).catch(app.loader = false)
+      approveMatrixResource
+        .update(id, { risk_appetite: this.risk_appetite })
+        .then((response) => {
+          this.risk_matrix = response.risk_matrix
+          this.loader = false
+        })
+        .catch((this.loader = false))
     },
     fetchRiskAppetite(matrix) {
       let matrixRange = []
@@ -463,19 +441,18 @@ export default {
         matrixRange = [
           { value: 2, label: 'LOW (1-2 Risk Score)' },
           { value: 5, label: 'MEDIUM (3-5 Risk Score)' },
-          { value: 9, label: 'HIGH (Above 5 Risk Score)' },
+          { value: 9, label: 'HIGH (Above 5 Risk Score)' }
         ]
       }
       if (matrix === '5x5') {
         matrixRange = [
           { value: 4, label: 'LOW (1-4 Risk Score)' },
           { value: 11, label: 'MEDIUM (5-11 Risk Score)' },
-          { value: 25, label: 'HIGH (Above 12 Risk Score)' },
+          { value: 25, label: 'HIGH (Above 12 Risk Score)' }
         ]
       }
       return matrixRange
-    },
-
-  },
+    }
+  }
 }
 </script>

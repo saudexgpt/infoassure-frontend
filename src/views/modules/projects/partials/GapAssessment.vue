@@ -1,28 +1,24 @@
 <template>
-  <el-card>
-    <div slot="header">
+  <div>
+    <!-- <div slot="header">
       <span class="pull-right">
-        <b-button
+        <el-button
           v-if="!showAnalysis"
           variant="outline-success"
           size="sm"
           @click="showAnalysis = true"
-        >Show Analysis</b-button>
-        <b-button
+        >Show Analysis</el-button>
+        <el-button
           v-else
           variant="outline-danger"
           size="sm"
           @click="showAnalysis = false"
-        >Hide Analysis</b-button>
+        >Hide Analysis</el-button>
       </span>
       <h4>Manage Gap Assessment</h4>
-    </div>
-    <div
-      v-if="showAnalysis"
-    >
-      <el-row
-        :gutter="8"
-      >
+    </div> -->
+    <div v-if="showAnalysis">
+      <el-row :gutter="8">
         <el-col
           v-for="(item, index) in statistics"
           :key="index"
@@ -32,74 +28,55 @@
           :lg="8"
           :xl="8"
         >
-          <b-card
+          <el-card
             v-if="item.show"
             style="border-top-left-radius: 1rem; border-bottom-right-radius: 1rem"
           >
-            <b-card-body class="d-flex justify-content-between align-items-center">
-              <b-avatar
-                :variant="`light-${item.color}`"
-                size="50"
-              >
-                <feather-icon
-                  size="40"
-                  :icon="item.icon"
-                />
-              </b-avatar>
+            <el-card-body class="d-flex justify-content-between align-items-center">
+              <el-avatar :variant="`light-${item.color}`" size="50">
+                <feather-icon size="40" :icon="item.icon" />
+              </el-avatar>
               <div class="truncate">
-                <h2
-                  class="mb-25 font-weight-bolder"
-                >
+                <h2 class="mel-25 font-weight-bolder">
                   {{ item.statistic }}
                 </h2>
                 <span>{{ item.label }}</span>
               </div>
-            </b-card-body>
-            <b-card-footer>
+            </el-card-body>
+            <el-card-footer>
               <strong>
                 <span v-if="item.footer">{{ item.title2 }}: {{ item.statistic2 }}</span>
                 <span v-else>&nbsp;</span>
               </strong>
-            </b-card-footer>
-          </b-card>
+            </el-card-footer>
+          </el-card>
         </el-col>
       </el-row>
     </div>
-    <b-tabs
-      variant="danger"
-    >
-      <b-tab
-        title="AUDIT QUESTIONS"
-        lazy
-      >
-        <audit-questions
-          :selected-project="selectedProject"
-          :is-admin="isAdmin"
-          @reloadAnalytics="fetchAnalystics"
-        />
-      </b-tab>
-      <b-tab
-        v-if="selectedProject.allow_document_uploads === 1"
-        title="DOCUMENTS"
-        lazy
-      >
-        <documents
-          :selected-project="selectedProject"
-          :is-admin="isAdmin"
-          @reloadAnalytics="fetchAnalystics"
-        />
-      </b-tab>
-      <b-tab
-        title="EXCLUSIONS"
-        lazy
-      >
-        <exceptions
-          :selected-project="selectedProject"
-          :is-admin="isAdmin"
-          @reloadAnalytics="fetchAnalystics"
-        />
-      </b-tab>
-      <!-- <b-tab
+    <el-card>
+      <el-tabs variant="danger">
+        <el-tab title="AUDIT QUESTIONS" lazy>
+          <audit-questions
+            :selected-project="selectedProject"
+            :is-admin="isAdmin"
+            @reloadAnalytics="fetchAnalystics"
+          />
+        </el-tab>
+        <el-tab v-if="selectedProject.allow_document_uploads === 1" title="DOCUMENTS" lazy>
+          <documents
+            :selected-project="selectedProject"
+            :is-admin="isAdmin"
+            @reloadAnalytics="fetchAnalystics"
+          />
+        </el-tab>
+        <el-tab title="EXCLUSIONS" lazy>
+          <exceptions
+            :selected-project="selectedProject"
+            :is-admin="isAdmin"
+            @reloadAnalytics="fetchAnalystics"
+          />
+        </el-tab>
+        <!-- <el-tab
         title="CERTIFICATE"
         lazy
       >
@@ -108,26 +85,19 @@
           :is-admin="isAdmin"
           @reloadAnalytics="fetchAnalystics"
         />
-      </b-tab> -->
-      <b-tab
-        v-if="isAdmin"
-        title="ASSESSMENT REPORTS"
-        lazy
-      >
-        <reports
-          :selected-project="selectedProject"
-          :is-admin="isAdmin"
-          @reloadAnalytics="fetchAnalystics"
-        />
-      </b-tab>
-    </b-tabs>
-  </el-card>
+      </el-tab> -->
+        <el-tab v-if="isAdmin" title="ASSESSMENT REPORTS" lazy>
+          <reports
+            :selected-project="selectedProject"
+            :is-admin="isAdmin"
+            @reloadAnalytics="fetchAnalystics"
+          />
+        </el-tab>
+      </el-tabs>
+    </el-card>
+  </div>
 </template>
 <script>
-import {
-  BCard, BCardFooter, BCardBody, BAvatar, BTabs, BTab, BButton,
-} from 'bootstrap-vue'
-import Documents from './Documents.vue'
 import AuditQuestions from './AuditQuestions.vue'
 import Exceptions from './Exceptions.vue'
 // import Certificate from './Certificate.vue'
@@ -137,39 +107,32 @@ import Resource from '@/api/resource'
 
 export default {
   components: {
-    BTabs,
-    BTab,
-    BCard,
-    BCardFooter,
-    BCardBody,
-    BAvatar,
-    BButton,
     Documents,
     AuditQuestions,
     Exceptions,
     // Certificate,
-    Reports,
+    Reports
   },
   props: {
     selectedClient: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
     selectedProject: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
     isAdmin: {
       type: Boolean,
-      default: () => false,
-    },
+      default: () => false
+    }
   },
   data() {
     return {
       showAnalysis: true,
       statistics: [],
       dashboardData: {},
-      evidence: '',
+      evidence: ''
     }
   },
   watch: {
@@ -180,7 +143,7 @@ export default {
     selectedProject() {
       this.createProjectAnswers()
       this.createProjectUploads()
-    },
+    }
   },
   created() {
     this.createProjectAnswers()
@@ -188,66 +151,80 @@ export default {
   },
   methods: {
     setData() {
-      const app = this
       const data = [
         {
-          color: 'success', icon: 'HelpCircleIcon', statistic: app.dashboardData.all_questions, label: 'Gap Assessment', title2: 'Responses', statistic2: app.dashboardData.answered_questions, footer: true, show: true,
+          color: 'success',
+          icon: 'HelpCircleIcon',
+          statistic: this.dashboardData.all_questions,
+          label: 'Questions',
+          title2: 'Responses',
+          statistic2: this.dashboardData.answered_questions,
+          footer: true,
+          show: true
         },
         {
-          color: 'primary', icon: 'UploadIcon', statistic: app.dashboardData.expected_documents, label: 'Expected Documents', title2: 'Uploaded Documents', statistic2: app.dashboardData.uploaded_documents, footer: true, show: app.selectedProject.allow_document_uploads === 1,
+          color: 'primary',
+          icon: 'UploadIcon',
+          statistic: this.dashboardData.expected_documents,
+          label: 'Expected Documents',
+          title2: 'Uploaded Documents',
+          statistic2: this.dashboardData.uploaded_documents,
+          footer: true,
+          show: this.selectedProject.allow_document_uploads === 1
         },
         {
-          color: 'danger', icon: 'AlertCircleIcon', statistic: app.dashboardData.exceptions, label: 'EXCLUSIONS', show: true,
-        },
+          color: 'danger',
+          icon: 'AlertCircleIcon',
+          statistic: this.dashboardData.exceptions,
+          label: 'EXCLUSIONS',
+          show: true
+        }
       ]
-      app.statistics = data
+      this.statistics = data
     },
     createProjectAnswers() {
-      const app = this
       const param = {
-        project_id: app.selectedProject.id,
-        consulting_id: app.selectedProject.consulting_id,
-        client_id: app.selectedProject.client_id,
-        standard_id: app.selectedProject.standard_id,
+        project_id: this.selectedProject.id,
+        consulting_id: this.selectedProject.consulting_id,
+        client_id: this.selectedProject.client_id,
+        standard_id: this.selectedProject.standard_id
       }
-      app.loading = true
+      this.loading = true
       const createAnswersResource = new Resource('answers/save')
-      createAnswersResource.store(param)
-        .then(() => {
-          app.fetchAnalystics()
-        })
-    },
-    createProjectUploads() {
-      const app = this
-      const param = {
-        project_id: app.selectedProject.id,
-        consulting_id: app.selectedProject.consulting_id,
-        client_id: app.selectedProject.client_id,
-        standard_id: app.selectedProject.standard_id,
-      }
-      app.loading = true
-      const createUploadsResource = new Resource('clauses/uploads/save')
-      createUploadsResource.store(param)
-        .then(() => {
-          app.fetchAnalystics()
-        })
-    },
-    fetchAnalystics() {
-      const app = this
-      const param = {
-        project_id: app.selectedProject.id,
-        client_id: app.selectedProject.client_id,
-      }
-      const dashboardDataResource = new Resource('reports/client-project-data-analysis')
-      dashboardDataResource.list(param).then(response => {
-        app.dashboardData = response
-        app.setData()
-      }).catch(error => {
-        console.log(error)
-        app.load = false
+      createAnswersResource.store(param).then(() => {
+        this.fetchAnalystics()
       })
     },
-  },
-
+    createProjectUploads() {
+      const param = {
+        project_id: this.selectedProject.id,
+        consulting_id: this.selectedProject.consulting_id,
+        client_id: this.selectedProject.client_id,
+        standard_id: this.selectedProject.standard_id
+      }
+      this.loading = true
+      const createUploadsResource = new Resource('clauses/uploads/save')
+      createUploadsResource.store(param).then(() => {
+        this.fetchAnalystics()
+      })
+    },
+    fetchAnalystics() {
+      const param = {
+        project_id: this.selectedProject.id,
+        client_id: this.selectedProject.client_id
+      }
+      const dashboardDataResource = new Resource('reports/client-project-data-analysis')
+      dashboardDataResource
+        .list(param)
+        .then((response) => {
+          this.dashboardData = response
+          this.setData()
+        })
+        .catch((error) => {
+          console.log(error)
+          this.load = false
+        })
+    }
+  }
 }
 </script>
