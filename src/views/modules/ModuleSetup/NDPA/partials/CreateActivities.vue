@@ -1,21 +1,56 @@
 <template>
   <el-row :gutter="20">
-    <el-col :md="24">
+    <el-col :md="12">
+      <label label-for="roles" rules="required">Select Part</label>
+      <el-select
+        v-model="selectedClause"
+        placeholder="Select Part"
+        value-key="id"
+        filterable
+        style="width: 100%"
+        @change="setClause()"
+      >
+        <el-option
+          v-for="(clause, index) in clauses"
+          :key="index"
+          :value="clause"
+          :label="`${clause.name} - ${clause.description}`"
+        />
+      </el-select>
+    </el-col>
+    <el-col :md="12">
+      <label label-for="roles" rules="required">Select Section</label>
+      <el-select
+        v-model="selectedSection"
+        placeholder="Select Section"
+        value-key="id"
+        filterable
+        style="width: 100%"
+        @change="setSection()"
+      >
+        <el-option
+          v-for="(section, index) in selectedClause.sections"
+          :key="index"
+          :value="section"
+          :label="`${section.name} - ${section.description}`"
+        />
+      </el-select>
+    </el-col>
+    <el-col v-if="form.section_id !== ''" :md="24">
       <div style="max-height: 450px; overflow: auto">
         <table class="table table-bordered">
           <thead>
             <tr>
               <th></th>
-              <th>Task (one per row)</th>
-              <th>Hint</th>
-              <th>Expected Document/Evidence Template</th>
-              <!-- <th>Dependent On</th> -->
+              <!-- <th>Control No.</th> -->
+              <th>Name/Title</th>
+              <th>Description</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(detail, index) in details" :key="index">
               <td>
-                <el-button-group>
+                <span>
                   <el-button
                     v-if="details.length > 1"
                     type="danger"
@@ -34,56 +69,25 @@
                   >
                     <icon icon="tabler:plus" />
                   </el-button>
-                </el-button-group>
+                </span>
               </td>
+              <!-- <td>
+                <el-input v-model="detail.activity_no" type="text" placeholder="e.g. 4.1-a" />
+              </td> -->
               <td>
                 <el-input
                   v-model="detail.name"
                   type="text"
-                  placeholder="State a task to be performed"
+                  placeholder="e.g. Identify external factors"
                 />
               </td>
               <td>
                 <el-input
-                  v-model="detail.hint"
+                  v-model="detail.description"
                   type="textarea"
-                  placeholder="Suggest implementation guide"
+                  placeholder="e.g. List all regulatory, legal, market, and technological factors affecting ISMS."
                 />
               </td>
-              <td>
-                <el-select
-                  v-model="detail.document_template_ids"
-                  multiple
-                  collapse-tags
-                  collapse-tags-tooltip
-                  placeholder="Select"
-                  style="width: 100%"
-                  filterable
-                >
-                  <el-option-group
-                    v-for="(documentTemplates, index) in templates"
-                    :key="index"
-                    :label="index"
-                  >
-                    <el-option
-                      v-for="template in documentTemplates"
-                      :key="template.id"
-                      :label="template.title"
-                      :value="template.id"
-                    />
-                  </el-option-group>
-                </el-select>
-              </td>
-              <!-- <td v-loading="loadTasks">
-                <el-select v-model="detail.dependency" filterable style="width: 100%">
-                  <el-option
-                    v-for="(task, index) in other_tasks"
-                    :key="index"
-                    :value="task.id"
-                    :label="task.name"
-                  />
-                </el-select>
-              </td> -->
             </tr>
             <tr v-if="fill_fields_error">
               <td colspan="4">
@@ -97,9 +101,7 @@
       </div>
     </el-col>
     <el-col :md="24">
-      <el-button :loading="loader" :disabled="rowIsEmpty()" type="success" @click="formSubmitted">
-        Submit
-      </el-button>
+      <el-button :loading="loader" type="success" @click="formSubmitted"> Submit </el-button>
     </el-col>
   </el-row>
 </template>
@@ -110,9 +112,9 @@ import Resource from '@/api/resource'
 export default {
   components: {},
   props: {
-    activity: {
-      type: Object,
-      default: () => null
+    clauses: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -122,51 +124,52 @@ export default {
 
       form: {
         clause_id: '',
-        module_activity_id: '',
+        section_id: '',
         details: []
       },
       empty_form: {
         clause_id: '',
-        module_activity_id: '',
+        section_id: '',
         details: []
       },
       loader: false,
       details: [],
       fill_fields_error: false,
-      loadTasks: false,
-      other_tasks: [],
-      templates: []
+      selectedClause: {
+        sections: []
+      },
+      selectedSection: null
     }
   },
   created() {
-    this.fetchDocumentTemplates()
-    this.form.clause_id = this.activity.clause_id
-    this.form.module_activity_id = this.activity.id
-    this.addLine()
+    // this.fetchFormDetails()
+    // this.addLine()
   },
   methods: {
-    rowIsEmpty() {
-      return this.details.some((detail) => detail.name === '')
+    setClause() {
+      this.form.clause_id = this.selectedClause.id
+    },
+    setSection() {
+      this.form.section_id = this.selectedSection.id
+      this.details = []
+      this.addLine()
     },
     addLine() {
       this.fill_fields_error = false
 
-      if (this.rowIsEmpty() && this.details.length > 0) {
+      const checkEmptyLines = this.details.filter(
+        (detail) => detail.name === '' || detail.activity_no === ''
+      )
+
+      if (checkEmptyLines.length >= 1 && this.details.length > 0) {
         this.fill_fields_error = true
       } else {
         this.details.push({
+          activity_no: this.selectedSection.name,
           name: '',
-          hint: '',
-          dependency: null,
-          document_template_ids: []
+          description: ''
         })
       }
-    },
-    fetchDocumentTemplates() {
-      const fetchTemplateResource = new Resource('document-templates/fetch')
-      fetchTemplateResource.list(this.form).then((response) => {
-        this.templates = response.document_templates
-      })
     },
     removeLine(detailId) {
       this.fill_fields_error = false
@@ -175,11 +178,11 @@ export default {
       }
     },
     formSubmitted() {
-      const createTaskResource = new Resource('isms/calendar/store-clause-activity-tasks')
+      const createActivityResource = new Resource('ndpa/calendar/store-clause-activities')
       const { form } = this
       form.details = this.details
       this.loader = true
-      createTaskResource
+      createActivityResource
         .store(form)
         .then(() => {
           this.form = this.empty_form

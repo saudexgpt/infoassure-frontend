@@ -24,6 +24,7 @@
       :enable-selection="true"
       :enable-editor="true"
       :isReadOnly="true"
+      v-on:contentChange="contentChangeEvent"
     />
   </div>
 </template>
@@ -65,19 +66,16 @@ export default {
     'ejs-documenteditorcontainer': DocumentEditorContainerComponent
   },
   props: {
-    documentPath: {
-      type: String,
-      default: ''
-    },
-    documentTitle: {
-      type: String,
-      default: ''
+    documentData: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
     return {
       disableButton: true,
       loading: false,
+      contentChanged: false,
       serviceUrl: 'https://ej2services.syncfusion.com/production/web-services/api/documenteditor/',
       items: [
         'New',
@@ -132,18 +130,36 @@ export default {
     // ]
   },
   mounted() {
-    this.fetchSFDTFile()
+    this.openFile()
+    this.enableAutoSave()
   },
   methods: {
+    openFile() {
+      if (this.documentData.link === null) {
+        this.fetchSFDTFile(this.documentData.template_link)
+      } else {
+        this.fetchSFDTFile(this.documentData.link)
+      }
+    },
     openFileButtonClickHandler() {
       console.log('Open file button clicked')
       this.$refs.fileUpload.click()
     },
-    fetchSFDTFile() {
+    contentChangeEvent() {
+      this.contentChanged = true
+    },
+    enableAutoSave() {
+      setInterval(() => {
+        if (this.contentChanged) {
+          //You can save the document as below
+          this.saveFile(false)
+          this.contentChanged = false
+        }
+      }, 20000)
+    },
+    fetchSFDTFile(path) {
       this.loading = true
-      const formData = {
-        path: this.documentPath
-      }
+      const formData = { path }
       const fetchResource = new Resource('format-doc-to-sfdt')
       fetchResource
         .list(formData)
@@ -157,12 +173,12 @@ export default {
           this.loading = false
           this.disableButton = true
           // console.log(e.response.data.message)
-          this.$message({ message: e.response.data.message, type: 'error' })
+          this.$message({ message: 'An error occured. Please try again!', type: 'error' })
         })
     },
     downloadFile() {
       // Download the document in docx format.
-      this.$refs.doceditcontainer.ej2Instances.documentEditor.save(this.documentTitle, 'Docx')
+      this.$refs.doceditcontainer.ej2Instances.documentEditor.save(this.documentData.title, 'Docx')
     },
     // onFileUpload(e) {
     //   if (e.target.files[0]) {
@@ -179,34 +195,49 @@ export default {
     //     }
     //   }
     // },
-
-    saveFile() {
-      this.$confirm('This will overwrite the existing document. Continue?', 'Warning', {
-        confirmButtonText: 'Yes, Please',
-        cancelButtonText: 'No, Abort',
-        type: 'warning'
-      })
-        .then(() => {
-          this.$refs.doceditcontainer.ej2Instances.documentEditor
-            .saveAsBlob('Docx')
-            .then((exportedDocument) => {
-              // The blob can be processed further
-              const formData = new FormData()
-              formData.append('file_to_be_saved', exportedDocument)
-              formData.append('path', this.documentPath)
-              this.saveDocBlob(formData)
-            })
+    saveFile(load = true) {
+      this.$refs.doceditcontainer.ej2Instances.documentEditor
+        .saveAsBlob('Docx')
+        .then((exportedDocument) => {
+          // The blob can be processed further
+          const formData = new FormData()
+          formData.append('file_to_be_saved', exportedDocument)
+          formData.append('path', this.documentData.link)
+          formData.append('id', this.documentData.id)
+          formData.append('title', this.documentData.title)
+          this.saveDocBlob(formData, load)
         })
-        .catch(() => {})
     },
-    saveDocBlob(formData) {
-      this.loading = true
-      const saveResource = new Resource('save-doc-template')
+    // saveFile() {
+    //   this.$confirm('This will overwrite the existing document. Continue?', 'Warning', {
+    //     confirmButtonText: 'Yes, Please',
+    //     cancelButtonText: 'No, Abort',
+    //     type: 'warning'
+    //   })
+    //     .then(() => {
+    //       this.$refs.doceditcontainer.ej2Instances.documentEditor
+    //         .saveAsBlob('Docx')
+    //         .then((exportedDocument) => {
+    //           // The blob can be processed further
+    //           const formData = new FormData()
+    //           formData.append('file_to_be_saved', exportedDocument)
+    //           formData.append('path', this.documentData.link)
+    //           formData.append('id', this.documentData.id)
+    //           formData.append('title', this.documentData.title)
+    //           this.saveDocBlob(formData)
+    //         })
+    //     })
+    //     .catch(() => {})
+    // },
+    saveDocBlob(formData, load) {
+      this.loading = load
+      const saveResource = new Resource('save-client-copy')
       saveResource
         .store(formData)
         .then((response) => {
           // open the SFDT text in Document Editor
           this.$message(response.message)
+          this.$emit('refresh')
           // this.$refs.doceditcontainer.ej2Instances.documentEditor.open(response)
           this.loading = false
         })

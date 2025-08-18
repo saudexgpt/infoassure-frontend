@@ -42,9 +42,9 @@
         <small class="mail-date-time text-muted">{{
           moment(message.created_a).format('lll')
         }}</small>
-        <small class="mail-date-time text-muted">{{
+        <!-- <small class="mail-date-time text-muted">{{
           formatDateToMonthShort(message.created_at, { hour: 'numeric', minute: 'numeric' })
-        }}</small>
+        }}</small> -->
       </div>
     </el-card-header>
 
@@ -57,7 +57,6 @@
 
 <script>
 import moment from 'moment'
-import { formatDate, formatDateToMonthShort } from '@core/utils/filter'
 export default {
   components: {},
   props: {
@@ -68,12 +67,6 @@ export default {
     type: {
       type: String,
       default: () => 'inbox'
-    }
-  },
-  setup() {
-    return {
-      formatDate,
-      formatDateToMonthShort
     }
   },
   methods: {

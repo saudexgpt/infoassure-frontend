@@ -29,9 +29,9 @@
             cols="12"
             class="mb-2"
           >
-            <h5 class="mb-0">
+            <h3 class="mb-0">
               General Information
-            </h5>
+            </h3>
             <small class="text-muted">
               Enter Your Account Details.
             </small>
@@ -48,6 +48,7 @@
           </el-col>
           <el-col :md="12">
             <el-form-group label="Business Type" label-for="v-business_type">
+              <label>Business Type</label>
               <el-select
                 v-model="form.business_type"
                 filterable
@@ -64,13 +65,7 @@
             </el-form-group>
           </el-col>
           <el-col :md="12">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="Example: Payroll services, Transaction processing, Software maintenance, Professional services, Legal services e.t.c"
-              placement="top"
-            >
-              <!-- <el-select
+            <!-- <el-select
                       v-model="form.service_description"
                       filterable
                       style="width: 100%"
@@ -84,18 +79,20 @@
                       />
                     </el-select> -->
 
-              <v-text-field
-                density="compact"
-                variant="outlined"
-                v-model="form.service_description"
-                type="textarea"
-                label="Describe the products/services your company offers"
-                maxlength="500"
-                rows="3"
-                show-word-limit
-                :readonly="isAdmin"
-              />
-            </el-tooltip>
+            <small
+              ><em
+                >Example: Payroll services, Transaction processing, Software maintenance,
+                Professional services, Legal services e.t.c</em
+              ></small
+            >
+            <v-textarea
+              density="compact"
+              variant="outlined"
+              v-model="form.service_description"
+              label="Describe the products/services your company offers"
+              :readonly="isAdmin"
+              rows="2"
+            />
           </el-col>
           <el-col :md="12">
             <el-form-group label="Company Registration Number" label-for="v-reg_no">
@@ -111,6 +108,7 @@
           </el-col>
           <el-col :md="12">
             <el-form-group label="Country of Incorporation" label-for="v-country">
+              <label>Country of Incorporation</label>
               <el-select
                 v-model="form.country_of_incorporation"
                 filterable
@@ -218,10 +216,10 @@
       <tab-content title="Pre Screening Information">
         <el-row :gutter="20">
           <el-col cols="6" class="mb-2">
-            <h5 class="mb-2">
+            <h3 class="mb-2">
               Does your company process, store, or transmit our organization's or customers'
               sensitive information?
-            </h5>
+            </h3>
             <div>
               <el-radio
                 v-model="form.stores_sentivite_information"
@@ -242,10 +240,10 @@
             </div>
           </el-col>
           <el-col cols="6" class="mb-2">
-            <h5 class="mb-2">
+            <h3 class="mb-2">
               Does your organization require direct access to our critical systems to perform its
               services?
-            </h5>
+            </h3>
             <div>
               <el-radio
                 v-model="form.has_access_to_critical_systems"
@@ -266,10 +264,10 @@
             </div>
           </el-col>
           <el-col cols="6" class="mb-2">
-            <h5 class="mb-2">
+            <h3 class="mb-2">
               Would a disruption in your services cause significant delays or downtime in our
               business operations?
-            </h5>
+            </h3>
             <div>
               <el-radio
                 v-model="form.has_impact_on_business_operations"
@@ -305,68 +303,64 @@
               "
             >
               <el-col md="12">
-                <el-form-group
-                  label="Have you worked with similar organizations before?"
-                  label-for="v-work_with_similar_organization"
-                >
-                  <div>
-                    <el-radio
-                      v-model="form.work_with_similar_organization"
-                      :label="0"
-                      border
-                      :disabled="isAdmin"
-                    >
-                      No
-                    </el-radio>
-                    <el-radio
-                      v-model="form.work_with_similar_organization"
-                      :label="1"
-                      border
-                      :disabled="isAdmin"
-                    >
-                      Yes
-                    </el-radio>
-                  </div>
-                  <div v-if="form.work_with_similar_organization === 1">
-                    <label for="">Kindly Provide References (Names of the organizations)</label>
-                    <v-text-field
-                      density="compact"
-                      variant="outlined"
-                      v-model="form.references_to_working_with_similar_organizations"
-                      type="textarea"
-                      label="Type Here..."
-                      maxlength="300"
-                      rows="3"
-                      show-word-limit
-                      :readonly="isAdmin"
-                    />
-                  </div>
-                </el-form-group>
+                <label for="v-work_with_similar_organization">
+                  Have you worked with similar organizations before?
+                </label>
+                <div>
+                  <el-radio
+                    v-model="form.work_with_similar_organization"
+                    :label="0"
+                    border
+                    :disabled="isAdmin"
+                  >
+                    No
+                  </el-radio>
+                  <el-radio
+                    v-model="form.work_with_similar_organization"
+                    :label="1"
+                    border
+                    :disabled="isAdmin"
+                  >
+                    Yes
+                  </el-radio>
+                </div>
+                <div v-if="form.work_with_similar_organization === 1">
+                  <label for="">Kindly Provide References (Names of the organizations)</label>
+                  <v-textarea
+                    density="compact"
+                    variant="outlined"
+                    v-model="form.references_to_working_with_similar_organizations"
+                    type="textarea"
+                    label="Type Here..."
+                    maxlength="300"
+                    rows="3"
+                    show-word-limit
+                    :readonly="isAdmin"
+                  />
+                </div>
               </el-col>
               <el-col md="12">
-                <el-form-group
-                  label="Do you have valid business insurance?"
-                  label-for="v-have_business_insurance"
-                >
-                  <div>
-                    <el-radio
-                      v-model="form.have_business_insurance"
-                      :label="0"
-                      border
-                      :disabled="isAdmin"
-                    >
-                      No
-                    </el-radio>
-                    <el-radio
-                      v-model="form.have_business_insurance"
-                      :label="1"
-                      border
-                      :disabled="isAdmin"
-                    >
-                      Yes
-                    </el-radio>
-                  </div>
-                  <div v-if="form.have_business_insurance === 1">
+                <label for="have_business_insurance">Do you have valid business insurance?</label>
+                <div>
+                  <el-radio
+                    v-model="form.have_business_insurance"
+                    :label="0"
+                    border
+                    :disabled="isAdmin"
+                  >
+                    No
+                  </el-radio>
+                  <el-radio
+                    v-model="form.have_business_insurance"
+                    :label="1"
+                    border
+                    :disabled="isAdmin"
+                  >
+                    Yes
+                  </el-radio>
+                </div>
+                <div v-if="form.have_business_insurance === 1">
+                  <div v-if="!fileUploaded('Business Insurance Certificate') && !isAdmin">
                     <label for="">Kindly Upload Certificate</label>
                     <input
                       v-if="!fileUploaded('Business Insurance Certificate') && !isAdmin"
@@ -374,22 +368,27 @@
                       type="file"
                       @change="onImageChange($event, 'Business Insurance Certificate')"
                     />
-                    <div v-else> Check for uploaded Business Insurance Certificate </div>
                   </div>
-                </el-form-group>
+                  <div v-else>
+                    <el-alert type="success" :closable="false"
+                      >Check the uploaded Business Insurance Certificate</el-alert
+                    >
+                  </div>
+                </div>
               </el-col>
               <el-col md="12">
                 <el-form-group
                   label="Upload your Business License"
                   label-for="v-business_license_link"
                 >
+                  <label for="">Upload your Business License</label>
                   <input
                     v-if="!fileUploaded('Business License Certificate') && !isAdmin"
                     class="form-control"
                     type="file"
                     @change="onImageChange($event, 'Business License Certificate')"
                   />
-                  <div v-else> Check for uploaded Business License Certificate </div>
+                  <div v-else> Check for the already uploaded Business License Certificate </div>
                 </el-form-group>
               </el-col>
               <el-col md="12">
@@ -397,6 +396,7 @@
                   label="Company Tax Identification Number"
                   label-for="v-company_tax_identification_no"
                 >
+                  <label for="">Company Tax Identification Number</label>
                   <v-text-field
                     density="compact"
                     variant="outlined"
@@ -411,6 +411,7 @@
                   label="Banking Details for Payment Processing"
                   label-for="v-bank_details"
                 >
+                  <label for="">Banking Details for Payment Processing</label>
                   <table class="table">
                     <tbody>
                       <tr>
@@ -456,19 +457,20 @@
             <!--More Info-->
             <el-row :gutter="20" v-else>
               <el-col cols="12" class="mb-2">
-                <h5 class="mb-2"> Business & Operational Details </h5>
+                <h3 class="mb-2"> Business & Operational Details </h3>
               </el-col>
               <el-col md="12">
                 <el-form-group
                   label="List any major clients or industry recognitions"
                   label-for="v-service_description"
                 >
-                  <v-text-field
+                  <v-textarea
                     density="compact"
                     variant="outlined"
                     v-model="form.list_of_clients_or_industry_recognitions"
                     type="textarea"
-                    label="Type Here..."
+                    label="List any major clients or industry recognitions"
+                    placeholder="Type here..."
                     maxlength="500"
                     rows="4"
                     show-word-limit
@@ -481,6 +483,7 @@
                   label="Does your company subcontract any services?"
                   label-for="v-work_with_similar_organization"
                 >
+                  <label>Does your company subcontract any services?</label>
                   <div>
                     <el-radio
                       v-model="form.does_subcontract_services"
@@ -500,13 +503,15 @@
                     </el-radio>
                   </div>
                   <div v-if="form.does_subcontract_services === 1">
-                    <label for="">Kindly specify the details</label>
-                    <v-text-field
+                    <br />
+                    <label for="">Kindly specify the services</label>
+                    <p></p>
+                    <v-textarea
                       density="compact"
                       variant="outlined"
                       v-model="form.list_of_services_subcontracted"
                       type="textarea"
-                      label="Type Here..."
+                      label="Specify the services your company subcontract"
                       maxlength="300"
                       rows="3"
                       show-word-limit
@@ -516,13 +521,14 @@
                 </el-form-group>
               </el-col>
               <el-col cols="12" class="mb-2">
-                <h5 class="mb-2"> Regulatory & Compliance Information </h5>
+                <h3 class="mb-2"> Regulatory & Compliance Information </h3>
               </el-col>
               <el-col md="12">
                 <el-form-group
                   label="Upload Applicable Industry Certifications"
                   label-for="v-industry_certs"
                 >
+                  <label>Upload Applicable Industry Certifications</label>
                   <table class="table table-bordered">
                     <thead>
                       <tr>
@@ -560,21 +566,30 @@
                             type="file"
                             @change="onImageChange($event, item.title)"
                           />
-                          <div v-else> Check for uploaded {{ item.title }} certificates </div>
+                          <div v-else>
+                            Check for the already uploaded {{ item.title }} certificate
+                          </div>
                         </td>
                         <td>
                           <span>
-                            <el-button
-                              v-if="certifications_to_upload.length > 1"
-                              size="mini"
-                              type="danger"
-                              @click="removeLine(upload_index)"
-                            >
-                              <icon icon="tabler:trash" />
-                            </el-button>
-                            <el-button size="mini" type="success" @click="addLine(upload_index)">
-                              <icon icon="tabler:plus" />
-                            </el-button>
+                            <el-button-group>
+                              <el-button
+                                v-if="certifications_to_upload.length > 1"
+                                size="mini"
+                                type="danger"
+                                @click="removeLine(upload_index)"
+                              >
+                                <icon icon="tabler:trash" />
+                              </el-button>
+                              <el-button
+                                v-if="certifications_to_upload.length - 1 === upload_index"
+                                size="mini"
+                                type="success"
+                                @click="addLine(upload_index)"
+                              >
+                                <icon icon="tabler:plus" />
+                              </el-button>
+                            </el-button-group>
                           </span>
                         </td>
                       </tr>
@@ -587,6 +602,9 @@
                   label="Does your organization have any past regulatory compliance violations?"
                   label-for="v-past_regulatory_compliance_violations"
                 >
+                  <label>
+                    Does your organization have any past regulatory compliance violations?
+                  </label>
                   <div>
                     <el-radio
                       v-model="form.past_regulatory_compliance_violations"
@@ -606,13 +624,13 @@
                     </el-radio>
                   </div>
                   <div v-if="form.past_regulatory_compliance_violations === 1">
-                    <label for="">Kindly provide the details</label>
-                    <v-text-field
+                    <p></p>
+                    <v-textarea
                       density="compact"
                       variant="outlined"
                       v-model="form.details_of_compliance_violations"
                       type="textarea"
-                      label="Type Here..."
+                      label="Kindly provide the details"
                       maxlength="300"
                       rows="3"
                       show-word-limit
@@ -626,6 +644,9 @@
                   label="Does your organization have an internal compliance team or officer?"
                   label-for="v-past_regulatory_compliance_violations"
                 >
+                  <label for=""
+                    >Does your organization have an internal compliance team or officer?</label
+                  >
                   <div>
                     <el-radio
                       v-model="form.internal_compliance_team_or_officer"
@@ -647,13 +668,14 @@
                 </el-form-group>
               </el-col>
               <el-col cols="12" class="mb-2">
-                <h5 class="mb-2"> Security & Risk Management </h5>
+                <h3 class="mb-2"> Security & Risk Management </h3>
               </el-col>
               <el-col md="12">
                 <el-form-group
                   label="Do you have a formal cybersecurity policy?"
                   label-for="v-have_formal_cybersecurity_policy"
                 >
+                  <label for="">Do you have a formal cybersecurity policy?</label>
                   <div>
                     <el-radio
                       v-model="form.have_formal_cybersecurity_policy"
@@ -673,14 +695,19 @@
                     </el-radio>
                   </div>
                   <div v-if="form.have_formal_cybersecurity_policy === 1">
-                    <label for="">Kindly Upload</label>
-                    <input
-                      v-if="!fileUploaded('Cybersecurity Policy') && !isAdmin"
-                      class="form-control"
-                      type="file"
-                      @change="onImageChange($event, 'Cybersecurity Policy')"
-                    />
-                    <div v-else> Check for uploaded Cybersecurity Policy </div>
+                    <div v-if="!fileUploaded('Cybersecurity Policy') && !isAdmin">
+                      <label for="">Kindly Upload</label>
+                      <input
+                        class="form-control"
+                        type="file"
+                        @change="onImageChange($event, 'Cybersecurity Policy')"
+                      />
+                    </div>
+                    <div v-else>
+                      <el-alert type="success" :closable="false"
+                        >Check the uploaded Cybersecurity Policy</el-alert
+                      >
+                    </div>
                   </div>
                 </el-form-group>
               </el-col>
@@ -689,6 +716,7 @@
                   label="Has your company experienced a data breach in the past 3 years?"
                   label-for="v-have_recent_data_breach"
                 >
+                  <label>Has your company experienced a data breach in the past 3 years?</label>
                   <div>
                     <el-radio
                       v-model="form.have_recent_data_breach"
@@ -708,13 +736,13 @@
                     </el-radio>
                   </div>
                   <div v-if="form.have_recent_data_breach === 1">
-                    <label for="">Kindly explain the resolution process</label>
-                    <v-text-field
+                    <p></p>
+                    <v-textarea
                       density="compact"
                       variant="outlined"
                       v-model="form.data_breach_resolution_process"
                       type="textarea"
-                      label="Explain Here..."
+                      label="Kindly explain the resolution process"
                       maxlength="500"
                       rows="4"
                       show-word-limit
@@ -728,12 +756,12 @@
                   label="How do you ensure data protection and confidentiality?"
                   label-for="v-ensure_data_protection_and_confidentiality"
                 >
-                  <v-text-field
+                  <v-textarea
                     density="compact"
                     variant="outlined"
                     v-model="form.ensure_data_protection_and_confidentiality"
                     type="textarea"
-                    label="Explain Here..."
+                    label="How do you ensure data protection and confidentiality?"
                     maxlength="500"
                     rows="4"
                     show-word-limit
@@ -746,6 +774,7 @@
                   label="Do you conduct background checks on employees?"
                   label-for="v-have_formal_cybersecurity_policy"
                 >
+                  <label>Do you conduct background checks on employees?</label>
                   <div>
                     <el-radio
                       v-model="form.does_background_checks_on_employees"
@@ -767,7 +796,7 @@
                 </el-form-group>
               </el-col>
               <el-col cols="12" class="mb-2">
-                <h5 class="mb-2"> Financial & Legal Information </h5>
+                <h3 class="mb-2"> Financial & Legal Information </h3>
               </el-col>
               <el-col md="12">
                 <el-form-group
@@ -788,6 +817,7 @@
                   label="Do you have valid business insurance?"
                   label-for="v-have_business_insurance"
                 >
+                  <label>Do you have valid business insurance?</label>
                   <div>
                     <el-radio
                       v-model="form.have_business_insurance"
@@ -807,14 +837,20 @@
                     </el-radio>
                   </div>
                   <div v-if="form.have_business_insurance === 1">
-                    <label for="">Kindly Upload Certificate</label>
-                    <input
-                      v-if="!fileUploaded('Business Insurance Certificate') && !isAdmin"
-                      class="form-control"
-                      type="file"
-                      @change="onImageChange($event, 'Business Insurance Certificate')"
-                    />
-                    <div v-else> Check for uploaded Business Insurance Certificate </div>
+                    <div v-if="!fileUploaded('Business Insurance Certificate') && !isAdmin">
+                      <label for="">Kindly Upload Certificate</label>
+                      <input
+                        v-if="!fileUploaded('Business Insurance Certificate') && !isAdmin"
+                        class="form-control"
+                        type="file"
+                        @change="onImageChange($event, 'Business Insurance Certificate')"
+                      />
+                    </div>
+                    <div v-else>
+                      <el-alert type="success" :closable="false"
+                        >Check for the already uploaded Business Insurance Certificate</el-alert
+                      >
+                    </div>
                   </div>
                 </el-form-group>
               </el-col>
@@ -823,6 +859,7 @@
                   label="Are there any ongoing legal disputes?"
                   label-for="v-ongoing_legal_dispute"
                 >
+                  <label>Are there any ongoing legal disputes?</label>
                   <div>
                     <el-radio
                       v-model="form.ongoing_legal_dispute"
@@ -842,13 +879,13 @@
                     </el-radio>
                   </div>
                   <div v-if="form.ongoing_legal_dispute === 1">
-                    <label for="">Kindly give details of the dispute</label>
-                    <v-text-field
+                    <p></p>
+                    <v-textarea
                       density="compact"
                       variant="outlined"
                       v-model="form.legal_dispute_details"
                       type="textarea"
-                      label="Explain Here..."
+                      label="Kindly give details of the dispute"
                       maxlength="300"
                       rows="3"
                       show-word-limit
@@ -862,7 +899,8 @@
                   label="Banking Details for Payment Processing"
                   label-for="v-bank_details"
                 >
-                  <table class="table">
+                  <strong for="">Banking Details for Payment Processing</strong>
+                  <table class="table table-striped">
                     <tbody>
                       <tr>
                         <td> Bank Name </td>
@@ -908,14 +946,14 @@
               v-if="form.document_uploads.length > 0"
               v-loading="loadDelete"
               style="
-                height: 550px;
+                height: 600px;
                 overflow: auto;
                 background: #f0f0f0;
                 padding: 10px;
                 border-radius: 8px;
               "
             >
-              <h4>Uploaded Documents</h4>
+              <h4>Uploaded Documents & Evidences</h4>
               <el-row :gutter="20">
                 <el-col
                   v-for="(document, document_index) in form.document_uploads"
@@ -993,16 +1031,16 @@
         <el-row :gutter="20">
           <el-col cols="12" class="mb-2">
             <div v-if="vendor.second_approval.action === 'Approve'" style="text-align: center">
-              <img src="/images/approved.png" width="100" />
+              <!-- <img src="/images/approved.png" width="100" /> -->
               <h1>CONGRATULATIONS</h1>
             </div>
             <div v-else>
-              <h5 class="mb-0">
+              <h3 class="mb-0">
                 <em
                   >By clicking Submit, I confirm that the information provided is accurate and
                   complete</em
                 >
-              </h5>
+              </h3>
             </div>
           </el-col>
         </el-row>
@@ -1197,6 +1235,7 @@ export default {
     },
     addLine() {
       if (this.rowIsEmpty() && this.certifications_to_upload.length > 0) {
+        this.$alert('Fill all empty fields')
         return false
       }
       this.certifications_to_upload.push({
@@ -1226,6 +1265,7 @@ export default {
             details: ''
           }
         }
+        this.industry_certifications = response.industry_certifications
         this.form = response.vendor
         this.business_types = response.business_types
         this.countries = response.countries

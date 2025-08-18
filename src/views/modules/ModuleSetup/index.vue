@@ -8,22 +8,22 @@
       <el-tab-pane :key="keyValue" label="ISMS" name="#isms" lazy>
         <ISMS />
       </el-tab-pane>
-      <!-- <el-tab-pane :key="keyValue" label="NDPA" name="#ndpa" lazy>
+      <el-tab-pane :key="keyValue" label="NDPA" name="#ndpa" lazy>
         <NDPA />
-      </el-tab-pane> -->
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
 import ISMS from '@/views/modules/ModuleSetup/ISMS/index.vue'
-//import NDPA from '@/views/modules/ModuleSetup/NDPA/index.vue'
+import NDPA from '@/views/modules/ModuleSetup/NDPA/index.vue'
 // import BCMS from '@/views/modules/ModuleSetup/BCMS/index.vue'
 
 export default {
   components: {
     //BCMS,
-    ISMS
-    //NDPA
+    ISMS,
+    NDPA
     // FinancialsAndBilling,
     // ContractAndSla,
     // VRM
@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      activeName: '#bcms',
+      activeName: '#isms',
       keyValue: 1
     }
   },
@@ -48,7 +48,7 @@ export default {
       this.keyValue += 1
     },
     setCurrentPage() {
-      this.activeName = window.location.hash !== '' ? window.location.hash : '#bcms'
+      this.activeName = window.location.hash !== '' ? window.location.hash : '#isms'
     }
     // showClicked(tab, event) {
     //   console.log(tab, event)

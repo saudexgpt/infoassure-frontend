@@ -1,18 +1,13 @@
 <template>
-  <div v-loading="loading">
+  <div v-loading="loading" element-loading-text="loading resources, please wait...">
     <div>
-      <el-tooltip class="item" effect="dark" content="Save" placement="top-start">
-        <el-button type="success" size="mini" @click="save">
-          <feather-icon icon="SaveIcon" />
-        </el-button>
-      </el-tooltip>
       <el-tooltip class="item" effect="dark" content="Download" placement="top-start">
         <el-button type="primary" size="mini">
-          <feather-icon icon="DownloadIcon" />
+          <icon icon="tabler:download" />
         </el-button>
       </el-tooltip>
     </div>
-    <ejs-spreadsheet>
+    <!-- <ejs-spreadsheet>
       <e-sheets>
         <e-sheet>
           <e-ranges>
@@ -20,15 +15,8 @@
           </e-ranges>
         </e-sheet>
       </e-sheets>
-    </ejs-spreadsheet>
-    <!-- <ejs-spreadsheet
-      ref="spreadsheet"
-      height="750px"
-      :open-url="openUrl"
-      :allow-open="true"
-      :save-url="saveUrl"
-      :created="created"
-    /> -->
+    </ejs-spreadsheet> -->
+    <ejs-spreadsheet ref="spreadsheet" height="750px" :open-url="openUrl" :allow-save="false" />
   </div>
 </template>
 
@@ -40,14 +28,14 @@ import {
   SheetsDirective,
   SheetDirective
 } from '@syncfusion/ej2-vue-spreadsheet'
-// import Resource from '@/api/resource'
+import Resource from '@/api/resource'
 export default {
   components: {
-    'ejs-spreadsheet': SpreadsheetComponent,
-    'e-sheets': SheetsDirective,
-    'e-sheet': SheetDirective,
-    'e-ranges': RangesDirective,
-    'e-range': RangeDirective
+    'ejs-spreadsheet': SpreadsheetComponent
+    // 'e-sheets': SheetsDirective,
+    // 'e-sheet': SheetDirective,
+    // 'e-ranges': RangesDirective,
+    // 'e-range': RangeDirective
   },
   props: {
     documentPath: {
@@ -70,20 +58,62 @@ export default {
     baseServerUrl() {
       return this.$store.getters.baseServerUrl
     }
+    // saveUrl() {
+    //   return `${this.$store.getters.baseServerUrl}api/spreadsheet/export-excel`
+    // }
+  },
+  mounted() {
+    this.fetchbase64FileFormat()
   },
   methods: {
-    save() {
-      this.$refs.spreadsheet.saveAsJson().then((response) => {
-        console.log(response)
-      })
+    beforeSave: function (args) {
+      args.needBlobData = true // To trigger the saveComplete event.
+      args.isFullPost = false // Get the spreadsheet data as blob data in the saveComplete event.
     },
-    created() {
+    save() {
+      const spreadsheet = this.$refs.spreadsheet
+      spreadsheet.save({ saveType: 'Xlsx' })
+    },
+    saveComplete: function (args) {
+      // console.log(args)
+      const blob = args.blobData
+      if (blob) {
+        const formData = new FormData()
+        formData.append('file_to_be_saved', blob, 'spreadsheet.xlsx')
+        formData.append('path', this.documentPath)
+        this.saveDocBlob(formData)
+      }
+    },
+    saveDocBlob(formData) {
       this.loading = true
-      // 'https://cdn.syncfusion.com/scripts/spreadsheet/Sample.xlsx'
-      // fetch(`${this.baseServerUrl}storage/${this.documentPath}`, options)
-      fetch(`${this.baseServerUrl}storage/${this.documentPath}`) // fetch the remote url
+      const saveResource = new Resource('save-excel-doc-template')
+      saveResource
+        .store(formData)
         .then((response) => {
-          console.log(response)
+          // open the SFDT text in Document Editor
+          this.$message(response.message)
+          // this.$refs.doceditcontainer.ej2Instances.documentEditor.open(response)
+          this.loading = false
+        })
+        .catch((e) => {
+          this.loading = false
+          this.$message(e.response.message)
+        })
+    },
+    async fetchbase64FileFormat() {
+      const formData = {
+        path: this.documentPath
+      }
+      const fetchBase64Resource = new Resource('fetch-excel-doc')
+      const responseInBase64 = await fetchBase64Resource.store(formData)
+      this.loadData(
+        `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${responseInBase64}`
+      )
+    },
+    loadData(data) {
+      this.loading = true
+      fetch(data)
+        .then((response) => {
           this.loading = false
           response.blob().then((fileBlob) => {
             // convert the excel file to blob
@@ -91,7 +121,10 @@ export default {
             this.$refs.spreadsheet.open({ file }) // open the file into Spreadsheet
           })
         })
-        .catch((this.loading = false))
+        .catch((e) => {
+          console.log(e)
+          this.loading = false
+        })
     }
   }
 }

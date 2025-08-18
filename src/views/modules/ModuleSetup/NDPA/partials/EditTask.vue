@@ -179,7 +179,7 @@ export default {
     },
     fetchAllTasks() {
       this.loadTasks = true
-      const fetchAllTasksesource = new Resource('isms/calendar/fetch-all-tasks')
+      const fetchAllTasksesource = new Resource('ndpa/calendar/fetch-all-tasks')
       fetchAllTasksesource
         .list()
         .then((response) => {
@@ -194,7 +194,7 @@ export default {
     updateActivity() {
       this.updateActivityLoader = true
       const { activityForm } = this
-      const updateActivityResource = new Resource('isms/calendar/update-clause-activity')
+      const updateActivityResource = new Resource('ndpa/calendar/update-clause-activity')
       updateActivityResource
         .update(activityForm.id, activityForm)
         .then(() => {
@@ -209,7 +209,7 @@ export default {
     updateTask() {
       this.updateTaskLoader = true
       const { taskForm } = this
-      const updateActivityResource = new Resource('isms/calendar/update-clause-activity-task')
+      const updateActivityResource = new Resource('ndpa/calendar/update-clause-activity-task')
       updateActivityResource
         .update(taskForm.id, taskForm)
         .then(() => {

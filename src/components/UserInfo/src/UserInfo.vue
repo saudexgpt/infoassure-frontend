@@ -77,7 +77,7 @@ const toPage = (path: string) => {
           <div @click="lockScreen">{{ t('lock.lockScreen') }}</div>
         </ElDropdownItem> -->
         <ElDropdownItem>
-          <div @click="logOut">{{ t('common.loginOut') }}</div>
+          <div @click="logOut">{{ t('common.logOut') }}</div>
         </ElDropdownItem>
       </ElDropdownMenu>
     </template>

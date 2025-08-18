@@ -31,6 +31,8 @@ import { setupRouter } from './router'
 // 权限
 import { setupPermission } from './directives'
 
+import { registerLicense } from '@syncfusion/ej2-base'
+
 import { createApp } from 'vue'
 
 import App from './App.vue'
@@ -63,6 +65,7 @@ if (!Highcharts.Chart.prototype.exportChartLocal) {
 if (!Highcharts.GanttChart.prototype.init) {
   HighchartsGantt(Highcharts)
 }
+registerLicense(import.meta.env.VITE_SYNC_FUSION_LICENSE)
 // highcharts3d(Highcharts)
 // highchartsMore(Highcharts)
 // solidGauge(Highcharts)

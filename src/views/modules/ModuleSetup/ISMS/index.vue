@@ -93,7 +93,7 @@
       v-if="showCreateTaskModal"
       v-model="showCreateTaskModal"
       :title="`Create Tasks under control ${selectedActivity.activity_no} (${selectedActivity.name})`"
-      width="60%"
+      width="80%"
     >
       <CreateTasks :activity="selectedActivity" @saved="fetchTaskByClause" />
     </el-dialog>

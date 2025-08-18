@@ -175,7 +175,7 @@ export default {
       }
     },
     formSubmitted() {
-      const createTaskResource = new Resource('isms/calendar/store-clause-activity-tasks')
+      const createTaskResource = new Resource('ndpa/calendar/store-clause-activity-tasks')
       const { form } = this
       form.details = this.details
       this.loader = true

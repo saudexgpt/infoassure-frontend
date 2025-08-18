@@ -1,25 +1,25 @@
 <template>
   <el-container class="no-margin" style="min-height: 650px; border: 1px solid #eee">
-    <el-aside v-loading="loading" width="400px" style="padding: 0 !important">
+    <el-aside
+      v-loading="loading"
+      element-loading-text="loading resources, please wait..."
+      width="300px"
+      style="padding: 0 !important"
+    >
       <div style="padding: 10px !important">
-        <el-row>
-          <el-col cols="8">
-            <strong>Manage Document/Evidence Templates</strong>
+        <el-row :gutter="10">
+          <el-col :md="20">
+            <strong>Document/Evidence Templates</strong>
           </el-col>
-          <el-col cols="4">
+          <el-col :md="4">
             <span class="pull-right">
-              <el-button
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="secondary"
-                size="sm"
-                @click="showModal = true"
-              >
-                <feather-icon icon="PlusIcon" class="mr-50" />
+              <el-button type="primary" size="sm" @click="((showModal = true), (isEdit = false))">
+                <icon icon="tabler:plus" />
                 <span class="align-middle">Create</span>
               </el-button>
             </span>
           </el-col>
-          <el-col cols="12">
+          <el-col :md="24">
             <hr />
             <el-input
               v-model="form.title"
@@ -27,74 +27,81 @@
               @input="fetchDocumentTemplates(false)"
             >
               <template v-slot:append>
-                <el-button icon="el-icon-search" @click="fetchDocumentTemplates(true)" />
+                <el-button size="sm" @click="fetchDocumentTemplates(true)">
+                  <icon icon="tabler:search" />
+                </el-button>
               </template>
             </el-input>
           </el-col>
         </el-row>
       </div>
-      <div>
-        <el-menu>
-          <el-submenu
-            v-for="(documentTemplates, index) in templates"
-            :key="index"
-            :index="`${index}`"
-          >
-            <template v-slot:title>
-              <h4
-                ><strong>{{ index }}</strong></h4
-              >
+      <div style="max-height: 500px; overflow: auto; padding: 0 !important">
+        <el-collapse>
+          <el-collapse-item v-for="(documentTemplates, index) in templates" :key="index">
+            <template #title>
+              <h3><icon icon="tabler:folder-open" /> {{ index }}</h3>
             </template>
-
-            <el-menu-item
-              v-for="(template, sub_index) in documentTemplates"
-              :key="`${index}-${sub_index}`"
-            >
-              <el-tooltip
-                v-if="template.title.length > 45"
-                effect="dark"
-                :content="template.title"
-                placement="top"
+            <div>
+              <el-card
+                v-for="(template, sub_index) in documentTemplates"
+                :key="`${index}-${sub_index}`"
+                :id="`doc-${index}-${sub_index}`"
+                @click="setView(template, `doc-${index}-${sub_index}`)"
+                style="cursor: pointer; margin-bottom: 2px"
+                shadow="hover"
               >
-                <span @click="setView(template)">{{ template.title.substring(0, 45) }}...</span>
-              </el-tooltip>
-              <span v-else @click="setView(template)">{{ template.title }}</span>
-            </el-menu-item>
-          </el-submenu>
-        </el-menu>
+                <strong><icon icon="tabler:file-text" /> {{ template.title }}</strong>
+              </el-card>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
       </div>
     </el-aside>
 
-    <el-container>
+    <el-container class="card">
       <el-main v-loading="loadView">
         <div v-if="viewType === 'welcome'" align="center" style="margin-top: 100px">
-          <img src="/images/project-icons/soa-large.png" width="250" />
-          <p>We are glad to help you stay compliant</p>
+          <icon icon="tabler:folder-open" size="200" />
+          <h4>Manage all expected document/evidence templates here</h4>
         </div>
         <div v-else>
-          <div v-if="showDocumentEditor !== 'none'">
-            <div>
-              <span class="pull-right">
-                <el-button
-                  type="danger"
-                  class="btn-icon"
-                  size="mini"
-                  @click="((showDocumentEditor = 'none'), (viewType = 'welcome'))"
-                >
-                  <feather-icon icon="XIcon" />
-                </el-button>
-              </span>
-            </div>
+          <div class="mb-5">
+            <span class="pull-right">
+              <el-button-group>
+                <el-tooltip class="item" effect="dark" content="Edit" placement="top-start">
+                  <el-button type="default" size="mini" @click="editFile(selectedDocument)">
+                    <icon icon="tabler:edit" />
+                  </el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="Delete" placement="top-start">
+                  <el-button type="default" size="mini" @click="deleteFile(selectedDocument.id)">
+                    <icon icon="tabler:trash" />
+                  </el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="Close" placement="top-start">
+                  <el-button
+                    type="default"
+                    size="mini"
+                    @click="((showDocumentEditor = 'none'), (viewType = 'welcome'))"
+                  >
+                    <icon icon="tabler:x" />
+                  </el-button>
+                </el-tooltip>
+              </el-button-group>
+            </span>
+            <h3>{{ selectedDocument.title }}</h3>
+          </div>
+          <div v-if="showDocumentEditor !== 'none'" style="background: #c0c0c0; padding: 10px">
             <div>
               <vue-document-editor
                 v-if="showDocumentEditor === 'word'"
                 :document-path="selectedDocument.link"
-                :document-title="selectedDocument.template_title"
+                :document-title="selectedDocument.title"
               />
               <vue-spreadsheet-editor
                 v-if="showDocumentEditor === 'spreadsheet'"
                 :document-path="selectedDocument.link"
-                :document-title="selectedDocument.template_title"
+                :document-title="selectedDocument.title"
               />
             </div>
           </div>
@@ -114,7 +121,7 @@
         </div>
       </el-main>
     </el-container>
-    <el-modal
+    <el-dialog
       v-if="showModal"
       v-model="showModal"
       title="Upload New Document/Evidence Template"
@@ -122,43 +129,95 @@
       size="lg"
       hide-footer
     >
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>File</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <el-input
-                v-model="templateForm.title"
-                type="text"
-                outline
-                placeholder="Title of document"
-              />
-            </td>
-            <td>
-              <input class="form-control" type="file" @change="onImageChange" />
-            </td>
-            <td>
-              <span>
-                <el-button
-                  variant="success"
-                  class="btn-icon rounded-circle"
-                  :disabled="templateForm.title === '' || templateForm.uploadableFile === null"
-                  @click="submitNewTemplate()"
+      <div v-loading="loading">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Template File</th>
+              <th>Applicable Modules</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <el-input
+                  v-model="templateForm.title"
+                  type="text"
+                  placeholder="Title of document"
+                />
+              </td>
+              <td>
+                <el-select
+                  v-model="templateForm.type"
+                  placeholder="Upload type"
+                  style="width: 100%"
                 >
-                  <feather-icon icon="UploadIcon" />
-                </el-button>
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </el-modal>
+                  <el-option value="upload" label="File upload from device" />
+                  <el-option value="external_link" label="Provide External Link" />
+                </el-select>
+                <input
+                  v-if="templateForm.type === 'upload'"
+                  class="form-control"
+                  type="file"
+                  @change="onImageChange"
+                />
+                <el-input
+                  v-if="templateForm.type === 'external_link'"
+                  v-model="templateForm.external_link"
+                  type="text"
+                  placeholder="Provide External Link to file"
+                />
+              </td>
+              <td>
+                <el-select
+                  v-model="templateForm.applicable_modules"
+                  placeholder="Select applicable modules"
+                  multiple
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(available_module, index) in modules"
+                    :key="index"
+                    :value="available_module.slug"
+                    :label="available_module.name"
+                  />
+                </el-select>
+              </td>
+              <td>
+                <el-tooltip content="Upload">
+                  <el-button
+                    v-if="isEdit"
+                    type="success"
+                    :disabled="
+                      templateForm.title === '' ||
+                      (templateForm.type === 'upload' && templateForm.uploadableFile === null) ||
+                      (templateForm.type === 'external_link' && templateForm.external_link === '')
+                    "
+                    @click="updateTemplate()"
+                  >
+                    <icon icon="tabler:upload" />
+                  </el-button>
+                  <el-button
+                    v-else
+                    type="success"
+                    :disabled="
+                      templateForm.title === '' ||
+                      (templateForm.type === 'upload' && templateForm.uploadableFile === null) ||
+                      (templateForm.type === 'external_link' && templateForm.external_link === '')
+                    "
+                    @click="submitNewTemplate()"
+                  >
+                    <icon icon="tabler:upload" />
+                  </el-button>
+                </el-tooltip>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -170,6 +229,7 @@ import Resource from '@/api/resource'
 // import CreateEvidence from './partials/CreateEvidence.vue'
 // import EditEvidence from './partials/EditEvidence.vue'
 import checkPermission from '@/utils/permission'
+import { template } from 'lodash-es'
 
 export default {
   components: {
@@ -190,17 +250,22 @@ export default {
       templates: [],
       loadView: false,
       viewType: 'welcome',
-      showDocumentEditor: 'none',
+      showDocumentEditor: '',
       selectedDocument: null,
       type: '',
       form: {
         title: ''
       },
       templateForm: {
+        id: '',
         title: '',
-        uploadableFile: null
+        applicable_modules: [],
+        uploadableFile: null,
+        external_link: '',
+        type: 'upload'
       },
-      docSrc: ''
+      docSrc: '',
+      modules: []
     }
   },
   computed: {
@@ -209,15 +274,16 @@ export default {
     }
   },
   created() {
-    // this.fetchEvidence()
+    this.fetchAvailableModules()
     this.fetchDocumentTemplates(true)
   },
   methods: {
     checkPermission,
-    setView(template) {
+    setView(template, viewId) {
+      this.changeActiveTabBgColor(viewId)
       this.viewType = 'documentViews'
-      this.showDocumentEditor = 'none'
       this.selectedDocument = template
+      this.showDocumentEditor = ''
       this.docSrc = template.link
       this.type = template.link.split('.').pop() // this returns the file extension
 
@@ -227,14 +293,34 @@ export default {
         } else if (this.type === 'doc' || this.type === 'docx') {
           this.showDocumentEditor = 'word'
         } else if (this.type === 'csv' || this.type === 'xlsx' || this.type === 'xls') {
-          // this.showDocumentEditor = 'spreadsheet'
-
-          document.getElementById(`${this.type}-download`).click()
+          this.showDocumentEditor = 'spreadsheet'
+          // document.getElementById(`${this.type}-download`).click()
+        } else {
+          this.showDocumentEditor = 'none'
         }
       }, 100)
     },
+    changeActiveTabBgColor(viewId) {
+      const divs = document.getElementsByClassName('el-card')
+      // Loop through the buttons and add the activeCard class to the current/clicked button
+
+      if (divs.length > 0) {
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].style.background = '#ffffff'
+          divs[i].style.color = '#000000'
+        }
+      }
+      document.getElementById(viewId).style.background = '#000000'
+      document.getElementById(viewId).style.color = '#ffffff'
+    },
     onImageChange(e) {
       this.templateForm.uploadableFile = e.target.files[0]
+    },
+    fetchAvailableModules() {
+      const fetchModuleResource = new Resource('packages/fetch-modules')
+      fetchModuleResource.list().then((response) => {
+        this.modules = response.modules
+      })
     },
     fetchDocumentTemplates(load) {
       this.loading = load
@@ -249,6 +335,7 @@ export default {
       const formData = new FormData()
       formData.append('title', this.templateForm.title)
       formData.append('file_uploaded', this.templateForm.uploadableFile)
+      formData.append('external_link', this.templateForm.external_link)
       const updatePhotoResource = new Resource('document-templates/upload')
       updatePhotoResource
         .store(formData)
@@ -257,15 +344,78 @@ export default {
           this.loading = false
           this.uploadableFile = null
           this.templateForm = {
+            id: '',
             title: '',
-            uploadableFile: null
+            uploadableFile: null,
+            external_link: '',
+            type: 'upload'
           }
           this.$message('File upload successful')
+          this.showModal = false
         })
         .catch((e) => {
           this.load = false
           this.$message(e.response.message)
         })
+    },
+    updateTemplate() {
+      this.loading = true
+      const formData = new FormData()
+      formData.append('id', this.templateForm.id)
+      formData.append('title', this.templateForm.title)
+      formData.append('file_uploaded', this.templateForm.uploadableFile)
+      formData.append('external_link', this.templateForm.external_link)
+      const updatePhotoResource = new Resource('document-templates/update')
+      updatePhotoResource
+        .store(formData)
+        .then(() => {
+          this.fetchDocumentTemplates(false)
+          this.loading = false
+          this.uploadableFile = null
+          this.templateForm = {
+            id: '',
+            title: '',
+            uploadableFile: null,
+            external_link: '',
+            type: 'upload'
+          }
+          this.$message('Document updated succcessfully')
+          this.showModal = false
+        })
+        .catch((e) => {
+          this.load = false
+          this.$message(e.response.message)
+        })
+    },
+    editFile(selectedDocument) {
+      this.templateForm = selectedDocument
+      this.templateForm.type = 'upload'
+      this.showModal = true
+      this.isEdit = true
+    },
+    deleteFile(id) {
+      this.$confirm('This will permanently delete the document. Continue?', 'Warning', {
+        confirmButtonText: 'Yes, Please',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      })
+        .then(() => {
+          this.loading = true
+          const deleteResource = new Resource(`document-templates/delete`)
+          deleteResource
+            .destroy(id)
+            .then((response) => {
+              this.fetchDocumentTemplates(false)
+              this.loading = false
+              this.$message('Document deleted successfully')
+              this.viewType = 'welcome'
+            })
+            .catch((e) => {
+              this.loading = false
+              this.$message(e.response.data.message)
+            })
+        })
+        .catch(() => {})
     }
   }
 }

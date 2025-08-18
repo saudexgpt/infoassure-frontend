@@ -295,6 +295,26 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
     ]
   },
   {
+    path: '/documents',
+    component: Layout,
+    name: 'Documents',
+    meta: {
+      icon: 'tabler:users',
+      roles: ['admin', 'client']
+    },
+    children: [
+      {
+        path: 'uploads',
+        component: () => import('@/views/modules/DocumentUploads/index.vue'),
+        name: 'DocumentUploads',
+        meta: {
+          title: 'Document Uploads',
+          icon: 'tabler:file-upload'
+        }
+      }
+    ]
+  },
+  {
     path: '/manage-client-users',
     component: Layout,
     name: 'ManageUsers',
@@ -368,6 +388,16 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
       roles: ['super']
     },
     children: [
+      {
+        path: 'document-template',
+        component: () => import('@/views/modules/app-setup/DocumentTemplates.vue'),
+        name: 'DocumentTemplate',
+        meta: {
+          title: 'Document Templates',
+          icon: 'tabler:arrow-badge-right',
+          roles: ['super']
+        }
+      },
       {
         path: 'modules-config',
         component: () => import('@/views/modules/ModuleSetup/index.vue'),
