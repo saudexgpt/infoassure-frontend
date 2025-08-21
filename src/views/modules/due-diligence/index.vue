@@ -1,25 +1,49 @@
 <template>
-  <el-tabs v-model="activeName" tab-position="left" @tab-click="forceRerender">
+  <el-tabs v-model="activeName" @tab-click="forceRerender">
     <!-- <el-tabs
       v-model="activeName"
       @tab-click="handleClick"
     > -->
     <el-tab-pane :key="keyValue" label="Dashboard" name="#dashboard" lazy>
+      <template v-slot:label>
+        <span><icon icon="tabler:dashboard" /> Dashboard</span>
+      </template>
       <dashboard />
     </el-tab-pane>
     <el-tab-pane label="Vendor Onboarding" name="#onboarding" lazy>
+      <template v-slot:label>
+        <span><icon icon="tabler:users" /> Vendor Onboarding</span>
+      </template>
       <onboarding />
     </el-tab-pane>
+    <el-tab-pane label="Vendors Screening/Approval" name="#vendor-screening" lazy>
+      <template v-slot:label>
+        <span><icon icon="tabler:user-search" /> Vendors Screening/Approval</span>
+      </template>
+      <ScreeningAndApproval />
+    </el-tab-pane>
     <el-tab-pane label="Risk Management" name="#risk-management" lazy>
+      <template v-slot:label>
+        <span><icon icon="tabler:alert-triangle" /> Risk Management</span>
+      </template>
       <risk-assessment />
     </el-tab-pane>
     <el-tab-pane label="Contracts & SLA" name="#contract-and-sla" lazy>
+      <template v-slot:label>
+        <span><icon icon="tabler:file-invoice" /> Contracts & SLA</span>
+      </template>
       <contract-and-sla />
     </el-tab-pane>
     <el-tab-pane label="Financials & Billing" name="#financials-and-billing" lazy>
+      <template v-slot:label>
+        <span><icon icon="tabler:report-money" /> Financials & Billing</span>
+      </template>
       <financials-and-billing />
     </el-tab-pane>
     <el-tab-pane label="Vendor Relationship" name="#vrm" lazy>
+      <template v-slot:label>
+        <span><icon icon="tabler:heart-handshake" /> Vendor Relationship</span>
+      </template>
       <VRM />
     </el-tab-pane>
     <!-- <el-tab-pane
@@ -55,6 +79,7 @@ import RiskAssessment from '@/views/modules/DUE-DILIGENCE/RiskAssessment/index.v
 import FinancialsAndBilling from '@/views/modules/DUE-DILIGENCE/FinancialsAndBilling/index.vue'
 import ContractAndSla from '@/views/modules/DUE-DILIGENCE/ContractAndSLA/index.vue'
 import VRM from '@/views/modules/DUE-DILIGENCE/VendorRelationshipManagement/index.vue'
+import ScreeningAndApproval from '@/views/modules/DUE-DILIGENCE/Onboarding/partials/ScreeningAndApproval.vue'
 
 export default {
   components: {
@@ -63,7 +88,8 @@ export default {
     RiskAssessment,
     FinancialsAndBilling,
     ContractAndSla,
-    VRM
+    VRM,
+    ScreeningAndApproval
     // NDPAReport,
   },
   data() {

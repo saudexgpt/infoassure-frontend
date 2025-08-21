@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/html-indent -->
 <template>
   <el-tabs>
-    <el-tab-pane label="Setup" lazy>
+    <el-tab-pane v-if="checkRole(['admin'])" label="Setup" lazy>
       <RiskSetup />
     </el-tab-pane>
     <el-tab-pane label="Assessment" lazy>
@@ -45,21 +45,24 @@
                     <template #title>
                       <strong>{{ index }}</strong>
                     </template>
-                    <el-card
+                    <div
                       v-for="(risk_assessment, assessments_index) in assessments"
                       :key="assessments_index"
-                      :id="`asset-${index}-${assessments_index}`"
-                      @click="viewDetails(risk_assessment, `asset-${index}-${assessments_index}`)"
-                      style="cursor: pointer; margin-bottom: 5px"
-                      shadow="hover"
                     >
-                      <strong>{{ risk_assessment.risk_id }} - {{ risk_assessment.threat }}</strong>
-                      <div>
-                        <em><strong>Vulnerabilities:</strong></em
-                        ><br />
-                        <span v-html="risk_assessment.vulnerability_description"></span>
-                      </div>
-                    </el-card>
+                      <CardNavView
+                        :id="`asset-${index}-${assessments_index}`"
+                        :title="`${risk_assessment.risk_id}-${risk_assessment.threat}`"
+                        @clickToView="viewDetails(risk_assessment)"
+                      >
+                        <template #description>
+                          <div>
+                            <em><strong>Vulnerabilities:</strong></em
+                            ><br />
+                            <span v-html="risk_assessment.vulnerability_description"></span>
+                          </div>
+                        </template>
+                      </CardNavView>
+                    </div>
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
@@ -81,21 +84,24 @@
                     <template #title>
                       <strong>{{ index }}</strong>
                     </template>
-                    <el-card
+                    <div
                       v-for="(risk_assessment, assessments_index) in assessments"
                       :key="assessments_index"
-                      :id="`process-${index}-${assessments_index}`"
-                      @click="viewDetails(risk_assessment, `process-${index}-${assessments_index}`)"
-                      style="cursor: pointer; margin-bottom: 5px"
-                      shadow="hover"
                     >
-                      <strong>{{ risk_assessment.risk_id }} - {{ risk_assessment.threat }}</strong>
-                      <div>
-                        <em><strong>Vulnerabilities:</strong></em
-                        ><br />
-                        <span v-html="risk_assessment.vulnerability_description"></span>
-                      </div>
-                    </el-card>
+                      <CardNavView
+                        :id="`process-${index}-${assessments_index}`"
+                        :title="`${risk_assessment.risk_id}-${risk_assessment.threat}`"
+                        @clickToView="viewDetails(risk_assessment)"
+                      >
+                        <template #description>
+                          <div>
+                            <em><strong>Vulnerabilities:</strong></em
+                            ><br />
+                            <span v-html="risk_assessment.vulnerability_description"></span>
+                          </div>
+                        </template>
+                      </CardNavView>
+                    </div>
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
@@ -152,12 +158,15 @@ import Resource from '@/api/resource'
 import EditRiskAssessment from './partials/EditRiskAssessment.vue'
 import RiskAssessmentTable from './partials/RiskAssessmentTable.vue'
 import RiskSetup from '@/views/modules/settings/partials/RiskAndThreats/index.vue'
+import checkRole from '@/utils/role'
+import CardNavView from '@/views/Components/CardNavView.vue'
 
 export default {
   components: {
     EditRiskAssessment,
     RiskAssessmentTable,
-    RiskSetup
+    RiskSetup,
+    CardNavView
   },
   props: {
     module: {
@@ -216,6 +225,7 @@ export default {
     }
   },
   methods: {
+    checkRole,
     toggleMenu() {
       this.showMenu = !this.showMenu
     },
@@ -249,21 +259,7 @@ export default {
         this.selectedData = data
         this.viewType = 'edit'
         this.showMenu = false
-        this.changeActiveTabBgColor(viewId)
       }
-    },
-    changeActiveTabBgColor(viewId) {
-      const divs = document.getElementsByClassName('el-card')
-      // Loop through the buttons and add the activeCard class to the current/clicked button
-
-      if (divs.length > 0) {
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].style.background = '#ffffff'
-          divs[i].style.color = '#000000'
-        }
-      }
-      document.getElementById(viewId).style.background = '#000000'
-      document.getElementById(viewId).style.color = '#ffffff'
     },
     fetchAllRiskAssessments(load) {
       this.loading = load

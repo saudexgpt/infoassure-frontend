@@ -43,24 +43,21 @@
                       <icon icon="tabler:plus" />&nbsp;New Task
                     </v-btn>
                     <br />
-                    <el-card
-                      v-for="(task, task_index) in activity.tasks"
-                      :key="task_index"
-                      :id="`task-${index}-${activity_index}-${task_index}`"
-                      @click="
-                        viewDetails(activity, task, `task-${index}-${activity_index}-${task_index}`)
-                      "
-                      style="cursor: pointer; margin-bottom: 5px"
-                      shadow="hover"
-                    >
-                      <strong>{{ `TASK ${task.id}` }}</strong>
-                      <!-- <strong>{{ `TASK ${activity.activity_no}-${task.id}` }}</strong> -->
-                      <div>
-                        <em><icon icon="tabler:arrow-badge-right" /> {{ task.name }}</em>
-                        <br />
-                        <span v-html="task.description"></span>
-                      </div>
-                    </el-card>
+                    <div v-for="(task, task_index) in activity.tasks" :key="task_index">
+                      <CardNavView
+                        :id="`task-${index}-${activity_index}-${task_index}`"
+                        :title="`TASK ${task.id}`"
+                        @clickToView="viewDetails(activity, task)"
+                      >
+                        <template #description>
+                          <div>
+                            <em><icon icon="tabler:arrow-badge-right" /> {{ task.name }}</em>
+                            <br />
+                            <span v-html="task.description"></span>
+                          </div>
+                        </template>
+                      </CardNavView>
+                    </div>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -101,6 +98,7 @@
   </el-card>
 </template>
 <script>
+import CardNavView from '@/views/Components/CardNavView.vue'
 import CreateActivities from './partials/CreateActivities.vue'
 import CreateTasks from './partials/CreateTasks.vue'
 import EditTask from './partials/EditTask.vue'
@@ -109,6 +107,7 @@ import Resource from '@/api/resource'
 export default {
   components: {
     CreateActivities,
+    CardNavView,
     CreateTasks,
     EditTask
   },
@@ -162,7 +161,7 @@ export default {
           this.loading = false
         })
     },
-    viewDetails(activity, data, viewId) {
+    viewDetails(activity, data) {
       if (data.id) {
         this.loadView = true
         this.viewType = ''
@@ -172,23 +171,8 @@ export default {
           this.viewType = 'edit'
           this.showMenu = false
           this.loadView = false
-        }, 1000)
-
-        this.changeActiveTabBgColor(viewId)
+        }, 100)
       }
-    },
-    changeActiveTabBgColor(viewId) {
-      const divs = document.getElementsByClassName('el-card')
-      // Loop through the buttons and add the activeCard class to the current/clicked button
-
-      if (divs.length > 0) {
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].style.background = '#ffffff'
-          divs[i].style.color = '#000000'
-        }
-      }
-      document.getElementById(viewId).style.background = '#000000'
-      document.getElementById(viewId).style.color = '#ffffff'
     }
   }
 }

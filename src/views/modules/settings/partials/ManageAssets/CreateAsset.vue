@@ -1,128 +1,171 @@
 <template>
-  <el-row v-loading="creating" :gutter="20">
-    <el-col :md="24">
-      <label>Asset Name</label>
+  <div>
+    <el-row v-loading="creating" :gutter="20">
+      <el-col :md="12">
+        <label>
+          Asset Type
+          <span @click="showCreate = true" style="color: blue; cursor: pointer">
+            <small>Click to create if not in the list</small>
+          </span>
+        </label>
+        <el-select
+          v-model="selectedAssetType"
+          filterable
+          placeholder="Select Asset type"
+          value-key="id"
+          style="width: 100%"
+          @change="setSampleAssets()"
+        >
+          <el-option
+            v-for="(item, index) in assetTypes"
+            :key="index"
+            :label="item.name"
+            :value="item"
+          />
+        </el-select>
+      </el-col>
+      <el-col :md="12">
+        <label>Asset Name <small>(Pick from list or type to create one)</small></label>
+        <el-select
+          v-model="form.name"
+          filterable
+          allow-create
+          clearable
+          placeholder="Type in an asset"
+          default-first-option
+          style="width: 100%"
+        >
+          <el-option v-for="(item, index) in options" :key="index" :label="item" :value="item" />
+        </el-select>
+      </el-col>
+      <el-col :md="12">
+        <label>Asset Description</label>
+        <el-input
+          v-model="form.description"
+          placeholder="Briefly describe this asset"
+          type="textarea"
+          maxlength="300"
+          show-word-limit
+          style="width: 100%"
+        />
+      </el-col>
+      <el-col :md="12">
+        <label>Asset Classification</label>
+        <el-select
+          v-model="form.classification"
+          filterable
+          placeholder="Classification"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="item in ['Public', 'Internal', 'Confidential', 'Restricted']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-col>
+      <el-col :md="12">
+        <label>Purpose of the asset</label>
+        <el-input
+          v-model="form.purpose"
+          placeholder="Briefly state the purpose of this asset"
+          type="text"
+          style="width: 100%"
+        />
+      </el-col>
+      <el-col :md="12">
+        <label>Type of information stored</label>
+        <el-select v-model="form.information_stored" filterable style="width: 100%">
+          <el-option
+            v-for="item in [
+              'None',
+              'Personal Data',
+              'Organization Data',
+              'Commercial Data',
+              'Intellectual Property'
+            ]"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-col>
+      <el-col :md="12">
+        <label>Location of the asset</label>
+        <p></p>
+        <el-radio-group v-model="form.location_type">
+          <el-radio label="Physical" border> Physical </el-radio>
+          <el-radio label="Virtual" border> Virtual </el-radio>
+          <el-radio label="Remote" border> Remote </el-radio>
+        </el-radio-group>
+        <p></p>
+        <el-input
+          v-if="form.location_type !== ''"
+          v-model="form.location"
+          :placeholder="`Where is the asset located ${form.location_type}ly?`"
+          type="text"
+          style="width: 100%"
+        />
+      </el-col>
+      <!-- <el-col :md="12">
+      <label>Assign Asset Owner</label>
       <el-select
-        v-model="form.name"
+        v-model="form.owner_id"
+        placeholder="Select Asset Owner"
         filterable
-        allow-create
-        remote
-        reserve-keyword
-        clearable
-        placeholder="Example: Laptop, Router, Switches, etc"
-        :remote-method="remoteMethod"
-        :loading="loading"
         style="width: 100%"
       >
         <el-option
-          v-for="(item, index) in options"
-          :key="index"
-          :label="item.name"
-          :value="item.name"
-        />
+          v-for="(user, user_index) in staff"
+          :key="user_index"
+          :value="user.id"
+          :label="user.name"
+        >
+          <span style="float: left">{{ user.name }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px">{{
+            user.designation ? user.designation : ''
+          }}</span>
+        </el-option>
       </el-select>
-      <!-- <el-select
-        v-model="form.name"
-        filterable
-        allow-create
-        default-first-option
-        placeholder="Example: Laptop, Router, Switches, etc"
-        style="width: 100%"
-      >
-        <el-option
-          v-for="item in []"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select> -->
-      <p></p>
-      <label>Asset Description</label>
-      <el-input
-        v-model="form.description"
-        placeholder="Briefly describe this asset"
-        type="textarea"
-        maxlength="300"
-        show-word-limit
-        style="width: 100%"
-      />
-      <p></p>
-      <label>Asset Classification</label>
-      <el-select
-        v-model="form.classification"
-        filterable
-        placeholder="Classification"
-        style="width: 100%"
-      >
-        <el-option
-          v-for="item in ['Public', 'Internal', 'Confidential', 'Restricted']"
-          :key="item"
-          :label="item"
-          :value="item"
-        />
-      </el-select>
-      <p></p>
-    </el-col>
-    <el-col :md="24">
-      <label>Purpose of the asset</label>
-      <el-input
-        v-model="form.purpose"
-        placeholder="Briefly state the purpose of this asset"
-        type="text"
-        style="width: 100%"
-      />
-      <p></p>
-      <label>Type of information stored</label>
-      <el-select v-model="form.information_stored" filterable style="width: 100%">
-        <el-option
-          v-for="item in [
-            'Personal Data',
-            'Sensitive Personal Data',
-            'Commercial Data',
-            'Intellectual Property'
-          ]"
-          :key="item"
-          :label="item"
-          :value="item"
-        />
-      </el-select>
-      <p></p>
-      <label>Location of the asset</label>
-      <p></p>
-      <el-radio-group v-model="form.location_type">
-        <el-radio label="Physical" border> Physical </el-radio>
-        <el-radio label="Virtual" border> Virtual </el-radio>
-        <el-radio label="Remote" border> Remote </el-radio>
-      </el-radio-group>
-      <p></p>
-      <el-input
-        v-if="form.location_type !== ''"
-        v-model="form.location"
-        placeholder="Where is the asset located?"
-        type="text"
-        style="width: 100%"
-      />
-    </el-col>
-    <el-col :md="24">
-      <p></p>
-      <el-button type="success" @click="submit()"> Submit </el-button>
-    </el-col>
-  </el-row>
+    </el-col> -->
+      <el-col :md="24">
+        <p></p>
+        <el-button type="success" @click="submit()"> Submit </el-button>
+      </el-col>
+    </el-row>
+    <el-dialog
+      v-model="showCreate"
+      title="Create Asset Types"
+      width="40%"
+      destroy-on-close
+      hide-footer
+    >
+      <CreateAssetType @saved="($emit('updateAssetTypes'), (showCreate = false))" />
+    </el-dialog>
+  </div>
 </template>
 
 <script>
 import Resource from '@/api/resource'
+import CreateAssetType from './CreateAssetType.vue'
 
 export default {
-  components: {},
+  components: {
+    CreateAssetType
+  },
   props: {
-    assetTypeId: {
-      type: Number,
-      default: null
+    assetTypes: {
+      type: Array,
+      default: () => []
     },
     clientId: {
       type: Number,
       default: null
+    },
+    staff: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -133,6 +176,7 @@ export default {
       dir: false,
       assets: [],
       form: {
+        asset_type_id: '',
         name: '',
         description: '',
         purpose: '',
@@ -142,8 +186,10 @@ export default {
         location_type: ''
       },
       createModal: false,
-      assetsList: [{ name: 'Laptop' }, { name: 'Router' }, { name: 'Switches' }],
-      options: []
+      showCreate: false,
+      assetsList: [],
+      options: [],
+      selectedAssetType: null
     }
   },
   computed: {
@@ -155,24 +201,28 @@ export default {
     // },
   },
   methods: {
-    remoteMethod(query) {
-      if (query !== '') {
-        this.loading = true
-        setTimeout(() => {
-          this.loading = false
-          this.options = this.assetsList.filter(
-            (item) => item.name.toLowerCase().indexOf(query.toLowerCase()) > -1
-          )
-        }, 200)
-      } else {
-        this.options = []
-      }
+    setSampleAssets() {
+      // this.assetsList = []
+      this.form.asset_type_id = this.selectedAssetType.id
+      this.options = this.selectedAssetType.asset_samples
     },
+    // remoteMethod(query) {
+    //   if (query !== '') {
+    //     this.loading = true
+    //     setTimeout(() => {
+    //       this.loading = false
+    //       this.options = this.assetsList.filter(
+    //         (item) => item.toLowerCase().indexOf(query.toLowerCase()) > -1
+    //       )
+    //     }, 200)
+    //   } else {
+    //     this.options = []
+    //   }
+    // },
     submit() {
       this.creating = true
       const formData = this.form
       formData.client_id = this.clientId
-      formData.asset_type_id = this.assetTypeId
       formData.location = `${formData.location_type} - ${formData.location}`
       const updatePhotoResource = new Resource('assets/save-assets')
       updatePhotoResource

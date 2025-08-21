@@ -12,6 +12,7 @@
         <el-row>
           <el-col :md="12">
             <h4>Manage Requirements</h4>
+            <span>Setup and manage requirements/audit questions for your vendors here</span>
           </el-col>
           <el-col :md="12">
             <span class="pull-right">

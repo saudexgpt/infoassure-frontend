@@ -7,13 +7,14 @@ import store from '@/VuexStore'
  */
 export default function checkRole(value) {
   if (value && value instanceof Array && value.length > 0) {
-    const roles = store.getters && store.getters.userData.all_roles
+    // const roles = store.getters && store.getters.userData.all_roles
+    const roles = store.getters && store.getters.userData.roles
     const requiredRoles = value
 
     const hasRole = roles.some((role) => requiredRoles.includes(role))
 
     return hasRole
   }
-  console.error("Need roles! Like v-role=\"['admin','editor']\"")
+  console.error("Need roles! Like v-role=\"['admin','client']\"")
   return false
 }

@@ -5,15 +5,16 @@
         v-model="activeName"
         @tab-click="handleClick"
       > -->
-      <el-tab-pane :key="keyValue" label="Asset Inventory Setup" name="#asset-inventory" lazy>
-        <el-tabs type="border-card">
+      <el-tab-pane :key="keyValue" label="Asset Management" name="#asset-inventory" lazy>
+        <AssetManagement />
+        <!-- <el-tabs type="border-card">
           <el-tab-pane label="Manage Asset Types" lazy>
             <AssetTypes />
           </el-tab-pane>
           <el-tab-pane label="Manage Assets" lazy>
             <AssetManagement />
           </el-tab-pane>
-        </el-tabs>
+        </el-tabs> -->
       </el-tab-pane>
       <el-tab-pane label="Business Units Setup" name="#business-unit" lazy>
         <BusinessUnits />
@@ -25,14 +26,14 @@
   </div>
 </template>
 <script>
-import AssetTypes from './partials/ManageAssetTypes/index.vue'
+// import AssetTypes from './partials/ManageAssetTypes/index.vue'
 import AssetManagement from './partials/ManageAssets/index.vue'
 import BusinessUnits from './partials/business-units/SetUp.vue'
 import RiskSetup from './partials/RiskAndThreats/index.vue'
 
 export default {
   components: {
-    AssetTypes,
+    // AssetTypes,
     AssetManagement,
     BusinessUnits,
     RiskSetup

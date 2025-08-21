@@ -14,16 +14,17 @@
         <tr>
           <td>Sub-Categories</td>
           <td>
-            <el-tag
-              v-for="sub_category in sub_categories"
-              :key="sub_category"
-              closable
-              type="success"
-              :disable-transitions="false"
-              @close="handleClose(sub_category)"
-            >
-              {{ sub_category }}
-            </el-tag>
+            <div v-for="sub_category in sub_categories" :key="sub_category">
+              <el-tag
+                closable
+                type="danger"
+                :disable-transitions="false"
+                @close="handleClose(sub_category)"
+              >
+                {{ sub_category }}
+              </el-tag>
+              <br />
+            </div>
             <el-input
               v-if="inputVisible"
               ref="saveTagInput"
@@ -43,7 +44,7 @@
             <el-button
               v-if="isEdit"
               :disabled="form.name === ''"
-              type="primary"
+              type="success"
               style="width: 30%"
               @click="updateEntry(form.id)"
             >
@@ -108,7 +109,7 @@ export default {
       const subCategories = []
       if (category.sub_categories !== null) {
         category.sub_categories.forEach((subCat) => {
-          subCategories.push(subCat.name)
+          subCategories.push(subCat)
         })
       }
       this.sub_categories = subCategories
@@ -135,7 +136,7 @@ export default {
     submitEntry() {
       const saveEntryResource = new Resource('risk-assessment/save-categories')
       this.loading = true
-      const { form } = app
+      const { form } = this
       form.client_id = this.clientId
       form.sub_categories = this.sub_categories
       saveEntryResource
@@ -143,8 +144,8 @@ export default {
         .then(() => {
           this.$emit('saved')
           this.loading = false
-          this.$notify({
-            title: 'Saved',
+          this.$message({
+            message: 'Saved',
             type: 'success'
           })
           this.form = { name: '', sub_categories: [] }
@@ -158,14 +159,14 @@ export default {
     updateEntry(id) {
       const saveEntryResource = new Resource('risk-assessment/update-category')
       this.loading = true
-      const { form } = app
+      const { form } = this
       form.client_id = this.clientId
       form.sub_categories = this.sub_categories
       saveEntryResource
         .update(id, form)
         .then(() => {
-          this.$notify({
-            title: 'Updated',
+          this.$message({
+            message: 'Updated',
             type: 'success'
           })
           this.$emit('saved')

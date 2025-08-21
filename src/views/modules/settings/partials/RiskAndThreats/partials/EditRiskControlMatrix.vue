@@ -101,8 +101,8 @@
               <el-option
                 v-for="(sub_type, subtype_index) in sub_categories"
                 :key="subtype_index"
-                :value="sub_type.name"
-                :label="sub_type.name"
+                :value="sub_type"
+                :label="sub_type"
               />
             </el-select>
           </el-col>

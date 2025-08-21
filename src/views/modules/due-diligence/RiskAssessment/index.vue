@@ -6,19 +6,19 @@
     </el-tab-pane> -->
     <el-tab-pane lazy>
       <template v-slot:label>
-        <span><i class="el-icon-odometer"></i> Overview</span>
+        <span><icon icon="tabler:dashboard" /> Overview</span>
       </template>
       <dashboard />
     </el-tab-pane>
     <el-tab-pane lazy>
       <template v-slot:label>
-        <span><feather-icon icon="SettingsIcon" /> Manage Requirements</span>
+        <span><icon icon="tabler:settings" /> Manage Requirements</span>
       </template>
       <manage-questions />
     </el-tab-pane>
     <el-tab-pane lazy>
       <template v-slot:label>
-        <span><feather-icon icon="AlertTriangleIcon" /> Risk Assessment</span>
+        <span><icon icon="tabler:alert-triangle" /> Risk Assessment</span>
       </template>
       <vendor-due-diligence />
     </el-tab-pane>

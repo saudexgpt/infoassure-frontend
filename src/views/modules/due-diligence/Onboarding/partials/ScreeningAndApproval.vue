@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <el-card>
     <div>
       <el-row>
         <el-col :md="16">
@@ -667,7 +667,7 @@
     >
       <iframe class="doc" :src="selectedDocument" width="600" height="500"></iframe>
     </el-dialog>
-  </div>
+  </el-card>
 </template>
 
 <script>

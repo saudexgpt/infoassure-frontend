@@ -1,49 +1,44 @@
 <!-- eslint-disable vue/html-indent -->
 <template>
   <el-container style="height: 100%; border: 1px solid #eee">
-    <el-aside width="300px" style="background-color: #fcfcfc">
-      <div
-        style="
-          text-align: center;
-          background-color: #000000;
-          color: #ffffff;
-          border-top-left-radius: 5px;
-          border-top-right-radius: 5px;
-        "
-      >
-        <span>Risk Categories</span>
-      </div>
-      <aside>
+    <el-aside width="400px" style="background-color: #fcfcfc">
+      <h3>Risk Categories</h3>
+      <!-- <aside>
         <el-input v-model="filterText" placeholder="Filter keyword" />
-      </aside>
-      <el-tree
-        ref="tree"
-        class="filter-tree"
-        :highlight-current="true"
-        :accordion="true"
-        :data="categories"
-        :props="treeProps"
-        :filter-node-method="filterNode"
-        @node-click="viewDetails"
-      />
-      <!-- <el-menu
-        background-color="#fcfcfc"
-        text-color="#00000"
-      >
-        <el-menu-item
-          v-for="(category, index) in categories"
-          :key="index"
-          :index="index"
-          @click="viewDetails(category)"
+      </aside> -->
+      <div v-for="(category, index) in categories" :key="index">
+        <CardNavView
+          :id="`category-${index}`"
+          :title="category.name"
+          @clickToView="viewDetails(category)"
         >
-          <span slot="title">{{ category.name }}</span>
-        </el-menu-item>
-      </el-menu> -->
+          <template #description>
+            <div>
+              <el-tag class="pull-right" effect="dark" type="success" round>
+                {{ category.sub_categories.length }} Subs
+              </el-tag>
+            </div>
+          </template>
+        </CardNavView>
+      </div>
     </el-aside>
 
     <el-container v-loading="loading">
-      <el-header style="text-align: right; font-size: 12px; padding: 10px">
-        <el-button type="primary" plain size="mini" @click="createNew()"> Create New </el-button>
+      <el-header style="font-size: 12px; padding: 10px">
+        <el-button type="primary" @click="createNew()">
+          <icon icon="tabler:plus" /> Create New
+        </el-button>
+        <el-popconfirm
+          v-if="categories.length < 1"
+          width="400"
+          hide-icon
+          title="The system can auto-generate pre-defined risk categories. Click YES to proceed."
+          @confirm="importRiskCategory"
+        >
+          <template #reference>
+            <el-button type="info"> <icon icon="tabler:package-import" /> Generate </el-button>
+          </template>
+        </el-popconfirm>
       </el-header>
 
       <el-main>
@@ -52,6 +47,7 @@
             :client-id="selectedClient.id"
             :selected-data="selectedRiskCategory"
             :is-edit="isEdit"
+            @saved="fetchCategory"
           />
         </div>
       </el-main>
@@ -61,10 +57,13 @@
 <script>
 import CreateRiskCategory from './partials/CreateRiskCategory.vue'
 import Resource from '@/api/resource'
+import { changeOpacityOfHexaColorCode } from '@/utils/tsxHelper'
+import CardNavView from '@/views/Components/CardNavView.vue'
 
 export default {
   components: {
-    CreateRiskCategory
+    CreateRiskCategory,
+    CardNavView
   },
   data() {
     return {
@@ -96,7 +95,7 @@ export default {
     }
   },
   created() {
-    // this.fetchCategory()
+    this.fetchCategory()
   },
   methods: {
     filterNode(value, data) {
@@ -128,14 +127,54 @@ export default {
       this.selectedRiskCategory = this.form
       this.isEdit = false
     },
-    viewDetails(category) {
+    viewDetails(category, id) {
       if (category.id) {
         this.isEdit = false
+        this.loading = true
         setTimeout(() => {
           this.selectedRiskCategory = category
           this.isEdit = true
+          this.loading = false
+          this.changeActiveTabBgColor(id)
         }, 1)
       }
+    },
+    changeActiveTabBgColor(viewId) {
+      const root = document.documentElement // Get the root element (<html>)
+      // root.style.setProperty('--el-color-primary', '#ff0000')
+      const primaryBgColor = root.style.getPropertyValue('--el-color-primary')
+      const divs = document.getElementsByClassName('el-card')
+      // Loop through the buttons and add the activeCard class to the current/clicked button
+
+      if (divs.length > 0) {
+        for (let i = 0; i < divs.length; i++) {
+          divs[i].style.background = '#ffffff'
+          divs[i].style.color = '#000000'
+        }
+      }
+      const doc = document.getElementById(viewId)
+      if (doc !== undefined && doc !== null) {
+        // Now we know that foo is defined, we are good to go.
+        doc.style.background = changeOpacityOfHexaColorCode(primaryBgColor, 0.2)
+      }
+
+      // document.getElementById(viewId).style.color = '#ffffff'
+    },
+    importRiskCategory() {
+      const fetchEntryResource = new Resource('risk-assessment/generate-risk-categories')
+      this.loading = true
+      fetchEntryResource
+        .store({ client_id: this.selectedClient.id })
+        .then((response) => {
+          this.categories = response.categories
+
+          this.loading = false
+        })
+        .catch((error) => {
+          console.log(error.response)
+          // this.$message.error(error.response.data.error)
+          this.loading = false
+        })
     },
     fetchCategory() {
       const fetchEntryResource = new Resource('risk-assessment/fetch-categories')

@@ -62,7 +62,7 @@
 <script>
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
-import CreateRisk from './CreateRiskImpactArea.vue'
+import CreateRisk from './partials/CreateRiskImpactArea.vue'
 
 export default {
   components: {

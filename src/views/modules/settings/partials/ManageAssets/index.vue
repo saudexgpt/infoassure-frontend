@@ -1,43 +1,127 @@
 <template>
-  <div>
-    <el-row v-if="loading" :gutter="20">
-      <el-col :md="4">
-        <el-skeleton :rows="5" />
-      </el-col>
-      <el-col :md="20">
-        <el-skeleton :rows="5" />
+  <el-card>
+    <el-row :gutter="10">
+      <el-col :md="12">
+        <h3> Asset Management </h3>
+        <small>Grouped by Asset Types</small>
       </el-col>
     </el-row>
-    <el-tabs v-else v-model="activeName" tab-position="left" type="border-card">
-      <el-tab-pane
-        v-for="(asset_type, index) in asset_types"
-        :key="index"
-        :label="asset_type.name"
-        :name="`asset-${index}`"
-        lazy
+    <el-container style="height: 100%">
+      <el-aside
+        v-loading="loading"
+        element-loading-text="loading resources, please wait..."
+        width="400px"
       >
-        <Assets
-          :can-change-status="true"
-          :asset-type="asset_type"
-          :client-id="asset_type.client_id"
-        />
-      </el-tab-pane>
-    </el-tabs>
-  </div>
+        <el-button
+          type="primary"
+          block
+          style="width: 100%; margin-bottom: 5px"
+          @click="showCreate = true"
+        >
+          <icon icon="tabler:plus" />&nbsp;Create Asset
+        </el-button>
+        <el-input
+          v-model="form.name"
+          placeholder="Search document title"
+          @input="fetchAssets(false)"
+        >
+          <template v-slot:append>
+            <el-button size="sm" @click="fetchAssets(true)">
+              <icon icon="tabler:search" />
+            </el-button>
+          </template>
+        </el-input>
+        <div style="max-height: 500px; overflow: auto; margin-top: 10px">
+          <el-collapse expand-icon-position="left" accordion>
+            <el-collapse-item
+              v-for="(assetsArray, index) in assets"
+              :key="index"
+              :name="`asset-${index}`"
+            >
+              <template #title>
+                <span>
+                  <el-tag class="pull-right" effect="dark" round>{{ assetsArray.length }}</el-tag>
+                  <h3>{{ index }}</h3>
+                </span>
+              </template>
+              <div v-for="(asset, index) in assetsArray" :key="index">
+                <CardNavView
+                  :id="asset.id"
+                  :title="asset.name"
+                  :description="asset.description"
+                  @clickToView="viewDetails(asset)"
+                />
+              </div>
+              <!-- <Assets
+                :can-change-status="true"
+                :assets-array="assetsArray"
+                :client-id="storedClient.id"
+                @clickToView="viewDetails"
+              /> -->
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+      </el-aside>
+
+      <el-container>
+        <el-main v-loading="loadView" element-loading-text="loading data, please wait...">
+          <div v-if="viewType === 'edit'">
+            <EditAsset
+              :selected-asset="selectedData"
+              :asset-types="asset_types"
+              :staff="staff"
+              @update="(fetchAssets(), (editModal = false))"
+            />
+          </div>
+          <div v-if="viewType === 'welcome'" align="center">
+            <icon icon="tabler:packages" size="200" />
+            <h3>Manage assets for your organization here</h3>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
+    <el-dialog v-model="showCreate" title="Create Asset" width="60%" destroy-on-close hide-footer>
+      <CreateAsset
+        :asset-types="asset_types"
+        :client-id="storedClient.id"
+        :staff="staff"
+        @save="(fetchAssets(), (showCreate = false))"
+        @updateAssetTypes="fetchAssetTypes"
+      />
+    </el-dialog>
+    <!-- <el-dialog
+      v-model="showCreate"
+      title="Create Asset Types"
+      width="50%"
+      destroy-on-close
+      hide-footer
+    >
+      <CreateAssetType :client-id="storedClient.id" @saved="fetchAssetTypes" />
+    </el-dialog> -->
+  </el-card>
 </template>
 <script>
+import CardNavView from '@/views/Components/CardNavView.vue'
 import Resource from '@/api/resource'
-import Assets from './Assets.vue'
+// import Assets from './AssetsCardView.vue'
+// import CreateAssetType from './CreateAssetType.vue'
+import CreateAsset from './CreateAsset.vue'
+import EditAsset from './EditAsset.vue'
 
 export default {
   components: {
-    Assets
+    // Assets,
+    CardNavView,
+    // CreateAssetType,
+    CreateAsset,
+    EditAsset
   },
   data() {
     return {
       selectedAssetType: '',
-      activeName: 'asset-0',
-      form: { client_id: '', names: [] },
+      viewType: 'welcome',
+      form: { client_id: '', name: '' },
+      assets: null,
       asset_types: [],
       loading: false,
       showCreate: false,
@@ -47,7 +131,9 @@ export default {
         filterByColumn: false,
         sortable: [],
         filterable: []
-      }
+      },
+      selectedData: null,
+      staff: []
     }
   },
   computed: {
@@ -61,35 +147,59 @@ export default {
   watch: {
     storedClient() {
       this.form.client_id = this.storedClient.id
-      this.fetchAssetTypes()
+      this.fetchAssets()
     }
   },
   mounted() {
     this.fetchClients()
     this.form.client_id = this.storedClient.id
+    this.fetchAssets()
     this.fetchAssetTypes()
+    this.fetchStaff()
   },
   methods: {
-    showTabDetails(tab, event) {
-      //
-      console.log(event.target.id)
-      console.log(tab)
-      // let hashString = event.target.id
-      // hashString = hashString.replace('tab-', '')
-      // // this.activeName = value
-      // this.$router.push({ hash: `${hashString}` })
-      // this.keyValue += 1
+    fetchStaff() {
+      const fetchUsersResource = new Resource('users/fetch-staff')
+      fetchUsersResource.list().then((response) => {
+        this.staff = response.staff
+      })
+    },
+    viewDetails(data) {
+      if (data.id) {
+        this.loadView = true
+        this.viewType = ''
+        setTimeout(() => {
+          this.selectedData = data
+          this.viewType = 'edit'
+          this.showMenu = false
+          this.loadView = false
+        }, 100)
+      }
     },
     fetchClients() {
       this.$store.dispatch('clients/fetchClients')
     },
     fetchAssetTypes() {
       const fetchEntryResource = new Resource('assets/fetch-asset-types')
-      this.loading = true
       fetchEntryResource
-        .list({ client_id: this.form.client_id })
+        .list(/*{ client_id: this.form.client_id }*/)
         .then((response) => {
           this.asset_types = response.asset_types
+        })
+        .catch((error) => {
+          // console.log(error.response)
+          this.$message.error(error.response.data.error)
+          this.loading = false
+        })
+    },
+    fetchAssets(load = true) {
+      this.showCreate = false
+      const fetchEntryResource = new Resource('assets/fetch-assets')
+      this.loading = load
+      fetchEntryResource
+        .list({ client_id: this.form.client_id, name: this.form.name })
+        .then((response) => {
+          this.assets = response.assets
           this.loading = false
         })
         .catch((error) => {

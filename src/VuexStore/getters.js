@@ -16,6 +16,7 @@ const getters = {
   navMenuItems: (state) => state.navItems.navMenuItems,
   clientActivatedProjects: (state) => state.navItems.clientActivatedProjects,
   clientActivatedModules: (state) => state.navItems.clientActivatedModules,
-  paystackKey: (state) => state.app.paystackKey
+  paystackKey: (state) => state.app.paystackKey,
+  assetTypesList: (state) => state.app.assetTypesList
 }
 export default getters

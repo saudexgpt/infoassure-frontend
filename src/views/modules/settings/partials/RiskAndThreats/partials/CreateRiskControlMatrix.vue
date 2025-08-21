@@ -6,10 +6,10 @@
       </h3>
     </div> -->
 
-    <b-row v-if="form.business_unit_id !== 0">
-      <b-col md="6">
-        <b-form-group label="Select Business Process" label-for="business_process">
-          <validation-provider #default="{ errors }" name="business_process" rules="required">
+    <el-row v-if="form.business_unit_id !== 0">
+      <el-col md="6">
+        <el-form-group label="Select Business Process" label-for="business_process">
+          <validation-provider name="business_process" rules="required">
             <el-select
               v-model="selectedBusinessProcess"
               placeholder="Select Business process"
@@ -25,13 +25,12 @@
                 :label="business_process.name"
               />
             </el-select>
-            <small class="text-danger">{{ errors[0] }}</small>
           </validation-provider>
-        </b-form-group>
-      </b-col>
-      <b-col md="6">
-        <b-form-group label="Sub Unit (L3)" label-for="sub_unit">
-          <validation-provider #default="{ errors }" name="sub_unit">
+        </el-form-group>
+      </el-col>
+      <el-col md="6">
+        <el-form-group label="Sub Unit (L3)" label-for="sub_unit">
+          <validation-provider name="sub_unit">
             <select v-model="form.sub_unit" placeholder="Select Sub Unit" class="form-control">
               <option
                 v-for="(team, team_index) in teams"
@@ -40,11 +39,10 @@
                 :label="team"
               ></option>
             </select>
-            <small class="text-danger">{{ errors[0] }}</small>
           </validation-provider>
-        </b-form-group>
-      </b-col>
-    </b-row>
+        </el-form-group>
+      </el-col>
+    </el-row>
     <form-wizard
       v-if="
         (form.business_unit_id !== 0 && form.business_process_id !== null) ||
@@ -63,9 +61,9 @@
     >
       <tab-content title="Risk" :before-change="validateRisk">
         <validation-observer ref="riskRule" tag="form">
-          <b-row v-if="form.business_unit_id === 0">
-            <b-col md="6">
-              <b-form-group label="Asset Type" label-for="asset_type">
+          <el-row v-if="form.business_unit_id === 0">
+            <el-col md="6">
+              <el-form-group label="Asset Type" label-for="asset_type">
                 <el-select
                   v-model="selectedAssetType"
                   placeholder="Select Asset Type"
@@ -84,10 +82,10 @@
                 <a style="color: #409eff" @click="createAssetTypeModal = true">
                   <i class="el-icon-plus"></i> Click to add new Asset Type</a
                 >
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Asset" label-for="asset">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Asset" label-for="asset">
                 <el-select
                   v-model="form.asset_id"
                   placeholder="Select Asset"
@@ -109,13 +107,13 @@
                 >
                   <i class="el-icon-plus"></i> Click to add new Asset</a
                 >
-              </b-form-group>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col md="6">
-              <b-form-group label="Risk Category" label-for="risk_category">
-                <validation-provider #default="{ errors }" name="risk_category" rules="required">
+              </el-form-group>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col md="6">
+              <el-form-group label="Risk Category" label-for="risk_category">
+                <validation-provider name="risk_category" rules="required">
                   <el-select
                     v-model="selectedRiskCategory"
                     value-key="id"
@@ -136,12 +134,11 @@
                   >
                     <i class="el-icon-plus"></i> Click to add new Risk Category</a
                   >
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Risk Sub-Category" label-for="sub_category">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Risk Sub-Category" label-for="sub_category">
                 <select
                   v-model="form.sub_type"
                   placeholder="Risk Sub Category"
@@ -162,11 +159,11 @@
                 >
                   <i class="el-icon-plus"></i> Add sub-categories</a
                 >
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Threat (Search Applicable Threat)" label-for="threat">
-                <validation-provider #default="{ errors }" name="threat">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Threat (Search Applicable Threat)" label-for="threat">
+                <validation-provider name="threat">
                   <el-select
                     v-model="form.threat"
                     filterable
@@ -195,25 +192,23 @@
                       :label="threat.threats"
                     />
                   </select> -->
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Risk Owner" label-for="risk_owner">
-                <validation-provider #default="{ errors }" name="risk_owner" rules="required">
-                  <b-form-input
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Risk Owner" label-for="risk_owner">
+                <validation-provider name="risk_owner" rules="required">
+                  <el-form-input
                     v-model="form.risk_owner"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Risk Owner"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="12">
-              <b-form-group label="Vulnerability/Risk Description" label-for="risk_description">
-                <validation-provider #default="{ errors }" name="risk_description" rules="required">
+              </el-form-group>
+            </el-col>
+            <el-col md="12">
+              <el-form-group label="Vulnerability/Risk Description" label-for="risk_description">
+                <validation-provider name="risk_description" rules="required">
                   <textarea
                     id="risk_description"
                     v-model="form.vulnerability_description"
@@ -228,17 +223,16 @@
                     :config="editorConfig"
                     placeholder="Describe the risk/vulnerability"
                   /> -->
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <!-- <b-col md="6">
-              <b-form-group
+              </el-form-group>
+            </el-col>
+            <!-- <el-col md="6">
+              <el-form-group
                 label="Impact/Outcome"
                 label-for="impact"
               >
                 <validation-provider
-                  #default="{ errors }"
+                  
                   name="outcome"
                   rules="required"
                 >
@@ -249,19 +243,19 @@
                     :config="editorConfig"
                     placeholder="State the outcome of the risk"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
+                  
                 </validation-provider>
-              </b-form-group>
-            </b-col> -->
-          </b-row>
+              </el-form-group>
+            </el-col> -->
+          </el-row>
         </validation-observer>
       </tab-content>
       <tab-content title="Control" :before-change="validateControl">
         <validation-observer ref="controlRule" tag="form">
-          <b-row>
-            <b-col md="6">
-              <b-form-group label="Nature of Control" label-for="nature_of_control">
-                <validation-provider #default="{ errors }" name="nature_of_control">
+          <el-row>
+            <el-col md="6">
+              <el-form-group label="Nature of Control" label-for="nature_of_control">
+                <validation-provider name="nature_of_control">
                   <el-select
                     v-model="form.nature_of_control"
                     placeholder="Select"
@@ -272,17 +266,16 @@
                     <el-option label="Manual" value="Manual" />
                     <el-option label="N/A" value="N/A" />
                   </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group
                 label="Name the application system used for execution of the control."
                 label-for="application_used_for_control"
               >
-                <validation-provider #default="{ errors }" name="application_used_for_control">
-                  <b-form-input
+                <validation-provider name="application_used_for_control">
+                  <el-form-input
                     id="email"
                     v-model="form.application_used_for_control"
                     :state="errors.length > 0 ? false : null"
@@ -291,39 +284,33 @@
                       form.nature_of_control !== 'Automated' && form.nature_of_control !== 'Hybrid'
                     "
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="12">
-              <b-form-group label="Describe Existing Control" label-for="control_description">
-                <validation-provider
-                  #default="{ errors }"
-                  name="control_description"
-                  rules="required"
-                >
-                  <ckeditor
+              </el-form-group>
+            </el-col>
+            <el-col md="12">
+              <el-form-group label="Describe Existing Control" label-for="control_description">
+                <validation-provider name="control_description" rules="required">
+                  <!-- <ckeditor
                     id="control_description"
                     v-model="form.control_description"
                     :editor="editor"
                     :config="editorConfig"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Describe Control"
-                  />
-                  <!-- <textarea
+                  /> -->
+                  <textarea
                     id="control_description"
                     v-model="form.control_description"
                     class="form-control"
-                    :state="errors.length > 0 ? false:null"
+                    :state="errors.length > 0 ? false : null"
                     placeholder="Describe Control"
-                  /> -->
-                  <small class="text-danger">{{ errors[0] }}</small>
+                  ></textarea>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Where is the control performed" label-for="control_location">
-                <validation-provider #default="{ errors }" name="Control Location">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Where is the control performed" label-for="control_location">
+                <validation-provider name="Control Location">
                   <el-select
                     v-model="form.control_location"
                     placeholder="Select Location"
@@ -333,13 +320,12 @@
                     <el-option label="Centralised" value="Centralised" />
                     <el-option label="N/A" value="N/A" />
                   </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Control Frequency" label-for="frequency">
-                <validation-provider #default="{ errors }" name="frequency">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Control Frequency" label-for="frequency">
+                <validation-provider name="frequency">
                   <el-select
                     v-model="form.control_frequency"
                     placeholder="Select Frequency"
@@ -352,26 +338,24 @@
                       :label="frequency"
                     />
                   </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Control Owner" label-for="control_owner">
-                <validation-provider #default="{ errors }" name="control_owner">
-                  <b-form-input
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Control Owner" label-for="control_owner">
+                <validation-provider name="control_owner">
+                  <el-form-input
                     id="email"
                     v-model="form.control_owner"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Control Owner"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Control Type" label-for="control_type">
-                <validation-provider #default="{ errors }" name="control_type">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Control Type" label-for="control_type">
+                <validation-provider name="control_type">
                   <el-select
                     v-model="form.control_type"
                     placeholder="Select Type"
@@ -381,42 +365,40 @@
                     <el-option label="Detective" value="Detective" />
                     <el-option label="N/A" value="N/A" />
                   </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Any Compensating control?" label-for="compensating_control">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Any Compensating control?" label-for="compensating_control">
                 <textarea
                   v-model="form.compensating_control"
                   class="form-control"
                   placeholder="Enter Compensating control"
                 ></textarea>
-              </b-form-group>
-            </b-col>
-          </b-row>
+              </el-form-group>
+            </el-col>
+          </el-row>
         </validation-observer>
       </tab-content>
       <tab-content title="Testing Strategy" :before-change="validateTesting">
         <validation-observer ref="testRules" tag="form">
-          <b-row>
-            <b-col md="6">
-              <b-form-group label="Test Procedure" label-for="test_procedures">
-                <validation-provider #default="{ errors }" name="test_procedures">
+          <el-row>
+            <el-col md="6">
+              <el-form-group label="Test Procedure" label-for="test_procedures">
+                <validation-provider name="test_procedures">
                   <textarea
                     v-model="form.test_procedures"
                     class="form-control"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Test Procedure"
                   ></textarea>
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Sample Size" label-for="sample_size">
-                <validation-provider #default="{ errors }" name="sample_size">
-                  <b-form-input
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Sample Size" label-for="sample_size">
+                <validation-provider name="sample_size">
+                  <el-form-input
                     id="sample_size"
                     v-model="form.sample_size"
                     type="number"
@@ -424,36 +406,34 @@
                     :state="errors.length > 0 ? false : null"
                     placeholder="Sample Size"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Data Required" label-for="data_required">
-                <validation-provider #default="{ errors }" name="Data Required">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Data Required" label-for="data_required">
+                <validation-provider name="Data Required">
                   <textarea
                     v-model="form.data_required"
                     class="form-control"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Data Required"
                   ></textarea>
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Link to Evidence & Report" label-for="link_to_evidence">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Link to Evidence & Report" label-for="link_to_evidence">
                 <input
                   class="form-control"
                   type="file"
                   placeholder="Link to Evidence & Report"
                   @change="onImageChange"
                 />
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Conclusion" label-for="test_conclusion">
-                <validation-provider #default="{ errors }" name="test_conclusion">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Conclusion" label-for="test_conclusion">
+                <validation-provider name="test_conclusion">
                   <el-select
                     v-model="form.test_conclusion"
                     placeholder="Select"
@@ -463,28 +443,27 @@
                     <el-option label="Inadequate" value="Inadequate" />
                     <el-option label="Sub-optimal" value="Sub-optimal" />
                   </el-select>
-                  <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-form-group>
-            </b-col>
-          </b-row>
+              </el-form-group>
+            </el-col>
+          </el-row>
         </validation-observer>
       </tab-content>
       <tab-content title="Gap" :before-change="validationGap">
         <validation-observer ref="gapRules" tag="form">
-          <b-row>
-            <b-col md="6">
-              <b-form-group label="Gap Description" label-for="gap_description">
+          <el-row>
+            <el-col md="6">
+              <el-form-group label="Gap Description" label-for="gap_description">
                 <textarea
                   id="gap_description"
                   v-model="form.gap_description"
                   class="form-control"
                   placeholder="This is to document if there is any gap or deficiency in internal control based on the procedures performed"
                 ></textarea>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group
                 label="TOD Improvement Opportunity (if any)"
                 label-for="tod_improvement_opportunity"
               >
@@ -494,65 +473,65 @@
                   class="form-control"
                   placeholder="TOD Improvement Opportunity"
                 ></textarea>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Recommendation" label-for="recommendation">
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Recommendation" label-for="recommendation">
                 <textarea
                   id="recommendation"
                   v-model="form.recommendation"
                   class="form-control"
                   placeholder="Recommendation"
                 ></textarea>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Responsibility" label-for="responsibility">
-                <b-form-input
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Responsibility" label-for="responsibility">
+                <el-form-input
                   id="responsibility"
                   v-model="form.responsibility"
                   placeholder="Responsibility"
                 />
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Timeline" label-for="timeline">
-                <b-form-input id="timeline" v-model="form.timeline" placeholder="Timeline" />
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="TOD Gap Status" label-for="tod_gap_status">
-                <b-form-input
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="Timeline" label-for="timeline">
+                <el-form-input id="timeline" v-model="form.timeline" placeholder="Timeline" />
+              </el-form-group>
+            </el-col>
+            <el-col md="6">
+              <el-form-group label="TOD Gap Status" label-for="tod_gap_status">
+                <el-form-input
                   id="tod_gap_status"
                   v-model="form.tod_gap_status"
                   placeholder="TOD Gap Status"
                 />
-              </b-form-group>
-            </b-col>
-          </b-row>
+              </el-form-group>
+            </el-col>
+          </el-row>
         </validation-observer>
       </tab-content>
     </form-wizard>
-    <b-modal v-model="showRiskCategoryForm" title="Risk Category" centered size="md" hide-footer>
+    <el-modal v-model="showRiskCategoryForm" title="Risk Category" centered size="md" hide-footer>
       <create-risk-category
         :client-id="clientId"
         :selected-data="selectedRiskCategory"
         :is-edit="isEdit"
         @saved="refreshCategorySelection()"
       />
-    </b-modal>
+    </el-modal>
     <!-- CREATE ASSET TYPES BEGINS-->
-    <b-modal v-model="createAssetTypeModal" title="Asset Type" centered size="lg" hide-footer>
+    <el-modal v-model="createAssetTypeModal" title="Asset Type" centered size="lg" hide-footer>
       <create-asset-type :client-id="clientId" @save="fetchAssetTypes" />
-    </b-modal>
+    </el-modal>
     <!-- CREATE ASSET TYPES ENDS-->
-    <b-modal v-model="createAssetModal" title="Asset" centered size="lg" hide-footer>
+    <el-modal v-model="createAssetModal" title="Asset" centered size="lg" hide-footer>
       <create-asset
         :asset-type-id="form.asset_type_id"
         :client-id="clientId"
         @save="fetchAssets(form.asset_type_id)"
       />
-    </b-modal>
+    </el-modal>
   </div>
 </template>
 <script>
@@ -595,10 +574,6 @@ export default {
       createAssetTypeModal: false,
       isEdit: false,
       activeName: '1',
-      editor: ClassicEditor,
-      editorConfig: {
-        // The configuration of the editor.
-      },
       clients: [],
       business_processes: [],
       business_units: [],

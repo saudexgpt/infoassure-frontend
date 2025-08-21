@@ -101,7 +101,7 @@
 <script>
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
-import CreateImpactCriteria from './CreateImpactCriteria.vue'
+import CreateImpactCriteria from './partials/CreateImpactCriteria.vue'
 
 export default {
   components: {

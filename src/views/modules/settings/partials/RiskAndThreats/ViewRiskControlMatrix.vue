@@ -2,11 +2,11 @@
   <el-card>
     <template v-slot:header>
       <div>
-        <span class="pull-right">
-          <el-button type="secondary" @click="viewType = 'tabular'"
-            ><icon icon="tabler:table" /> Tabular View</el-button
-          >
-        </span>
+        <!-- <span class="pull-right">
+          <el-button type="secondary" @click="viewType = 'tabular'">
+            <icon icon="tabler:table" /> Tabular View
+          </el-button>
+        </span> -->
         <h3>Risk and Control Matrix</h3>
       </div>
     </template>
@@ -30,48 +30,79 @@
             </el-button>
           </el-tooltip>
         </div>
-        <el-menu style="max-height: 250px; overflow: auto">
-          <el-sub-menu
-            v-for="(asset_type, index) in asset_types"
+        <el-collapse expand-icon-position="left" accordion>
+          <el-collapse-item
+            v-for="(assetsArray, index) in asset_types"
             :key="index"
-            :index="index"
-            :value="asset_type.name"
+            :name="`asset_type-${index}`"
           >
             <template #title>
-              <strong>{{ asset_type.name }}</strong>
+              <span>
+                <h3>{{ index }}</h3>
+              </span>
             </template>
-
-            <el-sub-menu
-              v-for="(asset, asset_index) in asset_type.assets"
-              :key="asset_index"
-              :index="`${index}-${asset_index}`"
-            >
-              <template #title>
-                <span>{{ asset.name }}</span>
-              </template>
-              <el-menu-item
-                v-for="(risk_register, ra_index) in asset.risk_registers"
-                :key="ra_index"
-                :index="`${index}-${asset_index}-${ra_index}`"
-                :title="`${risk_register.risk_id}- ${risk_register.threat}`"
-                :value="title"
-                @click="viewDetails(risk_register)"
+            <el-collapse expand-icon-position="right" accordion>
+              <el-collapse-item
+                v-for="(asset, asset_index) in assetsArray"
+                :key="asset_index"
+                :name="`asset-${asset_index}`"
               >
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  :content="risk_register.threat"
-                  placement="right"
-                  :open-delay="500"
-                >
-                  <div>
-                    {{ risk_register.risk_id }}
+                <template #title>
+                  <span>{{ asset.name }}</span>
+                </template>
+                <div v-if="asset.risk_registers.length > 0">
+                  <el-alert type="error" :closable="false">
+                    Identified threats for {{ asset.name }}
+                  </el-alert>
+                  <div
+                    v-for="(risk_register, risk_register_index) in asset.risk_registers"
+                    :key="risk_register_index"
+                  >
+                    <CardNavView
+                      :id="`risk_register-${index}`"
+                      :title="`${risk_register.risk_id}-${risk_register.threat}`"
+                      title-icon="tabler:file-text"
+                      @clickToView="viewDetails(risk_register)"
+                    >
+                      <!-- <template #description>
+                        <div>
+                          <em><icon icon="tabler:arrow-badge-right" /> {{ task.name }}</em>
+                          <br />
+                          <span v-html="task.description"></span>
+                        </div>
+                      </template> -->
+                    </CardNavView>
                   </div>
-                </el-tooltip>
-              </el-menu-item>
-            </el-sub-menu>
-          </el-sub-menu>
-        </el-menu>
+                </div>
+                <div v-else>
+                  <el-card style="margin-bottom: 5px">
+                    <div style="cursor: pointer">
+                      <strong>No Threat Identified Yet!</strong>
+                      <el-popconfirm
+                        width="400"
+                        hide-icon
+                        :title="`The system will attempt to auto-identify threats associated to ${asset.name}. Click YES to proceed.`"
+                        @confirm="loadAutoRiskRegisters(asset.id)"
+                      >
+                        <template #reference>
+                          <el-button type="primary" style="width: 100%">
+                            <icon icon="tabler:package-import" /> Click to auto identify
+                          </el-button>
+                        </template>
+                      </el-popconfirm>
+                    </div>
+                  </el-card>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+            <!-- <Assets
+              :can-change-status="true"
+              :assets-array="assetsArray"
+              :client-id="storedClient.id"
+              @clickToView="viewDetails"
+            /> -->
+          </el-collapse-item>
+        </el-collapse>
         <div style="background: #cccccc; color: #000000; padding: 10px; border-radius: 5px 5px 0 0">
           <small>Grouped by Business Unit/Process</small>
           <el-tooltip
@@ -91,6 +122,75 @@
             </el-button>
           </el-tooltip>
         </div>
+        <!-- <el-collapse
+          v-if="
+            (viewOnly !== 'isms' || viewOnly === 'all') &&
+            (activatedModules.includes('rcsa') ||
+              activatedModules.includes('bcms') ||
+              activatedModules.includes('ndpa'))
+          "
+          expand-icon-position="left"
+          accordion
+        >
+          <el-collapse-item
+            v-for="(assetsArray, index) in asset_types"
+            :key="index"
+            :name="`asset_type-${index}`"
+          >
+            <template #title>
+              <span>
+                <h3>{{ index }}</h3>
+              </span>
+            </template>
+            <el-collapse expand-icon-position="right" accordion>
+              <el-collapse-item
+                v-for="(business_unit, index) in business_units"
+                :key="index"
+                :index="`${index}`"
+                :name="`process-${asset_index}`"
+              >
+                <template #title>
+                  <span>{{ asset.name }}</span>
+                </template>
+                <div v-if="asset.risk_registers.length > 0">
+                  <el-alert type="error" :closable="false">
+                    Identified threats for {{ asset.name }}
+                  </el-alert>
+                  <div
+                    v-for="(risk_register, risk_register_index) in asset.risk_registers"
+                    :key="risk_register_index"
+                  >
+                    <CardNavView
+                      :id="`risk_register-${index}`"
+                      :title="`${risk_register.risk_id}-${risk_register.threat}`"
+                      title-icon="tabler:file-text"
+                      @clickToView="viewDetails(risk_register)"
+                    />
+                  </div>
+                </div>
+                <div v-else>
+                  <el-card style="margin-bottom: 5px">
+                    <div style="cursor: pointer">
+                      <strong>No Threat Identified Yet!</strong>
+                      <el-popconfirm
+                        width="400"
+                        hide-icon
+                        :title="`The system will attempt to auto-identify threats associated to ${asset.name}. Click YES to proceed.`"
+                        @confirm="loadAutoRiskRegisters(asset.id)"
+                      >
+                        <template #reference>
+                          <el-button type="primary" style="width: 100%">
+                            <icon icon="tabler:package-import" /> Click to auto identify
+                          </el-button>
+                        </template>
+                      </el-popconfirm>
+                    </div>
+                  </el-card>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </el-collapse-item>
+        </el-collapse> -->
         <el-menu
           style="max-height: 250px; overflow: auto"
           v-if="
@@ -225,12 +325,14 @@ import TabularRCM from './partials/TabularRiskControlMatrix.vue'
 import EditRCM from './partials/EditRiskControlMatrix.vue'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
+import CardNavView from '@/views/Components/CardNavView.vue'
 
 export default {
   components: {
     CreateRCM,
     EditRCM,
-    TabularRCM
+    TabularRCM,
+    CardNavView
   },
   props: {
     module: {
@@ -320,15 +422,15 @@ export default {
       const dataLowercase = data.vulnerability_description.toLowerCase()
       return dataLowercase.indexOf(valLowercase) !== -1
     },
-    createNewRiskRegister(module) {
-      // eslint-disable-next-line vue/no-mutating-props
-      this.module = module
+    createNewRiskRegister(mod) {
+      // this.module = mod
       this.form.business_unit_id = null
-      if (this.module === 'isms') {
+      if (mod === 'isms') {
         this.form.business_unit_id = 0
         this.fetchRisks()
       }
       this.viewType = 'create'
+      console.log(mod)
     },
     viewDetails(riskRegister) {
       // if (riskRegister.id) {
@@ -341,12 +443,26 @@ export default {
 
       // }
     },
+    loadAutoRiskRegisters(assetId) {
+      this.loading = true
+      const param = { client_id: this.selectedClient.id, asset_id: assetId }
+      const fetchAssetResource = new Resource('generate-auto-risk-registers')
+      fetchAssetResource
+        .store(param)
+        .then((response) => {
+          this.loadData()
+          this.loading = false
+        })
+        .catch((error) => {
+          this.loading = false
+          // console.log(error.response)
+          this.$message.error(error.response.data.message)
+        })
+    },
     fetchAssetTypes() {
       this.loading = true
       const param = { client_id: this.selectedClient.id }
-      const fetchAssetResource = new Resource(
-        'risk-assessment/fetch-asset-types-with-risk-registers'
-      )
+      const fetchAssetResource = new Resource('fetch-asset-risk-registers')
       fetchAssetResource
         .list(param)
         .then((response) => {

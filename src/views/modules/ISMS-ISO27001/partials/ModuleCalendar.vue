@@ -8,29 +8,25 @@
           width="350px"
         >
           <div style="max-height: 400px; overflow: auto">
-            <h3>Controls</h3>
             <el-collapse expand-icon-position="left">
               <el-collapse-item v-for="(clause, clause_index) in clauses" :key="clause_index">
                 <template #title>
                   <strong>{{ clause.name }}</strong> {{ clause.description }}
                 </template>
-                <div>
-                  <el-card
-                    v-for="(activity, activity_index) in clause.activities"
-                    :key="activity_index"
+                <div v-for="(activity, activity_index) in clause.activities" :key="activity_index">
+                  <CardNavView
                     :id="`activity-${index}-${activity_index}`"
-                    @click="viewDetails(activity, `activity-${index}-${activity_index}`)"
-                    style="cursor: pointer; margin-bottom: 5px"
-                    shadow="hover"
+                    :title="`Process ${activity.activity_no}`"
+                    @clickToView="viewDetails(activity)"
                   >
-                    <strong>Process {{ activity.activity_no }}</strong>
-                    <!-- <strong>{{ `TASK ${activity.activity_no}-${task.id}` }}</strong> -->
-                    <div>
-                      <em><icon icon="tabler:arrow-badge-right" /> {{ activity.name }}</em>
-                      <br />
-                      <span v-html="activity.description"></span>
-                    </div>
-                  </el-card>
+                    <template #description>
+                      <div>
+                        <em><icon icon="tabler:arrow-badge-right" /> {{ activity.name }}</em>
+                        <br />
+                        <span v-html="activity.description"></span>
+                      </div>
+                    </template>
+                  </CardNavView>
                 </div>
               </el-collapse-item>
             </el-collapse>
@@ -56,10 +52,12 @@
 <script>
 import Resource from '@/api/resource'
 import AssignTaskTable from './AssignTaskTable.vue'
+import CardNavView from '@/views/Components/CardNavView.vue'
 
 export default {
   components: {
-    AssignTaskTable
+    AssignTaskTable,
+    CardNavView
   },
   props: {},
   data() {
@@ -110,7 +108,7 @@ export default {
           this.loading = false
         })
     },
-    viewDetails(data, viewId) {
+    viewDetails(data) {
       if (data.id) {
         this.loadView = true
         this.viewType = ''
@@ -120,22 +118,7 @@ export default {
           this.showMenu = false
           this.loadView = false
         }, 1000)
-
-        this.changeActiveTabBgColor(viewId)
       }
-    },
-    changeActiveTabBgColor(viewId) {
-      const divs = document.getElementsByClassName('el-card')
-      // Loop through the buttons and add the activeCard class to the current/clicked button
-
-      if (divs.length > 0) {
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].style.background = '#ffffff'
-          divs[i].style.color = '#000000'
-        }
-      }
-      document.getElementById(viewId).style.background = '#000000'
-      document.getElementById(viewId).style.color = '#ffffff'
     }
   }
 }

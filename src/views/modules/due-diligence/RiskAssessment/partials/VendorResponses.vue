@@ -203,10 +203,10 @@
                 <el-alert
                   v-for="(evidence, evidence_index) in question.evidences"
                   :key="evidence_index"
-                  type="primary"
                   show
+                  :closable="false"
                 >
-                  <div v-loading="loadDelete" class="alert-body">
+                  <div v-loading="loadDelete">
                     <!-- <a
                               :href="baseServerUrl+'storage/'+evidence.link"
                               target="_blank"
@@ -214,8 +214,8 @@
                     <small style="font-size: 11px">{{ evidence.evidence_title }}</small>
                     <span class="pull-right">
                       <el-dropdown>
-                        <el-button type="flat" class="btn-icon rounded-circle">
-                          <i class="el-icon-more-outline"></i>
+                        <el-button type="text" circle>
+                          <icon icon="tabler:dots-vertical" />
                         </el-button>
                         <template v-slot:dropdown>
                           <el-dropdown-menu>

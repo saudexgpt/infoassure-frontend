@@ -1,14 +1,14 @@
 <template>
-  <el-card>
+  <div>
     <div v-if="uploadBulk">
       <el-button type="danger" @click="uploadBulk = false">
-        <feather-icon icon="ArrowBackIcon" class="mr-50" />
+        <icon icon="tabler:arrow-left" />
         <span class="align-middle">Back</span>
       </el-button>
       <create-bulk-question @save="updateTable" />
     </div>
     <div v-else v-loading="loading">
-      <div v:slot="header">
+      <div>
         <el-row>
           <el-col :md="12">
             <el-select
@@ -38,7 +38,7 @@
             <span class="pull-right">
               <v-btn color="black" variant="flat" @click="showQuestionSetupModal = true">
                 <icon icon="tabler:settings" />
-                <span class="align-middle">Setup Vendor Questions</span>
+                <span class="align-middle">Set Vendor Questions</span>
               </v-btn>
             </span>
           </el-col>
@@ -62,20 +62,14 @@
         </el-row>
       </div>
       <hr />
-      <el-tabs type="border-card" tab-position="left">
-        <el-tab-pane v-for="(questions, index) in answers" :key="index" lazy>
-          <template v-slot:label>
-            <small><feather-icon icon="CornerUpRightIcon" /> {{ index }}</small>
+      <el-tabs tab-position="left" style="height: 500px" stretch>
+        <el-tab-pane v-for="(questions, index) in answers" :key="index" :id="index" lazy>
+          <template #label>
+            <span>{{ index }} <icon icon="tabler:arrow-badge-right" /></span>
+            <hr />
           </template>
           <vendor-responses :questions="questions" :vendor-id="form.vendor_id" :is-admin="true" />
         </el-tab-pane>
-        <!-- <el-tab-pane
-          v-if="form.vendor_id !== null"
-          lazy
-        >
-          <span slot="label"><feather-icon icon="PieChartIcon" /> Report</span>
-          <report :vendor-id="form.vendor_id" />
-        </el-tab-pane> -->
       </el-tabs>
       <create-question
         v-if="isCreateQuestionSidebarActive"
@@ -90,20 +84,22 @@
       />
       <el-drawer
         title="Setup Vendor Questionaire"
-        v-model:visible="showQuestionSetupModal"
-        direction="ttb"
-        size="100%"
+        v-model="showQuestionSetupModal"
+        direction="rtl"
+        size="95%"
         :destroy-on-close="true"
         :before-close="updateTable"
       >
         <!-- <template slot="title">
             <h2>Subscribe from the list of packages</h2>
           </template> -->
-
-        <setup-vendor-questions :vendors="vendors" />
+        <strong>
+          Set applicable audit questions for a specific vendor from your question bank
+        </strong>
+        <setup-vendor-questions :vendors="vendors" :selected-vendor-id="form.vendor_id" />
       </el-drawer>
     </div>
-  </el-card>
+  </div>
 </template>
 
 <script>
@@ -210,3 +206,16 @@ export default {
   }
 }
 </script>
+<style scoped>
+.demo-tabs > .el-tabs__content {
+  padding: 32px;
+  color: #6b778c;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.el-tabs--right .el-tabs__content,
+.el-tabs--left .el-tabs__content {
+  height: 100%;
+}
+</style>

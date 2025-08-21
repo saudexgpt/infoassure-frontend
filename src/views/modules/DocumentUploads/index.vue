@@ -32,17 +32,13 @@
             <template #title>
               <h3><icon icon="tabler:folder-open" /> {{ index }}</h3>
             </template>
-            <div>
-              <el-card
-                v-for="(template, sub_index) in documentTemplates"
-                :key="`${index}-${sub_index}`"
+            <div v-for="(template, sub_index) in documentTemplates" :key="`${index}-${sub_index}`">
+              <CardNavView
                 :id="`doc-${index}-${sub_index}`"
-                @click="setView(template, `doc-${index}-${sub_index}`)"
-                style="cursor: pointer; margin-bottom: 2px"
-                shadow="hover"
-              >
-                <strong><icon icon="tabler:file-text" /> {{ template.title }}</strong>
-              </el-card>
+                :title="template.title"
+                title-icon="tabler:file-text"
+                @clickToView="setView(template)"
+              />
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -114,11 +110,13 @@ import Resource from '@/api/resource'
 // import CreateEvidence from './partials/CreateEvidence.vue'
 // import EditEvidence from './partials/EditEvidence.vue'
 import checkPermission from '@/utils/permission'
+import CardNavView from '@/views/Components/CardNavView.vue'
 
 export default {
   components: {
     VueDocumentEditor,
-    VueSpreadsheetEditor
+    VueSpreadsheetEditor,
+    CardNavView
   },
   data() {
     return {
@@ -153,8 +151,7 @@ export default {
   },
   methods: {
     checkPermission,
-    setView(template, viewId) {
-      this.changeActiveTabBgColor(viewId)
+    setView(template) {
       this.viewType = 'welcome'
       this.selectedDocument = null
       this.showDocumentEditor = ''
@@ -177,19 +174,6 @@ export default {
           this.showDocumentEditor = 'none'
         }
       }, 10)
-    },
-    changeActiveTabBgColor(viewId) {
-      const divs = document.getElementsByClassName('el-card')
-      // Loop through the buttons and add the activeCard class to the current/clicked button
-
-      if (divs.length > 0) {
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].style.background = '#ffffff'
-          divs[i].style.color = '#000000'
-        }
-      }
-      document.getElementById(viewId).style.background = '#000000'
-      document.getElementById(viewId).style.color = '#ffffff'
     },
     fetchDocumentTemplates(load) {
       this.loading = load

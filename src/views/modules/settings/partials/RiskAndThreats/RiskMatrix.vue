@@ -2,12 +2,12 @@
   <div>
     <div v-if="selectedClient !== null" v-loading="loading">
       <el-row :gutter="20">
-        <el-col :xs="24" :sm="16" :md="16">
+        <el-col :xs="24" :sm="12" :md="12">
           <p>Select the matrix your company uses</p>
           <el-select
             v-model="risk_matrix.current_matrix"
             style="width: 100%"
-            @input="sendProposedMatrix($event)"
+            @change="sendProposedMatrix($event)"
           >
             <el-option
               v-for="(matrix_val, index) in matrices"
@@ -48,18 +48,21 @@
             </tbody>
           </table>
         </el-col>
-        <el-col v-if="matrix !== '' && risk_matrix !== null" :xs="24" :sm="8" :md="8">
-          <div
-            style="
-              background: #f7f0da;
-              padding: 10px;
-              border-radius: 5px;
-              border-radius: 5px;
-              text-align: center;
-            "
-          >
-            <strong>Set your Risk Appetite here</strong>
-            <el-select
+        <el-col v-if="matrix !== '' && risk_matrix !== null" :xs="24" :sm="12" :md="12">
+          <div style="background: #f7f0da; padding: 10px; border-radius: 5px; border-radius: 5px">
+            <h4>Set your Risk Appetite here</h4>
+            <div v-for="(appetite, index) in fetchRiskAppetite(matrix)" :key="index">
+              <strong>{{ appetite.label }}</strong> <br />
+              <el-radio-group v-model="risk_appetite" @change="setRiskAppetite(risk_matrix.id)">
+                <el-radio-button
+                  v-for="(value, vIndex) in appetite.valueArray"
+                  :key="vIndex"
+                  :label="value"
+                  :value="value"
+                />
+              </el-radio-group>
+            </div>
+            <!-- <el-select
               v-model="risk_appetite"
               style="width: 100%"
               @change="setRiskAppetite(risk_matrix.id)"
@@ -70,7 +73,7 @@
                 :value="appetite.value"
                 :label="appetite.label"
               />
-            </el-select>
+            </el-select> -->
             <!-- <highcharts :options="riskAppetiteAnalytics" /> -->
             <img :src="changeImpactImage(risk_appetite)" />
           </div>
@@ -154,6 +157,47 @@
                 <table class="table table-bordered">
                   <thead>
                     <tr>
+                      <th rowspan="2">Impact Areas</th>
+                      <th :colspan="impact_matrices[matrix].length">Impact Rating Description</th>
+                    </tr>
+                    <tr>
+                      <th
+                        v-for="(content, i_matrix_index) in impact_matrices[matrix]"
+                        :key="i_matrix_index"
+                      >
+                        {{ content.value }} - {{ content.name }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(impact_on_area, impact_area_index1) in impact_matrices[matrix][0]
+                        .impact_on_areas"
+                      :key="impact_area_index1"
+                    >
+                      <td>
+                        <strong>{{ impact_on_area.impact_area.area }}</strong>
+                      </td>
+                      <td
+                        v-for="(content, i_matrix_index2) in impact_matrices[matrix]"
+                        :key="i_matrix_index2"
+                      >
+                        <div>
+                          <textarea
+                            v-model="impact_on_area.impact_level"
+                            type="text"
+                            class="form-control"
+                            :placeholder="`Enter the ${impact_on_area.impact_area.area} for a ${content.name} rating`"
+                            @blur="saveImpactOnAreas(impact_on_area.id, $event)"
+                          ></textarea>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- <table class="table table-bordered">
+                  <thead>
+                    <tr>
                       <th>Rating</th>
                       <th>Description</th>
                       <th
@@ -187,13 +231,13 @@
                       </td>
                     </tr>
                   </tbody>
-                </table>
+                </table> -->
               </div>
             </el-col>
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Risk Ranking Matrix" :lazy="true">
-          <risk-ranking-matrix :matrix="matrix" />
+          <RiskRankingMatrix :matrix="matrix" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -446,16 +490,20 @@ export default {
       let matrixRange = []
       if (matrix === '3x3') {
         matrixRange = [
-          { value: 2, label: 'LOW (1-2 Risk Score)' },
-          { value: 5, label: 'MEDIUM (3-5 Risk Score)' },
-          { value: 9, label: 'HIGH (Above 5 Risk Score)' }
+          { value: 2, label: 'LOW (1-2 Risk Score)', valueArray: [1, 2] },
+          { value: 5, label: 'MEDIUM (3-5 Risk Score)', valueArray: [3, 4, 5] },
+          { value: 9, label: 'HIGH (Above 5 Risk Score)', valueArray: [6, 7, 8, 9] }
         ]
       }
       if (matrix === '5x5') {
         matrixRange = [
-          { value: 4, label: 'LOW (1-4 Risk Score)' },
-          { value: 11, label: 'MEDIUM (5-11 Risk Score)' },
-          { value: 25, label: 'HIGH (Above 12 Risk Score)' }
+          { value: 4, label: 'LOW (1-4 Risk Score)', valueArray: [1, 2, 3, 4] },
+          { value: 11, label: 'MEDIUM (5-11 Risk Score)', valueArray: [5, 6, 7, 8, 9, 10, 11] },
+          {
+            value: 25,
+            label: 'HIGH (Above 12 Risk Score)',
+            valueArray: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+          }
         ]
       }
       return matrixRange

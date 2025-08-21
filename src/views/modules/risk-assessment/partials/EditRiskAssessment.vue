@@ -249,13 +249,13 @@
       <el-col :md="8">
         <div v-if="selectedData !== null">
           <div
-            style="
-              background: #f7f0da;
+            :style="`
+              background: ${setCoolBackground()};
               padding: 10px;
               border-radius: 5px;
-              border: 2px solid #d2a204;
+              border: 2px solid ${setCoolBackground(0.9)};
               border-radius: 5px;
-            "
+            `"
           >
             <!-- <span class="pull-right"><img src="images/pin.png"></span>
             <span><img src="images/pin.png"></span><br> -->
@@ -383,6 +383,7 @@
 import { Editor } from '@/components/Editor'
 import Resource from '@/api/resource'
 import RiskTreatmentOptions from './RiskTreatmentOptions.vue'
+import { setCoolBackground } from '@/utils/tsxHelper'
 
 export default {
   components: {
@@ -458,6 +459,7 @@ export default {
     this.fetchDetails()
   },
   methods: {
+    setCoolBackground,
     updateStepperItems() {
       const items = ['Analysis']
       if (this.form.risk_score !== null) {

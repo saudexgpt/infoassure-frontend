@@ -12,26 +12,18 @@
       </template>
       <vendor-list />
     </el-tab-pane>
-    <el-tab-pane lazy>
-      <template v-slot:label>
-        <span><icon icon="tabler:search" /> Vendors Screening/Approval</span>
-      </template>
-      <screening-and-approval />
-    </el-tab-pane>
   </el-tabs>
 </template>
 
 <script>
 import Dashboard from './Dashboard.vue'
 import VendorList from './partials/VendorList.vue'
-import ScreeningAndApproval from './partials/ScreeningAndApproval.vue'
 // import VendorUserRegistration from './partials/RegisterUserVendor.vue'
 
 export default {
   components: {
     Dashboard,
-    VendorList,
-    ScreeningAndApproval
+    VendorList
     // VendorUserRegistration,
   },
   data() {

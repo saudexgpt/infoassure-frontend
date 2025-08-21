@@ -24,3 +24,15 @@ export function generateRandomString(length) {
   }
   return result
 }
+
+export function changeOpacityOfHexaColorCode(colorCode, newOpacity) {
+  const alphaDecimal = Math.round(newOpacity * 255)
+  const hexAlpha = alphaDecimal.toString(16).padStart(2, '0').toUpperCase()
+  return colorCode + hexAlpha
+}
+
+export function setCoolBackground(newOpacity = 0.2) {
+  const root = document.documentElement // Get the root element (<html>)
+  const primaryBgColor = root.style.getPropertyValue('--el-color-primary')
+  return changeOpacityOfHexaColorCode(primaryBgColor, newOpacity)
+}

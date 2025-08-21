@@ -1,5 +1,7 @@
 <template>
-  <div style="padding: 20px">
+  <div style="margin-top: 20px">
+    <label for="">Select Vendor</label>
+    <br />
     <el-select v-model="form.vendor_id" placeholder="Select Vendor" style="width: 50%">
       <el-option
         v-for="(client, index) in vendors"
@@ -89,6 +91,10 @@ export default {
     vendors: {
       type: Array,
       default: () => []
+    },
+    selectedVendorId: {
+      type: Number,
+      default: () => null
     }
   },
   data() {
@@ -111,6 +117,7 @@ export default {
     }
   },
   mounted() {
+    this.form.vendor_id = this.selectedVendorId
     this.fetchQuestions()
   },
   methods: {
