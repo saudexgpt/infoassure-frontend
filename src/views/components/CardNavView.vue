@@ -8,7 +8,7 @@
     <div style="cursor: pointer">
       <strong><icon v-if="titleIcon" :icon="titleIcon" />{{ title }}</strong>
       <el-tag v-if="tagLabel !== ''" class="pull-right" effect="dark" type="success" round>
-        {{ tagCount }}
+        {{ tagLabel }}
       </el-tag>
       <slot name="description"></slot>
     </div>

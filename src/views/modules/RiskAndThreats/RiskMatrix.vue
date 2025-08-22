@@ -48,13 +48,13 @@
         </el-col>
         <el-col v-if="matrix !== '' && risk_matrix !== null" :xs="24" :sm="8" :md="8">
           <div
-            style="
-              background: #f7f0da;
+            :style="`background: ${setCoolBackground()};
+              border: 2px solid ${setCoolBackground(0.9)};
               padding: 10px;
               border-radius: 5px;
               border-radius: 5px;
               text-align: center;
-            "
+            `"
           >
             <strong>Set your Risk Appetite here</strong>
             <el-select
@@ -196,6 +196,7 @@
 <script>
 import RiskRankingMatrix from './partials/RiskRankingMatrix.vue'
 import Resource from '@/api/resource'
+import { setCoolBackground } from '@/utils/tsxHelper'
 
 export default {
   components: {
@@ -317,6 +318,7 @@ export default {
     this.loadFunctions()
   },
   methods: {
+    setCoolBackground,
     loadFunctions() {
       this.fetchRiskMatricesSetup()
       this.fetchRiskImpactAreas()

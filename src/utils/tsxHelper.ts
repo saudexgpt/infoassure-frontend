@@ -31,8 +31,10 @@ export function changeOpacityOfHexaColorCode(colorCode, newOpacity) {
   return colorCode + hexAlpha
 }
 
-export function setCoolBackground(newOpacity = 0.2) {
-  const root = document.documentElement // Get the root element (<html>)
-  const primaryBgColor = root.style.getPropertyValue('--el-color-primary')
+export function setCoolBackground(primaryBgColor = '', newOpacity = 0.2) {
+  if (primaryBgColor === '') {
+    const root = document.documentElement // Get the root element (<html>)
+    primaryBgColor = root.style.getPropertyValue('--el-color-primary')
+  }
   return changeOpacityOfHexaColorCode(primaryBgColor, newOpacity)
 }

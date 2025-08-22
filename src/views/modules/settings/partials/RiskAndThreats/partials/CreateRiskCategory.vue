@@ -94,6 +94,10 @@ export default {
     }
   },
   watch: {
+    selectedData() {
+      this.form = this.selectedData
+      this.setSubCategories()
+    },
     isEdit() {
       this.form = this.selectedData
       this.setSubCategories()

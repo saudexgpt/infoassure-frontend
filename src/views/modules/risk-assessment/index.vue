@@ -4,7 +4,7 @@
     <el-tab-pane v-if="checkRole(['admin'])" label="Setup" lazy>
       <RiskSetup />
     </el-tab-pane>
-    <el-tab-pane label="Assessment" lazy>
+    <el-tab-pane label="Risk Assessment" lazy>
       <el-card>
         <template v-slot:header>
           <div>
@@ -28,7 +28,7 @@
             placeholder="Filter keyword"
           />
         </aside> -->
-            <h4>Risk Library</h4>
+            <h4>Identified Risks</h4>
             <el-tabs>
               <el-tab-pane
                 v-if="
@@ -36,35 +36,37 @@
                 "
                 label="By Assets"
               >
-                <el-collapse>
-                  <el-collapse-item
-                    v-for="(assessments, index) in asset_types"
-                    :key="index"
-                    :name="`${index}`"
-                  >
-                    <template #title>
-                      <strong>{{ index }}</strong>
-                    </template>
-                    <div
-                      v-for="(risk_assessment, assessments_index) in assessments"
-                      :key="assessments_index"
+                <div style="max-height: 500px; overflow: auto">
+                  <el-collapse>
+                    <el-collapse-item
+                      v-for="(assessments, index) in asset_types"
+                      :key="index"
+                      :name="`${index}`"
                     >
-                      <CardNavView
-                        :id="`asset-${index}-${assessments_index}`"
-                        :title="`${risk_assessment.risk_id}-${risk_assessment.threat}`"
-                        @clickToView="viewDetails(risk_assessment)"
+                      <template #title>
+                        <strong>{{ index }}</strong>
+                      </template>
+                      <div
+                        v-for="(risk_assessment, assessments_index) in assessments"
+                        :key="assessments_index"
                       >
-                        <template #description>
-                          <div>
-                            <em><strong>Vulnerabilities:</strong></em
-                            ><br />
-                            <span v-html="risk_assessment.vulnerability_description"></span>
-                          </div>
-                        </template>
-                      </CardNavView>
-                    </div>
-                  </el-collapse-item>
-                </el-collapse>
+                        <CardNavView
+                          :id="`asset-${index}-${assessments_index}`"
+                          :title="`${risk_assessment.risk_id}-${risk_assessment.threat}`"
+                          @clickToView="viewDetails(risk_assessment)"
+                        >
+                          <template #description>
+                            <div>
+                              <em><strong>Vulnerabilities:</strong></em
+                              ><br />
+                              <span v-html="risk_assessment.vulnerability_description"></span>
+                            </div>
+                          </template>
+                        </CardNavView>
+                      </div>
+                    </el-collapse-item>
+                  </el-collapse>
+                </div>
               </el-tab-pane>
               <el-tab-pane
                 v-if="
@@ -75,35 +77,37 @@
                 "
                 label="By Business Process"
               >
-                <el-collapse>
-                  <el-collapse-item
-                    v-for="(assessments, index) in business_units"
-                    :key="index"
-                    :name="`${index}`"
-                  >
-                    <template #title>
-                      <strong>{{ index }}</strong>
-                    </template>
-                    <div
-                      v-for="(risk_assessment, assessments_index) in assessments"
-                      :key="assessments_index"
+                <div style="max-height: 500px; overflow: auto">
+                  <el-collapse>
+                    <el-collapse-item
+                      v-for="(assessments, index) in business_units"
+                      :key="index"
+                      :name="`${index}`"
                     >
-                      <CardNavView
-                        :id="`process-${index}-${assessments_index}`"
-                        :title="`${risk_assessment.risk_id}-${risk_assessment.threat}`"
-                        @clickToView="viewDetails(risk_assessment)"
+                      <template #title>
+                        <strong>{{ index }}</strong>
+                      </template>
+                      <div
+                        v-for="(risk_assessment, assessments_index) in assessments"
+                        :key="assessments_index"
                       >
-                        <template #description>
-                          <div>
-                            <em><strong>Vulnerabilities:</strong></em
-                            ><br />
-                            <span v-html="risk_assessment.vulnerability_description"></span>
-                          </div>
-                        </template>
-                      </CardNavView>
-                    </div>
-                  </el-collapse-item>
-                </el-collapse>
+                        <CardNavView
+                          :id="`process-${index}-${assessments_index}`"
+                          :title="`${risk_assessment.risk_id}-${risk_assessment.threat}`"
+                          @clickToView="viewDetails(risk_assessment)"
+                        >
+                          <template #description>
+                            <div>
+                              <em><strong>Vulnerabilities:</strong></em
+                              ><br />
+                              <span v-html="risk_assessment.vulnerability_description"></span>
+                            </div>
+                          </template>
+                        </CardNavView>
+                      </div>
+                    </el-collapse-item>
+                  </el-collapse>
+                </div>
               </el-tab-pane>
             </el-tabs>
           </el-aside>

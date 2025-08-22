@@ -1,18 +1,37 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div v-loading="loading">
-    <div v-if="form.asset_id !== 0 && form.asset_id !== null">
-      <h4>
-        <v-breadcrumbs
-          :items="[form.asset_type_name, form.asset_name, `${form.risk_id} - ${form.threat}`]"
-        />
-      </h4>
-    </div>
-    <div v-if="form.business_unit_id !== 0 && form.business_unit_id !== null">
-      <h4>
-        <v-breadcrumbs :items="[`${form.risk_id} - ${form.threat}`]" />
-      </h4>
-    </div>
+    <el-row v-if="form.business_unit_id !== 0">
+      <el-col :md="12">
+        <label for="">Select Business Process</label>
+        <el-select
+          v-model="selectedBusinessProcess"
+          placeholder="Select Business process"
+          value-key="id"
+          style="width: 100%"
+          filterable
+          @input="setTeams()"
+        >
+          <el-option
+            v-for="(business_process, index) in business_processes"
+            :key="index"
+            :value="business_process"
+            :label="business_process.name"
+          />
+        </el-select>
+      </el-col>
+      <el-col :md="12">
+        <label for="">Sub Unit (L3)</label>
+        <select v-model="form.sub_unit" placeholder="Select Sub Unit" class="form-control">
+          <option
+            v-for="(team, team_index) in teams"
+            :key="team_index"
+            :value="team"
+            :label="team"
+          ></option>
+        </select>
+      </el-col>
+    </el-row>
     <v-stepper
       non-linear
       editable
@@ -128,25 +147,11 @@
             </el-col> -->
           <el-col :md="24">
             <small>Risk Owner</small>
-            <el-select
+            <el-input
               v-model="form.risk_owner"
-              placeholder="Select Risk Owner"
-              filterable
-              style="width: 100%"
+              placeholder="Risk Owner"
               @blur="updateField($event.target.value, 'risk_owner', form)"
-            >
-              <el-option
-                v-for="(user, user_index) in staff"
-                :key="user_index"
-                :value="user.name"
-                :label="user.name"
-              >
-                <span style="float: left">{{ user.name }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{
-                  user.designation ? user.designation : ''
-                }}</span>
-              </el-option>
-            </el-select>
+            />
           </el-col>
           <el-col :md="24">
             <small>Vulnerability/Risk Description</small>
@@ -250,25 +255,12 @@
           </el-col>
           <el-col :md="12">
             <small>Control Owner</small>
-            <el-select
+            <el-input
+              id="email"
               v-model="form.control_owner"
-              placeholder="Select Control Owner"
-              filterable
-              style="width: 100%"
-              @change="updateField($event.target.value, 'control_owner', form)"
-            >
-              <el-option
-                v-for="(user, user_index) in staff"
-                :key="user_index"
-                :value="user.name"
-                :label="user.name"
-              >
-                <span style="float: left">{{ user.name }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{
-                  user.designation ? user.designation : ''
-                }}</span>
-              </el-option>
-            </el-select>
+              placeholder="Control Owner"
+              @blur="updateField($event.target.value, 'control_owner', form)"
+            />
           </el-col>
           <el-col :md="12">
             <small>Control Type</small>
@@ -444,7 +436,7 @@
         </el-row>
       </template>
       <template v-slot:item.5>
-        <el-row :gutter="20" v-if="form.business_unit_id === 0 || form.business_unit_id === null">
+        <el-row :gutter="20" v-if="form.business_unit_id === 0">
           <el-col :md="24">
             <v-btn
               :disabled="loading"
@@ -473,8 +465,6 @@ import Resource from '@/api/resource'
 export default {
   components: {
     Editor
-    // FormWizard,
-    // TabContent
     // BButton,
   },
   props: {
@@ -482,22 +472,31 @@ export default {
       type: Number,
       default: null
     },
-    selectedRiskRegister: {
-      type: Object,
-      default: () => {}
+    businessUnitId: {
+      type: Number,
+      default: null
+    },
+    module: {
+      type: String,
+      default: 'isms'
     }
   },
   data() {
     return {
+      showRiskCategoryForm: false,
+      createAssetModal: false,
+      createAssetTypeModal: false,
+      isEdit: false,
       activeName: '1',
       clients: [],
       business_processes: [],
       business_units: [],
-      sub_categories: [],
+      selectedBusinessUnit: null,
       unitTeams: [],
       team_members: [],
       risk_types: [],
       threats: [],
+      required: true,
       form: {
         id: '',
         client_id: '',
@@ -546,6 +545,7 @@ export default {
         asset_id: '',
         threat: '',
         type: '',
+        sub_type: '',
         vulnerability_description: '',
         outcome: '',
         risk_owner: '',
@@ -583,47 +583,58 @@ export default {
         'Per Terminal Request'
       ],
       loading: false,
+      loadSearch: false,
+      selectedBusinessProcess: {},
       uploadableFile: null,
+      selectedRiskCategory: { name: '', sub_categories: [] },
+      selectedCategoryIndex: null,
       teams: [],
       asset_types: [],
       selectedAssetType: null,
-      assets: [],
-      staff: []
+      assets: []
     }
   },
-  computed: {
-    baseServerUrl() {
-      return this.$store.getters.baseServerUrl
+  watch: {
+    clientId() {
+      this.form.client_id = this.clientId
+      this.fetchRiskCategories()
+      this.fetchBusinessProcesses()
+      this.this.fetchAssetTypes()
+    },
+    businessUnitId() {
+      this.form.business_unit_id = this.businessUnitId
+      this.fetchBusinessProcesses()
     }
   },
-  mounted() {
-    this.form = this.selectedRiskRegister
-    this.fetchRiskCategories()
+  created() {
     this.fetchThreats()
-    this.fetchStaff()
-    // this.fetchBusinessProcesses()
-    // this.fetchAssetTypes()
-    // this.fetchAssets(this.form.asset_type_id)
+    this.fetchAssetTypes()
+    this.form.client_id = this.clientId
+    this.form.business_unit_id = this.businessUnitId
+    this.form.module = this.module
+    this.fetchRiskCategories()
+    this.fetchBusinessProcesses()
   },
   methods: {
-    setRiskSubCategory() {
-      const { risk_types } = this
-      const value = this.form.type
-      this.sub_categories = []
-      risk_types.forEach((riskType) => {
-        if (riskType.name === value) {
-          this.sub_categories = riskType.sub_categories
-        }
-      })
+    setTeams() {
+      this.form.business_process_id = this.selectedBusinessProcess.id
+      this.teams = this.selectedBusinessProcess.teams
     },
-    fetchStaff() {
-      const fetchUsersResource = new Resource('users/fetch-staff')
-      fetchUsersResource.list().then((response) => {
-        this.staff = response.staff
-      })
+    refreshCategorySelection() {
+      this.showRiskCategoryForm = false
+      this.fetchRiskCategories()
+      this.setRiskSubCategory()
+    },
+    setRiskSubCategory() {
+      this.selectedCategoryIndex = this.risk_types.indexOf(this.selectedRiskCategory)
+      this.form.type = this.selectedRiskCategory.name
+      this.form.sub_type = ''
+    },
+    onImageChange(e) {
+      this.uploadableFile = e.target.files[0]
     },
     fetchAssetTypes() {
-      const fetchEntryResource = new Resource('assets/fetch-asset-types')
+      const fetchEntryResource = new Resource('risk-assessment/fetch-asset-types')
       this.loading = true
       fetchEntryResource
         .list({ client_id: this.clientId })
@@ -639,7 +650,7 @@ export default {
     },
     fetchAssets(assetTypeId) {
       // const assetTypeId = event.target.value
-      const fetchAssetsResource = new Resource('assets/fetch-assets')
+      const fetchAssetsResource = new Resource('risk-assessment/fetch-assets')
       fetchAssetsResource
         .list({ client_id: this.clientId, asset_type_id: assetTypeId })
         .then((response) => {
@@ -649,6 +660,13 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+    setAssets() {
+      this.form.asset_id = ''
+      if (this.selectedAssetType !== null) {
+        this.form.asset_type_id = this.selectedAssetType.id
+        this.assets = this.selectedAssetType.assets
+      }
     },
     fetchThreats() {
       this.loadSearch = true
@@ -665,21 +683,20 @@ export default {
           this.loadSearch = false
         })
     },
-    onImageChange(e) {
-      this.uploadableFile = e.target.files[0]
-    },
     fetchRiskCategories() {
       const fetchEntryResource = new Resource('risk-assessment/fetch-categories')
       fetchEntryResource
-        .list({ client_id: this.clientId })
+        .list({ client_id: this.form.client_id })
         .then((response) => {
           this.risk_types = response.categories
-          this.setRiskSubCategory()
+          if (this.selectedRiskCategory.name !== '') {
+            this.selectedRiskCategory = this.risk_types[this.selectedCategoryIndex]
+          }
           this.loading = false
         })
         .catch((error) => {
-          console.log(error)
-          this.$message.error(error.data)
+          // console.log(error.response)
+          this.$message.error(error.response.data.error)
           this.loading = false
         })
     },
@@ -687,7 +704,7 @@ export default {
       this.business_units = []
       const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')
       fetchBusinessUnitsResource
-        .list({ client_id: this.clientId })
+        .list({ client_id: this.form.client_id })
         .then((response) => {
           this.business_units = response.business_units
           this.loading = false
@@ -700,7 +717,7 @@ export default {
       this.business_processes = []
       const fetchBusinessProcesssResource = new Resource('business-units/fetch-business-processes')
       fetchBusinessProcesssResource
-        .list({ business_unit_id: this.businessUnitId })
+        .list({ business_unit_id: this.form.business_unit_id })
         .then((response) => {
           this.business_processes = response.business_processes
           this.loading = false
@@ -709,11 +726,64 @@ export default {
           this.loading = false
         })
     },
-    updateField(value, field, assessment) {
-      const params = { field, value }
-      const updateResource = new Resource('update-risk-register')
-      updateResource.update(assessment.id, params).then(() => {
-        this.$emit('reload')
+    validateSelection() {
+      return new Promise((resolve, reject) => {
+        this.$refs.selectionRule.validate().then((success) => {
+          if (success) {
+            this.saveAndContinue()
+            resolve(true)
+          } else {
+            reject()
+          }
+        })
+      })
+    },
+    validateRisk() {
+      return new Promise((resolve, reject) => {
+        this.$refs.riskRule.validate().then((success) => {
+          if (success) {
+            this.saveAndContinue()
+            resolve(true)
+          } else {
+            reject()
+          }
+        })
+      })
+    },
+    validateControl() {
+      return new Promise((resolve, reject) => {
+        this.$refs.controlRule.validate().then((success) => {
+          if (success) {
+            this.saveAndContinue()
+            resolve(true)
+          } else {
+            reject()
+          }
+        })
+      })
+    },
+    validateTesting() {
+      return new Promise((resolve, reject) => {
+        this.$refs.testRules.validate().then((success) => {
+          if (success) {
+            this.saveAndContinue()
+            resolve(true)
+          } else {
+            reject()
+          }
+        })
+      })
+    },
+    validationGap() {
+      return new Promise((resolve, reject) => {
+        this.$refs.gapRules.validate().then((success) => {
+          if (success) {
+            // we dont ned to save and continue here since this is the last part. Just submit outrightly
+            resolve(true)
+          } else {
+            reject()
+          }
+        })
       })
     },
     setFormVariables() {
@@ -752,7 +822,22 @@ export default {
       formData.append('timeline', this.form.timeline)
       formData.append('tod_gap_status', this.form.tod_gap_status)
       formData.append('link_to_evidence', this.uploadableFile)
+
       return formData
+    },
+    saveAndContinue() {
+      const formData = this.setFormVariables()
+      formData.append('submit_mode', 'temporal')
+      const saveRisksResource = new Resource('store-risk-registers')
+      saveRisksResource
+        .store(formData)
+        .then((response) => {
+          this.form.id = response.id
+        })
+        .catch((error) => {
+          this.loading = false
+          this.$message(error.response.data.error)
+        })
     },
     formSubmitted() {
       this.loading = true
@@ -765,11 +850,10 @@ export default {
           this.loading = false
           // this.$message('Action Successful')
           this.$notify({
-            title: 'Updated Successfully',
-            type: 'success'
+            title: 'Submitted Successfully'
           })
-          this.$emit('done')
-          // this.$emit('update:is-create-business-process-sidebar-active', false)
+          this.form = this.empty_form
+          this.$emit('submitted')
         })
         .catch((error) => {
           this.loading = false

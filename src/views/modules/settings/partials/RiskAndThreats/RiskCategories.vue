@@ -10,22 +10,23 @@
         <CardNavView
           :id="`category-${index}`"
           :title="category.name"
+          :tag-label="`${category.sub_categories.length} subs`"
           @clickToView="viewDetails(category)"
         >
-          <template #description>
+          <!-- <template #description>
             <div>
               <el-tag class="pull-right" effect="dark" type="success" round>
                 {{ category.sub_categories.length }} Subs
               </el-tag>
             </div>
-          </template>
+          </template> -->
         </CardNavView>
       </div>
     </el-aside>
 
     <el-container v-loading="loading">
       <el-header style="font-size: 12px; padding: 10px">
-        <el-button type="primary" @click="createNew()">
+        <el-button v-if="isEdit" type="primary" @click="createNew()">
           <icon icon="tabler:plus" /> Create New
         </el-button>
         <el-popconfirm
@@ -127,7 +128,7 @@ export default {
       this.selectedRiskCategory = this.form
       this.isEdit = false
     },
-    viewDetails(category, id) {
+    viewDetails(category) {
       if (category.id) {
         this.isEdit = false
         this.loading = true
@@ -135,30 +136,8 @@ export default {
           this.selectedRiskCategory = category
           this.isEdit = true
           this.loading = false
-          this.changeActiveTabBgColor(id)
         }, 1)
       }
-    },
-    changeActiveTabBgColor(viewId) {
-      const root = document.documentElement // Get the root element (<html>)
-      // root.style.setProperty('--el-color-primary', '#ff0000')
-      const primaryBgColor = root.style.getPropertyValue('--el-color-primary')
-      const divs = document.getElementsByClassName('el-card')
-      // Loop through the buttons and add the activeCard class to the current/clicked button
-
-      if (divs.length > 0) {
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].style.background = '#ffffff'
-          divs[i].style.color = '#000000'
-        }
-      }
-      const doc = document.getElementById(viewId)
-      if (doc !== undefined && doc !== null) {
-        // Now we know that foo is defined, we are good to go.
-        doc.style.background = changeOpacityOfHexaColorCode(primaryBgColor, 0.2)
-      }
-
-      // document.getElementById(viewId).style.color = '#ffffff'
     },
     importRiskCategory() {
       const fetchEntryResource = new Resource('risk-assessment/generate-risk-categories')

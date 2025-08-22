@@ -12,7 +12,7 @@
       class="wizard-vertical mel-3"
       @on-complete="formSubmitted"
     >
-      <tael-content title="Risk">
+      <tab-content title="Risk">
         <el-row v-if="form.business_unit_id === 0">
           <el-col md="6">
             <el-form-group label="Asset Type" label-for="asset_type">
@@ -190,8 +190,8 @@
             </el-form-group>
           </el-col> -->
         </el-row>
-      </tael-content>
-      <tael-content title="Control">
+      </tab-content>
+      <tab-content title="Control">
         <el-row>
           <el-col md="6">
             <el-form-group label="Nature of Control" label-for="nature_of_control">
@@ -311,8 +311,8 @@
             </el-form-group>
           </el-col>
         </el-row>
-      </tael-content>
-      <tael-content title="Testing Strategy">
+      </tab-content>
+      <tab-content title="Testing Strategy">
         <el-row>
           <el-col md="6">
             <el-form-group label="Test Procedure" label-for="test_procedures">
@@ -386,8 +386,8 @@
             </el-form-group>
           </el-col>
         </el-row>
-      </tael-content>
-      <tael-content title="Gap">
+      </tab-content>
+      <tab-content title="Gap">
         <el-row>
           <el-col md="6">
             <el-form-group label="Gap Description" label-for="gap_description">
@@ -459,7 +459,7 @@
             </el-form-group>
           </el-col>
         </el-row>
-      </tael-content>
+      </tab-content>
     </form-wizard>
   </div>
 </template>

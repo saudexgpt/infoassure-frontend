@@ -506,7 +506,7 @@ export default {
       updateResources
         .update(this.selectedData.id, params)
         .then((response) => {
-          this.form = response
+          this.form = response.data
         })
         .catch(() => {
           // eslint-disable-next-line vue/no-mutating-props

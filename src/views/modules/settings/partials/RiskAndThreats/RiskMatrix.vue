@@ -49,8 +49,16 @@
           </table>
         </el-col>
         <el-col v-if="matrix !== '' && risk_matrix !== null" :xs="24" :sm="12" :md="12">
-          <div style="background: #f7f0da; padding: 10px; border-radius: 5px; border-radius: 5px">
-            <h4>Set your Risk Appetite here</h4>
+          <div
+            :style="`background: ${setCoolBackground(changeRiskAppetiteBgColor(risk_appetite), 0.3)};
+              border: 2px solid ${setCoolBackground(changeRiskAppetiteBgColor(risk_appetite), 0.9)};
+              padding: 10px;
+              border-radius: 5px;
+              border-radius: 5px;
+              text-align: center;
+            `"
+          >
+            <h3>Set your Risk Appetite for a {{ risk_matrix.current_matrix }} Matrix</h3>
             <div v-for="(appetite, index) in fetchRiskAppetite(matrix)" :key="index">
               <strong>{{ appetite.label }}</strong> <br />
               <el-radio-group v-model="risk_appetite" @change="setRiskAppetite(risk_matrix.id)">
@@ -246,6 +254,7 @@
 <script>
 import RiskRankingMatrix from './partials/RiskRankingMatrix.vue'
 import Resource from '@/api/resource'
+import { setCoolBackground } from '@/utils/tsxHelper'
 
 export default {
   components: {
@@ -367,9 +376,37 @@ export default {
     this.loadFunctions()
   },
   methods: {
+    setCoolBackground,
     loadFunctions() {
       this.fetchRiskMatricesSetup()
       this.fetchRiskImpactAreas()
+    },
+    changeRiskAppetiteBgColor(score) {
+      const { matrix } = this
+      if (matrix === '3x3') {
+        if (score >= 6) {
+          return '#f00000' // red
+        }
+        if (score >= 3 && score <= 5) {
+          return '#FFFF00' // orange
+        }
+        if (score >= 1 && score <= 2) {
+          return '#00ff00' // green
+        }
+      }
+      if (matrix === '5x5') {
+        if (score >= 12) {
+          return '#f00000' // red
+        }
+        if (score >= 5 && score <= 11) {
+          return '#FFFF00' // orange
+        }
+        if (score >= 1 && score <= 4) {
+          return '#00ff00' // green
+        }
+      }
+
+      return '#333333' // default color
     },
     changeImpactImage(score) {
       const { matrix } = this
@@ -480,7 +517,7 @@ export default {
       approveMatrixResource
         .update(id, { risk_appetite: this.risk_appetite })
         .then((response) => {
-          this.$message({ message: 'Action Successful', type: 'success' })
+          this.$message({ message: 'Risk Appetite Updated', type: 'success' })
           this.risk_matrix = response.risk_matrix
           this.loader = false
         })

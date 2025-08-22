@@ -27,8 +27,8 @@
           </el-tab-pane>
         </el-tabs> -->
       </el-tab-pane>
-      <el-tab-pane label="Risk Assessment" name="#risk-assessment" lazy>
-        <ConsolidatedRA v-if="activeName === '#risk-assessment'" />
+      <el-tab-pane label="Risk Management" name="#risk-management" lazy>
+        <ConsolidatedRA v-if="activeName === '#risk-management'" />
       </el-tab-pane>
       <el-tab-pane label="Policy Management" name="#policy-management" lazy>
         <PolicyManagement v-if="activeName === '#policy-management'" />
