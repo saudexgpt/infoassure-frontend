@@ -1043,7 +1043,14 @@
                 <em
                   >By clicking Submit, I confirm that the information provided is accurate and
                   complete</em
+                >&nbsp;
+                <el-button
+                  v-if="!isAdmin && vendor.second_approval.action !== 'Approve'"
+                  type="primary"
+                  @click="formSubmitted"
                 >
+                  Submit
+                </el-button>
               </h3>
             </div>
           </el-col>

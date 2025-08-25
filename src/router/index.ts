@@ -435,7 +435,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         component: () => import('@/views/modules/DUE-DILIGENCE/vendor/index.vue'),
         name: 'VendorThirdPartyIndex',
         meta: {
-          title: 'Vendor Due Diligence',
+          title: 'TPDD',
           icon: 'tabler:user-search'
         }
       }

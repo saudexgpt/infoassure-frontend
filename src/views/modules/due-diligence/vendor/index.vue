@@ -1,42 +1,57 @@
 <template>
-  <el-tabs v-loading="loading" v-model="activeName" @tab-click="forceRerender">
-    <!-- <el-tabs
+  <div>
+    <el-row :gutter="20" class="mb-3">
+      <el-col :md="20">
+        <h3>Third Party Due Diligence</h3>
+      </el-col>
+      <el-col :md="4">
+        <span class="pull-right">
+          <el-button type="primary" @click="createClientProfile()">Become a Client</el-button>
+        </span>
+      </el-col>
+    </el-row>
+
+    <el-tabs v-loading="loading" v-model="activeName" @tab-click="forceRerender">
+      <!-- <el-tabs
       v-model="activeName"
       @tab-click="handleClick"
     > -->
-    <el-tab-pane :key="keyValue" label="Onboarding" name="#onboarding" lazy>
-      <template v-slot:label>
-        <span><icon icon="tabler:building" /> Onboarding</span>
+      <el-tab-pane :key="keyValue" label="Onboarding" name="#onboarding" lazy>
+        <template v-slot:label>
+          <span><icon icon="tabler:building" /> Onboarding</span>
+        </template>
+        <Onboarding :vendor-id="userData.vendor_id" />
+      </el-tab-pane>
+      <template v-if="vendor.second_approval !== null">
+        <template v-if="vendor.second_approval.action === 'Approve'">
+          <el-tab-pane label="Vendor Assessment" name="#risk-assessment" lazy>
+            <template v-slot:label>
+              <span><icon icon="tabler:alert-triangle" /> Vendor Assessment</span>
+            </template>
+            <RiskAssessment :vendor-id="userData.vendor_id" />
+          </el-tab-pane>
+          <el-tab-pane label="Contracts & SLA" name="#contract-and-sla" lazy>
+            <template v-slot:label>
+              <span><icon icon="tabler:file-invoice" /> Contracts & SLA</span>
+            </template>
+            <ContractAndSla :vendor-id="userData.vendor_id" />
+          </el-tab-pane>
+          <el-tab-pane label="Financials & Billing" name="#financials-and-billing" lazy>
+            <template v-slot:label>
+              <span><icon icon="tabler:report-money" /> Financials & Billing</span>
+            </template>
+            <FinancialAndBilling :vendor-id="userData.vendor_id" />
+          </el-tab-pane>
+          <el-tab-pane label="Vendor Relationship" name="#vrm" lazy>
+            <template v-slot:label>
+              <span><icon icon="tabler:heart-handshake" /> Vendor Relationship</span>
+            </template>
+            <VRM :vendor-id="userData.vendor_id" />
+          </el-tab-pane>
+        </template>
       </template>
-      <Onboarding :vendor-id="userData.vendor_id" />
-    </el-tab-pane>
-    <template v-if="vendor.second_approval.action === 'Approve'">
-      <el-tab-pane label="Vendor Assessment" name="#risk-assessment" lazy>
-        <template v-slot:label>
-          <span><icon icon="tabler:alert-triangle" /> Vendor Assessment</span>
-        </template>
-        <RiskAssessment :vendor-id="userData.vendor_id" />
-      </el-tab-pane>
-      <el-tab-pane label="Contracts & SLA" name="#contract-and-sla" lazy>
-        <template v-slot:label>
-          <span><icon icon="tabler:file-invoice" /> Contracts & SLA</span>
-        </template>
-        <ContractAndSla :vendor-id="userData.vendor_id" />
-      </el-tab-pane>
-      <el-tab-pane label="Financials & Billing" name="#financials-and-billing" lazy>
-        <template v-slot:label>
-          <span><icon icon="tabler:report-money" /> Financials & Billing</span>
-        </template>
-        <FinancialAndBilling :vendor-id="userData.vendor_id" />
-      </el-tab-pane>
-      <el-tab-pane label="Vendor Relationship" name="#vrm" lazy>
-        <template v-slot:label>
-          <span><icon icon="tabler:heart-handshake" /> Vendor Relationship</span>
-        </template>
-        <VRM :vendor-id="userData.vendor_id" />
-      </el-tab-pane>
-    </template>
-  </el-tabs>
+    </el-tabs>
+  </div>
 </template>
 <script>
 import checkPermission from '@/utils/permission'
@@ -81,6 +96,29 @@ export default {
   },
   methods: {
     checkPermission,
+    createClientProfile() {
+      this.$confirm(
+        'By becoming a client on the app, you will have access to more modules (ISMS, NDPA, BCMS, Due Diligence on your vendors, and so much more) on this tool. Do you want to continue?',
+        'Information',
+        {
+          confirmButtonText: 'Yes, Continue',
+          cancelButtonText: 'Cancel',
+          type: 'primary'
+        }
+      )
+        .then(() => {
+          this.loading = true
+          const fetchStaffResource = new Resource('vdd/become-a-client')
+          fetchStaffResource
+            .store({ vendor: this.vendor })
+            .then((response) => {
+              this.$message({ message: 'Action Successful', type: 'success' })
+              this.loading = false
+            })
+            .catch((this.loading = false))
+        })
+        .catch()
+    },
     fetchVendor() {
       this.loading = true
       const fetchVendorResource = new Resource('vdd/show-vendor')
