@@ -8,7 +8,7 @@
         </el-card-title>
         <el-card-text v-if="message !== ''" class="text-center mt-2">
           <RouterLink class="el-link el-link--primary" to="/login">
-            CLICK HERE TO SIGN IN
+            Redirecting to the login page in {{ counter }} seconds...
           </RouterLink>
         </el-card-text>
       </el-card>
@@ -25,11 +25,16 @@ export default {
   data() {
     return {
       message: '',
-      load: false
+      load: false,
+      counter: 5,
+      counterDecrement: null
     }
   },
   created() {
     this.confirmRegistration()
+  },
+  beforeUnmount() {
+    clearInterval(this.counterDecrement)
   },
   methods: {
     confirmRegistration() {
@@ -40,6 +45,7 @@ export default {
         .list({ code })
         .then((response) => {
           this.message = response
+          this.redirectToLogin()
           this.load = false
         })
         .catch((error) => {
@@ -47,6 +53,15 @@ export default {
           this.$message.error(error.response.data.error)
           this.load = false
         })
+    },
+    redirectToLogin() {
+      this.counterDecrement = setInterval(() => {
+        this.counter -= 1
+        console.log(this.counter)
+      }, 1000)
+      setTimeout(() => {
+        this.$router.push('/login')
+      }, 5000)
     }
   }
 }

@@ -35,35 +35,34 @@ router.beforeEach(async (to, from, next) => {
     if (hasToken) {
       // console.log(userData)
       if (to.path === '/login') {
-        next({ path: '/' })
+        next({ path: '/dashboard' })
+        return
       } else {
         if (permissionStore.getIsAddRouters) {
-          store.dispatch('clients/fetchClients')
+          // store.dispatch('clients/fetchClients')
           next()
-          return
-        }
-        try {
+        } else {
           await store.dispatch('user/getInfo')
-          next({ ...to, replace: true })
-        } catch (error) {
-          // remove token and go to login page to re-login
-          store.dispatch('user/resetToken')
-          // router.push({ path: '/login', query: { to: to.path } }).catch(() => { })
-          next(`/login?redirect=${to.path}`)
+          const { userData } = store.getters
+          const { roles, permissions, modules } = userData
+          await permissionStore.generateRoutes(roles, permissions, modules)
+
+          permissionStore.getAddRouters.forEach((route) => {
+            router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
+          })
+          const redirectPath = from.query.redirect || to.path
+          const redirect = decodeURIComponent(redirectPath as string)
+          const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
+          permissionStore.setIsAddRouters(true)
+          try {
+            next(nextData)
+          } catch (error) {
+            // remove token and go to login page to re-login
+            store.dispatch('user/resetToken')
+            // router.push({ path: '/login', query: { to: to.path } }).catch(() => { })
+            next(`/login?redirect=${to.path}`)
+          }
         }
-
-        const { userData } = store.getters
-        const { roles, permissions, modules } = userData
-        await permissionStore.generateRoutes(roles, permissions, modules)
-
-        permissionStore.getAddRouters.forEach((route) => {
-          router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
-        })
-        const redirectPath = from.query.redirect || to.path
-        const redirect = decodeURIComponent(redirectPath as string)
-        const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
-        permissionStore.setIsAddRouters(true)
-        next(nextData)
       }
     } else {
       if (NO_REDIRECT_WHITE_LIST.indexOf(to.path) !== -1) {

@@ -1,115 +1,58 @@
 <template>
-  <el-container style="height: 100%; border: 1px solid #eee">
-    <el-aside v-if="getOtherToken" width="250px">
-      <div style="text-align: center">
-        <img src="/images/logo/logo.png" alt="logo" width="200" class="mx-auto" />
-        <h1 style="font-size: 40px; font-weight: 600"> VMS </h1>
-        <span>Vendor Management System</span>
-      </div>
-      <el-menu>
-        <el-menu-item @click="setPage('#onboarding')">
-          <icon icon="tabler:building" />
-          <template v-slot:title>
-            <span>Onboarding</span>
-          </template>
-        </el-menu-item>
-        <el-menu-item @click="setPage('#risk-assessment')">
-          <icon icon="tabler:help" />
-          <template v-slot:title>
-            <span>Vendor Assessment</span>
-          </template>
-        </el-menu-item>
-        <el-menu-item @click="setPage('#contracts')">
-          <icon icon="tabler:file" />
-          <template v-slot:title>
-            <span>Contracts & SLA</span>
-          </template>
-        </el-menu-item>
-        <el-menu-item @click="setPage('#finance')">
-          <icon icon="tabler:coin" />
-          <template v-slot:title>
-            <span>Financials & Billing</span>
-          </template>
-        </el-menu-item>
-        <el-menu-item @click="setPage('#vrm')">
-          <icon icon="tabler:ticket" />
-          <template v-slot:title>
-            <el-tooltip content="Vendor Relationship Management">
-              <span>VRM</span>
-            </el-tooltip>
-          </template>
-        </el-menu-item>
-      </el-menu>
-    </el-aside>
-
-    <el-container>
-      <el-header
-        v-if="getOtherToken"
-        style="background-color: rgb(187, 144, 2); color: #fcfcfc; text-align: right"
-      >
-        <el-tooltip class="item" effect="dark" content="In-app Mailbox" placement="top-start">
-          <span @click="setPage('#mailbox')" style="cursor: pointer; color: #fcfcfc">
-            <icon icon="tabler:inbox" size="30" />
-          </span>
-        </el-tooltip>
-        <el-dropdown @command="logout">
-          <span class="mt-3" style="cursor: pointer; color: #fcfcfc">
-            <icon icon="tabler:user" size="30" />
-            {{ otherUserData.name }}
-          </span>
-          <template v-slot:dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="a"> Logout </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </el-header>
-
-      <el-main>
-        <div v-if="getOtherToken">
-          <div v-if="page === '#onboarding'">
-            <onboarding :vendor-id="otherUserData.vendor_id" />
-          </div>
-          <div v-if="page === '#mailbox'">
-            <mail-box />
-          </div>
-          <div v-if="page === '#risk-assessment'">
-            <risk-assessment :vendor-id="otherUserData.vendor_id" />
-          </div>
-          <div v-if="page === '#finance'">
-            <financial-and-billing :vendor-id="otherUserData.vendor_id" />
-          </div>
-          <div v-if="page === '#contracts'">
-            <contract-and-sla :vendor-id="otherUserData.vendor_id" />
-          </div>
-          <div v-if="page === '#vrm'">
-            <VRM :vendor-id="otherUserData.vendor_id" />
-          </div>
-        </div>
-        <div v-else>
-          <other-user-login product-module="vdd" />
-        </div>
-      </el-main>
-    </el-container>
-  </el-container>
+  <el-tabs v-loading="loading" v-model="activeName" @tab-click="forceRerender">
+    <!-- <el-tabs
+      v-model="activeName"
+      @tab-click="handleClick"
+    > -->
+    <el-tab-pane :key="keyValue" label="Onboarding" name="#onboarding" lazy>
+      <template v-slot:label>
+        <span><icon icon="tabler:building" /> Onboarding</span>
+      </template>
+      <Onboarding :vendor-id="userData.vendor_id" />
+    </el-tab-pane>
+    <template v-if="vendor.second_approval.action === 'Approve'">
+      <el-tab-pane label="Vendor Assessment" name="#risk-assessment" lazy>
+        <template v-slot:label>
+          <span><icon icon="tabler:alert-triangle" /> Vendor Assessment</span>
+        </template>
+        <RiskAssessment :vendor-id="userData.vendor_id" />
+      </el-tab-pane>
+      <el-tab-pane label="Contracts & SLA" name="#contract-and-sla" lazy>
+        <template v-slot:label>
+          <span><icon icon="tabler:file-invoice" /> Contracts & SLA</span>
+        </template>
+        <ContractAndSla :vendor-id="userData.vendor_id" />
+      </el-tab-pane>
+      <el-tab-pane label="Financials & Billing" name="#financials-and-billing" lazy>
+        <template v-slot:label>
+          <span><icon icon="tabler:report-money" /> Financials & Billing</span>
+        </template>
+        <FinancialAndBilling :vendor-id="userData.vendor_id" />
+      </el-tab-pane>
+      <el-tab-pane label="Vendor Relationship" name="#vrm" lazy>
+        <template v-slot:label>
+          <span><icon icon="tabler:heart-handshake" /> Vendor Relationship</span>
+        </template>
+        <VRM :vendor-id="userData.vendor_id" />
+      </el-tab-pane>
+    </template>
+  </el-tabs>
 </template>
-
 <script>
 import checkPermission from '@/utils/permission'
-import MailBox from './email/Email.vue'
+// import MailBox from './email/Email.vue'
 import Onboarding from './partials/Onboarding.vue'
 import RiskAssessment from './partials/RiskAssessment.vue'
 import FinancialAndBilling from './partials/FinancialAndBilling.vue'
 import ContractAndSla from './partials/ContractAndSLA.vue'
 import VRM from './partials/VRM.vue'
-import OtherUserLogin from '@/views/Authentication/OtherUserLogin.vue'
+import Resource from '@/api/resource'
 
 export default {
   components: {
-    MailBox,
+    // MailBox,
     Onboarding,
     RiskAssessment,
-    OtherUserLogin,
     FinancialAndBilling,
     ContractAndSla,
     VRM
@@ -118,42 +61,45 @@ export default {
     return {
       business_impact_analyses: [],
       loading: false,
-      page: '#onboarding'
+      activeName: '#onboarding',
+      keyValue: 1,
+      vendor: {
+        second_approval: {
+          action: 'pending'
+        }
+      }
     }
   },
   computed: {
-    getOtherToken() {
-      return this.$store.getters.other_user_token
-    },
-    otherUserData() {
-      return this.$store.getters.otherUserData
+    userData() {
+      return this.$store.getters.userData
     }
   },
   mounted() {
     this.setCurrentPage()
+    this.fetchVendor()
   },
   methods: {
     checkPermission,
-    async logout() {
-      await this.$store.dispatch('user/logoutOtherUser')
+    fetchVendor() {
+      this.loading = true
+      const fetchVendorResource = new Resource('vdd/show-vendor')
+      fetchVendorResource.vGet(this.userData.vendor_id).then((response) => {
+        this.vendor = response.vendor
+        this.loading = false
+      })
+    },
+    forceRerender(tab, event) {
+      // console.log(event.target.id)
+      let hashString = event.target.id
+      hashString = hashString.replace('tab-', '')
+      // this.activeName = value
+      this.$router.push({ hash: `${hashString}` })
+      this.keyValue += 1
     },
     setCurrentPage() {
-      this.page = window.location.hash !== '' ? window.location.hash : '#onboarding'
-    },
-    setPage(value) {
-      this.page = value
-      this.$router.push({ hash: `${value}` })
+      this.activeName = window.location.hash !== '' ? window.location.hash : '#onboarding'
     }
   }
 }
 </script>
-<style>
-.el-header {
-  background-color: #b3c0d1;
-  color: #333;
-  line-height: 60px;
-}
-.el-aside {
-  color: #333;
-}
-</style>

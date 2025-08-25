@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import vendorRequest from '@/utils/vendorRequest'
+// import vendorRequest from '@/utils/vendorRequest'
 // import Vue from 'vue'
 /**
  * Simple RESTful resource class
@@ -48,7 +48,7 @@ class Resource {
   }
 
   vList(query) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}`,
       method: 'get',
       params: query
@@ -56,14 +56,14 @@ class Resource {
   }
 
   vGet(id) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}/${id}`,
       method: 'get'
     })
   }
 
   vStore(resource) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}`,
       method: 'post',
       data: resource
@@ -71,7 +71,7 @@ class Resource {
   }
 
   vUpdate(id, resource) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}/${id}`,
       method: 'put',
       data: resource
@@ -79,14 +79,14 @@ class Resource {
   }
 
   vDestroy(id) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}/${id}`,
       method: 'delete'
     })
   }
 
   vList(query) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}`,
       method: 'get',
       params: query
@@ -94,14 +94,14 @@ class Resource {
   }
 
   vGet(id) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}/${id}`,
       method: 'get'
     })
   }
 
   vStore(resource) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}`,
       method: 'post',
       data: resource
@@ -109,7 +109,7 @@ class Resource {
   }
 
   vUpdate(id, resource) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}/${id}`,
       method: 'put',
       data: resource
@@ -117,7 +117,7 @@ class Resource {
   }
 
   vDestroy(id) {
-    return vendorRequest({
+    return request({
       url: `/${this.uri}/${id}`,
       method: 'delete'
     })

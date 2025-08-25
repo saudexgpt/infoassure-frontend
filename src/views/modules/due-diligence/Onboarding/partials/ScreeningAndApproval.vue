@@ -356,6 +356,33 @@
           <el-col :md="8">
             <div>
               <div>
+                <strong>Categorize {{ selectedVendor.name }} using the dropdown</strong>
+
+                <el-select
+                  v-model="selectedVendor.category"
+                  v-loading="loading"
+                  filterable
+                  style="width: 100%"
+                  value-key="id"
+                  placeholder="Select Category"
+                  @change="setVendorCategory"
+                >
+                  <el-option
+                    v-for="(category, index) in categories"
+                    :key="index"
+                    :label="category.name"
+                    :value="category"
+                  >
+                    <span style="float: left">{{ category.name }}</span>
+                    <span
+                      style="float: right; color: #8492a6; font-size: 11px; margin-left: 10px"
+                      >{{ category.description }}</span
+                    >
+                  </el-option>
+                </el-select>
+                <hr />
+              </div>
+              <div>
                 <strong>Inherent Risk Rating</strong>
                 <div
                   v-if="selectedVendor.inherent_risk_rating === 3"
@@ -393,33 +420,6 @@
                   <img src="/images/project-icons/low-impact-level.png" width="100" />
                   <strong>LOW</strong>
                 </div>
-              </div>
-              <div>
-                <strong>Categorize {{ selectedVendor.name }} using the dropdown</strong>
-
-                <el-select
-                  v-model="selectedVendor.category"
-                  v-loading="loading"
-                  filterable
-                  style="width: 100%"
-                  value-key="id"
-                  placeholder="Select Category"
-                  @change="setVendorCategory"
-                >
-                  <el-option
-                    v-for="(category, index) in categories"
-                    :key="index"
-                    :label="category.name"
-                    :value="category"
-                  >
-                    <span style="float: left">{{ category.name }}</span>
-                    <span
-                      style="float: right; color: #8492a6; font-size: 11px; margin-left: 10px"
-                      >{{ category.description }}</span
-                    >
-                  </el-option>
-                </el-select>
-                <hr />
               </div>
               <div v-if="selectedVendor.category_id !== null">
                 <div

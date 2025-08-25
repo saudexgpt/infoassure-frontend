@@ -1,8 +1,8 @@
 <template>
   <el-card v-loading="loading">
-    <div v-if="vendor.second_approval !== null" title="Review & Approval">
+    <div v-if="vendor.second_approval !== ''" title="Review & Approval">
       <div>
-        <div v-if="vendor.second_approval !== null" align="right">
+        <div v-if="vendor.second_approval !== ''" align="right">
           <div v-if="vendor.second_approval.action === 'Reject'">
             <img src="/images/rejected.png" width="100" />
             <p> <strong>Reason:</strong> {{ vendor.second_approval.details }} </p>
@@ -13,85 +13,49 @@
         </div>
       </div>
     </div>
-    <form-wizard
-      v-if="form != null"
-      color="black"
-      :title="null"
-      :subtitle="null"
-      shape="tab"
-      step-size="xs"
-      @on-complete="formSubmitted"
+    <v-stepper
+      editable
+      :items="[
+        'General Information',
+        'Pre Screening Information',
+        'Business Information',
+        `${
+          vendor.second_approval.action === 'Approve'
+            ? 'Review & Approval'
+            : 'Declaration/Acknowledgment'
+        }`
+      ]"
     >
-      <!-- account datails tab -->
-      <tab-content title="General Information">
+      <template v-slot:item.1>
         <el-row :gutter="20">
-          <!-- <el-col
-            cols="12"
-            class="mb-2"
-          >
-            <h3 class="mb-0">
-              General Information
-            </h3>
-            <small class="text-muted">
-              Enter Your Account Details.
-            </small>
-          </el-col> -->
           <el-col :md="12">
             <v-text-field
               density="compact"
               variant="outlined"
               id="v-name"
               v-model="form.name"
-              label="Enter Company Name"
-              :readonly="isAdmin"
+              label="Company Name"
+              :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
             />
           </el-col>
           <el-col :md="12">
-            <el-form-group label="Business Type" label-for="v-business_type">
-              <label>Business Type</label>
-              <el-select
-                v-model="form.business_type"
-                filterable
-                style="width: 100%"
-                :disabled="isAdmin"
-              >
-                <el-option
-                  v-for="(business_type, index) in business_types"
-                  :key="index"
-                  :label="business_type"
-                  :value="business_type"
-                />
-              </el-select>
-            </el-form-group>
-          </el-col>
-          <el-col :md="12">
-            <!-- <el-select
-                      v-model="form.service_description"
-                      filterable
-                      style="width: 100%"
-                      :disabled="isAdmin"
-                    >
-                      <el-option
-                        v-for="(service, index) in services"
-                        :key="index"
-                        :label="service"
-                        :value="service"
-                      />
-                    </el-select> -->
-
-            <small
-              ><em
-                >Example: Payroll services, Transaction processing, Software maintenance,
-                Professional services, Legal services e.t.c</em
-              ></small
-            >
-            <v-textarea
+            <v-text-field
               density="compact"
               variant="outlined"
-              v-model="form.service_description"
-              label="Describe the products/services your company offers"
-              :readonly="isAdmin"
-              rows="2"
+              id="v-company_email"
+              v-model="form.company_email"
+              label="Company Email"
+              :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
+            />
+          </el-col>
+          <el-col :md="12">
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              id="v-company_phone"
+              v-model="form.company_phone"
+              label="Company phone"
+              :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
             />
           </el-col>
           <el-col :md="12">
@@ -102,8 +66,36 @@
                 id="v-reg_no"
                 v-model="form.reg_no"
                 label="Company Registration Number"
-                :readonly="isAdmin"
+                placeholder="RC1234567"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               />
+            </el-form-group>
+          </el-col>
+          <el-col :md="12">
+            <el-form-group label="Business Type" label-for="v-business_type">
+              <label>Business Type</label>
+              <el-select
+                v-model="form.business_type"
+                filterable
+                style="width: 100%"
+                :disabled="isAdmin || vendor.second_approval.action === 'Approve'"
+              >
+                <el-option
+                  v-for="(business_type, index) in business_types"
+                  :key="index"
+                  :label="business_type"
+                  :value="business_type"
+                />
+              </el-select>
+              <div v-if="form.business_type === 'Others'">
+                <v-text-field
+                  density="compact"
+                  variant="outlined"
+                  v-model="form.other_business_type"
+                  label="Please specify other business type"
+                  :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
+                />
+              </div>
             </el-form-group>
           </el-col>
           <el-col :md="12">
@@ -113,7 +105,7 @@
                 v-model="form.country_of_incorporation"
                 filterable
                 style="width: 100%"
-                :disabled="isAdmin"
+                :disabled="isAdmin || vendor.second_approval.action === 'Approve'"
               >
                 <el-option
                   v-for="(country, c_index) in countries"
@@ -124,6 +116,17 @@
               </el-select>
             </el-form-group>
           </el-col>
+          <el-col :md="24">
+            <v-textarea
+              density="compact"
+              variant="outlined"
+              v-model="form.service_description"
+              :label="`Briefly describe the products/services ${form.name} offers`"
+              placeholder="Example: Payroll services, Transaction processing, Software maintenance, Professional services, Legal services e.t.c"
+              :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
+              rows="2"
+            />
+          </el-col>
           <el-col :md="12">
             <el-form-group label="Company Website" label-for="v-website">
               <v-text-field
@@ -133,28 +136,19 @@
                 v-model="form.website"
                 label="Company Website"
                 placeholder="www.example.com"
-                :readonly="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               />
             </el-form-group>
           </el-col>
           <el-col :md="12">
             <label>Number of years in business</label><br />
-            <!-- <v-number-input
-                density="compact" variant="outlined"
-                label="Number of years in business"
-                v-model="form.years_in_business"
-                :min="1"
-                :disabled="isAdmin"
-                size="large"
-              /> -->
             <el-input-number
               type="number"
               v-model="form.years_in_business"
               :min="1"
               placeholder="5"
-              :disabled="isAdmin"
-              size="large"
-              style="width: 100%"
+              :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
+              style="width: 50%"
             />
           </el-col>
           <el-col :md="12">
@@ -166,7 +160,7 @@
                 v-model="form.contact_name"
                 label="Primary Contact Name"
                 placeholder="John Doe"
-                :readonly="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               />
             </el-form-group>
           </el-col>
@@ -180,7 +174,7 @@
                 type="email"
                 label="Primary Contact Email"
                 placeholder="john.doe@email.com"
-                :readonly="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               />
             </el-form-group>
           </el-col>
@@ -192,13 +186,13 @@
                 id="v-phone"
                 v-model="form.contact_phone"
                 label="Enter primary contact phone"
-                :readonly="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               />
             </el-form-group>
           </el-col>
           <el-col :md="12">
             <el-form-group label="Contact Address" label-for="v-address">
-              <v-textarea
+              <v-text-field
                 density="compact"
                 variant="outlined"
                 id="v-address"
@@ -207,25 +201,26 @@
                 label="Contact Address"
                 :rows="2"
                 style="width: 100%"
-                :readonly="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               />
             </el-form-group>
           </el-col>
         </el-row>
-      </tab-content>
-      <tab-content title="Pre Screening Information">
+      </template>
+
+      <template v-slot:item.2>
         <el-row :gutter="20">
           <el-col cols="6" class="mb-2">
-            <h3 class="mb-2">
-              Does your company process, store, or transmit our organization's or customers'
-              sensitive information?
-            </h3>
+            <p class="mb-2">
+              Does <strong>{{ form.name }}</strong> process, store, or transmit our organization's
+              or customers' sensitive information?
+            </p>
             <div>
               <el-radio
                 v-model="form.stores_sentivite_information"
                 :label="0"
                 border
-                :disabled="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               >
                 No
               </el-radio>
@@ -233,23 +228,23 @@
                 v-model="form.stores_sentivite_information"
                 :label="1"
                 border
-                :disabled="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               >
                 Yes
               </el-radio>
             </div>
           </el-col>
           <el-col cols="6" class="mb-2">
-            <h3 class="mb-2">
-              Does your organization require direct access to our critical systems to perform its
-              services?
-            </h3>
+            <p class="mb-2">
+              Does <strong>{{ form.name }}</strong> require direct access to
+              <strong>{{ form.client.name }}'s</strong> critical systems to perform its services?
+            </p>
             <div>
               <el-radio
                 v-model="form.has_access_to_critical_systems"
                 :label="0"
                 border
-                :disabled="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               >
                 No
               </el-radio>
@@ -257,23 +252,24 @@
                 v-model="form.has_access_to_critical_systems"
                 :label="1"
                 border
-                :disabled="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               >
                 Yes
               </el-radio>
             </div>
           </el-col>
           <el-col cols="6" class="mb-2">
-            <h3 class="mb-2">
-              Would a disruption in your services cause significant delays or downtime in our
+            <p class="mb-2">
+              Would a disruption in <strong>{{ form.name }}'s</strong> services cause significant
+              delays or downtime in <strong>{{ form.client.name }}'s</strong>
               business operations?
-            </h3>
+            </p>
             <div>
               <el-radio
                 v-model="form.has_impact_on_business_operations"
                 :label="0"
                 border
-                :disabled="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               >
                 No
               </el-radio>
@@ -281,16 +277,16 @@
                 v-model="form.has_impact_on_business_operations"
                 :label="1"
                 border
-                :disabled="isAdmin"
+                :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
               >
                 Yes
               </el-radio>
             </div>
           </el-col>
         </el-row>
-      </tab-content>
-      <!-- personal info tab -->
-      <tab-content title="Business Information">
+      </template>
+
+      <template v-slot:item.3>
         <el-row :gutter="20">
           <el-col :md="16">
             <!--Lesser Info-->
@@ -304,14 +300,14 @@
             >
               <el-col md="12">
                 <label for="v-work_with_similar_organization">
-                  Have you worked with similar organizations before?
+                  Has <strong>{{ form.name }}</strong> worked with similar organizations before?
                 </label>
                 <div>
                   <el-radio
                     v-model="form.work_with_similar_organization"
                     :label="0"
                     border
-                    :disabled="isAdmin"
+                    :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                   >
                     No
                   </el-radio>
@@ -319,7 +315,7 @@
                     v-model="form.work_with_similar_organization"
                     :label="1"
                     border
-                    :disabled="isAdmin"
+                    :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                   >
                     Yes
                   </el-radio>
@@ -335,18 +331,20 @@
                     maxlength="300"
                     rows="3"
                     show-word-limit
-                    :readonly="isAdmin"
+                    :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                   />
                 </div>
               </el-col>
               <el-col md="12">
-                <label for="have_business_insurance">Do you have valid business insurance?</label>
+                <label for="have_business_insurance"
+                  >Does <strong>{{ form.name }}</strong> have valid business insurance?</label
+                >
                 <div>
                   <el-radio
                     v-model="form.have_business_insurance"
                     :label="0"
                     border
-                    :disabled="isAdmin"
+                    :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                   >
                     No
                   </el-radio>
@@ -354,7 +352,7 @@
                     v-model="form.have_business_insurance"
                     :label="1"
                     border
-                    :disabled="isAdmin"
+                    :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                   >
                     Yes
                   </el-radio>
@@ -402,7 +400,7 @@
                     variant="outlined"
                     v-model="form.company_tax_identification_no"
                     label="Type TIN here..."
-                    :readonly="isAdmin"
+                    :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                   />
                 </el-form-group>
               </el-col>
@@ -421,7 +419,7 @@
                             density="compact"
                             variant="outlined"
                             v-model="bank_details.bank_name"
-                            :readonly="isAdmin"
+                            :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                           />
                         </td>
                       </tr>
@@ -432,7 +430,7 @@
                             density="compact"
                             variant="outlined"
                             v-model="bank_details.account_name"
-                            :readonly="isAdmin"
+                            :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                           />
                         </td>
                       </tr>
@@ -444,7 +442,7 @@
                             variant="outlined"
                             v-model="bank_details.account_no"
                             type="number"
-                            :readonly="isAdmin"
+                            :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                           />
                         </td>
                       </tr>
@@ -461,7 +459,7 @@
               </el-col>
               <el-col md="12">
                 <el-form-group
-                  label="List any major clients or industry recognitions"
+                  :label="`List any major clients or industry recognitions ${form.name} has received`"
                   label-for="v-service_description"
                 >
                   <v-textarea
@@ -469,12 +467,12 @@
                     variant="outlined"
                     v-model="form.list_of_clients_or_industry_recognitions"
                     type="textarea"
-                    label="List any major clients or industry recognitions"
+                    :label="`List any major clients or industry recognitions ${form.name} has received`"
                     placeholder="Type here..."
                     maxlength="500"
                     rows="4"
                     show-word-limit
-                    :readonly="isAdmin"
+                    :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                   />
                 </el-form-group>
               </el-col>
@@ -483,13 +481,15 @@
                   label="Does your company subcontract any services?"
                   label-for="v-work_with_similar_organization"
                 >
-                  <label>Does your company subcontract any services?</label>
+                  <label
+                    >Does <strong>{{ form.name }}</strong> subcontract any services?</label
+                  >
                   <div>
                     <el-radio
                       v-model="form.does_subcontract_services"
                       :label="0"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       No
                     </el-radio>
@@ -497,7 +497,7 @@
                       v-model="form.does_subcontract_services"
                       :label="1"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       Yes
                     </el-radio>
@@ -515,7 +515,7 @@
                       maxlength="300"
                       rows="3"
                       show-word-limit
-                      :readonly="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     />
                   </div>
                 </el-form-group>
@@ -603,14 +603,15 @@
                   label-for="v-past_regulatory_compliance_violations"
                 >
                   <label>
-                    Does your organization have any past regulatory compliance violations?
+                    Does <strong>{{ form.name }}</strong> have any past regulatory compliance
+                    violations?
                   </label>
                   <div>
                     <el-radio
                       v-model="form.past_regulatory_compliance_violations"
                       :label="0"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       No
                     </el-radio>
@@ -618,7 +619,7 @@
                       v-model="form.past_regulatory_compliance_violations"
                       :label="1"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       Yes
                     </el-radio>
@@ -630,11 +631,11 @@
                       variant="outlined"
                       v-model="form.details_of_compliance_violations"
                       type="textarea"
-                      label="Kindly provide the details"
+                      label="Kindly provide the details of the violations"
                       maxlength="300"
                       rows="3"
                       show-word-limit
-                      :readonly="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     />
                   </div>
                 </el-form-group>
@@ -645,14 +646,15 @@
                   label-for="v-past_regulatory_compliance_violations"
                 >
                   <label for=""
-                    >Does your organization have an internal compliance team or officer?</label
+                    >Does <strong>{{ form.name }}</strong> have an internal compliance team or
+                    officer?</label
                   >
                   <div>
                     <el-radio
                       v-model="form.internal_compliance_team_or_officer"
                       :label="0"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       No
                     </el-radio>
@@ -660,7 +662,7 @@
                       v-model="form.internal_compliance_team_or_officer"
                       :label="1"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       Yes
                     </el-radio>
@@ -675,13 +677,16 @@
                   label="Do you have a formal cybersecurity policy?"
                   label-for="v-have_formal_cybersecurity_policy"
                 >
-                  <label for="">Do you have a formal cybersecurity policy?</label>
+                  <label for=""
+                    >Does <strong>{{ form.name }}</strong> have a formal cybersecurity
+                    policy?</label
+                  >
                   <div>
                     <el-radio
                       v-model="form.have_formal_cybersecurity_policy"
                       :label="0"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       No
                     </el-radio>
@@ -689,7 +694,7 @@
                       v-model="form.have_formal_cybersecurity_policy"
                       :label="1"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       Yes
                     </el-radio>
@@ -716,13 +721,16 @@
                   label="Has your company experienced a data breach in the past 3 years?"
                   label-for="v-have_recent_data_breach"
                 >
-                  <label>Has your company experienced a data breach in the past 3 years?</label>
+                  <label
+                    >Has <strong>{{ form.name }}</strong> experienced a data breach in the past 3
+                    years?</label
+                  >
                   <div>
                     <el-radio
                       v-model="form.have_recent_data_breach"
                       :label="0"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       No
                     </el-radio>
@@ -730,7 +738,7 @@
                       v-model="form.have_recent_data_breach"
                       :label="1"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       Yes
                     </el-radio>
@@ -746,7 +754,7 @@
                       maxlength="500"
                       rows="4"
                       show-word-limit
-                      :readonly="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     />
                   </div>
                 </el-form-group>
@@ -761,11 +769,11 @@
                     variant="outlined"
                     v-model="form.ensure_data_protection_and_confidentiality"
                     type="textarea"
-                    label="How do you ensure data protection and confidentiality?"
+                    :label="`How do you ensure data protection and confidentiality?`"
                     maxlength="500"
                     rows="4"
                     show-word-limit
-                    :readonly="isAdmin"
+                    :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                   />
                 </el-form-group>
               </el-col>
@@ -774,13 +782,16 @@
                   label="Do you conduct background checks on employees?"
                   label-for="v-have_formal_cybersecurity_policy"
                 >
-                  <label>Do you conduct background checks on employees?</label>
+                  <label
+                    >Does <strong>{{ form.name }}</strong> conduct background checks on
+                    employees?</label
+                  >
                   <div>
                     <el-radio
                       v-model="form.does_background_checks_on_employees"
                       :label="0"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       No
                     </el-radio>
@@ -788,7 +799,7 @@
                       v-model="form.does_background_checks_on_employees"
                       :label="1"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       Yes
                     </el-radio>
@@ -808,7 +819,7 @@
                     variant="outlined"
                     v-model="form.company_tax_identification_no"
                     label="Type TIN here..."
-                    :readonly="isAdmin"
+                    :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                   />
                 </el-form-group>
               </el-col>
@@ -817,13 +828,15 @@
                   label="Do you have valid business insurance?"
                   label-for="v-have_business_insurance"
                 >
-                  <label>Do you have valid business insurance?</label>
+                  <label
+                    >Does <strong>{{ form.name }}</strong> have valid business insurance?</label
+                  >
                   <div>
                     <el-radio
                       v-model="form.have_business_insurance"
                       :label="0"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       No
                     </el-radio>
@@ -831,7 +844,7 @@
                       v-model="form.have_business_insurance"
                       :label="1"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       Yes
                     </el-radio>
@@ -865,7 +878,7 @@
                       v-model="form.ongoing_legal_dispute"
                       :label="0"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       No
                     </el-radio>
@@ -873,7 +886,7 @@
                       v-model="form.ongoing_legal_dispute"
                       :label="1"
                       border
-                      :disabled="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     >
                       Yes
                     </el-radio>
@@ -889,7 +902,7 @@
                       maxlength="300"
                       rows="3"
                       show-word-limit
-                      :readonly="isAdmin"
+                      :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                     />
                   </div>
                 </el-form-group>
@@ -899,7 +912,7 @@
                   label="Banking Details for Payment Processing"
                   label-for="v-bank_details"
                 >
-                  <strong for="">Banking Details for Payment Processing</strong>
+                  <strong for="">Kindly provide your banking details for payment processing</strong>
                   <table class="table table-striped">
                     <tbody>
                       <tr>
@@ -930,7 +943,7 @@
                             variant="outlined"
                             v-model="bank_details.account_no"
                             type="number"
-                            :readonly="isAdmin"
+                            :readonly="isAdmin || vendor.second_approval.action === 'Approve'"
                           />
                         </td>
                       </tr>
@@ -973,12 +986,12 @@
                     <span class="pull-right">
                       <el-tooltip content="Download">
                         <a :href="baseServerUrl + 'storage/' + document.link" target="_blank"
-                          ><feather-icon size="20" icon="DownloadIcon" />
+                          ><icon size="20" icon="tabler:download" />
                         </a>
                       </el-tooltip>
                       <el-tooltip content="Delete">
                         <span @click="deleteUploadedDocument(document.id)"
-                          ><feather-icon size="20" color="red" icon="TrashIcon"
+                          ><icon size="20" color="red" icon="tabler:trash"
                         /></span>
                       </el-tooltip>
                     </span>
@@ -997,14 +1010,14 @@
                         <a
                           :href="baseServerUrl+'storage/'+document.link"
                           target="_blank"
-                        ><feather-icon
+                        ><icon
                           size="30"
                           icon="DownloadIcon"
                         />
                         </a>
                       </el-tooltip>
                       <el-tooltip content="Delete">
-                        <span @click="deleteUploadedDocument(document.id)"><feather-icon
+                        <span @click="deleteUploadedDocument(document.id)"><icon
                           size="30"
                           color="red"
                           icon="TrashIcon"
@@ -1017,21 +1030,12 @@
             </div>
           </el-col>
         </el-row>
-      </tab-content>
-
-      <!-- address -->
-      <tab-content
-        v-if="!isAdmin"
-        :title="
-          vendor.second_approval.action === 'Approve'
-            ? 'Review & Approval'
-            : 'Declaration/Acknowledgment'
-        "
-      >
+      </template>
+      <template v-slot:item.4>
         <el-row :gutter="20">
           <el-col cols="12" class="mb-2">
             <div v-if="vendor.second_approval.action === 'Approve'" style="text-align: center">
-              <!-- <img src="/images/approved.png" width="100" /> -->
+              <img src="/images/approved.png" width="100" />
               <h1>CONGRATULATIONS</h1>
             </div>
             <div v-else>
@@ -1044,27 +1048,8 @@
             </div>
           </el-col>
         </el-row>
-      </tab-content>
-
-      <template v-slot:prev>
-        <el-button type="primary"> Back </el-button>
       </template>
-      <template v-slot:next>
-        <el-button type="primary"> Next </el-button>
-      </template>
-      <template v-slot:finish>
-        <el-button
-          type="success"
-          v-if="vendor.second_approval.action !== 'Approve'"
-          :disabled="vendor.second_approval.action === 'Approve'"
-        >
-          Submit
-        </el-button>
-        <el-button v-else :disabled="vendor.second_approval.action === 'Approve'">
-          Already Approved
-        </el-button>
-      </template>
-    </form-wizard>
+    </v-stepper>
     <el-dialog
       v-if="showModal"
       v-model="showModal"
@@ -1079,15 +1064,10 @@
 </template>
 
 <script>
-import { FormWizard, TabContent } from 'vue3-form-wizard'
-import 'vue3-form-wizard/dist/style.css'
 import Resource from '@/api/resource'
 
 export default {
-  components: {
-    FormWizard,
-    TabContent
-  },
+  components: {},
   props: {
     isAdmin: {
       type: Boolean,
@@ -1102,44 +1082,47 @@ export default {
     return {
       showModal: false,
       vendor: {
-        id: null,
-        client_id: null,
-        admin_user_id: null,
-        name: null,
-        business_type: null,
-        contact_name: null,
-        contact_email: null,
-        contact_phone: null,
-        contact_address: null,
-        reg_no: null,
-        country_of_incorporation: null,
-        website: null,
+        id: '',
+        client_id: '',
+        admin_user_id: '',
+        name: '',
+        business_type: '',
+        other_business_type: '',
+        contact_name: '',
+        company_email: '',
+        company_phone: '',
+        contact_email: '',
+        contact_phone: '',
+        contact_address: '',
+        reg_no: '',
+        country_of_incorporation: '',
+        website: '',
         years_in_business: 1,
         stores_sentivite_information: 0,
         has_access_to_critical_systems: 0,
         has_impact_on_business_operations: 0,
-        service_description: null,
+        service_description: '',
         work_with_similar_organization: 1,
-        references_to_working_with_similar_organizations: null,
+        references_to_working_with_similar_organizations: '',
         have_business_insurance: 1,
-        business_insurance_file_link: null,
-        business_license_link: null,
-        list_of_clients_or_industry_recognitions: null,
+        business_insurance_file_link: '',
+        business_license_link: '',
+        list_of_clients_or_industry_recognitions: '',
         does_subcontract_services: 0,
-        list_of_services_subcontracted: null,
-        industry_certifications: null,
+        list_of_services_subcontracted: '',
+        industry_certifications: '',
         past_regulatory_compliance_violations: 0,
-        details_of_compliance_violations: null,
+        details_of_compliance_violations: '',
         internal_compliance_team_or_officer: 0,
         have_formal_cybersecurity_policy: 0,
-        cyber_security_policy_link: null,
+        cyber_security_policy_link: '',
         have_recent_data_breach: 0,
-        data_breach_resolution_process: null,
-        ensure_data_protection_and_confidentiality: null,
+        data_breach_resolution_process: '',
+        ensure_data_protection_and_confidentiality: '',
         does_background_checks_on_employees: 1,
-        company_tax_identification_no: null,
+        company_tax_identification_no: '',
         ongoing_legal_dispute: 0,
-        legal_dispute_details: null,
+        legal_dispute_details: '',
         document_uploads: [],
         first_approval: {
           action: '',
@@ -1151,44 +1134,47 @@ export default {
         }
       },
       form: {
-        id: null,
-        client_id: null,
-        admin_user_id: null,
-        name: null,
-        business_type: null,
-        contact_name: null,
-        contact_email: null,
-        contact_phone: null,
-        contact_address: null,
-        reg_no: null,
-        country_of_incorporation: null,
-        website: null,
+        id: '',
+        client_id: '',
+        admin_user_id: '',
+        name: '',
+        business_type: '',
+        other_business_type: '',
+        contact_name: '',
+        company_email: '',
+        company_phone: '',
+        contact_email: '',
+        contact_phone: '',
+        contact_address: '',
+        reg_no: '',
+        country_of_incorporation: '',
+        website: '',
         years_in_business: 1,
         stores_sentivite_information: 0,
         has_access_to_critical_systems: 0,
         has_impact_on_business_operations: 0,
-        service_description: null,
+        service_description: '',
         work_with_similar_organization: 1,
-        references_to_working_with_similar_organizations: null,
+        references_to_working_with_similar_organizations: '',
         have_business_insurance: 1,
-        business_insurance_file_link: null,
-        business_license_link: null,
-        list_of_clients_or_industry_recognitions: null,
+        business_insurance_file_link: '',
+        business_license_link: '',
+        list_of_clients_or_industry_recognitions: '',
         does_subcontract_services: 0,
-        list_of_services_subcontracted: null,
-        industry_certifications: null,
+        list_of_services_subcontracted: '',
+        industry_certifications: '',
         past_regulatory_compliance_violations: 0,
-        details_of_compliance_violations: null,
+        details_of_compliance_violations: '',
         internal_compliance_team_or_officer: 0,
         have_formal_cybersecurity_policy: 0,
-        cyber_security_policy_link: null,
+        cyber_security_policy_link: '',
         have_recent_data_breach: 0,
-        data_breach_resolution_process: null,
-        ensure_data_protection_and_confidentiality: null,
+        data_breach_resolution_process: '',
+        ensure_data_protection_and_confidentiality: '',
         does_background_checks_on_employees: 1,
-        company_tax_identification_no: null,
+        company_tax_identification_no: '',
         ongoing_legal_dispute: 0,
-        legal_dispute_details: null,
+        legal_dispute_details: '',
         document_uploads: []
       },
       business_types: [],
@@ -1204,7 +1190,7 @@ export default {
       loadDelete: false,
       loading: false,
       fill_fields_error: false,
-      selectedDocument: null
+      selectedDocument: ''
     }
   },
   computed: {
@@ -1223,9 +1209,7 @@ export default {
     },
     rowIsEmpty() {
       this.fill_fields_error = false
-      const checkEmptyLines = this.certifications_to_upload.filter(
-        (detail) => detail.title === null
-      )
+      const checkEmptyLines = this.certifications_to_upload.filter((detail) => detail.title === '')
       if (checkEmptyLines.length >= 1) {
         this.fill_fields_error = true
         // this.invoice_items[index].seleted_category = true;
@@ -1239,7 +1223,7 @@ export default {
         return false
       }
       this.certifications_to_upload.push({
-        title: null
+        title: ''
       })
       return true
     },
@@ -1259,7 +1243,7 @@ export default {
       const fetchVendorResource = new Resource('vdd/show-vendor')
       fetchVendorResource.vGet(this.vendorId).then((response) => {
         this.vendor = response.vendor
-        if (this.vendor.second_approval === null) {
+        if (this.vendor.second_approval === '') {
           this.vendor.second_approval = {
             action: '',
             details: ''

@@ -49,15 +49,12 @@ const setUserId = (val) => {
               tag="div"
               enter-active-class="animate__animated animate__bounceInLeft"
             >
-              <img src="@/assets/svgs/login-box-bg.svg" key="1" alt="" class="w-450px" />
+              <img src="/images/login-bg.png" key="1" alt="" class="w-550px" />
               <div class="text-3xl text-white italic" key="2">{{ t('login.welcome') }}</div>
-              <!-- <div class="mt-5 font-normal text-white text-14px" key="3">
-                {{ t('login.message') }}
-              </div> -->
             </TransitionGroup>
           </div>
         </div>
-        <div class="flex-1 p-30px lt-sm:p-10px dark:bg-[var(--login-bg-color)] relative">
+        <div class="flex-1 p-10px lt-sm:p-10px dark:bg-[var(--login-bg-color)] relative">
           <div
             class="flex justify-between items-center text-white at-2xl:justify-end at-xl:justify-end"
           >

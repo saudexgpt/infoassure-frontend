@@ -419,6 +419,27 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         }
       }
     ]
+  },
+  {
+    path: '/vendor',
+    name: 'VendorThirdParty',
+    component: Layout,
+    meta: {
+      title: 'Vendor / Third Party',
+      // permissions: ['manage-client-projects'],
+      roles: ['vendor']
+    },
+    children: [
+      {
+        path: 'third-party',
+        component: () => import('@/views/modules/DUE-DILIGENCE/vendor/index.vue'),
+        name: 'VendorThirdPartyIndex',
+        meta: {
+          title: 'Vendor Due Diligence',
+          icon: 'tabler:user-search'
+        }
+      }
+    ]
   }
   // {
   //   path: '/error',

@@ -76,6 +76,7 @@ const state = {
     login_as: null,
     partner_id: null,
     client_id: null,
+    vendor_id: null,
     introduction: '',
     modules: [],
     roles: [],

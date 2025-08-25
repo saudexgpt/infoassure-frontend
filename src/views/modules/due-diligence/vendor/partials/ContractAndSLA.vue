@@ -69,7 +69,7 @@
         <el-form :model="contractForm">
           <el-form-item label="Upload Contract Document">
             <input class="form-control" type="file" @change="onImageChange" />
-            <small>Acceptable file formats is PDF</small>
+            <small>Acceptable file format is PDF</small>
           </el-form-item>
           <el-form-item>
             <!-- <el-input v-model="contractForm.title" autocomplete="off" /> -->
@@ -80,7 +80,8 @@
               variant="outlined"
             />
           </el-form-item>
-          <el-form-item label="Start Date">
+          <el-form-item>
+            <small>Start Date</small>
             <el-date-picker
               v-model="contractForm.start_date"
               type="date"
@@ -90,7 +91,8 @@
               value-format="yyyy-MM-dd"
             />
           </el-form-item>
-          <el-form-item label="Expiry Date">
+          <el-form-item>
+            <small>Expiry Date</small>
             <el-date-picker
               v-model="contractForm.expiry_date"
               type="date"

@@ -9,10 +9,11 @@
         </el-row>
       </div>
       <hr />
-      <el-tabs type="border-card" tab-position="left">
+      <el-tabs tab-position="left" style="height: 500px" stretch>
         <el-tab-pane v-for="(questions, index) in answers" :key="index" lazy>
           <template v-slot:label>
-            <span><icon icon="tabler:arrow" /> {{ index }}</span>
+            <span>{{ index }} <icon icon="tabler:arrow-badge-right" /></span>
+            <hr />
           </template>
           <vendor-responses
             :questions="questions"
