@@ -4,7 +4,7 @@
       <el-col :md="20">
         <h3>Third Party Due Diligence</h3>
       </el-col>
-      <el-col :md="4">
+      <el-col v-if="vendor.is_a_client === 0" :md="4">
         <span class="pull-right">
           <el-button type="primary" @click="createClientProfile()">Become a Client</el-button>
         </span>
@@ -79,6 +79,7 @@ export default {
       activeName: '#onboarding',
       keyValue: 1,
       vendor: {
+        is_a_client: 1,
         second_approval: {
           action: 'pending'
         }
@@ -98,26 +99,33 @@ export default {
     checkPermission,
     createClientProfile() {
       this.$confirm(
-        'By becoming a client on the app, you will have access to more modules (ISMS, NDPA, BCMS, Due Diligence on your vendors, and so much more) on this tool. Do you want to continue?',
-        'Information',
+        'By becoming a client on this tool, you will be able to subscribe to: ' +
+          '<p> <ul><li>The ISMS Module</li><li>The NDPA Module</li><li>The BCMS Module</li><li>The RCSA Module</li><li>Third Party Due Diligence on your vendors</li><li>...so much more</li></ul></p>Do you want to continue?',
+        'Special Packages for Clients',
         {
-          confirmButtonText: 'Yes, Continue',
-          cancelButtonText: 'Cancel',
-          type: 'primary'
+          confirmButtonText: 'Yes, please continue',
+          cancelButtonText: 'No, cancel',
+          type: 'primary',
+          dangerouslyUseHTMLString: true,
+          icon: ''
         }
       )
         .then(() => {
           this.loading = true
-          const fetchStaffResource = new Resource('vdd/become-a-client')
+          const fetchStaffResource = new Resource('become-a-client')
           fetchStaffResource
-            .store({ vendor: this.vendor })
+            .store({ data: this.vendor })
             .then((response) => {
               this.$message({ message: 'Action Successful', type: 'success' })
+              window.location = '/dashboard'
               this.loading = false
             })
             .catch((this.loading = false))
         })
-        .catch()
+        .catch((e) => {
+          // console.log(e)
+          // this.$message({ type: 'info', message: 'Action Cancelled' })
+        })
     },
     fetchVendor() {
       this.loading = true

@@ -216,30 +216,30 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
       }
     ]
   },
-  {
-    path: '/manage-projects',
-    name: 'ManageProject',
-    component: Layout,
-    redirect: '/manage-projects/index',
-    meta: {
-      title: 'Manage Project',
-      // permissions: ['manage-client-projects'],
-      roles: ['admin']
-    },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/modules/projects/ClientProjects.vue'),
-        name: 'ManageProjectIndex',
-        meta: {
-          title: 'Manage Project',
-          icon: 'vi-ant-design:project-outlined',
-          permissions: ['manage-client-projects'],
-          roles: ['admin']
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/manage-projects',
+  //   name: 'ManageProject',
+  //   component: Layout,
+  //   redirect: '/manage-projects/index',
+  //   meta: {
+  //     title: 'Manage Project',
+  //     // permissions: ['manage-client-projects'],
+  //     roles: ['admin']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/modules/projects/ClientProjects.vue'),
+  //       name: 'ManageProjectIndex',
+  //       meta: {
+  //         title: 'Manage Project',
+  //         icon: 'vi-ant-design:project-outlined',
+  //         permissions: ['manage-client-projects'],
+  //         roles: ['admin']
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/modules',
     component: Layout,
@@ -251,6 +251,17 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
       roles: ['admin', 'client']
     },
     children: [
+      {
+        path: 'subscribe',
+        component: () => import('@/views/modules/projects/ClientProjects.vue'),
+        name: 'ManageProjectIndex',
+        meta: {
+          title: 'Subscriptions',
+          icon: 'vi-ant-design:project-outlined',
+          permissions: ['manage-client-projects'],
+          roles: ['admin']
+        }
+      },
       {
         path: 'bcms-index',
         component: () => import('@/views/modules/BCMS-ISO22301/index.vue'),

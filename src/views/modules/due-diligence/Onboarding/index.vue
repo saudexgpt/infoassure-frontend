@@ -1,5 +1,6 @@
 <template>
-  <el-tabs type="border-card">
+  <vendor-list />
+  <!-- <el-tabs type="border-card">
     <el-tab-pane lazy>
       <template v-slot:label>
         <span><icon icon="tabler:dashboard" /> Overview</span>
@@ -12,17 +13,17 @@
       </template>
       <vendor-list />
     </el-tab-pane>
-  </el-tabs>
+  </el-tabs> -->
 </template>
 
 <script>
-import Dashboard from './Dashboard.vue'
+// import Dashboard from './Dashboard.vue'
 import VendorList from './partials/VendorList.vue'
 // import VendorUserRegistration from './partials/RegisterUserVendor.vue'
 
 export default {
   components: {
-    Dashboard,
+    // Dashboard,
     VendorList
     // VendorUserRegistration,
   },

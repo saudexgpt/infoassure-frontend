@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <el-card v-loading="loading">
     <div v-if="vendor.second_approval !== ''" title="Review & Approval">

@@ -432,7 +432,12 @@
                 >
                   <strong>First Review</strong>
                   <div v-if="selectedVendor.first_approval !== null">
-                    <div v-if="selectedVendor.first_approval.action === 'Reject'">
+                    <div
+                      v-if="
+                        selectedVendor.first_approval.action === 'Reject' ||
+                        selectedVendor.first_approval.action === 'Pending'
+                      "
+                    >
                       <img src="/images/rejected.png" width="100" />
                       <p> <strong>Reason:</strong> {{ selectedVendor.first_approval.details }} </p>
                       <el-button
@@ -500,7 +505,12 @@
                 >
                   <strong>Final Review</strong>
                   <div v-if="selectedVendor.second_approval !== null">
-                    <div v-if="selectedVendor.second_approval.action === 'Reject'">
+                    <div
+                      v-if="
+                        selectedVendor.second_approval.action === 'Reject' ||
+                        selectedVendor.second_approval.action === 'Pending'
+                      "
+                    >
                       <img src="/images/rejected.png" width="100" />
                       <p> <strong>Reason:</strong> {{ selectedVendor.second_approval.details }} </p>
                       <el-button

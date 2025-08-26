@@ -105,6 +105,9 @@ export default {
         case 'super':
           this.loginAs()
           break
+        case 'vendor':
+          this.loginAs()
+          break
         case 'admin':
           // this.loginAs('admin')
           this.fetchUserClients()
@@ -126,6 +129,7 @@ export default {
         .store({
           partner_id: this.selectedPartner,
           client_id: this.selectedClient,
+          vendor_id: this.user.vendor_id,
           role: this.selectedRole
         })
         .then((response) => {
