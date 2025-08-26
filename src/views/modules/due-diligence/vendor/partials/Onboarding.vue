@@ -1356,12 +1356,18 @@ export default {
       })
       this.loading = true
       const updateVendorResource = new Resource('vdd/update-vendor')
-      updateVendorResource.vStore(formData).then(() => {
-        this.$message('Submitted Successfully')
-        this.fetchVendor()
-        this.loading = false
-        // console.log(response)
-      })
+      updateVendorResource
+        .vStore(formData)
+        .then(() => {
+          this.$message('Submitted Successfully')
+          this.fetchVendor()
+          this.loading = false
+          // console.log(response)
+        })
+        .catch((e) => {
+          this.loading = false
+          this.$message(e.response.message)
+        })
       // console.log(formData)
     },
     deleteUploadedDocument(documentId) {

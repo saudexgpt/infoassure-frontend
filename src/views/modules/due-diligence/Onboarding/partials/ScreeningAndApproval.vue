@@ -432,12 +432,48 @@
                 >
                   <strong>First Review</strong>
                   <div v-if="selectedVendor.first_approval !== null">
-                    <div
-                      v-if="
-                        selectedVendor.first_approval.action === 'Reject' ||
-                        selectedVendor.first_approval.action === 'Pending'
-                      "
-                    >
+                    <div v-if="selectedVendor.first_approval.action === 'Pending'">
+                      <el-button
+                        :loading="approvalLoading"
+                        type="success"
+                        @click="approveApplication('Approve', 'first_approval')"
+                      >
+                        Approve
+                      </el-button>
+                      <el-popover placement="right" width="500" trigger="click">
+                        <div
+                          style="
+                            background: #000000;
+                            color: #ffffff;
+                            padding: 10px;
+                            text-align: left;
+                            border-radius: 5px;
+                          "
+                        >
+                          <strong>Give reasons for rejection</strong>
+                          <el-input
+                            v-model="approvalForm.details"
+                            placeholder="Type reason here..."
+                            type="textarea"
+                          />
+                          <br /><br />
+                          <el-button
+                            :loading="approvalLoading"
+                            size="mini"
+                            type="primary"
+                            plain
+                            :disabled="approvalForm.details === ''"
+                            @click="approveApplication('Reject', 'first_approval')"
+                          >
+                            OK
+                          </el-button>
+                        </div>
+                        <template v-slot:reference>
+                          <el-button type="danger" style="margin-left: 10px"> Reject </el-button>
+                        </template>
+                      </el-popover>
+                    </div>
+                    <div v-if="selectedVendor.first_approval.action === 'Reject'">
                       <img src="/images/rejected.png" width="100" />
                       <p> <strong>Reason:</strong> {{ selectedVendor.first_approval.details }} </p>
                       <el-button
@@ -505,12 +541,48 @@
                 >
                   <strong>Final Review</strong>
                   <div v-if="selectedVendor.second_approval !== null">
-                    <div
-                      v-if="
-                        selectedVendor.second_approval.action === 'Reject' ||
-                        selectedVendor.second_approval.action === 'Pending'
-                      "
-                    >
+                    <div v-if="selectedVendor.second_approval.action === 'Pending'">
+                      <el-button
+                        :loading="approvalLoading"
+                        type="success"
+                        @click="approveApplication('Approve', 'second_approval')"
+                      >
+                        Approve
+                      </el-button>
+                      <el-popover placement="right" width="500" trigger="click">
+                        <div
+                          style="
+                            background: #000000;
+                            color: #ffffff;
+                            padding: 10px;
+                            text-align: left;
+                            border-radius: 5px;
+                          "
+                        >
+                          <strong>Give reasons for rejection</strong>
+                          <el-input
+                            v-model="approvalForm.details"
+                            placeholder="Type reason here..."
+                            type="textarea"
+                          />
+                          <br /><br />
+                          <el-button
+                            :loading="approvalLoading"
+                            size="mini"
+                            type="primary"
+                            plain
+                            :disabled="approvalForm.details === ''"
+                            @click="approveApplication('Reject', 'second_approval')"
+                          >
+                            OK
+                          </el-button>
+                        </div>
+                        <template v-slot:reference>
+                          <el-button type="danger" style="margin-left: 10px"> Reject </el-button>
+                        </template>
+                      </el-popover>
+                    </div>
+                    <div v-if="selectedVendor.second_approval.action === 'Reject'">
                       <img src="/images/rejected.png" width="100" />
                       <p> <strong>Reason:</strong> {{ selectedVendor.second_approval.details }} </p>
                       <el-button
