@@ -3,7 +3,7 @@ import store from '@/VuexStore'
 
 const state = {
   allClients: [],
-  selectedClient: { id: null },
+  selectedClient: { id: null, name: '' },
   partnerWithClients: []
 }
 

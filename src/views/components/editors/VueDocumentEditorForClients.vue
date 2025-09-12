@@ -1,21 +1,26 @@
 <template>
   <div v-loading="loading" element-loading-text="loading document, please wait...">
     <div>
+      <el-tooltip class="item" effect="dark" content="Reload" placement="top-start">
+        <el-button size="mini" @click="openFile()">
+          <icon icon="tabler:reload" />
+        </el-button>
+      </el-tooltip>
       <el-tooltip class="item" effect="dark" content="Save" placement="top-start">
         <el-button type="success" size="mini" :disabled="disableButton" @click="saveFile">
           <icon icon="tabler:device-floppy" />
         </el-button>
       </el-tooltip>
-      <el-tooltip class="item" effect="dark" content="Download" placement="top-start">
+      <!-- <el-tooltip class="item" effect="dark" content="Download" placement="top-start">
         <el-button type="primary" size="mini" :disabled="disableButton" @click="downloadFile">
           <icon icon="tabler:download" />
         </el-button>
-      </el-tooltip>
+      </el-tooltip> -->
     </div>
 
     <ejs-documenteditorcontainer
       ref="doceditcontainer"
-      height="500px"
+      height="700px"
       :service-url="serviceUrl"
       :toolbar-items="items"
       :enable-toolbar="true"
@@ -76,6 +81,7 @@ export default {
       disableButton: true,
       loading: false,
       contentChanged: false,
+      autoSave: null,
       serviceUrl: 'https://ej2services.syncfusion.com/production/web-services/api/documenteditor/',
       items: [
         'New',
@@ -129,6 +135,9 @@ export default {
     //   StylesDialog
     // ]
   },
+  beforeUnmount() {
+    clearInterval(this.autoSave)
+  },
   mounted() {
     this.openFile()
     this.enableAutoSave()
@@ -149,13 +158,13 @@ export default {
       this.contentChanged = true
     },
     enableAutoSave() {
-      setInterval(() => {
+      this.autoSave = setInterval(() => {
         if (this.contentChanged) {
           //You can save the document as below
           this.saveFile(false)
           this.contentChanged = false
         }
-      }, 20000)
+      }, 60000)
     },
     fetchSFDTFile(path) {
       this.loading = true
@@ -243,7 +252,7 @@ export default {
         })
         .catch((e) => {
           this.loading = false
-          this.$message(e.response.message)
+          console.log(e)
         })
     }
   }

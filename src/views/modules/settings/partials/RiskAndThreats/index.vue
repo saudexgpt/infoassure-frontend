@@ -2,20 +2,20 @@
   <div>
     <h3>Risks Management Setup</h3>
     <el-tabs v-if="selectedClient !== null" type="border-card">
-      <el-tab-pane label="Risk Category" lazy>
+      <el-tab-pane v-if="module !== 'isms'" label="Risk Category" lazy>
         <risk-categories />
       </el-tab-pane>
-      <el-tab-pane label="Impact Criteria" lazy>
+      <el-tab-pane v-if="module !== 'isms'" label="Impact Criteria" lazy>
         <RiskImpactAreas />
       </el-tab-pane>
-      <el-tab-pane label="Impact Recovery Requirements by Time" lazy>
+      <el-tab-pane v-if="module !== 'isms'" label="Impact Recovery Requirements by Time" lazy>
         <RecoveryRequirementsByTime />
       </el-tab-pane>
       <el-tab-pane label="Risk Matrix" lazy>
-        <risk-matrix />
+        <risk-matrix :module="module" />
       </el-tab-pane>
       <el-tab-pane label="Risk Library" lazy>
-        <view-risk-control-matrix />
+        <view-risk-control-matrix :view-only="module" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -35,6 +35,12 @@ export default {
     RiskMatrix,
     RecoveryRequirementsByTime,
     RiskImpactAreas
+  },
+  props: {
+    module: {
+      type: String,
+      default: () => 'all' // this is the general risk assessment
+    }
   },
   data() {
     return {

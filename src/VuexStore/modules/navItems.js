@@ -50,7 +50,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       const fetchCriteriaResource = new Resource('fetch-client-activated-projects')
       fetchCriteriaResource
-        .get(client.id)
+        .list({ client_id: client.id })
         .then((response) => {
           commit('SET_CLIENT_ACTIVATED_PROJECTS', response.projects)
           commit('SET_CLIENT_ACTIVATED_MODULES', response.activated_modules)

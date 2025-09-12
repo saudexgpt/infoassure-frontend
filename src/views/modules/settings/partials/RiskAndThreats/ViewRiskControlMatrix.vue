@@ -1,15 +1,13 @@
 <template>
-  <el-card>
-    <template v-slot:header>
-      <div>
-        <!-- <span class="pull-right">
+  <div>
+    <div>
+      <!-- <span class="pull-right">
           <el-button type="secondary" @click="viewType = 'tabular'">
             <icon icon="tabler:table" /> Tabular View
           </el-button>
         </span> -->
-        <h3>Manage Risk Library & Control Matrix</h3>
-      </div>
-    </template>
+      <h3>Manage Risk Library & Control Matrix</h3>
+    </div>
     <el-container style="height: 100%; border: 1px solid #eee">
       <el-aside v-if="showMenu" v-loading="loading" style="width: 350px; background-color: #fcfcfc">
         <el-tabs>
@@ -166,11 +164,12 @@
               :client-id="selectedClient.id"
               :assessment-module="module"
             />
-            <edit-r-c-m
+            <EditRCM
               v-if="viewType === 'edit'"
               :client-id="selectedClient.id"
               :selected-risk-register="selectedRiskRegister"
-              @done="((viewType = 'tabular'), fetchRisks())"
+              @done="((viewType = 'tabular'), loadData())"
+              @deleted="((viewType = 'welcome'), loadData())"
             />
             <div v-if="viewType === 'create'">
               <div v-if="selectedModule !== 'isms'">
@@ -207,7 +206,7 @@
         </el-main>
       </el-container>
     </el-container>
-  </el-card>
+  </div>
 </template>
 
 <script>
@@ -231,7 +230,7 @@ export default {
   props: {
     module: {
       type: String,
-      default: () => 'isms'
+      default: () => 'all'
     },
     viewOnly: {
       type: String,
@@ -405,16 +404,6 @@ export default {
       setTimeout(() => {
         this.downloading = false
       }, 30000)
-    },
-    destroyRow(row) {
-      if (window.confirm('Are you sure you want to delete this entry?')) {
-        this.loading = true
-        const destroyProjectsResource = new Resource('risk-assessment/destroy')
-        destroyProjectsResource.destroy(row.id).then(() => {
-          this.fetchRisks()
-          this.loading = false
-        })
-      }
     }
   }
 }

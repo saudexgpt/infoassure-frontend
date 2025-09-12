@@ -13,9 +13,9 @@
       <el-tab-pane :key="keyValue" label="The ISMS Journey" name="#isms-journey" lazy>
         <ISMSJourney v-if="activeName === '#isms-journey'" />
       </el-tab-pane>
-      <el-tab-pane :key="keyValue" label="Compliance Assessment" name="#compliance-assessment" lazy>
+      <!-- <el-tab-pane :key="keyValue" label="Compliance Assessment" name="#compliance-assessment" lazy>
         <ComplianceAssessment v-if="activeName === '#compliance-assessment'" />
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane :key="keyValue" label="Asset Management" name="#asset-inventory" lazy>
         <AssetManagement v-if="activeName === '#asset-inventory'" />
         <!-- <el-tabs type="border-card">
@@ -28,7 +28,7 @@
         </el-tabs> -->
       </el-tab-pane>
       <el-tab-pane label="Risk Management" name="#risk-management" lazy>
-        <ConsolidatedRA v-if="activeName === '#risk-management'" />
+        <ConsolidatedRA v-if="activeName === '#risk-management'" module="isms" view-only="isms" />
       </el-tab-pane>
       <el-tab-pane label="Policy Management" name="#policy-management" lazy>
         <PolicyManagement v-if="activeName === '#policy-management'" />
@@ -56,7 +56,7 @@ import Dashboard from '@/views/modules/ISMS-ISO27001/Dashboard.vue'
 // import AssetTypes from '@/views/modules/settings/partials/ManageAssetTypes/index.vue'
 import AssetManagement from '@/views/modules/settings/partials/ManageAssets/index.vue'
 import ConsolidatedRA from '@/views/modules/risk-assessment/index.vue'
-import ComplianceAssessment from './partials/ComplianceAssessment.vue'
+// import ComplianceAssessment from './partials/ComplianceAssessment.vue'
 import ISMSJourney from './ISMSJourney.vue'
 import PolicyManagement from '@/views/modules/Policies/index.vue'
 import IncidentManagement from '@/views/modules/Incidents/index.vue'
@@ -70,7 +70,7 @@ export default {
     // AssetTypes,
     AssetManagement,
     Dashboard,
-    ComplianceAssessment,
+    // ComplianceAssessment,
     PolicyManagement,
     IncidentManagement,
     ISMSJourney

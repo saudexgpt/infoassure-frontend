@@ -71,6 +71,7 @@
               :asset-types="asset_types"
               :staff="staff"
               @update="(fetchAssets(), (editModal = false))"
+              @deleted="(fetchAssets(), (viewType = 'welcome'))"
             />
           </div>
           <div v-if="viewType === 'welcome'" align="center">

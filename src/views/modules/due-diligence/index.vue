@@ -1,5 +1,5 @@
 <template>
-  <el-tabs v-model="activeName" @tab-click="forceRerender">
+  <el-tabs tab-position="left" v-model="activeName" @tab-click="forceRerender">
     <!-- <el-tabs
       v-model="activeName"
       @tab-click="handleClick"

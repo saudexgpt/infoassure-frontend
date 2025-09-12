@@ -18,8 +18,17 @@
       </form>
       <br />
 
-      <div style="cursor: pointer; margin-top: 20px; text-align: center" @click="resendToken()">
+      <div
+        v-if="showResend"
+        style="cursor: pointer; margin-top: 20px; text-align: center"
+        @click="resendToken()"
+      >
         <strong>Didn't get the token? Resend</strong>
+      </div>
+      <div v-else>
+        Your token has been sent to your email, kindly check your email. <br />
+        Didn't get the token? please wait for
+        {{ count }} seconds...
       </div>
       <!-- /Reset Password v1 -->
     </div>
@@ -39,23 +48,43 @@ export default {
   data() {
     return {
       token: '',
-      load: false
+      load: false,
+      showResend: false,
+      count: 90,
+      countDecrement: null
     }
+  },
+  beforeUnmount() {
+    clearInterval(this.countDecrement)
+  },
+  mounted() {
+    this.delayResend()
   },
   methods: {
     checkLength() {
       if (this.token.length === 6) {
-        console.log(this.token.length)
+        // console.log(this.token.length)
         this.validationForm()
       }
     },
+    delayResend() {
+      this.showResend = false
+      this.countDecrement = setInterval(() => {
+        this.count -= 1
+      }, 1000)
+      setTimeout(() => {
+        this.showResend = true
+      }, 90000)
+    },
     resendToken() {
       this.token = ''
+      this.count = 90
       const confirmTokenResource = new Resource('auth/sent-2fa-code')
       this.load = true
       confirmTokenResource
         .update(this.userId)
         .then(() => {
+          this.delayResend()
           this.$message('Token sent to your email')
           this.load = false
         })

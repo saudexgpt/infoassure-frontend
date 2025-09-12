@@ -1,13 +1,14 @@
 <script lang="tsx">
 import { defineComponent, computed } from 'vue'
 import { Collapse } from '@/components/Collapse'
-import { LocaleDropdown } from '@/components/LocaleDropdown'
-import { SizeDropdown } from '@/components/SizeDropdown'
+// import { LocaleDropdown } from '@/components/LocaleDropdown'
+// import { SizeDropdown } from '@/components/SizeDropdown'
 import { UserInfo } from '@/components/UserInfo'
-import { Screenfull } from '@/components/Screenfull'
+// import { Screenfull } from '@/components/Screenfull'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { useAppStore } from '@/store/modules/app'
 import { useDesign } from '@/hooks/web/useDesign'
+import store from '@/VuexStore'
 
 const { getPrefixCls, variables } = useDesign()
 
@@ -22,7 +23,7 @@ const breadcrumb = computed(() => appStore.getBreadcrumb)
 const hamburger = computed(() => appStore.getHamburger)
 
 // 全屏图标
-const screenfull = computed(() => appStore.getScreenfull)
+// const screenfull = computed(() => appStore.getScreenfull)
 
 // 尺寸图标
 const size = computed(() => appStore.getSize)
@@ -31,7 +32,7 @@ const size = computed(() => appStore.getSize)
 const layout = computed(() => appStore.getLayout)
 
 // 多语言图标
-const locale = computed(() => appStore.getLocale)
+// const locale = computed(() => appStore.getLocale)
 
 export default defineComponent({
   name: 'ToolHeader',
@@ -49,6 +50,15 @@ export default defineComponent({
             {hamburger.value && layout.value !== 'cutMenu' ? (
               <Collapse class="custom-hover" color="var(--top-header-text-color)"></Collapse>
             ) : undefined}
+            {store.getters.selectedClient ? (
+              <strong style="font-size: 18px">{`${store.getters.selectedClient.name}`}</strong>
+            ) : (
+              ''
+            )}
+          </div>
+        ) : undefined}
+        {layout.value !== 'top' ? (
+          <div class="h-full flex items-center">
             {breadcrumb.value ? <Breadcrumb class="<md:hidden"></Breadcrumb> : undefined}
           </div>
         ) : undefined}

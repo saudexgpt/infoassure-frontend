@@ -16,10 +16,10 @@
         element-loading-text="loading resources, please wait..."
         width="400px"
       >
-        <v-btn color="orange" block @click="showCreateActivityModal = true">
-          <icon icon="tabler:plus" />&nbsp;New Activity
+        <v-btn color="orange" block @click="showCreateTaskModal = true">
+          <icon icon="tabler:plus" />&nbsp;New Task
         </v-btn>
-        <div style="max-height: 400px; overflow: auto">
+        <div style="max-height: 700px; overflow: auto; padding: 10px">
           <el-collapse>
             <el-collapse-item
               v-for="(clause, index) in clause_tasks"
@@ -29,37 +29,26 @@
               <template #title>
                 <h3>{{ clause.name }}</h3>
               </template>
-              <el-collapse expand-icon-position="left">
-                <el-collapse-item
-                  v-for="(activity, activity_index) in clause.activities"
-                  :key="activity_index"
-                >
-                  <template #title>
-                    <strong>{{ activity.activity_no }}</strong> {{ activity.name }}
-                  </template>
-                  <div>
-                    <v-btn color="error" block @click="createTask(activity)">
-                      <icon icon="tabler:plus" />&nbsp;New Task
-                    </v-btn>
-                    <br />
-                    <div v-for="(task, task_index) in activity.tasks" :key="task_index">
-                      <CardNavView
-                        :id="`task-${index}-${activity_index}-${task_index}`"
-                        :title="`TASK ${task.id}`"
-                        @clickToView="viewDetails(activity, task)"
-                      >
-                        <template #description>
-                          <div>
-                            <em><icon icon="tabler:arrow-badge-right" /> {{ task.name }}</em>
-                            <br />
-                            <span v-html="task.description"></span>
-                          </div>
-                        </template>
-                      </CardNavView>
-                    </div>
-                  </div>
-                </el-collapse-item>
-              </el-collapse>
+              <div>
+                <!-- <v-btn color="error" block @click="createTask(activity)">
+                  <icon icon="tabler:plus" />&nbsp;New Task
+                </v-btn>
+                <br /> -->
+                <div v-for="(task, task_index) in clause.tasks" :key="task_index">
+                  <CardNavView
+                    :id="`task-${index}-${activity_index}-${task_index}`"
+                    :title="`${task.activity_no} - ${task.name}`"
+                    title-icon="tabler:arrow-badge-right"
+                    @clickToView="viewDetails(task)"
+                  >
+                    <template #description>
+                      <div>
+                        <span v-html="task.description"></span>
+                      </div>
+                    </template>
+                  </CardNavView>
+                </div>
+              </div>
             </el-collapse-item>
           </el-collapse>
         </div>
@@ -68,7 +57,7 @@
       <el-container>
         <el-main v-loading="loadView" element-loading-text="loading data, please wait...">
           <div v-if="viewType === 'edit'">
-            <EditTask :selected-data="selectedData" :selected-activity="selectedActivity" />
+            <EditTask :selected-data="selectedData" />
           </div>
           <div v-if="viewType === 'welcome'" align="center">
             <icon icon="tabler:settings-cog" size="200" />
@@ -79,33 +68,33 @@
     </el-container>
 
     <el-dialog
-      v-if="showCreateActivityModal"
-      v-model="showCreateActivityModal"
-      title="Create Activities"
+      v-if="showCreateTaskModal"
+      v-model="showCreateTaskModal"
+      title="Create Tasks"
       width="80%"
     >
-      <CreateActivities :clauses="clause_tasks" @saved="fetchTaskByClause" />
+      <CreateTasks :clauses="clause_tasks" @saved="fetchTaskByClause" />
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       v-if="showCreateTaskModal"
       v-model="showCreateTaskModal"
       :title="`Create Tasks under control ${selectedActivity.activity_no} (${selectedActivity.name})`"
       width="80%"
     >
       <CreateTasks :activity="selectedActivity" @saved="fetchTaskByClause" />
-    </el-dialog>
+    </el-dialog> -->
   </el-card>
 </template>
 <script>
 import CardNavView from '@/views/Components/CardNavView.vue'
-import CreateActivities from './partials/CreateActivities.vue'
+// import CreateActivities from './partials/CreateActivities.vue'
 import CreateTasks from './partials/CreateTasks.vue'
 import EditTask from './partials/EditTask.vue'
 import Resource from '@/api/resource'
 
 export default {
   components: {
-    CreateActivities,
+    // CreateActivities,
     CardNavView,
     CreateTasks,
     EditTask
@@ -113,8 +102,8 @@ export default {
   props: {},
   data() {
     return {
-      showCreateActivityModal: false,
       showCreateTaskModal: false,
+      // showCreateTaskModal: false,
       showMenu: true,
       asset_types: [],
       clause_tasks: [],
@@ -146,7 +135,7 @@ export default {
       this.showCreateTaskModal = true
     },
     fetchTaskByClause(load = true) {
-      this.showCreateActivityModal = false
+      this.showCreateTaskModal = false
       this.showCreateTaskModal = false
       this.loading = load
       const fetchResource = new Resource('isms/calendar/fetch-task-by-clause')
@@ -160,12 +149,11 @@ export default {
           this.loading = false
         })
     },
-    viewDetails(activity, data) {
+    viewDetails(data) {
       if (data.id) {
         this.loadView = true
         this.viewType = ''
         setTimeout(() => {
-          this.selectedActivity = activity
           this.selectedData = data
           this.viewType = 'edit'
           this.showMenu = false

@@ -109,6 +109,13 @@
             height="550"
             :src="baseServerUrl + 'storage/' + docSrc"
           ></iframe>
+          <div v-if="showDocumentEditor === 'none' && docSrc === null">
+            <el-empty description="No template available">
+              <el-button type="primary" @click="editFile(selectedDocument)">
+                <icon icon="tabler:upload" />Click to upload
+              </el-button>
+            </el-empty>
+          </div>
           <a
             :id="`${type}-download`"
             :href="baseServerUrl + 'storage/' + docSrc"
@@ -131,7 +138,7 @@
             <tr>
               <th>Title</th>
               <th>Template File</th>
-              <th>Applicable Modules</th>
+              <!-- <th>Applicable Modules</th> -->
               <th></th>
             </tr>
           </thead>
@@ -145,14 +152,14 @@
                 />
               </td>
               <td>
-                <el-select
+                <!-- <el-select
                   v-model="templateForm.type"
                   placeholder="Upload type"
                   style="width: 100%"
                 >
                   <el-option value="upload" label="File upload from device" />
                   <el-option value="external_link" label="Provide External Link" />
-                </el-select>
+                </el-select> -->
                 <input
                   v-if="templateForm.type === 'upload'"
                   class="form-control"
@@ -166,7 +173,7 @@
                   placeholder="Provide External Link to file"
                 />
               </td>
-              <td>
+              <!-- <td>
                 <el-select
                   v-model="templateForm.applicable_modules"
                   placeholder="Select applicable modules"
@@ -180,7 +187,7 @@
                     :label="available_module.name"
                   />
                 </el-select>
-              </td>
+              </td> -->
               <td>
                 <el-tooltip content="Upload">
                   <el-button
@@ -282,7 +289,7 @@ export default {
       this.selectedDocument = template
       this.showDocumentEditor = ''
       this.docSrc = template.link
-      this.type = template.link.split('.').pop() // this returns the file extension
+      this.type = template.link !== null ? template.link.split('.').pop() : '' // this returns the file extension
 
       setTimeout(() => {
         if (this.type === 'pdf') {

@@ -5,13 +5,13 @@
       <el-tab-pane lazy label="Overview" name="#overview">
         <NDPADashboard />
       </el-tab-pane>
-      <el-tab-pane lazy label="Compliance Assessment" name="#compliance">
+      <!-- <el-tab-pane lazy label="Compliance Assessment" name="#compliance">
         <GapAssessment
           :selected-client="selectedClient"
           :selected-project="selectedProject"
           :is-admin="isAdmin"
         />
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane lazy label="Business Unit Setup" name="#business_unit">
         <BusinessUnit />
       </el-tab-pane>
@@ -40,7 +40,7 @@
 import NDPADashboard from '@/views/modules/NDPA/Dashboard.vue'
 // import NDPAManage from '@/views/modules/NDPA/Manage.vue'
 import BusinessUnit from '@/views/modules/settings/partials/business-units/SetUp.vue'
-import GapAssessment from './partials/GapAssessment.vue'
+// import GapAssessment from './partials/GapAssessment.vue'
 import RiskLibrary from '@/views/modules/settings/partials/RiskAndThreats/ViewRiskControlMatrix.vue'
 // import RiskAssessment from '@/views/modules/risk-assessment/index.vue'
 
@@ -54,7 +54,7 @@ export default {
     NDPADashboard,
     // NDPAManage,
     BusinessUnit,
-    GapAssessment,
+    // GapAssessment,
     RiskLibrary
     // DPIA
     // RiskAssessment

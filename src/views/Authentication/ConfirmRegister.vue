@@ -57,7 +57,6 @@ export default {
     redirectToLogin() {
       this.counterDecrement = setInterval(() => {
         this.counter -= 1
-        console.log(this.counter)
       }, 1000)
       setTimeout(() => {
         this.$router.push('/login')

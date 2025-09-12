@@ -31,23 +31,23 @@
               </template>
               <el-collapse expand-icon-position="left">
                 <el-collapse-item
-                  v-for="(activity, activity_index) in clause.activities"
-                  :key="activity_index"
+                  v-for="(section, section_index) in clause.sections"
+                  :key="section_index"
                 >
                   <template #title>
-                    <strong>{{ activity.activity_no }}&nbsp;</strong>
-                    <small> {{ activity.name }}</small>
+                    <strong>{{ section.section_no }}&nbsp;</strong>
+                    <small> {{ section.name }}</small>
                   </template>
                   <div>
-                    <v-btn color="error" block @click="createTask(activity)">
+                    <v-btn color="error" block @click="createTask(section)">
                       <icon icon="tabler:plus" />&nbsp;New Task
                     </v-btn>
                     <br />
-                    <div v-for="(task, task_index) in activity.tasks" :key="task_index">
+                    <div v-for="(task, task_index) in section.tasks" :key="task_index">
                       <CardNavView
-                        :id="`task-${index}-${activity_index}-${task_index}`"
+                        :id="`task-${index}-${section_index}-${task_index}`"
                         :title="`TASK ${task.id}`"
-                        @clickToView="viewDetails(activity, task)"
+                        @clickToView="viewDetails(section, task)"
                       >
                         <template #description>
                           <div>
@@ -69,11 +69,11 @@
       <el-container>
         <el-main v-loading="loadView" element-loading-text="loading data, please wait...">
           <div v-if="viewType === 'edit'">
-            <EditTask :selected-data="selectedData" :selected-activity="selectedActivity" />
+            <EditTask :selected-data="selectedData" :selected-section="selectedActivity" />
           </div>
           <div v-if="viewType === 'welcome'" align="center">
             <icon icon="tabler:settings-cog" size="200" />
-            <h3>Manage the activities & tasks for ISMS Controls here</h3>
+            <h3>Manage the activities & tasks for NDPA here</h3>
           </div>
         </el-main>
       </el-container>
@@ -90,10 +90,10 @@
     <el-dialog
       v-if="showCreateTaskModal"
       v-model="showCreateTaskModal"
-      :title="`Create Tasks under control ${selectedActivity.activity_no} (${selectedActivity.name})`"
+      :title="`Create Tasks under control ${selectedActivity.section_no} (${selectedActivity.name})`"
       width="80%"
     >
-      <CreateTasks :activity="selectedActivity" @saved="fetchTaskByRequirement" />
+      <CreateTasks :section="selectedActivity" @saved="fetchTaskByRequirement" />
     </el-dialog>
   </el-card>
 </template>
@@ -142,8 +142,8 @@ export default {
     this.fetchTaskByRequirement()
   },
   methods: {
-    createTask(activity) {
-      this.selectedActivity = activity
+    createTask(section) {
+      this.selectedActivity = section
       this.showCreateTaskModal = true
     },
     fetchTaskByRequirement(load = true) {
@@ -161,12 +161,12 @@ export default {
           this.loading = false
         })
     },
-    viewDetails(activity, data) {
+    viewDetails(section, data) {
       if (data.id) {
         this.loadView = true
         this.viewType = ''
         setTimeout(() => {
-          this.selectedActivity = activity
+          this.selectedActivity = section
           this.selectedData = data
           this.viewType = 'edit'
           this.showMenu = false

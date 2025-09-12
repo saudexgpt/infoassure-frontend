@@ -158,7 +158,7 @@
             </el-row>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="Impact Analysis">
+        <el-tab-pane v-if="module !== 'isms'" label="Impact Analysis">
           <el-row>
             <el-col :col="12">
               <div class="table-responsive">
@@ -259,6 +259,12 @@ import { setCoolBackground } from '@/utils/tsxHelper'
 export default {
   components: {
     RiskRankingMatrix
+  },
+  props: {
+    module: {
+      type: String,
+      default: () => 'all' // this is the general risk assessment
+    }
   },
   data() {
     return {

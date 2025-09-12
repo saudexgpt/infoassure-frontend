@@ -1,16 +1,21 @@
 <template>
   <div v-loading="loading" element-loading-text="loading resources, please wait...">
     <div>
+      <el-tooltip class="item" effect="dark" content="Reload" placement="top-start">
+        <el-button size="mini" @click="openFile()">
+          <icon icon="tabler:reload" />
+        </el-button>
+      </el-tooltip>
       <el-tooltip class="item" effect="dark" content="Save" placement="top-start">
         <el-button type="success" size="mini" @click="save">
           <icon icon="tabler:device-floppy" />
         </el-button>
       </el-tooltip>
-      <el-tooltip class="item" effect="dark" content="Download" placement="top-start">
+      <!-- <el-tooltip class="item" effect="dark" content="Download" placement="top-start">
         <el-button type="primary" size="mini" @click="download">
           <icon icon="tabler:download" />
         </el-button>
-      </el-tooltip>
+      </el-tooltip> -->
     </div>
     <!-- <ejs-spreadsheet>
       <e-sheets>
@@ -23,7 +28,7 @@
     </ejs-spreadsheet> -->
     <ejs-spreadsheet
       ref="spreadsheet"
-      height="650px"
+      height="700px"
       :open-url="openUrl"
       :beforeSave="beforeSave"
       :saveComplete="saveComplete"
@@ -89,7 +94,6 @@ export default {
       this.$refs.spreadsheet.openFromJson({ file: response.jsonObject })
     },
     async fetchbase64FileFormat(link) {
-      this.loading = true
       const formData = {
         path: link
       }
@@ -165,10 +169,10 @@ export default {
     },
     download() {
       console.log(this.$refs.spreadsheet)
-      // const link = document.createElement('a')
-      // link.href = window.URL.createObjectURL(blob)
-      // link.download = 'Sample.xlsx'
-      // link.click()
+      const link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = 'Sample.xlsx'
+      link.click()
     },
     saveDocBlob(formData) {
       this.loading = true
@@ -184,7 +188,7 @@ export default {
         })
         .catch((e) => {
           this.loading = false
-          this.$message(e.response.message)
+          console.log(e)
         })
     }
   }

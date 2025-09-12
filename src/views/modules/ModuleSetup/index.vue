@@ -1,10 +1,10 @@
 <template>
   <div>
     <h4>Configure & Setup Modules</h4>
-    <el-tabs v-model="activeName" @tab-click="forceRerender">
-      <!-- <el-tab-pane :key="keyValue" label="BCMS" name="#bcms" lazy>
+    <el-tabs v-model="activeName" @tab-click="forceRerender" type="border-card">
+      <el-tab-pane :key="keyValue" label="BCMS" name="#bcms" lazy>
         <BCMS />
-      </el-tab-pane> -->
+      </el-tab-pane>
       <el-tab-pane :key="keyValue" label="ISMS" name="#isms" lazy>
         <ISMS />
       </el-tab-pane>
@@ -17,11 +17,11 @@
 <script>
 import ISMS from '@/views/modules/ModuleSetup/ISMS/index.vue'
 import NDPA from '@/views/modules/ModuleSetup/NDPA/index.vue'
-// import BCMS from '@/views/modules/ModuleSetup/BCMS/index.vue'
+import BCMS from '@/views/modules/ModuleSetup/BCMS/index.vue'
 
 export default {
   components: {
-    //BCMS,
+    BCMS,
     ISMS,
     NDPA
     // FinancialsAndBilling,

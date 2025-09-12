@@ -1,18 +1,28 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div v-loading="loading">
-    <div v-if="form.asset_id !== 0 && form.asset_id !== null">
-      <h4>
-        <v-breadcrumbs
-          :items="[form.asset_type_name, form.asset_name, `${form.risk_id} - ${form.threat}`]"
-        />
-      </h4>
-    </div>
-    <div v-if="form.business_unit_id !== 0 && form.business_unit_id !== null">
-      <h4>
-        <v-breadcrumbs :items="[`${form.risk_id} - ${form.threat}`]" />
-      </h4>
-    </div>
+    <el-row :gutter="20">
+      <el-col :md="20">
+        <div v-if="form.asset_id !== 0 && form.asset_id !== null">
+          <h4>
+            <v-breadcrumbs
+              :items="[form.asset_type_name, form.asset_name, `${form.risk_id} - ${form.threat}`]"
+            />
+          </h4>
+        </div>
+        <div v-if="form.business_unit_id !== 0 && form.business_unit_id !== null">
+          <h4>
+            <v-breadcrumbs :items="[`${form.risk_id} - ${form.threat}`]" />
+          </h4>
+        </div>
+      </el-col>
+      <el-col :md="4">
+        <el-button type="danger" @click="deleteRiskRegister()">
+          <icon icon="tabler:trash" /> Delete
+        </el-button>
+      </el-col>
+    </el-row>
+
     <v-stepper
       non-linear
       editable
@@ -775,6 +785,24 @@ export default {
           this.loading = false
           this.$message(error.response.data.error)
         })
+    },
+    deleteRiskRegister() {
+      if (window.confirm('Click OK to confirm delete action')) {
+        const deleteEntryResource = new Resource('delete-risk-registers')
+        this.loading = true
+        deleteEntryResource
+          .destroy(this.selectedRiskRegister.id)
+          .then(() => {
+            this.$message('Action Successful')
+            this.$emit('deleted')
+            this.loading = false
+          })
+          .catch((error) => {
+            // console.log(error.response)
+            this.$message.error('An error occured.')
+            this.loading = false
+          })
+      }
     }
   }
 }

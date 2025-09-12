@@ -54,15 +54,15 @@
         </div>
       </template>
     </v-client-table>
-    <el-drawer
+    <el-dialog
       v-model="isCreateBusinessUnitSidebarActive"
       title="Create Business Unit"
       :direction="direction"
       destroy-on-close
     >
       <create-business-unit :selected-client="selectedClient" @save="fetchBusinessUnits" />
-    </el-drawer>
-    <el-drawer
+    </el-dialog>
+    <el-dialog
       v-model="isEditBusinessUnitSidebarActive"
       title="Edit Business Unit"
       :direction="direction"
@@ -73,7 +73,7 @@
         :business-unit="selectedBusinessUnit"
         @update="fetchBusinessUnits"
       />
-    </el-drawer>
+    </el-dialog>
   </div>
 </template>
 

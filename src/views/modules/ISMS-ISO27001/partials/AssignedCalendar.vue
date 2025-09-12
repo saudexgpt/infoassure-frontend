@@ -14,18 +14,21 @@
                   <strong>{{ clause.name }}</strong> {{ clause.description }}
                 </template>
                 <div v-for="(task, task_index) in clause.tasks" :key="task_index">
-                  <CardNavView
-                    :id="`task-${index}-${task.id}`"
-                    :title="`Process ${task.activity_no}`"
-                    title-icon="tabler:arrow-badge-right"
-                    @clickToView="viewDetails(task)"
-                  >
-                    <template #description>
-                      <div>
-                        <em>{{ task.name }}</em>
-                      </div>
-                    </template>
-                  </CardNavView>
+                  <div v-if="task.assigned_task !== null">
+                    <CardNavView
+                      v-if="task.assigned_task.assignee_id === userId"
+                      :id="`task-${index}-${task.id}`"
+                      :title="`Process ${task.activity_no}`"
+                      title-icon="tabler:arrow-badge-right"
+                      @clickToView="viewDetails(task)"
+                    >
+                      <template #description>
+                        <div>
+                          <em>{{ task.name }}</em>
+                        </div>
+                      </template>
+                    </CardNavView>
+                  </div>
                 </div>
               </el-collapse-item>
             </el-collapse>
@@ -40,7 +43,7 @@
           <AssignTaskTable
             :selected-data="selectedData"
             :staff="staff"
-            role="admin"
+            role="client"
             @update:tasks="updateTask"
           />
         </div>
@@ -90,7 +93,11 @@ export default {
       staff: []
     }
   },
-  computed: {},
+  computed: {
+    userId() {
+      return this.$store.getters.userData.id
+    }
+  },
   mounted() {
     this.fetchTaskByClause()
     this.fetchStaff()

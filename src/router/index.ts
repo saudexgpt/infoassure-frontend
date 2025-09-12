@@ -404,7 +404,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         component: () => import('@/views/modules/app-setup/DocumentTemplates.vue'),
         name: 'DocumentTemplate',
         meta: {
-          title: 'Document Templates',
+          title: 'Template Library',
           icon: 'tabler:arrow-badge-right',
           roles: ['super']
         }

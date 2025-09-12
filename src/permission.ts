@@ -46,7 +46,9 @@ router.beforeEach(async (to, from, next) => {
           const { userData } = store.getters
           const { roles, permissions, modules } = userData
           await permissionStore.generateRoutes(roles, permissions, modules)
-
+          if (roles.includes('admin') || roles.includes('client')) {
+            store.dispatch('clients/fetchClients')
+          }
           permissionStore.getAddRouters.forEach((route) => {
             router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
           })

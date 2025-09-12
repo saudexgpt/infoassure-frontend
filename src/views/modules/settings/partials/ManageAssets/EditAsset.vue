@@ -1,7 +1,16 @@
 <template>
   <div>
-    <h3>Edit Asset</h3>
-    <el-row v-loading="creating" :gutter="20">
+    <el-row :gutter="20">
+      <el-col :md="20">
+        <h3>Edit Asset</h3>
+      </el-col>
+      <el-col :md="4">
+        <el-button type="danger" @click="deleteAsset()">
+          <icon icon="tabler:trash" /> Delete
+        </el-button>
+      </el-col>
+    </el-row>
+    <el-row v-loading="loading" :gutter="20">
       <el-col :md="12">
         <label>Asset Type</label>
         <el-select
@@ -161,7 +170,6 @@ export default {
   data() {
     return {
       loading: false,
-      creating: false,
       pageLength: 10,
       dir: false,
       assets: [],
@@ -207,20 +215,37 @@ export default {
       }
     },
     update() {
-      this.creating = true
+      this.loading = true
       const formData = this.form
       const updatePhotoResource = new Resource('assets/update-asset')
       updatePhotoResource
         .update(formData.id, formData)
         .then(() => {
-          this.creating = false
+          this.loading = false
           this.$message('Updated')
           this.$emit('update')
         })
         .catch((e) => {
-          this.creating = false
+          this.loading = false
           this.$message(e.response.data.message)
         })
+    },
+    deleteAsset() {
+      if (window.confirm('Click OK to confirm delete action')) {
+        const deleteEntryResource = new Resource('assets/delete-asset')
+        this.loading = true
+        deleteEntryResource
+          .destroy(this.selectedAsset.id)
+          .then(() => {
+            this.$emit('deleted')
+            this.loading = false
+          })
+          .catch((error) => {
+            // console.log(error.response)
+            app.$message.error(error.response.data.error)
+            app.loading = false
+          })
+      }
     }
   }
 }

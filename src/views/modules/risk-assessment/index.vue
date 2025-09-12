@@ -1,8 +1,8 @@
 <!-- eslint-disable vue/html-indent -->
 <template>
-  <el-tabs>
+  <el-tabs type="border-card">
     <el-tab-pane v-if="checkRole(['admin'])" label="Setup" lazy>
-      <RiskSetup />
+      <RiskSetup :module="module" />
     </el-tab-pane>
     <el-tab-pane label="Risk Assessment" lazy>
       <el-card>
@@ -222,11 +222,14 @@ export default {
     }
   },
   mounted() {
-    if (this.selectedClient.id !== null) {
+    setTimeout(() => {
       this.setMatrix()
-    } else {
-      this.$alert('Please select a client to continue')
-    }
+    }, 2000)
+    // if (this.selectedClient.id !== null) {
+    //   this.setMatrix()
+    // } else {
+    //   this.$alert('Please select a client to continue')
+    // }
   },
   methods: {
     checkRole,
@@ -291,7 +294,7 @@ export default {
         })
         .catch((error) => {
           this.loading = false
-          console.log(error.response)
+          // console.log(error.response)
           // this.$message.error(error.response.data.error)
         })
     },

@@ -1,107 +1,134 @@
 <template>
   <el-row :gutter="20">
     <el-col :md="24">
-      <div style="max-height: 450px; overflow: auto">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Task (one per row)</th>
-              <th>Hint</th>
-              <th>Expected Document/Evidence Template</th>
-              <!-- <th>Dependent On</th> -->
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(detail, index) in details" :key="index">
-              <td>
-                <el-button-group>
-                  <el-button
-                    v-if="details.length > 1"
-                    type="danger"
-                    circle
-                    size="mini"
-                    @click="removeLine(index)"
-                  >
-                    <icon icon="tabler:trash" />
-                  </el-button>
-                  <el-button
-                    v-if="index + 1 === details.length"
-                    type="success"
-                    circle
-                    size="mini"
-                    @click="addLine(index)"
-                  >
-                    <icon icon="tabler:plus" />
-                  </el-button>
-                </el-button-group>
-              </td>
-              <td>
-                <el-input
-                  v-model="detail.name"
-                  type="text"
-                  placeholder="State a task to be performed"
-                />
-              </td>
-              <td>
-                <el-input
-                  v-model="detail.hint"
-                  type="textarea"
-                  placeholder="Suggest implementation guide"
-                />
-              </td>
-              <td>
-                <el-select
-                  v-model="detail.document_template_ids"
-                  multiple
-                  collapse-tags
-                  collapse-tags-tooltip
-                  placeholder="Select"
-                  style="width: 100%"
-                  filterable
-                >
-                  <el-option-group
-                    v-for="(documentTemplates, index) in templates"
-                    :key="index"
-                    :label="index"
-                  >
-                    <el-option
-                      v-for="template in documentTemplates"
-                      :key="template.id"
-                      :label="template.title"
-                      :value="template.id"
-                    />
-                  </el-option-group>
-                </el-select>
-              </td>
-              <!-- <td v-loading="loadTasks">
-                <el-select v-model="detail.dependency" filterable style="width: 100%">
-                  <el-option
-                    v-for="(task, index) in other_tasks"
-                    :key="index"
-                    :value="task.id"
-                    :label="task.name"
-                  />
-                </el-select>
-              </td> -->
-            </tr>
-            <tr v-if="fill_fields_error">
-              <td colspan="4">
-                <label class="alert alert-danger"
-                  >Please fill all empty fields before adding another row</label
-                >
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </el-col>
-    <el-col :md="24">
-      <el-button :loading="loader" :disabled="rowIsEmpty()" type="success" @click="formSubmitted">
-        Submit
-      </el-button>
+      <label label-for="roles" rules="required">Select Control</label>
+      <el-select v-model="form.clause_id" filterable style="width: 100%">
+        <el-option
+          v-for="(clause, index) in clauses"
+          :key="index"
+          :value="clause.id"
+          :label="`${clause.name} - ${clause.description}`"
+        />
+      </el-select>
     </el-col>
   </el-row>
+  <div style="max-height: 400px; overflow: auto; padding: 20px">
+    <el-collapse v-model="activeName" accordion>
+      <el-collapse-item
+        v-for="(detail, index) in details"
+        :key="index"
+        :title="`${index + 1} - ${detail.name}`"
+        :name="index"
+      >
+        <template #title>
+          <strong
+            >{{ index + 1 }} - {{ detail.name !== '' ? detail.name : 'Define New Task' }}</strong
+          >
+        </template>
+        <el-row :gutter="20" style="margin-bottom: 10px">
+          <el-col :md="12">
+            <v-text-field
+              v-model="detail.activity_no"
+              density="compact"
+              variant="outlined"
+              type="text"
+              label="Control No."
+              placeholder="e.g. 4.1-a"
+            />
+          </el-col>
+          <el-col :md="12">
+            <v-text-field
+              v-model="detail.name"
+              density="compact"
+              variant="outlined"
+              label="Process Title"
+              placeholder="e.g. Identify external factors"
+            />
+          </el-col>
+          <el-col :md="12">
+            <v-textarea
+              v-model="detail.description"
+              density="compact"
+              variant="outlined"
+              rows="3"
+              label="Description"
+              placeholder="e.g. Document external factors (legal, regulatory, market trends, technology) that affect the ISMS."
+            />
+          </el-col>
+          <el-col :md="12">
+            <v-textarea
+              v-model="detail.implementation_guide"
+              density="compact"
+              variant="outlined"
+              rows="3"
+              label="Suggest implementation guide"
+              placeholder="e.g Use online legal databases, industry publications, and tech blogs. Note each factor with a brief summary and source"
+            />
+          </el-col>
+          <el-col :md="12">
+            <label for="">List of Tasks</label>
+            <small>List all tasks here. Hit the ENTER key to add multiple tasks</small>
+            <el-input-tag
+              v-model="detail.tasks"
+              size="large"
+              placeholder="List all tasks here. Hit the ENTER key to add multiple tasks"
+            />
+          </el-col>
+          <el-col :md="12">
+            <label for="">Expected Document/Evidence Template</label>
+            <el-select
+              v-model="detail.document_template_ids"
+              multiple
+              collapse-tags
+              collapse-tags-tooltip
+              placeholder="Select"
+              style="width: 100%"
+              filterable
+            >
+              <el-option-group
+                v-for="(documentTemplates, index) in templates"
+                :key="index"
+                :label="index"
+              >
+                <el-option
+                  v-for="template in documentTemplates"
+                  :key="template.id"
+                  :label="template.title"
+                  :value="template.id"
+                />
+              </el-option-group>
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-button-group>
+          <el-button v-if="details.length > 1" type="danger" @click="removeLine(index)">
+            <icon icon="tabler:trash" />
+          </el-button>
+          <el-button
+            v-if="index + 1 === details.length"
+            type="success"
+            @click="(addLine(index), (activeName = parseInt(index + 1)))"
+          >
+            <icon icon="tabler:plus" />
+          </el-button>
+        </el-button-group>
+      </el-collapse-item>
+    </el-collapse>
+    <div v-if="fill_fields_error">
+      <label class="alert alert-danger"
+        >Please fill all empty fields before adding another row</label
+      >
+    </div>
+  </div>
+  <el-button
+    class="pull-right"
+    :loading="loader"
+    :disabled="rowIsEmpty()"
+    type="primary"
+    @click="formSubmitted"
+  >
+    Submit
+  </el-button>
 </template>
 
 <script>
@@ -110,24 +137,23 @@ import Resource from '@/api/resource'
 export default {
   components: {},
   props: {
-    activity: {
-      type: Object,
-      default: () => null
+    clauses: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
     const maxDate = new Date()
     return {
+      activeName: 0,
       max: maxDate,
 
       form: {
         clause_id: '',
-        module_activity_id: '',
         details: []
       },
       empty_form: {
         clause_id: '',
-        module_activity_id: '',
         details: []
       },
       loader: false,
@@ -140,13 +166,11 @@ export default {
   },
   created() {
     this.fetchDocumentTemplates()
-    this.form.clause_id = this.activity.clause_id
-    this.form.module_activity_id = this.activity.id
     this.addLine()
   },
   methods: {
     rowIsEmpty() {
-      return this.details.some((detail) => detail.name === '')
+      return this.details.some((detail) => detail.name === '' || detail.activity_no === '')
     },
     addLine() {
       this.fill_fields_error = false
@@ -155,9 +179,11 @@ export default {
         this.fill_fields_error = true
       } else {
         this.details.push({
+          activity_no: '',
           name: '',
-          hint: '',
-          dependency: null,
+          implementation_guide: '',
+          tasks: [],
+          description: '',
           document_template_ids: []
         })
       }

@@ -1,61 +1,154 @@
 <template>
-  <div>
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Task</th>
-          <th>Assignee</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Status</th>
-          <th>Assign</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(task, index) in tasks" :key="index">
-          <td>
-            {{ task.name }}
-            <p v-if="task.hint" class="text-muted">
-              <small>
-                <em>Hint: {{ task.hint }}</em>
-              </small>
-            </p>
-          </td>
-          <td>{{ task.assigned_task ? task.assigned_task.assignee.name : null }}</td>
-          <td>{{ task.assigned_task ? task.assigned_task.start_date : null }}</td>
-          <td>{{ task.assigned_task ? task.assigned_task.end_date : null }}</td>
-          <td>{{ task.assigned_task ? task.assigned_task.status : 'pending' }}</td>
-          <td>
-            <el-tooltip content="Assign Task to a personnel" placement="top">
-              <el-button type="primary" @click="setDetails(task, index)">
-                <icon icon="tabler:users" /> Assign
+  <div v-if="data !== null">
+    <div>
+      <el-row :gutter="20">
+        <el-col :md="16">
+          <h3>Process {{ `${data.activity_no} - ${data.name}` }}</h3>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>Sub Tasks</td>
+                <td>
+                  <ul>
+                    <li v-for="(task, index) in data.tasks" :key="index">
+                      {{ task }}
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td>Implementation Guide</td>
+                <td>
+                  <span v-html="data.description"></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Description</td>
+                <td>
+                  <span v-html="data.implementation_guide"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-if="data.assigned_task !== null">
+            <AssignedTaskNotes :task="data.assigned_task" />
+          </div>
+          <div v-if="data.assigned_task !== null" v-loading="loadingUploads">
+            <h3 v-if="uploads.length > 0">Expected Documents/Evidences</h3>
+            <el-card v-for="(upload, index) in uploads" :key="index" class="mb-1">
+              <div>
+                <div class="pull-right">
+                  <el-button-group>
+                    <el-button
+                      v-if="upload.template_link !== null || upload.link !== null"
+                      type="text"
+                      size="small"
+                      @click="setView(upload)"
+                    >
+                      <icon icon="tabler:edit" /> Edit
+                    </el-button>
+                    <el-button v-else type="text" size="small" @click="uploadDocument()">
+                      <icon icon="tabler:upload" /> Upload
+                    </el-button>
+                    <!-- <el-button v-if="upload.link !== null" type="text" size="small">
+                      <icon icon="tabler:download" /> Download
+                    </el-button> -->
+                  </el-button-group>
+                  <icon v-if="upload.link !== null" icon="tabler:check" color="green" />
+                  <icon v-else icon="tabler:alert-circle" color="red" />
+                </div>
+                <div>
+                  <strong><icon icon="tabler:file-description" /> {{ upload.title }}</strong>
+                  <br />
+                </div>
+              </div>
+            </el-card>
+          </div>
+        </el-col>
+        <el-col :md="8">
+          <div v-if="data.assigned_task">
+            <el-alert type="success" :closable="false">
+              {{ data.assigned_task.status.toUpperCase() }}
+            </el-alert>
+          </div>
+          <br />
+          <el-button-group>
+            <el-tooltip
+              :content="data.assigned_task === null ? 'Assign Task' : 'Reassign Task'"
+              placement="top"
+            >
+              <el-button v-if="role === 'admin'" type="default" @click="setDetails(data)">
+                <icon icon="tabler:users" />
               </el-button>
             </el-tooltip>
-          </td>
-          <td>
-            <div v-if="task.assigned_task">
-              <span v-if="task.assigned_task.status === 'completed'"> Completed </span>
-              <span v-else>
-                <el-tooltip content="Mark task as completed" placement="top">
-                  <el-button
-                    v-if="task.assigned_task.progress === 1"
-                    type="success"
-                    @click="markTaskAsDone(task.assigned_task.id, index)"
-                  >
-                    <icon icon="tabler:check" /> Completed
-                  </el-button>
-                </el-tooltip>
-              </span>
-            </div>
-          </td>
-        </tr>
-        <tr v-if="tasks.length === 0">
-          <td colspan="7"><h4 align="center">No tasks available</h4></td>
-        </tr>
-      </tbody>
-    </table>
-    <el-dialog v-model="showAssignModal" hide-footer centered title="Assign Task">
+            <el-tooltip content="Mark task as completed" placement="top">
+              <el-button
+                type="success"
+                :disabled="data.assigned_task === null"
+                @click="markTaskAsDone(data.assigned_task.id)"
+              >
+                <icon icon="tabler:check" />
+              </el-button>
+            </el-tooltip>
+          </el-button-group>
+          <hr />
+          <p>
+            <strong> Assignee: </strong>
+            <span>
+              {{ data.assigned_task ? data.assigned_task.assignee.name : 'Not assigned' }}
+            </span>
+          </p>
+          <p>
+            <strong>Start Date: </strong>
+            <span>
+              {{ data.assigned_task ? data.assigned_task.start_date : 'Not stated' }}
+            </span>
+          </p>
+          <p>
+            <strong>Due Date: </strong>
+            <span>
+              {{ data.assigned_task ? data.assigned_task.end_date : 'Not stated' }}
+            </span>
+          </p>
+
+          <hr />
+
+          <div style="background: #fcfcfc; padding: 5px">
+            <TaskComments :task="data.assigned_task" />
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <el-drawer
+      v-if="showEditor"
+      v-model="showEditor"
+      direction="rtl"
+      :title="`${selectedDocument.title}`"
+      size="87%"
+      :close-on-click-modal="false"
+      destroy-on-close
+      :before-close="loadTask"
+    >
+      <div>
+        <vue-document-editor
+          v-if="showDocumentEditor === 'word'"
+          :document-data="selectedDocument"
+          @refresh="fetchDocumentTemplates(false)"
+        />
+        <vue-spreadsheet-editor
+          v-if="showDocumentEditor === 'spreadsheet'"
+          :document-data="selectedDocument"
+          @refresh="fetchDocumentTemplates(false)"
+        />
+      </div>
+    </el-drawer>
+    <el-dialog
+      v-if="showAssignModal"
+      v-model="showAssignModal"
+      hide-footer
+      centered
+      title="Assign Task"
+    >
       <el-row v-loading="loading" :gutter="20">
         <el-col :md="24">
           <label for="">Select Assignee</label>
@@ -116,17 +209,35 @@
 
 <script>
 import Resource from '@/api/resource'
+import VueDocumentEditor from '@/views/Components/editors/VueDocumentEditorForClients.vue'
+import VueSpreadsheetEditor from '@/views/Components/editors/VueSpreadsheetEditorForClients.vue'
+import TaskComments from './TaskComments.vue'
+import AssignedTaskNotes from './AssignedTaskNotes.vue'
 
 export default {
-  components: {},
+  components: {
+    VueDocumentEditor,
+    VueSpreadsheetEditor,
+    TaskComments,
+    AssignedTaskNotes
+  },
   props: {
-    tasks: {
+    selectedData: {
+      type: Object,
+      default: () => null
+    },
+    staff: {
       type: Array,
       default: () => []
+    },
+    role: {
+      type: String,
+      default: () => 'client'
     }
   },
   data() {
     return {
+      data: null,
       assignForm: {
         module_activity_task_id: '',
         assignee_id: '',
@@ -144,29 +255,93 @@ export default {
       showAssignModal: false,
       selectedindex: null,
       loadTasks: false,
-      staff: []
+      loadingUploads: false,
+      uploads: [],
+      showEditor: false,
+      selectedDocument: {
+        title: ''
+      },
+      showDocumentEditor: '',
+      type: '',
+      form: {
+        title: ''
+      },
+      docSrc: ''
     }
   },
   mounted() {
-    this.fetchStaff()
+    this.data = this.selectedData
+    this.fetchUploadedEvidiences()
+    this.loadTask()
   },
   methods: {
     disabledDate(time) {
       return time.getTime() <= Date.now() - 8.64e7 // Disable past dates
     },
-    fetchStaff() {
-      const fetchUsersResource = new Resource('users/fetch-staff')
-      fetchUsersResource.list().then((response) => {
-        this.staff = response.staff
-      })
+    loadTask() {
+      this.showEditor = false
+      const evidenceResource = new Resource('isms/calendar/show-task')
+      evidenceResource
+        .get(this.selectedData.id)
+        .then((response) => {
+          this.data = response.task
+          this.$emit('update:tasks', response.task.assigned_task)
+          // send mail
+        })
+        .catch((error) => {
+          console.log(error.response.data.message)
+        })
     },
-    setDetails(task, index) {
+    uploadDocument() {},
+    setView(template) {
+      this.showEditor = false
+      this.selectedDocument = {
+        title: ''
+      }
+      this.showDocumentEditor = ''
+      this.docSrc = ''
+      this.type = '' // this returns the file extension
+
+      setTimeout(() => {
+        this.selectedDocument = template
+        this.type = template.template_link.split('.').pop()
+        this.docSrc = template.link
+        this.showEditor = true
+        if (this.type === 'pdf') {
+          document.getElementById(this.type).style.display = 'block'
+        } else if (this.type === 'doc' || this.type === 'docx') {
+          this.showDocumentEditor = 'word'
+        } else if (this.type === 'csv' || this.type === 'xlsx' || this.type === 'xls') {
+          this.showDocumentEditor = 'spreadsheet'
+          // document.getElementById(`${this.type}-download`).click()
+        } else {
+          this.showDocumentEditor = 'none'
+        }
+      }, 10)
+    },
+    setDetails(task) {
       this.assignForm.module_activity_task_id = task.id
       this.assignForm.assignee_id = task.assigned_task ? task.assigned_task.assignee_id : null
       this.assignForm.start_date = task.assigned_task ? task.assigned_task.start_date : null
       this.assignForm.end_date = task.assigned_task ? task.assigned_task.end_date : null
-      this.selectedindex = index
       this.showAssignModal = true
+    },
+    fetchUploadedEvidiences() {
+      if (this.data.document_template_ids !== null) {
+        this.loadingUploads = true
+        const evidenceResource = new Resource('uploads/fetch-uploaded-document-with-template-ids')
+        evidenceResource
+          .store({ template_ids: this.data.document_template_ids })
+          .then((response) => {
+            this.loadingUploads = false
+            this.uploads = response.uploads
+            // send mail
+          })
+          .catch((error) => {
+            console.log(error.response.data.message)
+            this.loadingUploads = false
+          })
+      }
     },
     assignTask() {
       const createTaskResource = new Resource('isms/calendar/assign-task-to-user')
@@ -176,13 +351,8 @@ export default {
         .store(assignForm)
         .then((response) => {
           this.assignForm = this.empty_form
-          // Create a local copy and update, then emit to parent
-          const updatedTasks = [...this.tasks]
-          updatedTasks[this.selectedindex] = {
-            ...updatedTasks[this.selectedindex],
-            assigned_task: response.assigned_task
-          }
-          this.$emit('update:tasks', updatedTasks)
+          this.fetchUploadedEvidiences()
+          this.$emit('update:tasks', response.assigned_task)
           this.showAssignModal = false
           this.loader = false
 
@@ -202,13 +372,8 @@ export default {
           .update(taskId)
           .then((response) => {
             this.$message.success('Task marked as completed successfully')
+            this.loadTask()
             this.loader = false
-            const updatedTasks = [...this.tasks]
-            updatedTasks[index] = {
-              ...updatedTasks[index],
-              assigned_task: response.task
-            }
-            this.$emit('update:tasks', updatedTasks)
             this.fetchProjectCalendarData() // Refresh the calendar data after marking as done
           })
           .catch(() => {
