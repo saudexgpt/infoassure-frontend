@@ -3,26 +3,19 @@
     <template v-slot:header>
       <div>
         <span v-if="display === 'details'" class="pull-right">
-          <el-button type="success" size="mini" @click="display = 'create'"> Create New </el-button>
-          <el-button type="primary" size="mini" :loading="downloading" @click="display = 'summary'">
+          <el-button type="success" @click="display = 'create'"> Create New </el-button>
+          <el-button type="primary" :loading="downloading" @click="display = 'summary'">
             View Summary Sheet
           </el-button>
         </span>
         <span v-if="display === 'summary'" class="pull-right">
-          <el-button type="danger" size="mini" @click="display = 'details'">
-            View Details
-          </el-button>
-          <el-button
-            type="primary"
-            size="mini"
-            :loading="downloading"
-            @click="exportToExcel('RoPASheet')"
-          >
+          <el-button type="danger" @click="display = 'details'"> View Details </el-button>
+          <el-button type="primary" :loading="downloading" @click="exportToExcel('RoPASheet')">
             Export
           </el-button>
         </span>
         <span v-if="display === 'create'" class="pull-right">
-          <el-button type="danger" size="mini" @click="display = 'details'"> Close Form </el-button>
+          <el-button type="danger" @click="display = 'details'"> Close Form </el-button>
         </span>
         <h3>Records of Processing Activities</h3>
       </div>

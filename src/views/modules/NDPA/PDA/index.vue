@@ -3,52 +3,58 @@
     <template v-slot:header>
       <div>
         <span class="pull-right">
-          <el-button type="primary" @click="viewType = 'tabular'"
-            ><i class="el-icon-menu"></i> Tabular View</el-button
-          >
+          <el-button type="info" @click="viewType = 'tabular'">
+            <icon icon="tabler:table" /> Tabular View
+          </el-button>
         </span>
         <h3>Personal Data Asset</h3>
       </div>
     </template>
     <el-container style="height: 100%; border: 1px solid #eee">
       <el-aside v-if="showMenu" v-loading="loading" width="400px" style="background-color: #fcfcfc">
-        <el-menu background-color="#fcfcfc" text-color="#00000">
-          <div style="background: #d2a204; color: #000000; padding: 10px">
+        <el-button type="primary" width="100%" @click="createNewEntry()">
+          <icon icon="tabler:plus" /> Create New Entry
+        </el-button>
+        <el-collapse>
+          <!-- <div>
             Grouped by Business Unit/Process
             <el-tooltip class="item" effect="dark" content="Create New Entry" placement="right">
-              <el-button variant="secondary" size="sm" class="pull-right" @click="createNewEntry()">
-                <i class="el-icon-plus"></i>
+              <el-button type="secondary" size="sm" class="pull-right" @click="createNewEntry()">
+                <icon icon="tabler:plus" />
               </el-button>
             </el-tooltip>
-          </div>
-          <el-submenu v-for="(pda_data, index) in grouped_pdas" :key="index" :index="`${index}`">
+          </div> -->
+          <el-collapse-item
+            v-for="(pda_data, index) in grouped_pdas"
+            :key="index"
+            :index="`${index}`"
+          >
             <template v-slot:title>
               <strong>{{ index }}</strong>
             </template>
-            <el-menu-item
-              v-for="(data, data_index) in pda_data"
-              :key="data_index"
-              :index="`${index}-${data_index}`"
-              @click="viewDetails(data)"
-            >
-              <div>
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  :content="data.description"
-                  placement="right"
-                  :open-delay="500"
-                >
-                  <small>{{ data.business_process }}</small>
-                </el-tooltip>
-              </div>
-            </el-menu-item>
-          </el-submenu>
-        </el-menu>
+            <div v-for="(data, data_index) in pda_data" :key="data_index">
+              <CardNavView
+                :id="`pda-${data.id}`"
+                :title="`${data.business_process}`"
+                title-icon="tabler:arrow-badge-right"
+                @clickToView="viewDetails(data)"
+              >
+                <template #description>
+                  <div>
+                    <em>
+                      <!-- <icon icon="tabler:arrow-badge-right" /> -->
+                      {{ data.description }}
+                    </em>
+                  </div>
+                </template>
+              </CardNavView>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
       </el-aside>
 
       <el-container v-loading="loadNew">
-        <h1>
+        <!-- <h1>
           <el-tooltip effect="dark" content="Toggle Menu" placement="right">
             <a v-if="showMenu" style="cursor: pointer" @click="toggleMenu"
               ><i class="el-icon-s-fold"></i
@@ -57,11 +63,12 @@
               ><i class="el-icon-s-unfold"></i
             ></a>
           </el-tooltip>
-        </h1>
+        </h1> -->
         <el-main>
           <div>
             <div v-if="viewType === 'welcome'" align="center">
-              <img src="/images/project-icons/risk_library.png" width="200" />
+              <!-- <img src="/images/project-icons/pda.png" width="200" /> -->
+              <icon icon="tabler:id" size="200" />
               <h3>Manage your Personal Data Asset Here</h3>
               <span align="center">
                 <el-button variant="outline-secondary" @click="createNewEntry()"
@@ -103,12 +110,14 @@ import EditPDA from './partials/EditPDA.vue'
 import TabularPDA from './PDATable.vue'
 import Resource from '@/api/resource'
 import checkPermission from '@/utils/permission'
+import CardNavView from '@/views/Components/CardNavView.vue'
 
 export default {
   components: {
     CreatePDA,
     EditPDA,
-    TabularPDA
+    TabularPDA,
+    CardNavView
   },
   props: {
     riskGroup: {
@@ -157,7 +166,7 @@ export default {
       this.$refs.tree.filter(val)
     }
   },
-  created() {
+  mounted() {
     this.loadData()
   },
   methods: {
@@ -192,7 +201,7 @@ export default {
     },
     fetchPDA(load = true) {
       this.loading = load
-      const pdaResource = new Resource('pda')
+      const pdaResource = new Resource('ndpa/pda')
       pdaResource
         .list({
           client_id: this.clientId
@@ -206,7 +215,7 @@ export default {
     },
     fetchPersonalDataItems(load = true) {
       this.loading = load
-      const pdiResource = new Resource('pda/fetch-personal-data-item')
+      const pdiResource = new Resource('ndpa/pda/fetch-personal-data-item')
       pdiResource.list().then((response) => {
         this.personal_data_items = response.personal_data_items
         this.loading = false

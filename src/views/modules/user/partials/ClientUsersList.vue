@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div v-loading="loading">
       <el-row>
         <el-col :md="21">
           <h3> Registered Users </h3>
@@ -20,46 +20,54 @@
             @click="handleDownload('List of Clients', users)"
           >Export Excel</el-button>
         </span> -->
-      <v-client-table :data="users" v-loading="loading" :columns="columns" :options="options">
+      <v-client-table :data="users" :columns="columns" :options="options">
         <template v-slot:is_active="{ row }">
           <div>
             {{ row.is_active === 1 ? 'Active' : 'Suspended' }}
           </div>
         </template>
+        <template v-slot:assign="{ row }">
+          <el-button-group>
+            <!-- <el-button @click="grantPermissionToUser(row)">
+              <icon icon="tabler:user" /> Role
+            </el-button> -->
+            <el-button type="success" @click="grantPermissionToUser(row)">
+              <icon icon="tabler:key" /> Privileges
+            </el-button>
+          </el-button-group>
+        </template>
         <template v-slot:action="{ row }">
           <div>
-            <el-tooltip
-              v-if="row.email_verified_at === null"
-              content="Activate Account"
-              placement="top"
-            >
-              <el-button
-                circle
-                type="success"
-                @click="confirmRegistration(row.id, 'admin_confirmation')"
+            <el-button-group>
+              <el-tooltip
+                v-if="row.email_verified_at === null"
+                content="Activate Account"
+                placement="top"
               >
-                <icon icon="tabler:check" />
-              </el-button>
-            </el-tooltip>
-            <el-tooltip :content="`Edit ${row.name}'s info`" placement="top">
-              <el-button circle type="primary" @click="editThisClientUser(row)">
-                <icon icon="tabler:edit" />
-              </el-button>
-            </el-tooltip>
-            <el-tooltip
-              v-if="row.is_client_admin === 0"
-              content="Send login credentials"
-              placement="top"
-            >
-              <el-button circle type="info" @click="sendLoginCredentials(row)">
-                <icon icon="tabler:key" />
-              </el-button>
-            </el-tooltip>
-            <el-tooltip v-if="row.is_client_admin === 0" content="Delete User" placement="top">
-              <el-button circle type="danger" @click="deleteClientUser(props.row.id, row.id)">
-                <icon icon="tabler:trash" />
-              </el-button>
-            </el-tooltip>
+                <el-button @click="confirmRegistration(row.id, 'admin_confirmation')">
+                  <icon icon="tabler:check" color="green" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip :content="`Edit ${row.name}'s info`" placement="top">
+                <el-button @click="editThisClientUser(row)">
+                  <icon icon="tabler:edit" color="orange" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip
+                v-if="row.is_client_admin === 0"
+                content="Send login credentials"
+                placement="top"
+              >
+                <el-button @click="sendLoginCredentials(row)">
+                  <icon icon="tabler:lock-password" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip v-if="row.is_client_admin === 0" content="Delete User" placement="top">
+                <el-button @click="deleteClientUser(props.row.id, row.id)">
+                  <icon icon="tabler:trash" color="red" />
+                </el-button>
+              </el-tooltip>
+            </el-button-group>
           </div>
         </template>
       </v-client-table>
@@ -100,6 +108,32 @@
         @update="fetchClientUsers()"
       />
     </el-dialog>
+    <el-dialog
+      :title="`Grant Privileges to ${selectedClientUser.name}`"
+      width="80%"
+      v-if="showGrantPermissionModal"
+      v-model="showGrantPermissionModal"
+      @closed="updateTable"
+    >
+      <div style="min-height: 500px; max-height: 500px">
+        <el-tabs type="border-card" stretch>
+          <el-tab-pane label="Assign Roles">
+            <AssignUserRoles
+              v-if="showGrantPermissionModal"
+              :user="selectedClientUser"
+              :permissions="permissions"
+            />
+          </el-tab-pane>
+          <el-tab-pane label="Grant Specific Permissions">
+            <AssignUserPermissions
+              v-if="showGrantPermissionModal"
+              :user="selectedClientUser"
+              :permissions="permissions"
+            />
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </el-dialog>
     <!-- <el-dialog v-model="editClient" title="Edit">
       <EditClient
         v-if="!editClientUser"
@@ -118,12 +152,16 @@ import RegisterUserClient from './RegisterUserClient.vue'
 // import EditClient from './EditClient.vue'
 import EditClientUser from './EditClientUser.vue'
 import Resource from '@/api/resource'
+import AssignUserRoles from '@/views/modules/settings/partials/access-control/partials/AssignUserRoles.vue'
+import AssignUserPermissions from '@/views/modules/settings/partials/access-control/partials/AssignUserPermissions.vue'
 
 export default {
   components: {
     // EditClient,
     EditClientUser,
-    RegisterUserClient
+    RegisterUserClient,
+    AssignUserRoles,
+    AssignUserPermissions
   },
   data() {
     return {
@@ -132,27 +170,30 @@ export default {
       editClientUser: false,
       isCreateClassSidebarActive: false,
       isEditClassSidebarActive: false,
+      showGrantPermissionModal: false,
       pageLength: 10,
       dir: false,
       columns: [
         'name',
         'email',
         'phone',
-        'designation',
+        // 'designation',
+        'assign',
         'action'
         // 'user.password_status',
       ],
 
       options: {
         headings: {
-          action: ''
+          action: '',
+          assign: 'Assign'
 
           // id: 'S/N',
         },
         filterByColumn: false,
         rowAttributesCallback(row) {
           if (row.email_verified_at === null) {
-            return { style: 'background: #d83b3beb; color: #000000' }
+            return { style: 'background: #f9ccd1; color: #000000' }
           }
           return {}
         },
@@ -162,6 +203,8 @@ export default {
       },
       showEditForm: false,
       users: [],
+      roles: [],
+      permissions: [],
       loading: false,
       selectedClient: null,
       selectedClientUser: null,
@@ -175,10 +218,21 @@ export default {
   },
   created() {
     this.fetchClientUsers()
+    this.fetchPermissions()
   },
   methods: {
     checkPermission,
     checkRole,
+    fetchPermissions() {
+      const fetchPermissionResource = new Resource('acl/permissions/index')
+      fetchPermissionResource.list().then((response) => {
+        this.permissions = response.permissions
+      })
+    },
+    grantPermissionToUser(user) {
+      this.selectedClientUser = user
+      this.showGrantPermissionModal = true
+    },
     fetchClientUsers() {
       // const { limit, page } = this.query
       this.registerDialog = false

@@ -9,16 +9,21 @@
       <h3>Manage Risk Library & Control Matrix</h3>
     </div>
     <el-container style="height: 100%; border: 1px solid #eee">
-      <el-aside v-if="showMenu" v-loading="loading" style="width: 350px; background-color: #fcfcfc">
-        <el-tabs>
+      <el-aside v-if="showMenu" v-loading="loading" style="width: 400px; background-color: #fcfcfc">
+        <el-tabs stretch>
           <el-tab-pane
             v-if="activatedModules.includes('isms') && (viewOnly === 'isms' || viewOnly === 'all')"
             label="By Assets"
           >
-            <el-button type="primary" width="100%" @click="createNewRiskRegister('isms')">
+            <el-button
+              type="primary"
+              width="100%"
+              class="mb-2"
+              @click="createNewRiskRegister('isms')"
+            >
               <icon icon="tabler:plus" /> Create New Asset Risk Library
             </el-button>
-            <el-collapse expand-icon-position="left" accordion>
+            <el-collapse accordion>
               <el-collapse-item
                 v-for="(assetsArray, index) in asset_types"
                 :key="index"
@@ -29,7 +34,7 @@
                     <h3>{{ index }}</h3>
                   </span>
                 </template>
-                <el-collapse expand-icon-position="right" accordion>
+                <el-collapse expand-icon-position="left" accordion>
                   <el-collapse-item
                     v-for="(asset, asset_index) in assetsArray"
                     :key="asset_index"
@@ -39,7 +44,7 @@
                       <span>{{ asset.name }}</span>
                     </template>
                     <div v-if="asset.risk_registers.length > 0">
-                      <el-alert type="error" :closable="false">
+                      <el-alert :closable="false">
                         Identified threats for {{ asset.name }}
                       </el-alert>
                       <div
@@ -47,18 +52,21 @@
                         :key="risk_register_index"
                       >
                         <CardNavView
-                          :id="`risk_register-${index}`"
-                          :title="`${risk_register.risk_id}-${risk_register.threat}`"
+                          :id="`risk_register-${risk_register.id}`"
+                          :title="`${risk_register.risk_id}`"
                           title-icon="tabler:file-text"
                           @clickToView="viewDetails(risk_register)"
                         >
-                          <!-- <template #description>
-                        <div>
-                          <em><icon icon="tabler:arrow-badge-right" /> {{ task.name }}</em>
-                          <br />
-                          <span v-html="task.description"></span>
-                        </div>
-                      </template> -->
+                          <template #description>
+                            <div>
+                              <em>
+                                <icon icon="tabler:arrow-badge-right" />
+                                {{ risk_register.threat }}
+                              </em>
+                              <!-- <br />
+                              <span v-html="task.description"></span> -->
+                            </div>
+                          </template>
                         </CardNavView>
                       </div>
                     </div>
@@ -72,7 +80,7 @@
                             confirm-button-text="Proceed"
                             cancel-button-text="Cancel"
                             :title="`The system will attempt to identify threats associated with ${asset.name}.`"
-                            @confirm="loadAutoRiskRegisters(asset.id)"
+                            @confirm="loadAutoRiskRegisters(asset.id, 'asset')"
                           >
                             <template #reference>
                               <el-button type="info" style="width: 100%">
@@ -103,36 +111,87 @@
             "
             label="By Business Process"
           >
-            <el-button type="primary" width="100%" @click="createNewRiskRegister('bcms')">
+            <el-button
+              type="primary"
+              width="100%"
+              class="mb-2"
+              @click="createNewRiskRegister('bcms')"
+            >
               <icon icon="tabler:plus" /> Create New Process Risk Library
             </el-button>
             <el-collapse>
               <el-collapse-item
-                v-for="(assessments, index) in business_units"
+                v-for="(business_unit, index) in business_units"
                 :key="index"
                 :name="`${index}`"
               >
                 <template #title>
-                  <strong>{{ index }}</strong>
+                  <strong>{{ business_unit.unit_name }}</strong>
                 </template>
-                <div
-                  v-for="(risk_assessment, assessments_index) in assessments"
-                  :key="assessments_index"
-                >
-                  <CardNavView
-                    :id="`process-${index}-${assessments_index}`"
-                    :title="`${risk_assessment.risk_id}-${risk_assessment.threat}`"
-                    @clickToView="viewDetails(risk_assessment)"
+                <el-collapse expand-icon-position="left" accordion>
+                  <el-collapse-item
+                    v-for="(
+                      business_process, business_process_index
+                    ) in business_unit.business_processes"
+                    :key="business_process_index"
                   >
-                    <template #description>
-                      <div>
-                        <em><strong>Vulnerabilities:</strong></em
-                        ><br />
-                        <span v-html="risk_assessment.vulnerability_description"></span>
-                      </div>
+                    <template #title>
+                      <span>{{ business_process.name }}</span>
                     </template>
-                  </CardNavView>
-                </div>
+                    <div v-if="business_process.risk_registers.length > 0">
+                      <el-alert :closable="false">
+                        Identified threats for {{ business_process.name }}
+                      </el-alert>
+                      <div
+                        v-for="(
+                          risk_register, risk_register_index
+                        ) in business_process.risk_registers"
+                        :key="risk_register_index"
+                      >
+                        <CardNavView
+                          :id="`risk_register-${risk_register.id}`"
+                          :title="`${risk_register.risk_id}`"
+                          title-icon="tabler:file-text"
+                          @clickToView="viewDetails(risk_register)"
+                        >
+                          <template #description>
+                            <div>
+                              <em>
+                                <icon icon="tabler:arrow-badge-right" />
+                                {{ risk_register.threat }}
+                              </em>
+                              <!-- <br />
+                              <span v-html="task.description"></span> -->
+                            </div>
+                          </template>
+                        </CardNavView>
+                      </div>
+                    </div>
+                    <div v-else>
+                      <el-card style="margin-bottom: 5px">
+                        <div style="cursor: pointer">
+                          <strong>No Threat Identified Yet!</strong>
+                          <el-popconfirm
+                            width="550"
+                            hide-icon
+                            confirm-button-text="Proceed"
+                            cancel-button-text="Cancel"
+                            :title="`The system will attempt to identify threats associated with ${business_process.name}.`"
+                            @confirm="
+                              loadAutoRiskRegisters(business_process.id, 'business_process')
+                            "
+                          >
+                            <template #reference>
+                              <el-button type="info" style="width: 100%">
+                                <icon icon="tabler:package-import" /> Click to auto identify
+                              </el-button>
+                            </template>
+                          </el-popconfirm>
+                        </div>
+                      </el-card>
+                    </div>
+                  </el-collapse-item>
+                </el-collapse>
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
@@ -331,10 +390,14 @@ export default {
 
       // }
     },
-    loadAutoRiskRegisters(assetId) {
+    loadAutoRiskRegisters(id, type = 'asset') {
       this.loading = true
-      const param = { client_id: this.selectedClient.id, asset_id: assetId }
-      const fetchAssetResource = new Resource('generate-auto-risk-registers')
+      const param = { client_id: this.selectedClient.id, id }
+
+      let fetchAssetResource = new Resource('generate-asset-auto-risk-registers')
+      if (type === 'business_process') {
+        fetchAssetResource = new Resource('generate-process-auto-risk-registers')
+      }
       fetchAssetResource
         .store(param)
         .then((response) => {

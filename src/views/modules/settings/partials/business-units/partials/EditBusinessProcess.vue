@@ -27,11 +27,29 @@
             </el-col>
             <el-col :md="12">
               <el-form-item label="Process Owner" label-for="v-name">
-                <el-input
+                <el-select
+                  v-model="form.process_owner"
+                  placeholder="Select Risk Owner"
+                  filterable
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(user, user_index) in staff"
+                    :key="user_index"
+                    :value="user.name"
+                    :label="user.name"
+                  >
+                    <span style="float: left">{{ user.name }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{
+                      user.designation ? user.designation : ''
+                    }}</span>
+                  </el-option>
+                </el-select>
+                <!-- <el-input
                   v-model="form.process_owner"
                   placeholder="Example: CTO"
                   style="width: 100%"
-                />
+                /> -->
                 <!-- <el-select
                   v-model="form.process_owner"
                   placeholder="Process Owner"
@@ -347,10 +365,12 @@ export default {
         'More than 1 Month'
       ],
       loading: false,
-      selectedClient: {}
+      selectedClient: {},
+      staff: []
     }
   },
   created() {
+    this.fetchStaff()
     this.fetchBusinessUnits()
     this.form = this.businessProcess
   },
@@ -365,6 +385,12 @@ export default {
         return true
       }
       return false
+    },
+    fetchStaff() {
+      const fetchUsersResource = new Resource('users/fetch-staff')
+      fetchUsersResource.list().then((response) => {
+        this.staff = response.staff
+      })
     },
     fetchBusinessUnits() {
       const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')

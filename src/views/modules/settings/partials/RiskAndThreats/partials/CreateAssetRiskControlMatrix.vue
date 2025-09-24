@@ -93,13 +93,13 @@
           <el-col :md="12">
             <small>
               Risk Sub-Category
-              <a
+              <!-- <a
                 v-if="selectedRiskCategory.name !== ''"
                 style="float: right; color: #409eff; cursor: pointer"
                 @click="((isEdit = true), (showRiskCategoryForm = true))"
               >
                 <icon icon="tabler:plus" /> Click to add sub-categories
-              </a>
+              </a> -->
             </small>
             <el-select
               v-model="form.sub_type"

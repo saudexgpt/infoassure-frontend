@@ -7,7 +7,7 @@
           :loading="downloading"
           @click="exportTableToExcel('PDATable')"
         >
-          <feather-icon icon="DownloadIcon" class="mr-50" />
+          <icon icon="tabler:download" />
           <span class="align-middle">Export</span>
         </el-button>
       </span>

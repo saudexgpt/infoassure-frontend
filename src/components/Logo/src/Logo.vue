@@ -2,6 +2,7 @@
 import { ref, watch, computed, onMounted, unref } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import { useDesign } from '@/hooks/web/useDesign'
+import store from '@/VuexStore'
 
 const { getPrefixCls } = useDesign()
 
@@ -49,7 +50,7 @@ watch(
 </script>
 
 <template>
-  <div>
+  <div class="pb-10px pt-10px">
     <router-link
       :class="[
         prefixCls,
@@ -58,11 +59,12 @@ watch(
       ]"
       to="/"
     >
-      <img
+      <img :src="store.getters.baseServerUrl + 'storage/' + store.getters.userData.logo" />
+      <!-- <img
         src="@/assets/imgs/logo.png"
         class="w-[calc(var(--logo-height)-10px)] h-[calc(var(--logo-height)-10px)]"
-      />
-      <div
+      /> -->
+      <!-- <div
         v-if="show"
         :class="[
           'ml-10px text-16px font-700',
@@ -74,7 +76,7 @@ watch(
         ]"
       >
         {{ title }}
-      </div>
+      </div> -->
     </router-link>
   </div>
 </template>

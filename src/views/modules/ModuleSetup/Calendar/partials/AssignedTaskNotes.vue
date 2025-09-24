@@ -1,7 +1,12 @@
 <template>
   <div v-loading="loader">
-    <h4>Notes/Response to Sub tasks</h4>
-    <Editor v-model="form.notes" />
+    <h4>Notes/Response to tasks</h4>
+    <!-- <Editor v-model="form.notes" /> -->
+    <v-textarea
+      v-model="form.notes"
+      variant="outlined"
+      placeholder="Drop a note in response to tasks here..."
+    />
     <aside>
       <el-tooltip content="Save">
         <el-button type="primary" @click="saveNote()">
@@ -14,16 +19,20 @@
 <script>
 import moment from 'moment'
 import Resource from '@/api/resource'
-import { Editor } from '@/components/Editor'
+// import { Editor } from '@/components/Editor'
 
 export default {
   components: {
-    Editor
+    // Editor
   },
   props: {
     task: {
       type: Object,
       default: () => null
+    },
+    selectedModule: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -44,7 +53,9 @@ export default {
   },
   methods: {
     saveNote() {
-      const createTaskResource = new Resource('isms/calendar/save-assigned-task-note')
+      const createTaskResource = new Resource(
+        `${this.selectedModule}/calendar/save-assigned-task-note`
+      )
       const { form } = this
       form.assigned_task_id = this.task.id
       this.loader = true

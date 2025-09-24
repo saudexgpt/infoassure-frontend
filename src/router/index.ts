@@ -247,8 +247,9 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
     meta: {
       title: t('router.modules'),
       icon: 'tabler:packages',
-      // modules: ['bcms', 'isms', 'vdd', 'ndpa'],
-      roles: ['admin', 'client']
+      modules: ['bcms', 'isms', 'vdd', 'ndpa'],
+      except: ['super', 'partner'],
+      permissions: ['manage-project-subscription']
     },
     children: [
       {
@@ -258,8 +259,8 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: 'Subscriptions',
           icon: 'vi-ant-design:project-outlined',
-          permissions: ['manage-client-projects'],
-          roles: ['admin']
+          permissions: ['manage-project-subscription']
+          // roles: ['admin']
         }
       },
       {
@@ -427,6 +428,34 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: 'Packages',
           icon: 'tabler:arrow-badge-right',
           roles: ['super']
+        }
+      },
+      {
+        path: 'acl',
+        component: () => import('@/views/modules/access-control/index.vue'),
+        name: 'AccessControl',
+        meta: {
+          title: t('setting.accessControl'),
+          icon: 'tabler:lock-cog'
+        }
+      }
+    ]
+  },
+  {
+    path: '/notifications',
+    name: 'Notifications',
+    component: Layout,
+    meta: {
+      icon: 'tabler:Notifications'
+    },
+    children: [
+      {
+        path: 'all',
+        name: 'AllNotifications',
+        component: () => import('@/views/modules/Notifications.vue'),
+        meta: {
+          title: 'Notifications',
+          icon: 'tabler:bell'
         }
       }
     ]

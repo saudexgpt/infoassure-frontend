@@ -22,6 +22,9 @@
       <el-tab-pane label="Risk Management Setup" name="#risk-management" lazy>
         <RiskSetup />
       </el-tab-pane>
+      <el-tab-pane label="Access Control" name="#access-control" lazy>
+        <AccessControl />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -30,13 +33,15 @@
 import AssetManagement from './partials/ManageAssets/index.vue'
 import BusinessUnits from './partials/business-units/SetUp.vue'
 import RiskSetup from './partials/RiskAndThreats/index.vue'
+import AccessControl from './partials/access-control/index.vue'
 
 export default {
   components: {
     // AssetTypes,
     AssetManagement,
     BusinessUnits,
-    RiskSetup
+    RiskSetup,
+    AccessControl
     // NDPAReport,
   },
   data() {

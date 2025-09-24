@@ -65,6 +65,10 @@ export default {
     task: {
       type: Object,
       default: () => null
+    },
+    selectedModule: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -98,7 +102,9 @@ export default {
       if (this.task !== null) {
         this.loading = true
         const { query } = this
-        const commentResource = new Resource('isms/calendar/comments/fetch-task-comments')
+        const commentResource = new Resource(
+          `${this.selectedModule}/calendar/comments/fetch-task-comments`
+        )
         commentResource
           .list({ task_id: this.task.id, page: query.page })
           .then((response) => {
@@ -113,13 +119,16 @@ export default {
       }
     },
     sendComment() {
-      const createTaskResource = new Resource('isms/calendar/comments/post-task-comment')
+      const createTaskResource = new Resource(
+        `${this.selectedModule}/calendar/comments/post-task-comment`
+      )
       const { form } = this
       form.assigned_task_id = this.task.id
       this.loader = true
       createTaskResource
         .store(form)
         .then((response) => {
+          this.form = this.empty_form
           this.comments.push(response.comment)
           this.loader = false
           // send mail
@@ -144,7 +153,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50px;
   background: #f0f0f0;
   border: solid 2px #cccccc;
   color: #000000;
@@ -156,7 +164,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50px;
   background: var(--el-color-primary-light-9);
   border: solid 2px var(--el-color-primary-light-5);
   color: var(--el-color-primary);

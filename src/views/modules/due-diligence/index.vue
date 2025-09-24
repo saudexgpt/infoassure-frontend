@@ -1,6 +1,6 @@
 <template>
-  <el-tabs tab-position="left" v-model="activeName" @tab-click="forceRerender">
-    <!-- <el-tabs
+  <el-tabs v-model="activeName" @tab-click="forceRerender" stretch>
+    <!-- tab-position="left" <el-tabs
       v-model="activeName"
       @tab-click="handleClick"
     > -->

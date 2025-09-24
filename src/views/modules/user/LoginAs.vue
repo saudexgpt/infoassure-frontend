@@ -119,6 +119,7 @@ export default {
           this.fetchUserClients()
           break
         default:
+          this.fetchUserClients(selectedRole)
           break
       }
     },
@@ -158,11 +159,11 @@ export default {
           this.load = false
         })
     },
-    fetchUserClients() {
+    fetchUserClients(selectedRole = null) {
       this.load = true
       const userResource = new Resource('clients/fetch-user-clients')
       userResource
-        .list()
+        .list({ role: selectedRole })
         .then((response) => {
           this.clients = response.clients
           this.load = false

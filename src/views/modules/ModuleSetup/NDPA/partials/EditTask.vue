@@ -3,11 +3,15 @@
     <el-tab-pane label="Manage Task">
       <el-row :gutter="20">
         <el-col :md="24">
-          <div style="max-height: 550px; overflow: auto">
+          <div>
             <br />
             <v-text-field variant="outlined" v-model="taskForm.name" label="Task" />
-            <!-- <v-textarea variant="outlined" v-model="taskForm.description" label="Description" /> -->
-            <v-text-field variant="outlined" v-model="taskForm.hint" label="Hint" />
+            <v-textarea variant="outlined" v-model="taskForm.description" label="Description" />
+            <v-textarea
+              variant="outlined"
+              v-model="taskForm.implementation_guide"
+              label="Implementation Guide"
+            />
             <label for="">Expected Document/Evidence Template</label>
             <el-select
               v-model="taskForm.document_template_ids"
@@ -38,14 +42,12 @@
                 :key="index"
                 :disabled="task.id === taskForm.id"
                 :value="task.id"
-                :label="`[${selectedActivity.activity_no}-${task.id}] ${task.name}`"
+                :label="`${task.activity_no} - ${task.name}`"
               >
-                <span style="float: left">{{
-                  `[${selectedActivity.activity_no}-${task.id}]`
-                }}</span>
+                <!-- <span style="float: left">{{ `${task.activity_no} - ${task.name}` }}</span>
                 <span style="float: right; color: var(--el-text-color-secondary); font-size: 11px">
                   {{ task.name }}
-                </span>
+                </span> -->
               </el-option>
             </el-select>
             <label for="">Priority</label>
@@ -83,7 +85,7 @@
         </el-col>
       </el-row>
     </el-tab-pane>
-    <el-tab-pane label="Manage Activity">
+    <!-- <el-tab-pane label="Manage Activity">
       <el-row :gutter="20">
         <el-col :md="24">
           <div style="max-height: 550px; overflow: auto">
@@ -112,7 +114,7 @@
           </div>
         </el-col>
       </el-row>
-    </el-tab-pane>
+    </el-tab-pane> -->
   </el-tabs>
 </template>
 
@@ -148,8 +150,9 @@ export default {
       },
       taskForm: {
         id: '',
+        activity_no: '',
         document_template_ids: '',
-        hint: '',
+        implementation_guide: '',
         name: '',
         description: '',
         dependency: null
@@ -163,12 +166,12 @@ export default {
     if (this.selectedData) {
       this.taskForm = this.selectedData
     }
-    if (this.selectedActivity) {
-      this.activityForm.id = this.selectedActivity.id
-      this.activityForm.activity_no = this.selectedActivity.activity_no
-      this.activityForm.name = this.selectedActivity.name
-      this.activityForm.description = this.selectedActivity.description
-    }
+    // if (this.selectedActivity) {
+    //   this.activityForm.id = this.selectedActivity.id
+    //   this.activityForm.activity_no = this.selectedActivity.activity_no
+    //   this.activityForm.name = this.selectedActivity.name
+    //   this.activityForm.description = this.selectedActivity.description
+    // }
   },
   methods: {
     fetchDocumentTemplates() {

@@ -29,6 +29,12 @@
 import Resource from '@/api/resource'
 export default {
   name: 'GanttChart',
+  props: {
+    selectedModule: {
+      type: String,
+      required: true
+    }
+  },
 
   data() {
     return {
@@ -134,7 +140,7 @@ export default {
     },
     fetchMyCalendarData() {
       // Fetch data for the calendar
-      const fetchResource = new Resource('isms/calendar/fetch-my-calendar-data')
+      const fetchResource = new Resource(`${this.selectedModule}/calendar/fetch-my-calendar-data`)
       fetchResource
         .list()
         .then((response) => {
@@ -147,7 +153,7 @@ export default {
     },
     markTaskAsDone(taskId) {
       if (confirm('Click OK to mark this task as completed?')) {
-        const fetchResource = new Resource('isms/calendar/mark-task-as-done')
+        const fetchResource = new Resource(`${this.selectedModule}/calendar/mark-task-as-done`)
         fetchResource
           .update(taskId)
           .then(() => {

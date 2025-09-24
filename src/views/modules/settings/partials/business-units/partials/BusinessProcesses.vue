@@ -10,7 +10,7 @@
             <span class="pull-right">
               <el-button type="primary" @click="isCreateBusinessProcessActive = true">
                 <Icon icon="tabler-plus" />
-                <span class="align-middle">Create New</span>
+                <span class="align-middle">Create New Process</span>
               </el-button>
             </span>
           </el-col>
@@ -102,8 +102,8 @@
     <el-drawer
       v-model="isCreateBusinessProcessActive"
       title="Create Business Process"
-      direction="ttb"
-      size="100%"
+      direction="rtl"
+      size="87%"
       destroy-on-close
     >
       <create-business-process
@@ -115,8 +115,8 @@
     <el-drawer
       v-model="isEditBusinessProcessActive"
       title="Edit Business Process"
-      direction="ttb"
-      size="100%"
+      direction="rtl"
+      size="87%"
       destroy-on-close
     >
       <edit-business-process

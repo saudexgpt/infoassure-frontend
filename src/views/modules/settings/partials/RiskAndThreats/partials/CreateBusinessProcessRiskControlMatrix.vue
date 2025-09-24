@@ -1,16 +1,22 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div v-loading="loading">
-    <el-row v-if="form.business_unit_id !== 0">
-      <el-col :md="12">
+    <el-row v-if="form.business_unit_id !== ''" :gutter="20">
+      <el-col :md="24">
         <label for="">Select Business Process</label>
+        <span class="pull-right">
+          <el-button type="text" @click="isCreateBusinessProcessActive = true">
+            <Icon icon="tabler-plus" />
+            <span class="align-middle">Create New Process</span>
+          </el-button>
+        </span>
         <el-select
           v-model="selectedBusinessProcess"
           placeholder="Select Business process"
           value-key="id"
           style="width: 100%"
           filterable
-          @input="setTeams()"
+          @change="setTeams()"
         >
           <el-option
             v-for="(business_process, index) in business_processes"
@@ -20,112 +26,77 @@
           />
         </el-select>
       </el-col>
-      <el-col :md="12">
+      <!-- <el-col :md="12">
         <label for="">Sub Unit (L3)</label>
-        <select v-model="form.sub_unit" placeholder="Select Sub Unit" class="form-control">
-          <option
+        <el-select v-model="form.sub_unit" placeholder="Select Sub Unit">
+          <el-option
             v-for="(team, team_index) in teams"
             :key="team_index"
             :value="team"
             :label="team"
-          ></option>
-        </select>
+          />
+        </el-select>
+      </el-col> -->
+      <el-col v-if="form.module === 'ndpa'" :md="12">
+        <label for="">Personal Data Item</label>
+        <input
+          id="asset_name"
+          v-model="form.asset_name"
+          class="form-control"
+          placeholder="Personal Data Item"
+          disabled
+        />
       </el-col>
-    </el-row>
-    <v-stepper
-      non-linear
-      editable
-      hide-actions
-      :items="['Associated Risk', 'Control', 'Testing Strategy', 'Gap', 'Submit']"
-    >
-      <template v-slot:item.1>
-        <!-- <el-row :gutter="20" v-if="form.business_unit_id === 0">
-            <el-col :md="12">
-              <el-form-group label="Asset Type" label-for="asset_type">
-                <el-select
-                  v-model="form.asset_type_id"
-                  placeholder="Select Asset Type"
-                  value-key="id"
-                  style="width: 100%"
-                  filterable
-                  @change="(fetchAssets($event), updateField($event, 'asset_type_id', form))"
-                >
-                  <el-option
-                    v-for="(asset_type, type_index) in asset_types"
-                    :key="type_index"
-                    :label="asset_type.name"
-                    :value="asset_type.id"
-                  />
-                </el-select>
-              </el-form-group>
-            </el-col>
-            <el-col :md="12">
-              <el-form-group label="Asset" label-for="asset">
-                <el-select
-                  v-model="form.asset_id"
-                  placeholder="Select Asset"
-                  filterable
-                  style="width: 100%"
-                  :disabled="form.asset_type_id === ''"
-                  @change="updateField($event, 'asset_id', form)"
-                >
-                  <el-option
-                    v-for="(asset, asset_index) in assets"
-                    :key="asset_index"
-                    :label="asset.name"
-                    :value="asset.id"
-                  />
-                </el-select>
-              </el-form-group>
-            </el-col>
-          </el-row> -->
-        <el-row :gutter="20">
-          <el-col v-if="form.module === 'ndpa'" :md="12">
-            <el-form-group label="Personal Data Item" label-for="asset_name">
-              <input
-                id="asset_name"
-                v-model="form.asset_name"
-                class="form-control"
-                placeholder="Personal Data Item"
-                disabled
-                @blur="updateField($event.target.value, 'asset_name', form)"
-              />
-            </el-form-group>
-          </el-col>
-          <el-col :md="12">
-            <small>Risk Category</small>
-            <el-select
-              v-model="form.type"
-              placeholder="Risk Category"
-              style="width: 100%"
-              :disabled="form.module === 'ndpa'"
-              @change="(setRiskSubCategory($event), updateField($event, 'type', form))"
-            >
-              <el-option
-                v-for="(risk_type, type_index) in risk_types"
-                :key="type_index"
-                :value="risk_type.name"
-                :label="risk_type.name"
-              />
-            </el-select>
-          </el-col>
-          <el-col v-if="form.module !== 'ndpa'" :md="12">
-            <small>Risk Sub-Category</small>
-            <el-select
-              v-model="form.sub_type"
-              placeholder="Risk Sub Category"
-              style="width: 100%"
-              @change="updateField($event, 'sub_type', form)"
-            >
-              <el-option
-                v-for="(sub_type, subtype_index) in sub_categories"
-                :key="subtype_index"
-                :value="sub_type"
-                :label="sub_type"
-              />
-            </el-select>
-          </el-col>
-          <!-- <el-col :md="12">
+      <el-col :md="12">
+        <small>
+          Risk Category
+          <a
+            style="float: right; color: #409eff; cursor: pointer"
+            @click="((showRiskCategoryForm = true), (isEdit = false))"
+          >
+            <icon icon="tabler:plus" /> Click to add new Risk Category
+          </a>
+        </small>
+        <el-select
+          v-model="selectedRiskCategory"
+          value-key="id"
+          placeholder="Risk Category"
+          style="width: 100%"
+          @change="setRiskSubCategory()"
+        >
+          <el-option
+            v-for="(risk_type, type_index) in risk_types"
+            :key="type_index"
+            :value="risk_type"
+            :label="risk_type.name"
+          />
+        </el-select>
+      </el-col>
+      <el-col :md="12">
+        <small>
+          Risk Sub-Category
+          <!-- <a
+            v-if="selectedRiskCategory.name !== ''"
+            style="float: right; color: #409eff; cursor: pointer"
+            @click="((isEdit = true), (showRiskCategoryForm = true))"
+          >
+            <icon icon="tabler:plus" /> Click to add sub-categories
+          </a> -->
+        </small>
+        <el-select
+          v-model="form.sub_type"
+          placeholder="Risk Sub Category"
+          :disabled="selectedRiskCategory.name === ''"
+        >
+          <el-option
+            v-for="(sub_type, subtype_index) in selectedRiskCategory.sub_categories"
+            :key="subtype_index"
+            :value="sub_type"
+            :label="sub_type"
+          />
+        </el-select>
+      </el-col>
+      <!-- <el-col :md="12">
               <el-form-group label="Threat (Search Applicable Threat)" label-for="threat">
                 <el-select
                   v-model="form.threat"
@@ -145,327 +116,225 @@
                 </el-select>
               </el-form-group>
             </el-col> -->
-          <el-col :md="24">
-            <small>Risk Owner</small>
-            <el-input
+      <!-- <el-col :md="24">
+        <small>Risk Owner</small>
+        <el-input
+          v-model="form.risk_owner"
+          placeholder="Risk Owner"
+          @blur="updateField($event.target.value, 'risk_owner', form)"
+        />
+      </el-col>
+      <el-col :md="24">
+        <small>Vulnerability Description</small>
+        <v-textarea
+          v-model="form.vulnerability_description"
+          variant="outlined"
+          placeholder="Describe Risk"
+          @blur="updateField(form.vulnerability_description, 'vulnerability_description', form)"
+        />
+      </el-col> -->
+      <el-col :md="24">
+        <small>Risk Owner</small>
+        <el-select
+          v-model="form.risk_owner"
+          placeholder="Select Risk Owner"
+          filterable
+          style="width: 100%"
+        >
+          <el-option
+            v-for="(user, user_index) in staff"
+            :key="user_index"
+            :value="user.name"
+            :label="user.name"
+          >
+            <span style="float: left">{{ user.name }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{
+              user.designation ? user.designation : ''
+            }}</span>
+          </el-option>
+        </el-select>
+        <!-- <el-input
               v-model="form.risk_owner"
               placeholder="Risk Owner"
               @blur="updateField($event.target.value, 'risk_owner', form)"
-            />
-          </el-col>
-          <el-col :md="24">
-            <small>Vulnerability/Risk Description</small>
-            <!-- <textarea
-                  id="risk_description"
-                  v-model="form.vulnerability_description"
-                  class="form-control"
-                  placeholder="Describe Risk"
-                  @blur="updateField($event.target.value, 'vulnerability_description', form)"
-                ></textarea> -->
-            <Editor
-              id="vulnerability_description"
-              v-model="form.vulnerability_description"
-              placeholder="Describe Risk"
-              @blur="updateField(form.vulnerability_description, 'vulnerability_description', form)"
-            />
-          </el-col>
-          <!-- <el-col :md="12">
-            <el-form-group
-              label="Impact/Outcome"
-              label-for="impact"
-            >
-              <ckeditor
-                id="outcome"
-                v-model="form.outcome"
-                :editor="editor"
-                :config="editorConfig"
-                placeholder="State the outcome of the risk"
-                @blur="updateField(form.outcome, 'outcome', form)"
-              />
-            </el-form-group>
-          </el-col> -->
-        </el-row>
-      </template>
-
-      <template v-slot:item.2>
-        <el-row :gutter="20">
-          <el-col :md="12">
-            <small>Nature of Control</small>
-            <el-select
-              v-model="form.nature_of_control"
-              placeholder="Select"
-              style="width: 100%"
-              @change="updateField($event, 'nature_of_control', form)"
-            >
-              <el-option label="Automated" value="Automated" />
-              <el-option label="Hybrid" value="Hybrid" />
-              <el-option label="Manual" value="Manual" />
-              <el-option label="N/A" value="N/A" />
-            </el-select>
-          </el-col>
-          <el-col :md="12">
-            <small>Name the application system used for executing the control</small>
-            <el-input
-              id="application_used_for_control"
-              v-model="form.application_used_for_control"
-              placeholder="Enter application name"
-              :disabled="
-                form.nature_of_control !== 'Automated' && form.nature_of_control !== 'Hybrid'
-              "
-              @blur="updateField($event.target.value, 'application_used_for_control', form)"
-            />
-          </el-col>
-          <el-col :md="24">
-            <small>Control Description</small>
-            <Editor
-              id="control_description"
-              v-model="form.control_description"
-              placeholder="Describe Control"
-              @blur="updateField(form.control_description, 'control_description', form)"
-            />
-          </el-col>
-          <el-col :md="12">
-            <small>Where is the control performed?</small>
-            <el-select
-              v-model="form.control_location"
-              placeholder="Select Location"
-              style="width: 100%"
-              @change="updateField($event, 'control_location', form)"
-            >
-              <el-option label="Business Unit" value="Business Unit" />
-              <el-option label="Centralised" value="Centralised" />
-              <el-option label="N/A" value="N/A" />
-            </el-select>
-          </el-col>
-          <el-col :md="12">
-            <small>How often do you perform the control?</small>
-            <el-select
-              v-model="form.control_frequency"
-              placeholder="Select Frequency"
-              style="width: 100%"
-              @change="updateField($event, 'control_frequency', form)"
-            >
-              <el-option
-                v-for="(frequency, index) in control_frequencies"
-                :key="index"
-                :value="frequency"
-                :label="frequency"
-              />
-            </el-select>
-          </el-col>
-          <el-col :md="12">
-            <small>Control Owner</small>
-            <el-input
-              id="email"
-              v-model="form.control_owner"
-              placeholder="Control Owner"
-              @blur="updateField($event.target.value, 'control_owner', form)"
-            />
-          </el-col>
-          <el-col :md="12">
-            <small>Control Type</small>
-            <el-select
-              v-model="form.control_type"
-              placeholder="Select Type"
-              style="width: 100%"
-              @change="updateField($event, 'control_type', form)"
-            >
-              <el-option label="Preventive" value="Preventive" />
-              <el-option label="Detective" value="Detective" />
-              <el-option label="N/A" value="N/A" />
-            </el-select>
-          </el-col>
-          <el-col :md="24">
-            <small>State any compensating control</small>
-            <Editor
-              id="compensating_control"
-              v-model="form.compensating_control"
-              placeholder="Enter Compensating control"
-              @blur="updateField($event.target.value, 'compensating_control', form)"
-            />
-          </el-col>
-        </el-row>
-      </template>
-
-      <template v-slot:item.3>
-        <el-row :gutter="20">
-          <el-col :md="12">
-            <small>Test Procedure</small>
-            <textarea
-              v-model="form.test_procedures"
-              class="form-control"
-              placeholder="Provide Test Procedure"
-              @blur="updateField($event.target.value, 'test_procedures', form)"
-            ></textarea>
-          </el-col>
-          <el-col :md="12">
-            <small>Sample Size</small>
-            <el-input
-              id="sample_size"
-              v-model="form.sample_size"
-              type="number"
-              :min="1"
-              placeholder="Sample Size"
-              @blur="updateField($event, 'sample_size', form)"
-            />
-          </el-col>
-          <el-col :md="24">
-            <small>Data Required for test</small>
-            <!-- <ckeditor
-                id="data_required"
-                v-model="form.data_required"
-                :editor="editor"
-                :config="editorConfig"
-                placeholder="Data Required"
-                @blur="updateField(form.data_required, 'data_required', form)"
-              /> -->
-            <Editor
-              v-model="form.data_required"
-              placeholder="Data Required"
-              @blur="updateField($event.target.value, 'data_required', form)"
-            />
-          </el-col>
-          <el-col :md="12">
-            <small>Link to Evidence & Report</small><br />
-            <a
-              v-if="form.link_to_evidence !== null"
-              :href="baseServerUrl + 'storage/' + form.link_to_evidence"
-              target="_blank"
-              style="color: #409eff"
-              >Click link to evidence</a
-            >
-            <input
-              class="form-control"
-              type="file"
-              placeholder="Change Link to Evidence"
-              @change="onImageChange"
-            />
-          </el-col>
-          <el-col :md="12">
-            <small>Test Conclusion</small>
-            <el-select
-              v-model="form.test_conclusion"
-              placeholder="Select"
-              style="width: 100%"
-              @change="updateField($event, 'test_conclusion', form)"
-            >
-              <el-option label="Adequate" value="Adequate" />
-              <el-option label="Inadequate" value="Inadequate" />
-              <el-option label="Sub-optimal" value="Sub-optimal" />
-            </el-select>
-          </el-col>
-        </el-row>
-      </template>
-      <template v-slot:item.4>
-        <el-row :gutter="20">
-          <el-col :md="12">
-            <small>Gap Description</small>
-            <el-form-group label="Gap Description" label-for="gap_description">
-              <textarea
-                id="gap_description"
-                v-model="form.gap_description"
-                class="form-control"
-                :row="6"
-                placeholder="This is to document if there is any gap or deficiency in internal control based on the procedures performed"
-                @blur="updateField($event.target.value, 'gap_description', form)"
-              ></textarea>
-            </el-form-group>
-          </el-col>
-          <el-col :md="12">
-            <small>TOD Improvement Opportunity (if any)</small>
-            <el-form-group
-              label="TOD Improvement Opportunity (if any)"
-              label-for="tod_improvement_opportunity"
-            >
-              <textarea
-                id="tod_improvement_opportunity"
-                v-model="form.tod_improvement_opportunity"
-                :row="6"
-                class="form-control"
-                placeholder="TOD Improvement Opportunity"
-                @blur="updateField($event.target.value, 'tod_improvement_opportunity', form)"
-              ></textarea>
-            </el-form-group>
-          </el-col>
-          <el-col :md="12">
-            <small>Recommendation</small>
-            <el-form-group label="Recommendation" label-for="recommendation">
-              <textarea
-                id="recommendation"
-                v-model="form.recommendation"
-                class="form-control"
-                placeholder="Recommendation"
-                @blur="updateField($event.target.value, 'recommendation', form)"
-              ></textarea>
-            </el-form-group>
-          </el-col>
-          <el-col :md="12">
-            <small>Responsibility</small>
-            <el-form-group label="Responsibility" label-for="responsibility">
-              <el-input
-                id="responsibility"
-                v-model="form.responsibility"
-                placeholder="Responsibility"
-                @blur="updateField($event, 'responsibility', form)"
-              />
-            </el-form-group>
-          </el-col>
-          <el-col :md="12">
-            <small>Timeline</small>
-            <el-form-group label="Timeline" label-for="timeline">
-              <input
-                id="timeline"
-                v-model="form.timeline"
-                placeholder="Timeline"
-                class="form-control"
-                @blur="updateField($event.target.value, 'timeline', form)"
-              />
-            </el-form-group>
-          </el-col>
-          <el-col :md="12">
-            <small>TOD Gap Status</small>
-            <el-form-group label="TOD Gap Status" label-for="tod_gap_status">
-              <el-input
-                id="tod_gap_status"
-                v-model="form.tod_gap_status"
-                placeholder="TOD Gap Status"
-                @blur="updateField($event, 'tod_gap_status', form)"
-              />
-            </el-form-group>
-          </el-col>
-        </el-row>
-      </template>
-      <template v-slot:item.5>
-        <el-row :gutter="20" v-if="form.business_unit_id === 0">
-          <el-col :md="24">
-            <v-btn
-              :disabled="loading"
-              :loading="loading"
-              class="text-none mb-4"
-              color="black"
-              size="x-large"
-              variant="flat"
-              block
-              @click="formSubmitted()"
-            >
-              Submit
-            </v-btn>
-          </el-col>
-        </el-row>
-      </template>
-    </v-stepper>
+            /> -->
+      </el-col>
+      <el-col v-if="selectedBusinessProcess !== null" :md="24">
+        <el-button type="text" @click="showApplicableThreatModal = true">
+          <icon icon="tabler:plus" /> Click to Add Applicable Threats
+        </el-button>
+      </el-col>
+      <el-col v-if="selectedBusinessProcess !== null" :md="24">
+        <div v-if="form.threats.length > 0">
+          <h4>Applicable Threats</h4>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Threat</th>
+                <th>Vulnerabilities</th>
+                <th>Existing Controls</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(detail, index) in form.threats" :key="index">
+                <td>
+                  <el-button @click="removeItem(form.threats, index)">
+                    <icon icon="tabler:trash" color="red" />
+                  </el-button>
+                </td>
+                <td>
+                  {{ detail.threat }}
+                </td>
+                <td>
+                  <div
+                    v-for="(vulnerability, v_index) in detail.vulnerabilities"
+                    :key="v_index"
+                    style="margin-top: 5px"
+                  >
+                    <el-tag
+                      type="info"
+                      effect="dark"
+                      closable
+                      :disable-transitions="false"
+                      @close="removeItem(detail.vulnerabilities, v_index)"
+                    >
+                      <icon icon="tabler:point" /> {{ vulnerability }}
+                    </el-tag>
+                  </div>
+                </td>
+                <td>
+                  <div
+                    v-for="(control_description, c_index) in detail.control_descriptions"
+                    :key="c_index"
+                    style="margin-top: 5px"
+                  >
+                    <el-tag
+                      closable
+                      type="success"
+                      effect="dark"
+                      :disable-transitions="false"
+                      @close="removeItem(detail.control_descriptions, c_index)"
+                    >
+                      {{ control_description }}
+                    </el-tag>
+                    <br />
+                  </div>
+                  <el-input
+                    v-if="detail.showNewInput"
+                    v-model="inputValue"
+                    class="input-new-tag"
+                    placeholder="Type existing control"
+                    style="width: 90%"
+                    @blur="
+                      ($event.target.value
+                        ? detail.control_descriptions.push($event.target.value)
+                        : (inputValue = ''),
+                      (inputValue = ''),
+                      (detail.showNewInput = false))
+                    "
+                  />
+                  <a
+                    v-else
+                    style="color: #409eff; cursor: pointer"
+                    @click="detail.showNewInput = true"
+                  >
+                    + Add New
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </el-col>
+      <el-col :md="24">
+        <v-btn
+          :disabled="form.threats.length < 1"
+          :loading="loading"
+          class="text-none mb-4"
+          color="success"
+          size="x-large"
+          variant="flat"
+          block
+          @click="formSubmitted()"
+        >
+          Submit
+        </v-btn>
+      </el-col>
+    </el-row>
+    <el-drawer
+      v-model="isCreateBusinessProcessActive"
+      title="Create Business Process"
+      direction="rtl"
+      size="87%"
+      destroy-on-close
+    >
+      <CreateBusinessProcess
+        :business-unit-id="businessUnitId"
+        :client-id="clientId"
+        @save="fetchBusinessProcesses"
+      />
+    </el-drawer>
+    <el-dialog
+      v-model="showApplicableThreatModal"
+      v-if="selectedBusinessProcess !== null"
+      :title="`Select Applicable Threats for: ${selectedBusinessProcess.name}`"
+      centered
+      width="80%"
+      hide-footer
+    >
+      <ApplicableThreats
+        v-if="selectedBusinessProcess !== null"
+        :selected-asset-type="selectedBusinessProcess"
+        @done="appendThreatsToForm"
+      />
+    </el-dialog>
+    <el-dialog
+      v-model="showRiskCategoryForm"
+      title="Risk Category"
+      centered
+      width="50%"
+      hide-footer
+    >
+      <create-risk-category
+        :client-id="clientId"
+        :selected-data="selectedRiskCategory"
+        :is-edit="isEdit"
+        @saved="refreshCategorySelection()"
+      />
+    </el-dialog>
+    <!-- CREATE ASSET TYPES BEGINS-->
+    <el-dialog v-model="createAssetTypeModal" title="Asset Type" centered width="40%" hide-footer>
+      <create-asset-type :client-id="clientId" @save="fetchAssetTypes" />
+    </el-dialog>
+    <!-- CREATE ASSET TYPES ENDS-->
+    <el-dialog v-model="createAssetModal" title="Asset" centered width="60%" hide-footer>
+      <create-asset
+        :asset-type-id="form.asset_type_id"
+        :client-id="clientId"
+        @save="fetchAssets(form.asset_type_id)"
+      />
+    </el-dialog>
   </div>
 </template>
 <script>
 // import { FormWizard, TabContent } from 'vue3-form-wizard'
-import { Editor } from '@/components/Editor'
+// import { Editor } from '@/components/Editor'
 import Resource from '@/api/resource'
+import CreateRiskCategory from './CreateRiskCategory.vue'
+import CreateAssetType from '@/views/modules/settings/partials/ManageAssetTypes/CreateAssetType.vue'
+import CreateAsset from '@/views/modules/settings/partials/ManageAssets/CreateAsset.vue'
+import ApplicableThreats from './ApplicableThreats.vue'
+import CreateBusinessProcess from '@/views/modules/settings/partials/business-units/partials/CreateBusinessProcess.vue'
 // import 'vue3-form-wizard/dist/style.css'
 
 export default {
   components: {
-    Editor
-    // BButton,
+    CreateRiskCategory,
+    CreateAssetType,
+    CreateAsset,
+    ApplicableThreats,
+    CreateBusinessProcess
   },
   props: {
     clientId: {
@@ -478,7 +347,7 @@ export default {
     },
     module: {
       type: String,
-      default: 'isms'
+      default: 'bcms'
     }
   },
   data() {
@@ -486,6 +355,8 @@ export default {
       showRiskCategoryForm: false,
       createAssetModal: false,
       createAssetTypeModal: false,
+      isCreateBusinessProcessActive: false,
+      showApplicableThreatModal: false,
       isEdit: false,
       activeName: '1',
       clients: [],
@@ -508,6 +379,7 @@ export default {
         asset_type_id: '',
         asset_id: '',
         threat: '',
+        threats: [],
         type: '',
         vulnerability_description: '',
         outcome: '',
@@ -544,6 +416,7 @@ export default {
         asset_type_id: '',
         asset_id: '',
         threat: '',
+        threats: [],
         type: '',
         sub_type: '',
         vulnerability_description: '',
@@ -584,14 +457,15 @@ export default {
       ],
       loading: false,
       loadSearch: false,
-      selectedBusinessProcess: {},
+      selectedBusinessProcess: null,
       uploadableFile: null,
       selectedRiskCategory: { name: '', sub_categories: [] },
       selectedCategoryIndex: null,
       teams: [],
       asset_types: [],
       selectedAssetType: null,
-      assets: []
+      assets: [],
+      staff: []
     }
   },
   watch: {
@@ -599,7 +473,6 @@ export default {
       this.form.client_id = this.clientId
       this.fetchRiskCategories()
       this.fetchBusinessProcesses()
-      this.this.fetchAssetTypes()
     },
     businessUnitId() {
       this.form.business_unit_id = this.businessUnitId
@@ -608,7 +481,7 @@ export default {
   },
   created() {
     this.fetchThreats()
-    this.fetchAssetTypes()
+    this.fetchStaff()
     this.form.client_id = this.clientId
     this.form.business_unit_id = this.businessUnitId
     this.form.module = this.module
@@ -616,9 +489,22 @@ export default {
     this.fetchBusinessProcesses()
   },
   methods: {
+    fetchStaff() {
+      const fetchUsersResource = new Resource('users/fetch-staff')
+      fetchUsersResource.list().then((response) => {
+        this.staff = response.staff
+      })
+    },
     setTeams() {
       this.form.business_process_id = this.selectedBusinessProcess.id
-      this.teams = this.selectedBusinessProcess.teams
+      // this.teams = this.selectedBusinessProcess.teams
+    },
+    appendThreatsToForm(threats) {
+      this.form.threats = []
+      setTimeout(() => {
+        this.form.threats = threats
+        this.showApplicableThreatModal = false
+      }, 1)
     },
     refreshCategorySelection() {
       this.showRiskCategoryForm = false
@@ -632,41 +518,6 @@ export default {
     },
     onImageChange(e) {
       this.uploadableFile = e.target.files[0]
-    },
-    fetchAssetTypes() {
-      const fetchEntryResource = new Resource('risk-assessment/fetch-asset-types')
-      this.loading = true
-      fetchEntryResource
-        .list({ client_id: this.clientId })
-        .then((response) => {
-          this.asset_types = response.asset_types
-          this.loading = false
-        })
-        .catch((error) => {
-          // console.log(error.response)
-          this.$message.error(error.response.data.error)
-          this.loading = false
-        })
-    },
-    fetchAssets(assetTypeId) {
-      // const assetTypeId = event.target.value
-      const fetchAssetsResource = new Resource('risk-assessment/fetch-assets')
-      fetchAssetsResource
-        .list({ client_id: this.clientId, asset_type_id: assetTypeId })
-        .then((response) => {
-          this.assets = response.assets
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
-        })
-    },
-    setAssets() {
-      this.form.asset_id = ''
-      if (this.selectedAssetType !== null) {
-        this.form.asset_type_id = this.selectedAssetType.id
-        this.assets = this.selectedAssetType.assets
-      }
     },
     fetchThreats() {
       this.loadSearch = true
@@ -700,19 +551,6 @@ export default {
           this.loading = false
         })
     },
-    fetchBusinessUnits() {
-      this.business_units = []
-      const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')
-      fetchBusinessUnitsResource
-        .list({ client_id: this.form.client_id })
-        .then((response) => {
-          this.business_units = response.business_units
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
-        })
-    },
     fetchBusinessProcesses() {
       this.business_processes = []
       const fetchBusinessProcesssResource = new Resource('business-units/fetch-business-processes')
@@ -725,66 +563,6 @@ export default {
         .catch(() => {
           this.loading = false
         })
-    },
-    validateSelection() {
-      return new Promise((resolve, reject) => {
-        this.$refs.selectionRule.validate().then((success) => {
-          if (success) {
-            this.saveAndContinue()
-            resolve(true)
-          } else {
-            reject()
-          }
-        })
-      })
-    },
-    validateRisk() {
-      return new Promise((resolve, reject) => {
-        this.$refs.riskRule.validate().then((success) => {
-          if (success) {
-            this.saveAndContinue()
-            resolve(true)
-          } else {
-            reject()
-          }
-        })
-      })
-    },
-    validateControl() {
-      return new Promise((resolve, reject) => {
-        this.$refs.controlRule.validate().then((success) => {
-          if (success) {
-            this.saveAndContinue()
-            resolve(true)
-          } else {
-            reject()
-          }
-        })
-      })
-    },
-    validateTesting() {
-      return new Promise((resolve, reject) => {
-        this.$refs.testRules.validate().then((success) => {
-          if (success) {
-            this.saveAndContinue()
-            resolve(true)
-          } else {
-            reject()
-          }
-        })
-      })
-    },
-    validationGap() {
-      return new Promise((resolve, reject) => {
-        this.$refs.gapRules.validate().then((success) => {
-          if (success) {
-            // we dont ned to save and continue here since this is the last part. Just submit outrightly
-            resolve(true)
-          } else {
-            reject()
-          }
-        })
-      })
     },
     setFormVariables() {
       const formData = new FormData()
@@ -799,6 +577,7 @@ export default {
       formData.append('asset_type_id', this.form.asset_type_id)
       formData.append('asset_id', this.form.asset_id)
       formData.append('threat', this.form.threat)
+      formData.append('threats', JSON.stringify(this.form.threats))
       formData.append('vulnerability_description', this.form.vulnerability_description)
       formData.append('outcome', this.form.outcome)
       formData.append('risk_owner', this.form.risk_owner)

@@ -80,9 +80,13 @@ export default {
   methods: {
     openFile() {
       if (this.documentData.link === null) {
-        this.fetchbase64FileFormat(this.documentData.template_link)
+        this.fetchbase64FileFormat(this.documentData.template.link)
       } else {
-        this.openJsonversion(this.documentData.link)
+        if (this.documentData.type === 'json') {
+          this.openJsonversion(this.documentData.link)
+        } else {
+          this.fetchbase64FileFormat(this.documentData.link)
+        }
       }
     },
     async openJsonversion(link) {

@@ -1,14 +1,14 @@
 <template>
-  <el-tabs type="border-card" class="demo-tabs">
-    <el-tab-pane v-if="checkRole(['admin', 'client'])" label="Manage Schedules & Tasks" lazy>
-      <ModuleCalendar v-if="checkRole(['admin'])" />
-      <AssignedCalendar v-if="checkRole(['client'])" />
+  <el-tabs type="border-card">
+    <el-tab-pane label="Manage Schedules & Tasks">
+      <ModuleCalendar v-if="checkRole(['admin'])" :selected-module="module" />
+      <AssignedCalendar v-if="checkRole(['client'])" :selected-module="module" />
     </el-tab-pane>
     <el-tab-pane v-if="checkRole(['admin'])" label="All Scheduled Tasks" lazy>
-      <Calendar />
+      <Calendar :selected-module="module" />
     </el-tab-pane>
     <el-tab-pane v-if="checkRole(['client', 'admin'])" label="My Tasks" lazy>
-      <MyCalendar />
+      <MyCalendar :selected-module="module" />
     </el-tab-pane>
   </el-tabs>
   <!-- <div>
@@ -17,8 +17,8 @@
 </template>
 
 <script>
-import Calendar from './partials/Calendar.vue'
-import MyCalendar from './partials/MyCalendar.vue'
+import Calendar from '@/views/modules/ModuleSetup/Calendar/partials/Calendar.vue'
+import MyCalendar from '@/views/modules/ModuleSetup/Calendar/partials/MyCalendar.vue'
 import ModuleCalendar from './partials/ModuleCalendar.vue'
 import checkRole from '@/utils/role'
 import AssignedCalendar from './partials/AssignedCalendar.vue'
@@ -31,7 +31,9 @@ export default {
   },
 
   data() {
-    return {}
+    return {
+      module: 'isms'
+    }
   },
   methods: {
     checkRole

@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div v-loading="loading">
+    {{ selectedRiskRegister }}
     <el-row :gutter="20">
       <el-col :md="20">
         <div v-if="form.asset_id !== 0 && form.asset_id !== null">
@@ -159,7 +160,7 @@
             </el-select>
           </el-col>
           <el-col :md="24">
-            <small>Vulnerability/Risk Description</small>
+            <small>Vulnerability Description</small>
             <!-- <textarea
                   id="risk_description"
                   v-model="form.vulnerability_description"
@@ -167,12 +168,17 @@
                   placeholder="Describe Risk"
                   @blur="updateField($event.target.value, 'vulnerability_description', form)"
                 ></textarea> -->
-            <Editor
-              id="vulnerability_description"
+            <v-textarea
               v-model="form.vulnerability_description"
+              variant="outlined"
               placeholder="Describe Risk"
               @blur="updateField(form.vulnerability_description, 'vulnerability_description', form)"
             />
+            <!-- <Editor
+              v-model="form.vulnerability_description"
+              placeholder="Describe Risk"
+              @blur="updateField(form.vulnerability_description, 'vulnerability_description', form)"
+            /> -->
           </el-col>
           <!-- <el-col :md="12">
             <el-form-group
@@ -222,12 +228,17 @@
           </el-col>
           <el-col :md="24">
             <small>Control Description</small>
-            <Editor
-              id="control_description"
+            <v-textarea
               v-model="form.control_description"
+              variant="outlined"
               placeholder="Describe Control"
               @blur="updateField(form.control_description, 'control_description', form)"
             />
+            <!-- <Editor
+              v-model="form.control_description"
+              placeholder="Describe Control"
+              @blur="updateField(form.control_description, 'control_description', form)"
+            /> -->
           </el-col>
           <el-col :md="12">
             <small>Where is the control performed?</small>
@@ -295,12 +306,17 @@
           </el-col>
           <el-col :md="24">
             <small>State any compensating control</small>
-            <Editor
-              id="compensating_control"
+            <v-textarea
+              v-model="form.compensating_control"
+              variant="outlined"
+              placeholder="Enter Compensating control"
+              @blur="updateField(form.compensating_control, 'compensating_control', form)"
+            />
+            <!-- <Editor
               v-model="form.compensating_control"
               placeholder="Enter Compensating control"
               @blur="updateField($event.target.value, 'compensating_control', form)"
-            />
+            /> -->
           </el-col>
         </el-row>
       </template>
@@ -309,12 +325,18 @@
         <el-row :gutter="20">
           <el-col :md="12">
             <small>Test Procedure</small>
-            <textarea
+            <v-textarea
+              v-model="form.test_procedures"
+              variant="outlined"
+              placeholder="Provide Test Procedure"
+              @blur="updateField(form.test_procedures, 'test_procedures', form)"
+            />
+            <!-- <textarea
               v-model="form.test_procedures"
               class="form-control"
               placeholder="Provide Test Procedure"
               @blur="updateField($event.target.value, 'test_procedures', form)"
-            ></textarea>
+            ></textarea> -->
           </el-col>
           <el-col :md="12">
             <small>Sample Size</small>
@@ -329,19 +351,17 @@
           </el-col>
           <el-col :md="24">
             <small>Data Required for test</small>
-            <!-- <ckeditor
-                id="data_required"
-                v-model="form.data_required"
-                :editor="editor"
-                :config="editorConfig"
-                placeholder="Data Required"
-                @blur="updateField(form.data_required, 'data_required', form)"
-              /> -->
-            <Editor
+            <v-textarea
+              v-model="form.data_required"
+              variant="outlined"
+              placeholder="Data Required for test"
+              @blur="updateField(form.data_required, 'data_required', form)"
+            />
+            <!-- <Editor
               v-model="form.data_required"
               placeholder="Data Required"
               @blur="updateField($event.target.value, 'data_required', form)"
-            />
+            /> -->
           </el-col>
           <el-col :md="12">
             <small>Link to Evidence & Report</small><br />
@@ -352,12 +372,7 @@
               style="color: #409eff"
               >Click link to evidence</a
             >
-            <input
-              class="form-control"
-              type="file"
-              placeholder="Change Link to Evidence"
-              @change="onImageChange"
-            />
+            <input type="file" placeholder="Change Link to Evidence" @change="onImageChange" />
           </el-col>
           <el-col :md="12">
             <small>Test Conclusion</small>
@@ -379,14 +394,20 @@
           <el-col :md="12">
             <small>Gap Description</small>
             <el-form-group label="Gap Description" label-for="gap_description">
-              <textarea
+              <v-textarea
+                v-model="form.gap_description"
+                variant="outlined"
+                placeholder="This is to document if there is any gap or deficiency in internal control based on the procedures performed"
+                @blur="updateField(form.gap_description, 'gap_description', form)"
+              />
+              <!-- <textarea
                 id="gap_description"
                 v-model="form.gap_description"
                 class="form-control"
                 :row="6"
                 placeholder="This is to document if there is any gap or deficiency in internal control based on the procedures performed"
                 @blur="updateField($event.target.value, 'gap_description', form)"
-              ></textarea>
+              ></textarea> -->
             </el-form-group>
           </el-col>
           <el-col :md="12">
@@ -395,26 +416,40 @@
               label="TOD Improvement Opportunity (if any)"
               label-for="tod_improvement_opportunity"
             >
-              <textarea
+              <v-textarea
+                v-model="form.tod_improvement_opportunity"
+                variant="outlined"
+                placeholder="TOD Improvement Opportunity"
+                @blur="
+                  updateField(form.tod_improvement_opportunity, 'tod_improvement_opportunity', form)
+                "
+              />
+              <!-- <textarea
                 id="tod_improvement_opportunity"
                 v-model="form.tod_improvement_opportunity"
                 :row="6"
                 class="form-control"
                 placeholder="TOD Improvement Opportunity"
                 @blur="updateField($event.target.value, 'tod_improvement_opportunity', form)"
-              ></textarea>
+              ></textarea> -->
             </el-form-group>
           </el-col>
           <el-col :md="12">
             <small>Recommendation</small>
             <el-form-group label="Recommendation" label-for="recommendation">
-              <textarea
+              <v-textarea
+                v-model="form.recommendation"
+                variant="outlined"
+                placeholder="Recommendation"
+                @blur="updateField(form.recommendation, 'recommendation', form)"
+              />
+              <!-- <textarea
                 id="recommendation"
                 v-model="form.recommendation"
                 class="form-control"
                 placeholder="Recommendation"
                 @blur="updateField($event.target.value, 'recommendation', form)"
-              ></textarea>
+              ></textarea> -->
             </el-form-group>
           </el-col>
           <el-col :md="12">
@@ -431,12 +466,11 @@
           <el-col :md="12">
             <small>Timeline</small>
             <el-form-group label="Timeline" label-for="timeline">
-              <input
+              <el-input
                 id="timeline"
                 v-model="form.timeline"
                 placeholder="Timeline"
-                class="form-control"
-                @blur="updateField($event.target.value, 'timeline', form)"
+                @blur="updateField($event, 'timeline', form)"
               />
             </el-form-group>
           </el-col>
@@ -454,7 +488,7 @@
         </el-row>
       </template>
       <template v-slot:item.5>
-        <el-row :gutter="20" v-if="form.business_unit_id === 0 || form.business_unit_id === null">
+        <el-row :gutter="20">
           <el-col :md="24">
             <v-btn
               :disabled="loading"
@@ -463,10 +497,9 @@
               color="black"
               size="x-large"
               variant="flat"
-              block
-              @click="formSubmitted()"
+              @click="updateField('final', 'submit_mode', form, true)"
             >
-              Submit
+              Submit Entries
             </v-btn>
           </el-col>
         </el-row>
@@ -476,13 +509,13 @@
 </template>
 <script>
 // import { FormWizard, TabContent } from 'vue3-form-wizard'
-import { Editor } from '@/components/Editor'
+// import { Editor } from '@/components/Editor'
 import Resource from '@/api/resource'
 // import 'vue3-form-wizard/dist/style.css'
 
 export default {
   components: {
-    Editor
+    // Editor
     // FormWizard,
     // TabContent
     // BButton,
@@ -518,7 +551,7 @@ export default {
         risk_unique_id: '',
         asset_type_id: '',
         asset_id: '',
-        threat: '',
+        threats: [],
         type: '',
         vulnerability_description: '',
         outcome: '',
@@ -554,7 +587,7 @@ export default {
         risk_unique_id: '',
         asset_type_id: '',
         asset_id: '',
-        threat: '',
+        threats: [],
         type: '',
         vulnerability_description: '',
         outcome: '',
@@ -719,11 +752,14 @@ export default {
           this.loading = false
         })
     },
-    updateField(value, field, assessment) {
+    updateField(value, field, assessment, alert = false) {
       const params = { field, value }
       const updateResource = new Resource('update-risk-register')
       updateResource.update(assessment.id, params).then(() => {
         this.$emit('reload')
+        if (alert) {
+          this.$message('Field Updated')
+        }
       })
     },
     setFormVariables() {

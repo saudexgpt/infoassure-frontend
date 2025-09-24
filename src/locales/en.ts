@@ -69,6 +69,7 @@ export default {
     returnToHome: 'Return to home'
   },
   setting: {
+    accessControl: 'Access Control',
     projectSetting: 'Project setting',
     theme: 'Theme',
     layout: 'Layout',

@@ -42,6 +42,7 @@
         <div v-if="viewType === 'edit'">
           <AssignTaskTable
             :selected-data="selectedData"
+            :selected-module="selectedModule"
             :staff="staff"
             role="client"
             @update:tasks="updateTask"
@@ -58,7 +59,7 @@
 </template>
 <script>
 import Resource from '@/api/resource'
-import AssignTaskTable from './AssignTaskTable.vue'
+import AssignTaskTable from '@/views/modules/ModuleSetup/Calendar/partials/AssignTaskTable.vue'
 import CardNavView from '@/views/Components/CardNavView.vue'
 
 export default {
@@ -69,6 +70,7 @@ export default {
   props: {},
   data() {
     return {
+      selectedModule: 'bcms',
       showCreateActivityModal: false,
       showCreateTaskModal: false,
       showMenu: true,

@@ -16,8 +16,8 @@
         element-loading-text="loading resources, please wait..."
         width="400px"
       >
-        <v-btn color="orange" block @click="showCreateActivityModal = true">
-          <icon icon="tabler:plus" />&nbsp;New Activity
+        <v-btn color="orange" block @click="showCreateTaskModal = true">
+          <icon icon="tabler:plus" />&nbsp;New Task
         </v-btn>
         <div style="max-height: 400px; overflow: auto">
           <el-collapse>
@@ -30,32 +30,35 @@
                 <h3>{{ clause.name }}</h3>
               </template>
               <el-collapse expand-icon-position="left">
+                <div>
+                  <strong>{{ clause.description }}</strong>
+                </div>
                 <el-collapse-item
                   v-for="(section, section_index) in clause.sections"
                   :key="section_index"
                 >
                   <template #title>
-                    <strong>{{ section.section_no }}&nbsp;</strong>
-                    <small> {{ section.name }}</small>
+                    <strong>
+                      <small>{{ section.name }} - {{ section.description }}</small>
+                    </strong>
                   </template>
                   <div>
-                    <v-btn color="error" block @click="createTask(section)">
+                    <!-- <v-btn color="error" block @click="createTask(section)">
                       <icon icon="tabler:plus" />&nbsp;New Task
                     </v-btn>
-                    <br />
+                    <br /> -->
                     <div v-for="(task, task_index) in section.tasks" :key="task_index">
                       <CardNavView
                         :id="`task-${index}-${section_index}-${task_index}`"
-                        :title="`TASK ${task.id}`"
+                        :title="task.name"
+                        title-icon="tabler:arrow-badge-right"
                         @clickToView="viewDetails(section, task)"
                       >
-                        <template #description>
+                        <!-- <template #description>
                           <div>
-                            <em><icon icon="tabler:arrow-badge-right" /> {{ task.name }}</em>
-                            <br />
                             <span v-html="task.description"></span>
                           </div>
-                        </template>
+                        </template> -->
                       </CardNavView>
                     </div>
                   </div>
@@ -90,10 +93,10 @@
     <el-dialog
       v-if="showCreateTaskModal"
       v-model="showCreateTaskModal"
-      :title="`Create Tasks under control ${selectedActivity.section_no} (${selectedActivity.name})`"
+      :title="`Create Tasks`"
       width="80%"
     >
-      <CreateTasks :section="selectedActivity" @saved="fetchTaskByRequirement" />
+      <CreateTasks :clauses="clause_tasks" @saved="fetchTaskByRequirement" />
     </el-dialog>
   </el-card>
 </template>

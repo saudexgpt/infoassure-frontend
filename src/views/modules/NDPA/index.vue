@@ -1,9 +1,12 @@
 <template>
   <div>
-    <h4>Welcome to the NDPA Module</h4>
-    <el-tabs v-model="activeName" @tab-click="forceRerender">
+    <!-- <h4>Welcome to the NDPA Module</h4> -->
+    <el-tabs v-model="activeName" type="border-card" @tab-click="forceRerender" stretch>
       <el-tab-pane lazy label="Overview" name="#overview">
         <NDPADashboard />
+      </el-tab-pane>
+      <el-tab-pane :key="keyValue" label="The NDPA Journey" name="#ndpa-journey" lazy>
+        <NDPAJourney />
       </el-tab-pane>
       <!-- <el-tab-pane lazy label="Compliance Assessment" name="#compliance">
         <GapAssessment
@@ -16,7 +19,7 @@
         <BusinessUnit />
       </el-tab-pane>
       <el-tab-pane lazy label="Risk Library" name="#risk_library">
-        <RiskLibrary />
+        <RiskLibrary module="ndpa" view-only="ndpa" />
       </el-tab-pane>
       <el-tab-pane lazy label="PDA" name="#pda">
         <PDA :selected-client="selectedClient" />
@@ -24,9 +27,9 @@
       <el-tab-pane lazy label="RoPA" name="#ropa">
         <RoPA :selected-client="selectedClient" />
       </el-tab-pane>
-      <!-- <el-tab-pane lazy label="DPIA" name="dpia">
-      <DPIA />
-    </el-tab-pane> -->
+      <el-tab-pane lazy label="DPIA" name="#dpia">
+        <ConsolidatedRA v-if="activeName === '#dpia'" module="ndpa" view-only="ndpa" />
+      </el-tab-pane>
       <!-- <el-tab-pane lazy
       label="Reports"
       name="third"
@@ -42,22 +45,26 @@ import NDPADashboard from '@/views/modules/NDPA/Dashboard.vue'
 import BusinessUnit from '@/views/modules/settings/partials/business-units/SetUp.vue'
 // import GapAssessment from './partials/GapAssessment.vue'
 import RiskLibrary from '@/views/modules/settings/partials/RiskAndThreats/ViewRiskControlMatrix.vue'
-// import RiskAssessment from '@/views/modules/risk-assessment/index.vue'
+import ConsolidatedRA from '@/views/modules/risk-assessment/index.vue'
 
 // import DPIA from './DPIA/index.vue'
 import RoPA from './RoPA/index.vue'
 import PDA from './PDA/index.vue'
+import NDPAJourney from './NDPAJourney.vue'
 // import NDPAReport from '@/views/modules/NDPA/Report.vue'
 
 export default {
   components: {
     NDPADashboard,
+    NDPAJourney,
+    PDA,
+    RoPA,
     // NDPAManage,
     BusinessUnit,
     // GapAssessment,
-    RiskLibrary
+    RiskLibrary,
     // DPIA
-    // RiskAssessment
+    ConsolidatedRA
     // NDPAReport,
   },
   data() {

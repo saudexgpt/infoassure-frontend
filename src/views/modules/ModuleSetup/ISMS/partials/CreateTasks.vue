@@ -109,7 +109,7 @@
             type="success"
             @click="(addLine(index), (activeName = parseInt(index + 1)))"
           >
-            <icon icon="tabler:plus" />
+            <icon icon="tabler:plus" /> Add New
           </el-button>
         </el-button-group>
       </el-collapse-item>
@@ -127,7 +127,7 @@
     type="primary"
     @click="formSubmitted"
   >
-    Submit
+    Submit All
   </el-button>
 </template>
 

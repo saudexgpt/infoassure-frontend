@@ -34,6 +34,12 @@
 import Resource from '@/api/resource'
 export default {
   name: 'GanttChart',
+  props: {
+    selectedModule: {
+      type: String,
+      required: true
+    }
+  },
 
   data() {
     const day = 24 * 36e5,
@@ -215,7 +221,9 @@ export default {
     },
     fetchProjectCalendarData() {
       // Fetch data for the calendar
-      const fetchResource = new Resource('isms/calendar/fetch-project-calendar-data')
+      const fetchResource = new Resource(
+        `${this.selectedModule}/calendar/fetch-project-calendar-data`
+      )
       fetchResource
         .list()
         .then((response) => {
@@ -228,7 +236,7 @@ export default {
     },
     markTaskAsDone(taskId) {
       if (confirm('Click OK to mark this task as completed?')) {
-        const fetchResource = new Resource('isms/calendar/mark-task-as-completed')
+        const fetchResource = new Resource(`${this.selectedModule}/calendar/mark-task-as-completed`)
         fetchResource
           .update(taskId)
           .then(() => {

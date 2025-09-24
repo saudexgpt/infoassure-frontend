@@ -1,46 +1,65 @@
 <template>
-  <el-tabs type="border-card" stretch>
-    <el-tab-pane v-for="(clauses, index) in clause_tasks" :key="index" :label="index">
+  <el-tabs
+    v-loading="loading"
+    element-loading-text="loading resources, please wait..."
+    type="border-card"
+    stretch
+  >
+    <el-tab-pane v-for="(tasks, index) in clause_tasks" :key="index" :label="index">
+      <p>Click to view task details</p>
       <el-container style="height: 100%">
-        <el-aside
-          v-loading="loading"
-          element-loading-text="loading resources, please wait..."
-          width="350px"
-        >
-          <div style="max-height: 400px; overflow: auto">
-            <h3>Controls</h3>
-            <el-collapse expand-icon-position="left">
-              <el-collapse-item v-for="(clause, clause_index) in clauses" :key="clause_index">
-                <template #title>
-                  <strong>{{ clause.name }}</strong> {{ clause.description }}
-                </template>
+        <el-aside width="400px">
+          <div v-for="(task, task_index) in tasks" :key="task_index">
+            <CardNavView
+              :id="`task-${index}-${task.id}`"
+              :title="task.name"
+              @click="viewDetails(task)"
+            >
+              <template #description>
                 <div>
-                  <el-card
-                    v-for="(activity, activity_index) in clause.activities"
-                    :key="activity_index"
-                    :id="`activity-${index}-${activity_index}`"
-                    @click="viewDetails(activity, `activity-${index}-${activity_index}`)"
-                    style="cursor: pointer; margin-bottom: 5px"
-                    shadow="hover"
-                  >
-                    <strong>Process {{ activity.activity_no }}</strong>
-                    <!-- <strong>{{ `TASK ${activity.activity_no}-${task.id}` }}</strong> -->
-                    <div>
-                      <em><icon icon="tabler:arrow-badge-right" /> {{ activity.name }}</em>
-                      <br />
-                      <span v-html="activity.description"></span>
-                    </div>
-                  </el-card>
+                  <em>{{ task.clause.name }} - {{ task.section.name }}</em>
+                  <br />
+                  <div v-if="task.assigned_task === null">
+                    <strong>
+                      <icon icon="tabler:calendar-x" size="25" />
+                      Not Assigned
+                    </strong>
+                  </div>
+                  <div v-else>
+                    <strong v-if="task.assigned_task.status === 'overdue'">
+                      <icon icon="tabler:exclamation-circle-filled" color="red" size="25" />
+                      Overdue
+                    </strong>
+                    <strong v-if="task.assigned_task.status === 'in progress'">
+                      <icon icon="tabler:exclamation-circle-filled" color="orange" size="25" />
+                      In Progress
+                    </strong>
+                    <strong
+                      v-if="
+                        task.assigned_task.status === 'completed' ||
+                        task.assigned_task.status === 'submitted'
+                      "
+                    >
+                      <icon icon="tabler:circle-check-filled" color="green" size="25" />
+                      {{ task.assigned_task.status }}
+                    </strong>
+                  </div>
                 </div>
-              </el-collapse-item>
-            </el-collapse>
+              </template>
+            </CardNavView>
           </div>
         </el-aside>
 
         <el-container>
           <el-main v-loading="loadView" element-loading-text="loading data, please wait...">
             <div v-if="viewType === 'edit'">
-              <AssignTaskTable :tasks="selectedData.tasks" @update:tasks="updateTask" />
+              <AssignTaskTable
+                :selected-data="selectedData"
+                :selected-module="selectedModule"
+                :staff="staff"
+                role="admin"
+                @update:tasks="updateTask"
+              />
             </div>
             <div v-if="viewType === 'welcome'" align="center">
               <icon icon="tabler:calendar-time" size="200" />
@@ -55,15 +74,18 @@
 </template>
 <script>
 import Resource from '@/api/resource'
-import AssignTaskTable from './AssignTaskTable.vue'
+import AssignTaskTable from '@/views/modules/ModuleSetup/Calendar/partials/AssignTaskTable.vue'
+import CardNavView from '@/views/Components/CardNavView.vue'
 
 export default {
   components: {
-    AssignTaskTable
+    AssignTaskTable,
+    CardNavView
   },
   props: {},
   data() {
     return {
+      selectedModule: 'ndpa',
       showCreateActivityModal: false,
       showCreateTaskModal: false,
       showMenu: true,
@@ -84,22 +106,30 @@ export default {
       viewType: 'welcome',
       response: {},
       activatedModules: [],
-      selectedActivity: null
+      selectedActivity: null,
+      staff: []
     }
   },
   computed: {},
   mounted() {
     this.fetchTaskByClause()
+    this.fetchStaff()
   },
   methods: {
+    fetchStaff() {
+      const fetchUsersResource = new Resource('users/fetch-staff')
+      fetchUsersResource.list().then((response) => {
+        this.staff = response.staff
+      })
+    },
     updateTask(task) {
-      this.selectedData.tasks = task
+      this.selectedData.assigned_task = task
     },
     fetchTaskByClause(load = true) {
       this.showCreateActivityModal = false
       this.showCreateTaskModal = false
       this.loading = load
-      const fetchResource = new Resource('isms/calendar/fetch-client-assigned-tasks')
+      const fetchResource = new Resource('ndpa/calendar/fetch-client-assigned-tasks')
       fetchResource
         .list()
         .then((response) => {
@@ -110,7 +140,7 @@ export default {
           this.loading = false
         })
     },
-    viewDetails(data, viewId) {
+    viewDetails(data) {
       if (data.id) {
         this.loadView = true
         this.viewType = ''
@@ -119,23 +149,8 @@ export default {
           this.viewType = 'edit'
           this.showMenu = false
           this.loadView = false
-        }, 1000)
-
-        this.changeActiveTabBgColor(viewId)
+        }, 100)
       }
-    },
-    changeActiveTabBgColor(viewId) {
-      const divs = document.getElementsByClassName('el-card')
-      // Loop through the buttons and add the activeCard class to the current/clicked button
-
-      if (divs.length > 0) {
-        for (let i = 0; i < divs.length; i++) {
-          divs[i].style.background = '#ffffff'
-          divs[i].style.color = '#000000'
-        }
-      }
-      document.getElementById(viewId).style.background = '#000000'
-      document.getElementById(viewId).style.color = '#ffffff'
     }
   }
 }

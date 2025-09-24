@@ -1,12 +1,12 @@
 <template>
   <div v-loading="loading">
-    <div>
-      <el-row>
+    <el-form label-position="top">
+      <el-row :gutter="20">
         <el-col :md="12">
-          <el-form-group label="Name of Controller">
+          <el-form-item label="Name of Controller">
             <el-tooltip
               target="controller_name"
-              title="Who is the controller of the data i.e. the natural or legal person, public authority, agency or other body which, alone or jointly with others, determines the purposes and means of the processing of personal data"
+              content="Who is the controller of the data i.e. the natural or legal person, public authority, agency or other body which, alone or jointly with others, determines the purposes and means of the processing of personal data"
             />
             <input
               id="controller_name"
@@ -14,13 +14,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'controller_name')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Contact Details of Controller">
+          <el-form-item label="Contact Details of Controller">
             <el-tooltip
               target="controller_contact_details"
-              title="State the contact details of the Controller"
+              content="State the contact details of the Controller"
             />
             <input
               id="controller_contact_details"
@@ -28,13 +28,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'controller_contact_details')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Name of Joint Controller">
+          <el-form-item label="Name of Joint Controller">
             <el-tooltip
               target="joint_controller_name"
-              title="Who is the joint controller (if any) of the data. This applies where two or more controllers jointly determine the purposes and means of processing"
+              content="Who is the joint controller (if any) of the data. This applies where two or more controllers jointly determine the purposes and means of processing"
             />
             <input
               id="joint_controller_name"
@@ -42,13 +42,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'joint_controller_name')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Contact Details of Controller">
+          <el-form-item label="Contact Details of Controller">
             <el-tooltip
               target="joint_controller_contact_details"
-              title="State the contact details of the joint controller"
+              content="State the contact details of the joint controller"
             />
             <input
               id="joint_controller_contact_details"
@@ -56,13 +56,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'joint_controller_contact_details')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Name of Controller's Representative">
+          <el-form-item label="Name of Controller's Representative">
             <el-tooltip
               target="controller_rep_name"
-              title="Where the controller is not established in the European Union"
+              content="Where the controller is not established in the European Union"
             />
             <input
               id="controller_rep_name"
@@ -70,13 +70,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'controller_rep_name')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Contact Details of Controller's Representative">
+          <el-form-item label="Contact Details of Controller's Representative">
             <el-tooltip
               target="controller_rep_contact_details"
-              title="State the contact details of the controller's representative"
+              content="State the contact details of the controller's representative"
             />
             <input
               id="controller_rep_contact_details"
@@ -84,13 +84,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'controller_rep_contact_details')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Name of Data Protection Officer">
+          <el-form-item label="Name of Data Protection Officer">
             <el-tooltip
               target="dpo_name"
-              title="If applicable - where there is a requirement to appoint a data protection officer"
+              content="If applicable - where there is a requirement to appoint a data protection officer"
             />
             <input
               id="dpo_name"
@@ -98,13 +98,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'dpo_name')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Contact Details of Data Protection Officer">
+          <el-form-item label="Contact Details of Data Protection Officer">
             <el-tooltip
               target="dpo_details"
-              title="State the contact details of the data protection officer"
+              content="State the contact details of the data protection officer"
             />
             <input
               id="dpo_details"
@@ -112,13 +112,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'dpo_details')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Purpose of Processing">
+          <el-form-item label="Purpose of Processing">
             <el-tooltip
               target="processing_purpose"
-              title="The reasons for which the processing is carried out"
+              content="The reasons for which the processing is carried out"
             />
             <textarea
               id="processing_purpose"
@@ -126,13 +126,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'processing_purpose')"
             ></textarea>
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Category of Data Subjects">
+          <el-form-item label="Category of Data Subjects">
             <el-tooltip
               target="data_subject_categories"
-              title="Define who the data subjects are e.g. by country, gender, service recipients"
+              content="Define who the data subjects are e.g. by country, gender, service recipients"
             />
             <input
               id="data_subject_categories"
@@ -140,13 +140,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'data_subject_categories')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Categories of Personal Data">
+          <el-form-item label="Categories of Personal Data">
             <el-tooltip
               target="personal_data_categories"
-              title="Define the types of data items that are involved, particularly if special categories such as biometric data"
+              content="Define the types of data items that are involved, particularly if special categories such as biometric data"
             />
             <textarea
               id="personal_data_categories"
@@ -154,13 +154,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'personal_data_categories')"
             ></textarea>
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Categories of Data Recipients">
+          <el-form-item label="Categories of Data Recipients">
             <el-tooltip
               target="data_recipients_categories"
-              title="Who is the data regularly shared with or who has access to it?"
+              content="Who is the data regularly shared with or who has access to it?"
             />
             <input
               id="data_recipients_categories"
@@ -168,13 +168,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'data_recipients_categories')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="International Transfer Destination">
+          <el-form-item label="International Transfer Destination">
             <el-tooltip
               target="international_transfer_destination"
-              title="Countries or international organisations to whom the data are regularly transferred"
+              content="Countries or international organisations to whom the data are regularly transferred"
             />
             <input
               id="international_transfer_destination"
@@ -182,13 +182,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'international_transfer_destination')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Time Limit for Erasure">
+          <el-form-item label="Time Limit for Erasure">
             <el-tooltip
               target="erasure_time_limit"
-              title="How long will the personal data be held for before it is erased?"
+              content="How long will the personal data be held for before it is erased?"
             />
             <input
               id="erasure_time_limit"
@@ -196,13 +196,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'erasure_time_limit')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Technical and Organisational Security Measures Applied">
+          <el-form-item label="Technical and Organisational Security Measures Applied">
             <el-tooltip
               target="security_measures_applied"
-              title="A brief description of the controls used to protect the personal data (refer to additional information if required)"
+              content="A brief description of the controls used to protect the personal data (refer to additional information if required)"
             />
             <input
               id="security_measures_applied"
@@ -210,13 +210,13 @@
               class="form-control"
               @blur="updateField($event.target.value, 'security_measures_applied')"
             />
-          </el-form-group>
+          </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-group label="Comments">
+          <el-form-item label="Comments">
             <el-tooltip
               target="comments"
-              title="Any other comments you would like to make about the information"
+              content="Any other comments you would like to make about the information"
             />
             <textarea
               id="comments"
@@ -224,11 +224,11 @@
               class="form-control"
               @blur="updateField($event.target.value, 'comments')"
             ></textarea>
-          </el-form-group>
+          </el-form-item>
         </el-col>
       </el-row>
       <el-button type="primary" @click="$emit('updated')"> Update </el-button>
-    </div>
+    </el-form>
   </div>
 </template>
 <script>

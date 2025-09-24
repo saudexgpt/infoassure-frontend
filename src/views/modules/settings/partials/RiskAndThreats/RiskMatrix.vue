@@ -40,9 +40,14 @@
                   {{ risk_matrix.approver ? risk_matrix.approver.name : '' }}
                 </td>
                 <td v-if="risk_matrix.proposed_matrix !== null">
-                  <el-button type="success" @click="approvematrix(risk_matrix.id)">
+                  <el-button
+                    v-if="checkPermission(['approve-risk-matrix'])"
+                    type="success"
+                    @click="approvematrix(risk_matrix.id)"
+                  >
                     Click to approve
                   </el-button>
+                  <el-alert v-else>Awaiting Approval</el-alert>
                 </td>
               </tr>
             </tbody>
@@ -59,16 +64,21 @@
             `"
           >
             <h3>Set your Risk Appetite for a {{ risk_matrix.current_matrix }} Matrix</h3>
-            <div v-for="(appetite, index) in fetchRiskAppetite(matrix)" :key="index">
-              <strong>{{ appetite.label }}</strong> <br />
-              <el-radio-group v-model="risk_appetite" @change="setRiskAppetite(risk_matrix.id)">
-                <el-radio-button
-                  v-for="(value, vIndex) in appetite.valueArray"
-                  :key="vIndex"
-                  :label="value"
-                  :value="value"
-                />
-              </el-radio-group>
+            <div v-if="checkPermission(['set-risk-appetite'])">
+              <div v-for="(appetite, index) in fetchRiskAppetite(matrix)" :key="index">
+                <strong>{{ appetite.label }}</strong> <br />
+                <el-radio-group v-model="risk_appetite" @change="setRiskAppetite(risk_matrix.id)">
+                  <el-radio-button
+                    v-for="(value, vIndex) in appetite.valueArray"
+                    :key="vIndex"
+                    :label="value"
+                    :value="value"
+                  />
+                </el-radio-group>
+              </div>
+            </div>
+            <div v-else>
+              <strong>Risk Appetite: {{ risk_appetite }}</strong>
             </div>
             <!-- <el-select
               v-model="risk_appetite"
@@ -111,6 +121,7 @@
                             v-model="content.name"
                             type="text"
                             class="form-control"
+                            :disabled="!checkPermission(['configure-risk-ratings'])"
                             @blur="customizeRiskMatrix(content.id, 'impact', 'name', $event)"
                           />
                         </td>
@@ -139,6 +150,7 @@
                             v-model="content.name"
                             type="text"
                             class="form-control"
+                            :disabled="!checkPermission(['configure-risk-ratings'])"
                             @blur="customizeRiskMatrix(content.id, 'likelihood', 'name', $event)"
                           />
                         </td>
@@ -147,6 +159,7 @@
                             v-model="content.summary"
                             type="text"
                             class="form-control"
+                            :disabled="!checkPermission(['configure-risk-ratings'])"
                             @blur="customizeRiskMatrix(content.id, 'likelihood', 'summary', $event)"
                           ></textarea>
                         </td>
@@ -196,6 +209,7 @@
                             type="text"
                             class="form-control"
                             :placeholder="`Enter the ${impact_on_area.impact_area.area} for a ${content.name} rating`"
+                            :disabled="!checkPermission(['configure-impact-analysis'])"
                             @blur="saveImpactOnAreas(impact_on_area.id, $event)"
                           ></textarea>
                         </div>
@@ -252,6 +266,7 @@
   </div>
 </template>
 <script>
+import checkPermission from '@/utils/permission'
 import RiskRankingMatrix from './partials/RiskRankingMatrix.vue'
 import Resource from '@/api/resource'
 import { setCoolBackground } from '@/utils/tsxHelper'
@@ -382,6 +397,7 @@ export default {
     this.loadFunctions()
   },
   methods: {
+    checkPermission,
     setCoolBackground,
     loadFunctions() {
       this.fetchRiskMatricesSetup()

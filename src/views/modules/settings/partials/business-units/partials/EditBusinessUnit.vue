@@ -73,7 +73,7 @@
       </el-col>
       <!-- submit and reset -->
       <el-col cols="12">
-        <el-button type="primary" class="btn-block" @click="submit()"> Submit </el-button>
+        <el-button type="primary" class="btn-block" @click="update()"> Submit </el-button>
       </el-col>
     </el-row>
   </div>
@@ -152,8 +152,9 @@ export default {
         .then(() => {
           this.loading = false
           // this.$message('Action Successful')
-          this.$notify({
-            title: 'Action Successful'
+          this.$message({
+            message: 'Action Successful',
+            type: 'success'
           })
           this.$emit('update')
           // this.$emit('update:is-edit-business-unit-sidebar-active', false)

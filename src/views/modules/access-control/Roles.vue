@@ -1,19 +1,15 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
     <template v-slot:header>
       <div>
         <el-row>
-          <el-col cols="6">
-            <h4>Available Roles</h4>
+          <el-col :md="12">
+            <h3>Available Roles</h3>
           </el-col>
-          <el-col cols="6">
+          <el-col :md="12">
             <span class="pull-right">
-              <el-button
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="gradient-primary"
-                @click="isCreateRoleSidebarActive = true"
-              >
-                <feather-icon icon="FilePlusIcon" class="mr-50" />
+              <el-button type="primary" @click="isCreateRoleSidebarActive = true">
+                <icon icon="tabler:plus" />
                 <span class="align-middle">Create Role</span>
               </el-button>
             </span>
@@ -21,98 +17,56 @@
         </el-row>
       </div>
     </template>
-    <aside>
-      <el-row :gutter="5">
-        <el-col :lg="12" :md="12" :sm="12" :xs="12">
-          <small>Select Role</small>
-          <el-select
-            v-model="selected_role_index"
-            filterable
-            style="width: 100%"
-            @input="setPermissions()"
-          >
-            <!-- <el-option
-              v-for="(role, index) in roles"
-              :key="index"
-              :value="index"
-              :disabled="role.name === 'admin'"
-              :label="role.display_name"
-            /> -->
-            <el-option
-              v-for="(role, index) in roles"
-              :key="index"
-              :value="index"
-              :label="role.display_name"
-              :disabled="role.name === 'super'"
-            />
-          </el-select>
-        </el-col>
-        <el-col :lg="12" :md="12" :sm="12" :xs="12">
-          <small>Select relevant permissions to assign to selected role</small>
-          <el-select
-            v-model="new_permissions"
-            multiple
-            filterable
-            collapse-tags
-            style="width: 100%"
-            @change="assignPermissions()"
-          >
-            <el-option
-              v-for="(permission, index) in permissions"
-              :key="index"
-              :value="permission.id"
-              :label="permission.display_name"
-            />
-          </el-select>
-        </el-col>
-      </el-row>
-    </aside>
-    <!-- table -->
-
-    <v-client-table :data="roles" v-loading="loading" :columns="columns" :options="options">
-      <template v-slot:assigned_permissions="props">
+    <v-client-table :data="roles" :columns="columns" :options="options">
+      <!-- <template v-slot:assigned_permissions="props">
         <div>
           <span v-for="(permission, perm_index) in props.row.permissions" :key="perm_index">
             <el-tag>{{ perm_index + 1 + ') ' + permission.display_name }}</el-tag
             >&nbsp;
           </span>
         </div>
-      </template>
+      </template> -->
       <template v-slot:action="props">
-        <div>
-          <template v-if="school">
-            <el-button
-              v-if="school.id === props.row.school_id"
-              variant="gradient-warning"
-              class="btn-icon rounded-circle"
-              @click="editThisRow(props.row)"
-            >
-              <feather-icon icon="EditIcon" />
-            </el-button>
-          </template>
-          <template v-else>
-            <el-button
-              variant="gradient-warning"
-              class="btn-icon rounded-circle"
-              @click="editThisRow(props.row)"
-            >
-              <feather-icon icon="EditIcon" />
-            </el-button>
-          </template>
-        </div>
+        <el-button-group>
+          <el-button
+            :disabled="props.row.name === 'super' || props.row.name === 'admin'"
+            @click="editThisRow(props.row)"
+          >
+            <icon icon="tabler:edit" /> Edit
+          </el-button>
+          <el-button type="success" @click="grantPermissionToRole(props.row)">
+            <icon icon="tabler:key" /> Grant Permission
+          </el-button>
+        </el-button-group>
       </template>
     </v-client-table>
-    <create-role
+    <el-dialog
+      :title="`Grant Permissions to ${selectedRole.display_name}`"
+      width="80%"
+      v-if="showGrantPermissionModal"
+      v-model="showGrantPermissionModal"
+    >
+      <AssignAccess
+        v-if="showGrantPermissionModal"
+        :role="selectedRole"
+        :permissions="permissions"
+        @assigned="updateTable"
+      />
+    </el-dialog>
+    <el-dialog
+      title="Create Role"
       v-if="isCreateRoleSidebarActive"
       v-model="isCreateRoleSidebarActive"
-      @save="updateTable"
-    />
-    <edit-role
-      v-if="isEditRoleSidebarActive"
-      v-model="isEditRoleSidebarActive"
-      :selected-role="editable_row"
-      @update="updateEditedTableRow"
-    />
+    >
+      <create-role @save="updateTable" />
+    </el-dialog>
+    <el-dialog title="Edit Role" v-if="isEditRoleSidebarActive" v-model="isEditRoleSidebarActive">
+      <edit-role
+        v-if="isEditRoleSidebarActive"
+        :selected-role="editable_row"
+        @update="updateTable"
+      />
+    </el-dialog>
   </el-card>
 </template>
 
@@ -120,16 +74,20 @@
 import Resource from '@/api/resource'
 import CreateRole from './partials/AddRole.vue'
 import EditRole from './partials/EditRole.vue'
+import AssignAccess from './partials/AssignAccess.vue'
 
 export default {
   components: {
     // VueGoodTable,
     CreateRole,
-    EditRole
+    EditRole,
+    AssignAccess
   },
   data() {
     return {
       loading: false,
+      showGrantPermissionModal: false,
+      selectedRole: null,
       isCreateRoleSidebarActive: false,
       isEditRoleSidebarActive: false,
       pageLength: 10,
@@ -138,7 +96,7 @@ export default {
         // 'name',
         'display_name',
         'description',
-        'assigned_permissions',
+        // 'assigned_permissions',
         'action'
       ],
 
@@ -186,23 +144,30 @@ export default {
     this.fetchRoles()
   },
   methods: {
-    fetchRoles() {
-      this.loading = true
-      const fetchCurriculumSetupResource = new Resource('acl/roles/index')
-      fetchCurriculumSetupResource.list().then((response) => {
+    fetchRoles(load = true) {
+      this.loading = load
+      const fetchRoleResource = new Resource('acl/roles/index')
+      fetchRoleResource.list().then((response) => {
         this.roles = response.roles
-        this.school = response.school
+        // this.roles = response.roles
         this.loading = false
       })
     },
     fetchPermissions() {
-      const fetchCurriculumSetupResource = new Resource('acl/permissions/index')
-      fetchCurriculumSetupResource.list().then((response) => {
+      const fetchPermissionResource = new Resource('acl/permissions/index')
+      fetchPermissionResource.list().then((response) => {
         this.permissions = response.permissions
       })
     },
     updateTable(roles) {
-      this.roles = roles
+      this.isCreateRoleSidebarActive = false
+      this.isEditRoleSidebarActive = false
+      this.showGrantPermissionModal = false
+      this.fetchRoles(false)
+    },
+    grantPermissionToRole(role) {
+      this.selectedRole = role
+      this.showGrantPermissionModal = true
     },
     editThisRow(selectedRow) {
       // console.log(props)
@@ -210,9 +175,6 @@ export default {
       // const editableRow = selected_row;
       this.editable_row = selectedRow
       this.isEditRoleSidebarActive = true
-    },
-    updateEditedTableRow() {
-      this.fetchRoles()
     },
     setPermissions() {
       const roleIndex = this.selected_role_index

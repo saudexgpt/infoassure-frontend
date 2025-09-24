@@ -1,7 +1,14 @@
 <template>
   <el-card
+    class="special-card"
     :id="id"
-    style="cursor: pointer; margin-bottom: 5px"
+    style="
+      background: #fcfcfc;
+      border: 1px #888888 solid;
+      cursor: pointer;
+      margin-bottom: 5px;
+      margin-right: 15px;
+    "
     shadow="hover"
     @click="viewDetails(id)"
   >
@@ -49,19 +56,19 @@ export default {
       const root = document.documentElement // Get the root element (<html>)
       // root.style.setProperty('--el-color-primary', '#ff0000')
       const primaryBgColor = root.style.getPropertyValue('--el-color-primary')
-      const divs = document.getElementsByClassName('el-card')
+      const divs = document.getElementsByClassName('special-card')
       // Loop through the buttons and add the activeCard class to the current/clicked button
 
       if (divs.length > 0) {
         for (let i = 0; i < divs.length; i++) {
-          divs[i].style.background = '#ffffff'
+          divs[i].style.border = '#888888 solid 1px'
           divs[i].style.color = '#000000'
         }
       }
       const doc = document.getElementById(viewId)
       if (doc !== undefined && doc !== null) {
         // Now we know that foo is defined, we are good to go.
-        doc.style.background = changeOpacityOfHexaColorCode(primaryBgColor, 0.2)
+        doc.style.border = `${changeOpacityOfHexaColorCode(primaryBgColor, 1)} solid 3px`
       }
       this.$emit('clickToView', viewId)
       // document.getElementById(viewId).style.color = '#ffffff'

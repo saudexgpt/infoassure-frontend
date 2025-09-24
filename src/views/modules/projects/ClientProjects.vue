@@ -34,7 +34,7 @@
           <el-col :md="12">
             <span class="pull-right">
               <el-button
-                v-if="checkPermission(['create-client project']) || checkRole(['admin'])"
+                v-if="checkPermission(['manage-project-subscription']) || checkRole(['admin'])"
                 type="primary"
                 @click="isCreateProjectSidebarActive = true"
               >
@@ -114,111 +114,21 @@
           :lg="6"
           :xl="6"
         >
-          <el-card>
-            <el-card-header>
-              <strong>
-                <h2>{{ item.title }}</h2>
-              </strong>
-              <span class="pull-right">
-                <el-dropdown>
-                  <el-button type="text">
-                    <icon icon="tabler:dots-vertical" size="20" />
-                  </el-button>
-                  <template v-slot:dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item>
-                        <span @click="assignProject(item)">
-                          <icon size="20" icon="tabler:user-plus" /> Assign Project
-                        </span>
-                      </el-dropdown-item>
-                      <!-- <el-dropdown-item>
-                        <span @click="showProjectSettings(item)"
-                          ><icon icon="ToolIcon" /> Project Settings</span
-                        >
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <span @click="setupProjectPlan(item)"
-                          ><icon icon="CheckSquareIcon" /> Activate project Plan</span
-                        >
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <span @click="destroyRow(item)"
-                          ><icon icon="TrashIcon" /> Delete Project</span
-                        >
-                      </el-dropdown-item> -->
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </span>
-            </el-card-header>
-            <el-card-body>
-              <el-button type="text" @click="manageProject(item)">
-                <icon size="20" icon="tabler:folder" /> Click to Manage
+          <el-card shadow="hover">
+            <h2>{{ item.title }}</h2>
+            <hr />
+            <el-button-group>
+              <el-button type="primary" @click="manageProject(item)">
+                <icon size="20" icon="tabler:eye" /> View
               </el-button>
-              <!-- <div class="justify-content-between align-items-center">
-                <el-progress
-                  :text-inside="true"
-                  :stroke-width="20"
-                  :percentage="item.progress"
-                  :color="customColorMethod"
-                />
-                <br />
-                <el-select
-                  v-model="item.is_completed"
-                  @change="toggleProjectCompletion(item, $event, 'is_completed')"
-                >
-                  <el-option :value="0" label="In Progress" />
-                  <el-option :value="1" label="Completed" />
-                </el-select>
-              </div> -->
-            </el-card-body>
-            <el-card-footer>
-              <div>
-                <!-- <span style="margin-right: 10px">
-                  <el-tooltip content="View Project Details">
-                    <el-button type="primary" circle plain @click="manageProject(item)">
-                      <icon size="20" icon="tabler:folder" />
-                    </el-button>
-                  </el-tooltip>
-                </span>
-                <span style="margin-right: 10px">
-                  <el-tooltip content="Assign user(s) to project">
-                    <el-button type="success" circle plain @click="assignProject(item)">
-                      <icon size="20" icon="tabler:user-plus" />
-                    </el-button>
-                  </el-tooltip>
-                </span>
-                <el-popover placement="right" title="Assigned User(s)" width="250" trigger="hover">
-                  <div
-                    style="
-                      background: #f3cf58b2;
-                      color: #000000;
-                      padding: 5px;
-                      text-align: left;
-                      border-radius: 5px;
-                    "
-                  >
-                    <span v-for="(user, staff_index) in item.users" :key="staff_index">
-                      <el-tag
-                        type="info"
-                        effect="plain"
-                        closable
-                        style="cursor: pointer"
-                        @close="unassignUserFromProject(item, user)"
-                        @click="unassignUserFromProject(item, user)"
-                      >
-                        {{ user.name }}
-                      </el-tag>
-                    </span>
-                  </div>
-                  <template v-slot:reference>
-                    <el-button type="warning" circle plain>
-                      <icon size="20" icon="tabler:users" />
-                    </el-button>
-                  </template>
-                </el-popover>-->
-              </div>
-            </el-card-footer>
+              <el-button
+                v-if="checkPermission(['assign-project-to-user']) || checkRole(['admin'])"
+                type="info"
+                @click="assignProject(item)"
+              >
+                <icon size="20" icon="tabler:user-plus" /> Assign
+              </el-button>
+            </el-button-group>
           </el-card>
         </el-col>
       </el-row>

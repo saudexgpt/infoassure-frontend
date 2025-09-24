@@ -8,7 +8,7 @@
         <span class="pull-right">
           <el-button type="primary" @click="isCreateBusinessUnitSidebarActive = true">
             <icon icon="tabler:plus" />
-            <span class="align-middle">Create</span>
+            <span class="align-middle">Create New</span>
           </el-button>
         </span>
       </el-col>
@@ -17,9 +17,7 @@
     <v-client-table :data="business_units" :columns="columns" :options="options">
       <template v-slot:child_row="props">
         <div>
-          <el-alert type="success" :closable="false">
-            Business Processes for {{ props.row.unit_name }}
-          </el-alert>
+          <el-alert :closable="false"> Business Processes for {{ props.row.unit_name }} </el-alert>
           <business-processes
             :can-change-status="true"
             :business-unit-id="props.row.id"
@@ -173,6 +171,8 @@ export default {
     },
     fetchBusinessUnits() {
       this.loading = true
+      this.isEditBusinessUnitSidebarActive = false
+      this.isCreateBusinessUnitSidebarActive = false
       const fetchBusinessUnitsResource = new Resource('business-units/fetch-business-units')
       fetchBusinessUnitsResource
         .list({ client_id: this.selectedClient.id })

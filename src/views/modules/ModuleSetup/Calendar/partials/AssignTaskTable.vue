@@ -2,52 +2,73 @@
   <div v-if="data !== null">
     <div>
       <el-row :gutter="20">
-        <el-col :md="16">
-          <h3>Process {{ `${data.activity_no} - ${data.name}` }}</h3>
+        <el-col :md="14">
+          <h3 v-if="data.activity_no !== null"
+            >Process {{ `${data.activity_no} - ${data.name}` }}</h3
+          >
+          <h3 v-else>{{ `${data.name}` }}</h3>
           <table class="table table-bordered">
             <tbody>
+              <template v-if="data.tasks">
+                <tr v-if="data.tasks.length > 0">
+                  <td>Sub Tasks</td>
+                  <td>
+                    <ul>
+                      <li v-for="(task, index) in data.tasks" :key="index">
+                        {{ task }}
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </template>
               <tr>
-                <td>Sub Tasks</td>
-                <td>
-                  <ul>
-                    <li v-for="(task, index) in data.tasks" :key="index">
-                      {{ task }}
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              <tr>
-                <td>Implementation Guide</td>
+                <td>Description</td>
                 <td>
                   <span v-html="data.description"></span>
                 </td>
               </tr>
-              <tr>
-                <td>Description</td>
-                <td>
-                  <span v-html="data.implementation_guide"></span>
-                </td>
-              </tr>
+              <template v-if="selectedModule === 'ndpa'">
+                <tr v-if="data.implementation_guide.length > 0">
+                  <td>Implementation Guide</td>
+                  <td>
+                    <ul>
+                      <li v-for="(task, index) in data.implementation_guide" :key="index">
+                        {{ task }}
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </template>
+              <template v-else>
+                <tr>
+                  <td>Implementation Guide</td>
+                  <td>
+                    <span v-html="data.implementation_guide"></span>
+                  </td>
+                </tr>
+              </template>
             </tbody>
           </table>
           <div v-if="data.assigned_task !== null">
-            <AssignedTaskNotes :task="data.assigned_task" />
+            <AssignedTaskNotes :task="data.assigned_task" :selected-module="selectedModule" />
           </div>
           <div v-if="data.assigned_task !== null" v-loading="loadingUploads">
-            <h3 v-if="uploads.length > 0">Expected Documents/Evidences</h3>
+            <h3 v-if="uploads.length > 0">
+              <icon icon="tabler:folder-open" size="25" /> Required Documents/Evidences
+            </h3>
             <el-card v-for="(upload, index) in uploads" :key="index" class="mb-1">
               <div>
                 <div class="pull-right">
                   <el-button-group>
                     <el-button
-                      v-if="upload.template_link !== null || upload.link !== null"
+                      v-if="upload.template.link !== null || upload.link !== null"
                       type="text"
                       size="small"
                       @click="setView(upload)"
                     >
                       <icon icon="tabler:edit" /> Edit
                     </el-button>
-                    <el-button v-else type="text" size="small" @click="uploadDocument()">
+                    <el-button v-else type="text" size="small" @click="uploadDocument(upload)">
                       <icon icon="tabler:upload" /> Upload
                     </el-button>
                     <!-- <el-button v-if="upload.link !== null" type="text" size="small">
@@ -65,9 +86,9 @@
             </el-card>
           </div>
         </el-col>
-        <el-col :md="8">
+        <el-col :md="10">
           <div v-if="data.assigned_task">
-            <el-alert type="success" :closable="false">
+            <el-alert :type="statusColor(data.assigned_task.status)" :closable="false">
               {{ data.assigned_task.status.toUpperCase() }}
             </el-alert>
           </div>
@@ -78,7 +99,7 @@
               placement="top"
             >
               <el-button v-if="role === 'admin'" type="default" @click="setDetails(data)">
-                <icon icon="tabler:users" />
+                <icon icon="tabler:user-check" />
               </el-button>
             </el-tooltip>
             <el-tooltip content="Mark task as completed" placement="top">
@@ -113,8 +134,8 @@
 
           <hr />
 
-          <div style="background: #fcfcfc; padding: 5px">
-            <TaskComments :task="data.assigned_task" />
+          <div style="background: #fcfcfc; padding: 10px; border-radius: 5px">
+            <TaskComments :task="data.assigned_task" :selected-module="selectedModule" />
           </div>
         </el-col>
       </el-row>
@@ -204,6 +225,16 @@
         </el-col>
       </el-row>
     </el-dialog>
+    <el-dialog
+      v-if="showUploadEvidenceModal"
+      v-model="showUploadEvidenceModal"
+      hide-footer
+      centered
+      title="Upload evidence Task"
+      @close="fetchUploadedEvidiences()"
+    >
+      <UploadExpectedDocument :upload-template="selectedTemplate" />
+    </el-dialog>
   </div>
 </template>
 
@@ -213,13 +244,15 @@ import VueDocumentEditor from '@/views/Components/editors/VueDocumentEditorForCl
 import VueSpreadsheetEditor from '@/views/Components/editors/VueSpreadsheetEditorForClients.vue'
 import TaskComments from './TaskComments.vue'
 import AssignedTaskNotes from './AssignedTaskNotes.vue'
+import UploadExpectedDocument from './UploadExpectedDocument.vue'
 
 export default {
   components: {
     VueDocumentEditor,
     VueSpreadsheetEditor,
     TaskComments,
-    AssignedTaskNotes
+    AssignedTaskNotes,
+    UploadExpectedDocument
   },
   props: {
     selectedData: {
@@ -233,6 +266,10 @@ export default {
     role: {
       type: String,
       default: () => 'client'
+    },
+    selectedModule: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -266,7 +303,9 @@ export default {
       form: {
         title: ''
       },
-      docSrc: ''
+      docSrc: '',
+      selectedTemplate: null,
+      showUploadEvidenceModal: false
     }
   },
   mounted() {
@@ -280,7 +319,7 @@ export default {
     },
     loadTask() {
       this.showEditor = false
-      const evidenceResource = new Resource('isms/calendar/show-task')
+      const evidenceResource = new Resource(`${this.selectedModule}/calendar/show-task`)
       evidenceResource
         .get(this.selectedData.id)
         .then((response) => {
@@ -292,20 +331,29 @@ export default {
           console.log(error.response.data.message)
         })
     },
-    uploadDocument() {},
-    setView(template) {
+    uploadDocument(template) {
+      this.showUploadEvidenceModal = true
+      this.selectedTemplate = template
+    },
+    setView(upload) {
       this.showEditor = false
       this.selectedDocument = {
-        title: ''
+        title: '',
+        type: ''
       }
       this.showDocumentEditor = ''
       this.docSrc = ''
       this.type = '' // this returns the file extension
 
       setTimeout(() => {
-        this.selectedDocument = template
-        this.type = template.template_link.split('.').pop()
-        this.docSrc = template.link
+        this.selectedDocument = upload
+        if (upload.template.link !== null) {
+          this.type = upload.template.link.split('.').pop()
+        } else {
+          this.type = upload.link.split('.').pop()
+        }
+        this.selectedDocument.type = this.type
+        this.docSrc = upload.link
         this.showEditor = true
         if (this.type === 'pdf') {
           document.getElementById(this.type).style.display = 'block'
@@ -344,14 +392,14 @@ export default {
       }
     },
     assignTask() {
-      const createTaskResource = new Resource('isms/calendar/assign-task-to-user')
+      const createTaskResource = new Resource(`${this.selectedModule}/calendar/assign-task-to-user`)
       const { assignForm } = this
       this.loader = true
       createTaskResource
         .store(assignForm)
         .then((response) => {
           this.assignForm = this.empty_form
-          this.fetchUploadedEvidiences()
+          this.loadTask()
           this.$emit('update:tasks', response.assigned_task)
           this.showAssignModal = false
           this.loader = false
@@ -365,9 +413,13 @@ export default {
         })
     },
     markTaskAsDone(taskId, index) {
+      if (!this.isTaskCompleted()) {
+        this.$alert('Please ensure all required documents/evidences are uploaded')
+        return false
+      }
       if (confirm('Click OK to mark this task as completed?')) {
         this.loader = true
-        const fetchResource = new Resource('isms/calendar/mark-task-as-completed')
+        const fetchResource = new Resource(`${this.selectedModule}/calendar/mark-task-as-completed`)
         fetchResource
           .update(taskId)
           .then((response) => {
@@ -381,6 +433,30 @@ export default {
           })
       }
       // Logic to mark the task as done
+    },
+    isTaskCompleted() {
+      if (this.uploads.length > 0) {
+        let uncompleteUpload = 0
+        this.uploads.forEach((upload) => {
+          if (upload.link === null) {
+            uncompleteUpload = 1
+          }
+        })
+        if (uncompleteUpload > 0) {
+          return false
+        }
+        return true
+      }
+      return true
+    },
+    statusColor(status) {
+      if (status === 'completed' || status === 'submitted') {
+        return 'success'
+      }
+      if (status === 'in progress') {
+        return 'warning'
+      }
+      return 'error'
     }
   }
 }

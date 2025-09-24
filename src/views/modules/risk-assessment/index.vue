@@ -5,22 +5,21 @@
       <RiskSetup :module="module" />
     </el-tab-pane>
     <el-tab-pane label="Risk Assessment" lazy>
-      <el-card>
-        <template v-slot:header>
-          <div>
-            <span class="pull-right">
-              <el-button type="primary" @click="viewType = 'tabular'"
-                ><icon icon="tabler:table" />&nbsp;Summary</el-button
-              >
-            </span>
-            <h3>Risk Assessment</h3>
-          </div>
-        </template>
+      <div>
+        <!-- <div>
+          <h3>&nbsp;</h3>
+          <span class="pull-right">
+            <el-button type="primary" @click="viewType = 'tabular'"
+              ><icon icon="tabler:table" />&nbsp;Summary</el-button
+            >
+          </span>
+        </div> -->
         <el-container style="height: 100%">
           <el-aside
             v-loading="loading"
             element-loading-text="loading assessment, please wait..."
             width="350px"
+            style="width: 350px; background-color: #fcfcfc"
           >
             <!-- <aside>
           <el-input
@@ -29,7 +28,10 @@
           />
         </aside> -->
             <h4>Identified Risks</h4>
-            <el-tabs>
+            <el-button type="primary" @click="viewType = 'tabular'"
+              ><icon icon="tabler:table" />&nbsp;Summary</el-button
+            >
+            <el-tabs stretch>
               <el-tab-pane
                 v-if="
                   activatedModules.includes('isms') && (viewOnly === 'isms' || viewOnly === 'all')
@@ -39,31 +41,46 @@
                 <div style="max-height: 500px; overflow: auto">
                   <el-collapse>
                     <el-collapse-item
-                      v-for="(assessments, index) in asset_types"
+                      v-for="(assetsArray, index) in asset_types"
                       :key="index"
                       :name="`${index}`"
                     >
                       <template #title>
                         <strong>{{ index }}</strong>
                       </template>
-                      <div
-                        v-for="(risk_assessment, assessments_index) in assessments"
-                        :key="assessments_index"
-                      >
-                        <CardNavView
-                          :id="`asset-${index}-${assessments_index}`"
-                          :title="`${risk_assessment.risk_id}-${risk_assessment.threat}`"
-                          @clickToView="viewDetails(risk_assessment)"
+                      <el-collapse expand-icon-position="left" accordion>
+                        <el-collapse-item
+                          v-for="(assessments, asset_index) in assetsArray"
+                          :key="asset_index"
+                          :name="`asset-${asset_index}`"
                         >
-                          <template #description>
-                            <div>
-                              <em><strong>Vulnerabilities:</strong></em
-                              ><br />
-                              <span v-html="risk_assessment.vulnerability_description"></span>
-                            </div>
+                          <template #title>
+                            <span>{{ asset_index }}</span>
                           </template>
-                        </CardNavView>
-                      </div>
+                          <div
+                            v-for="(risk_assessment, assessments_index) in assessments"
+                            :key="assessments_index"
+                          >
+                            <CardNavView
+                              :id="`asset-${risk_assessment.id}`"
+                              :title="`${risk_assessment.risk_id}`"
+                              @clickToView="viewDetails(risk_assessment)"
+                            >
+                              <template #description>
+                                <div>
+                                  <em>
+                                    <icon icon="tabler:arrow-badge-right" />
+                                    {{ risk_assessment.threat }}
+                                  </em>
+                                  <!-- <em><strong>Vulnerabilities:</strong></em
+                                  ><br />
+                                  <span v-html="risk_assessment.vulnerability_description"></span> -->
+                                </div>
+                              </template>
+                            </CardNavView>
+                          </div>
+                        </el-collapse-item>
+                      </el-collapse>
                     </el-collapse-item>
                   </el-collapse>
                 </div>
@@ -153,7 +170,7 @@
             </el-main>
           </el-container>
         </el-container>
-      </el-card>
+      </div>
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -224,7 +241,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.setMatrix()
-    }, 2000)
+    }, 1000)
     // if (this.selectedClient.id !== null) {
     //   this.setMatrix()
     // } else {
@@ -263,9 +280,12 @@ export default {
     },
     viewDetails(data, viewId) {
       if (data.id) {
-        this.selectedData = data
-        this.viewType = 'edit'
-        this.showMenu = false
+        this.viewType = ''
+        setTimeout(() => {
+          this.selectedData = data
+          this.viewType = 'edit'
+          this.showMenu = false
+        }, 10)
       }
     },
     fetchAllRiskAssessments(load) {

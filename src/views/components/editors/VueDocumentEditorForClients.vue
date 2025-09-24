@@ -145,7 +145,7 @@ export default {
   methods: {
     openFile() {
       if (this.documentData.link === null) {
-        this.fetchSFDTFile(this.documentData.template_link)
+        this.fetchSFDTFile(this.documentData.template.link)
       } else {
         this.fetchSFDTFile(this.documentData.link)
       }

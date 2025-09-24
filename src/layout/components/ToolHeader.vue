@@ -2,9 +2,10 @@
 import { defineComponent, computed } from 'vue'
 import { Collapse } from '@/components/Collapse'
 // import { LocaleDropdown } from '@/components/LocaleDropdown'
-// import { SizeDropdown } from '@/components/SizeDropdown'
+import { SizeDropdown } from '@/components/SizeDropdown'
 import { UserInfo } from '@/components/UserInfo'
-// import { Screenfull } from '@/components/Screenfull'
+import { NofificationBell } from '@/components/NofificationBell'
+import { Screenfull } from '@/components/Screenfull'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { useAppStore } from '@/store/modules/app'
 import { useDesign } from '@/hooks/web/useDesign'
@@ -23,7 +24,7 @@ const breadcrumb = computed(() => appStore.getBreadcrumb)
 const hamburger = computed(() => appStore.getHamburger)
 
 // 全屏图标
-// const screenfull = computed(() => appStore.getScreenfull)
+const screenfull = computed(() => appStore.getScreenfull)
 
 // 尺寸图标
 const size = computed(() => appStore.getSize)
@@ -63,19 +64,20 @@ export default defineComponent({
           </div>
         ) : undefined}
         <div class="h-full flex items-center">
-          {/* {screenfull.value ? (
+          {screenfull.value ? (
             <Screenfull class="custom-hover" color="var(--top-header-text-color)"></Screenfull>
           ) : undefined}
           {size.value ? (
             <SizeDropdown class="custom-hover" color="var(--top-header-text-color)"></SizeDropdown>
           ) : undefined}
-          {locale.value ? (
+          {/* {locale.value ? (
             <LocaleDropdown
               class="custom-hover"
               color="var(--top-header-text-color)"
             ></LocaleDropdown>
           ) : undefined} */}
-          <UserInfo></UserInfo>
+          <NofificationBell />
+          <UserInfo />
         </div>
       </div>
     )

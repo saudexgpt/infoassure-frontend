@@ -5,6 +5,9 @@
       <!-- <el-tab-pane :key="keyValue" label="Overview" name="#dashboard" lazy>
         <dashboard />
       </el-tab-pane> -->
+      <el-tab-pane :key="keyValue" label="The BCMS Journey" name="#bcms-journey" lazy>
+        <BCMSJourney v-if="activeName === '#bcms-journey'" />
+      </el-tab-pane>
       <el-tab-pane label="Business Units Setup" name="#business-unit" lazy>
         <BusinessUnits />
       </el-tab-pane>
@@ -29,6 +32,7 @@ import BusinessUnits from '@/views/modules/settings/partials/business-units/SetU
 import ConsolidatedRA from '@/views/modules/risk-assessment/index.vue'
 import IncidentManagement from '@/views/modules/Incidents/index.vue'
 import BIA from './BIA/Analyze.vue'
+import BCMSJourney from './BCMSJourney.vue'
 
 export default {
   name: 'BCMS',
@@ -37,7 +41,8 @@ export default {
     BIA,
     // Dashboard,
     BusinessUnits,
-    IncidentManagement
+    IncidentManagement,
+    BCMSJourney
   },
   data() {
     return {
