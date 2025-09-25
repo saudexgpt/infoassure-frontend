@@ -1,12 +1,12 @@
 <template>
   <div class="justify-content-between align-items-center px-2 py-1">
     <el-row v-loading="loading">
-      <!-- Role Name -->
+      <!-- Category Name -->
       <el-col cols="12">
         <v-text-field
           v-model="form.name"
           variant="outlined"
-          label="Role Name"
+          label="Category Name"
           placeholder="ISMS Manager"
         />
       </el-col>
@@ -15,8 +15,8 @@
         <v-textarea
           v-model="form.description"
           variant="outlined"
-          label="Role Description"
-          placeholder="Briefly describe role..."
+          label="Category Description"
+          placeholder="Briefly describe category..."
         />
       </el-col>
       <!-- submit and reset -->
@@ -33,11 +33,11 @@ import Resource from '@/api/resource'
 export default {
   components: {},
   props: {
-    isEditRoleSidebarActive: {
+    isEditCategorySidebarActive: {
       type: Boolean,
       required: true
     },
-    selectedRole: {
+    selectedCategory: {
       type: Object,
       default: () => null
     }
@@ -47,35 +47,26 @@ export default {
       form: {
         id: '',
         name: '',
-        description: '',
-        level_groups: []
+        description: ''
       },
-      loading: false,
-      curriculum_level_groups: []
+      loading: false
     }
   },
   created() {
-    this.form.id = this.selectedRole.id
-    this.form.name = this.selectedRole.name
-    this.form.description = this.selectedRole.description
+    this.form.id = this.selectedCategory.id
+    this.form.name = this.selectedCategory.name
+    this.form.description = this.selectedCategory.description
   },
   methods: {
     update() {
       this.loading = true
-      const updateCurriculumSetupResource = new Resource('acl/roles/update')
+      const updateCurriculumSetupResource = new Resource('vdd/update-vendor-category')
       const param = this.form
-      updateCurriculumSetupResource
-        .update(param.id, param)
-        .then((response) => {
-          this.loading = false
-          this.$emit('update', response.roles)
-          this.$emit('update:is-edit-level-sidebar-active', false)
-        })
-        .catch((error) => {
-          this.error = true
-          this.$message(error.response.data.message)
-          this.loading = false
-        })
+      updateCurriculumSetupResource.update(param.id, param).then((response) => {
+        this.loading = false
+        this.$emit('update', response.categorys)
+        this.$emit('update:is-edit-level-sidebar-active', false)
+      })
     }
   }
 }

@@ -7,7 +7,10 @@
         </el-col>
         <el-col :md="12">
           <div class="pull-right">
-            <el-button type="primary" @click="showCreate = true"
+            <el-button
+              v-if="checkPermission(['create-vendor'])"
+              type="primary"
+              @click="showCreate = true"
               ><Icon icon="tabler:plus" /> Register New</el-button
             >
           </div>
@@ -48,22 +51,31 @@
                   <template v-slot:action="{ row }">
                     <div>
                       <el-button-group>
-                        <el-tooltip :content="`Edit ${row.name}'s info`" placement="top">
-                          <el-button type="default" @click="editThisVendorUser(row)">
-                            <icon icon="tabler:edit" />
+                        <el-tooltip
+                          v-if="checkPermission(['update-vendor'])"
+                          :content="`Edit ${row.name}'s info`"
+                          placement="top"
+                        >
+                          <el-button @click="editThisVendorUser(row)">
+                            <icon icon="tabler:edit" color="orange" />
                           </el-button>
                         </el-tooltip>
                         <el-tooltip
+                          v-if="checkPermission(['create-vendor'])"
                           :content="`Send login credentials to ${row.email}`"
                           placement="top"
                         >
-                          <el-button type="info" @click="sendLoginCredentials(row)">
+                          <el-button @click="sendLoginCredentials(row)">
                             <icon icon="tabler:key" />
                           </el-button>
                         </el-tooltip>
-                        <el-tooltip :content="`Delete ${row.name}'s profile`" placement="top">
-                          <el-button type="danger" @click="deleteClientUser(props.row.id, row.id)">
-                            <icon icon="tabler:trash" />
+                        <el-tooltip
+                          v-if="checkPermission(['delete-vendor'])"
+                          :content="`Delete ${row.name}'s profile`"
+                          placement="top"
+                        >
+                          <el-button @click="deleteVendorUser(row)">
+                            <icon icon="tabler:trash" color="red" />
                           </el-button>
                         </el-tooltip>
                       </el-button-group>
@@ -71,7 +83,7 @@
                   </template>
                 </v-client-table>
               </el-col>
-              <el-col :md="12">
+              <el-col v-if="checkRole(['admin'])" :md="12">
                 <aside>
                   <h4>Assign Staff to {{ props.row.name }}</h4>
                   <el-select
@@ -120,9 +132,9 @@
           </div>
         </template>
         <template v-slot:action="props">
-          <div>
-            <el-button variant="secondary" @click="editVendor(props.row)">
-              <span><feather-icon icon="EditIcon" /></span>
+          <div v-if="checkPermission(['update-vendor'])">
+            <el-button @click="editVendor(props.row)">
+              <span><icon icon="tabler:edit" /> Edit</span>
             </el-button>
           </div>
         </template>
@@ -203,7 +215,7 @@ export default {
         'contact_address'
         // 'rating',
         // 'second_approval',
-        // 'action',
+        // 'action'
         // 'user.password_status',
       ],
 
@@ -416,10 +428,10 @@ export default {
           // })
         })
     },
-    deleteVendorUser(vendorId, userId) {
+    deleteVendorUser(user) {
       this.$confirm(
-        'Are you sure you want to remove this user from this vendor?',
-        'Confirm Action',
+        `Are you sure you want to delete ${user.name} from the list of users? This cannot be undone.`,
+        'Confirm Delete Action',
         {
           confirmButtonText: 'Yes',
           cancelButtonText: 'No',
@@ -428,8 +440,8 @@ export default {
       )
         .then(() => {
           this.loading = true
-          const deleteStaffResource = new Resource('vendors/delete-vendor-user')
-          deleteStaffResource.update(vendorId, { user_id: userId }).then(() => {
+          const deleteStaffResource = new Resource('vdd/delete-vendor-user')
+          deleteStaffResource.destroy(user.id).then(() => {
             this.fetchVendors()
             this.$message({
               type: 'success',
@@ -438,11 +450,12 @@ export default {
             this.loading = false
           })
         })
-        .catch(() => {
-          // this.$message({
-          //   type: 'info',
-          //   message: 'Delete canceled',
-          // })
+        .catch((error) => {
+          this.loading = false
+          this.$message({
+            type: 'error',
+            message: error.response.data.error || error.response.data.message
+          })
         })
     },
     editVendor(value) {

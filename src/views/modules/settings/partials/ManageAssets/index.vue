@@ -12,14 +12,16 @@
         element-loading-text="loading resources, please wait..."
         width="400px"
       >
-        <el-button
-          type="primary"
-          block
-          style="width: 100%; margin-bottom: 5px"
-          @click="showCreate = true"
-        >
-          <icon icon="tabler:plus" />&nbsp;Create Asset
-        </el-button>
+        <div class="mb-2">
+          <el-button-group>
+            <el-button type="primary" block @click="showCreate = true">
+              <icon icon="tabler:plus" />&nbsp;Create Assets
+            </el-button>
+            <el-button type="info" block @click="showCreate = true">
+              <icon icon="tabler:upload" />&nbsp;Upload Bulk Assets
+            </el-button>
+          </el-button-group>
+        </div>
         <el-input
           v-model="form.name"
           placeholder="Search document title"

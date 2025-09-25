@@ -1,13 +1,13 @@
 <template>
   <div class="justify-content-between align-items-center px-2 py-1">
     <el-row v-loading="loading">
-      <!-- Role Name -->
+      <!-- Category Name -->
       <el-col cols="12">
         <v-text-field
           v-model="form.name"
           variant="outlined"
-          label="Role Name"
-          placeholder="ISMS Manager"
+          label="Category Name"
+          placeholder="Strategic Partner"
         />
       </el-col>
       <!-- Abbrev -->
@@ -15,13 +15,22 @@
         <v-textarea
           v-model="form.description"
           variant="outlined"
-          label="Role Description"
-          placeholder="Briefly describe role..."
+          label="Category Description"
+          placeholder="Briefly describe category..."
         />
       </el-col>
       <!-- submit and reset -->
       <el-col cols="12">
-        <el-button type="primary" class="mr-1" @click="update()"> Update </el-button>
+        <el-button type="primary" class="mr-1" @click="submit()"> Submit </el-button>
+      </el-col>
+      <el-col v-if="error" cols="12">
+        <el-alert variant="danger" show>
+          <div class="alert-body">
+            <span
+              ><strong>{{ error_message }}</strong></span
+            >
+          </div>
+        </el-alert>
       </el-col>
     </el-row>
   </div>
@@ -33,43 +42,31 @@ import Resource from '@/api/resource'
 export default {
   components: {},
   props: {
-    isEditRoleSidebarActive: {
+    isCreateCategorySidebarActive: {
       type: Boolean,
       required: true
-    },
-    selectedRole: {
-      type: Object,
-      default: () => null
     }
   },
   data() {
     return {
       form: {
-        id: '',
         name: '',
-        description: '',
-        level_groups: []
+        description: ''
       },
       loading: false,
-      curriculum_level_groups: []
+      error: false
     }
   },
-  created() {
-    this.form.id = this.selectedRole.id
-    this.form.name = this.selectedRole.name
-    this.form.description = this.selectedRole.description
-  },
   methods: {
-    update() {
+    submit() {
       this.loading = true
-      const updateCurriculumSetupResource = new Resource('acl/roles/update')
+      const saveCategoryResource = new Resource('vdd/save-vendor-category')
       const param = this.form
-      updateCurriculumSetupResource
-        .update(param.id, param)
+      saveCategoryResource
+        .store(param)
         .then((response) => {
           this.loading = false
-          this.$emit('update', response.roles)
-          this.$emit('update:is-edit-level-sidebar-active', false)
+          this.$emit('save', response.categorys)
         })
         .catch((error) => {
           this.error = true

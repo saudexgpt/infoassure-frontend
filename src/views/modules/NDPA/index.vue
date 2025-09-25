@@ -5,7 +5,7 @@
       <el-tab-pane lazy label="Overview" name="#overview">
         <NDPADashboard />
       </el-tab-pane>
-      <el-tab-pane :key="keyValue" label="The NDPA Journey" name="#ndpa-journey" lazy>
+      <el-tab-pane label="The NDPA Journey" name="#ndpa-journey" lazy>
         <NDPAJourney />
       </el-tab-pane>
       <!-- <el-tab-pane lazy label="Compliance Assessment" name="#compliance">

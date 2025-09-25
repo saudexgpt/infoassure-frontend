@@ -18,15 +18,15 @@
             <span class="pull-right">
               <el-tooltip content="Import and customize preset requirements from our databank">
                 <el-button type="secondary" @click="showImportQuestionModal = true">
-                  <icon icon="tabler:database-import" />
-                  <span class="align-middle">Import</span>
+                  <icon icon="tabler:cloud-down" />
+                  <span class="align-middle">Load Sample Questions</span>
                 </el-button>
               </el-tooltip>
               &nbsp;
               <el-tooltip content="Create your own requirement">
                 <el-button type="primary" @click="isCreateQuestionSidebarActive = true">
                   <icon icon="tabler:plus" />
-                  <span class="align-middle">Create New</span>
+                  <span class="align-middle">Create your Questions</span>
                 </el-button>
               </el-tooltip>
               &nbsp;
@@ -116,7 +116,7 @@
         :before-close="updateTable"
       >
         <template v-slot:title>
-          <h3>Import Questions from our Databank</h3>
+          <h3>Load Sample Relevant Questions</h3>
         </template>
 
         <import-default-question />

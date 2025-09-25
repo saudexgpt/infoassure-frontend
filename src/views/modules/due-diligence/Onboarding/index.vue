@@ -1,42 +1,43 @@
 <template>
-  <vendor-list />
-  <!-- <el-tabs type="border-card">
+  <el-tabs type="border-card">
     <el-tab-pane lazy>
       <template v-slot:label>
-        <span><icon icon="tabler:dashboard" /> Overview</span>
+        <span><icon icon="tabler:users-group" /> Vendor Categories</span>
       </template>
-      <dashboard />
+      <vendorCategories />
     </el-tab-pane>
     <el-tab-pane lazy>
       <template v-slot:label>
-        <span><icon icon="tabler:tool" /> Manage Vendors</span>
+        <span><icon icon="tabler:users-plus" /> Vendor Onboarding</span>
       </template>
       <vendor-list />
     </el-tab-pane>
-  </el-tabs> -->
+    <el-tab-pane lazy>
+      <template v-slot:label>
+        <span><icon icon="tabler:user-search" /> Vendors Screening/Approval</span>
+      </template>
+      <ScreeningAndApproval />
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script>
 // import Dashboard from './Dashboard.vue'
 import VendorList from './partials/VendorList.vue'
-// import VendorUserRegistration from './partials/RegisterUserVendor.vue'
+import ScreeningAndApproval from './partials/ScreeningAndApproval.vue'
+import VendorCategories from './partials/VendorCategories.vue'
 
 export default {
   components: {
     // Dashboard,
-    VendorList
+    VendorList,
+    ScreeningAndApproval,
+    VendorCategories
     // VendorUserRegistration,
   },
   data() {
-    return {
-      keyValue: 1
-    }
+    return {}
   },
-  methods: {
-    forceRerender() {
-      // console.log(e)
-      this.keyValue += 1
-    }
-  }
+  methods: {}
 }
 </script>

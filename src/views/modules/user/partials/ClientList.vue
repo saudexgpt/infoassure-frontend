@@ -6,7 +6,12 @@
           <h3> Registered Clients </h3>
         </el-col>
         <el-col :md="3">
-          <el-button type="primary" @click="registerDialog = true">New Registration</el-button>
+          <el-button
+            v-if="checkPermission(['create-clients'])"
+            type="primary"
+            @click="registerDialog = true"
+            >New Registration</el-button
+          >
         </el-col>
       </el-row>
       <hr />
@@ -298,30 +303,27 @@ export default {
             this.fetchClients()
           })
         })
-        .catch(() => {
-          // this.$message({
-          //   type: 'info',
-          //   message: 'Delete canceled',
-          // })
+        .catch((error) => {
+          this.$message({
+            type: 'error',
+            message: error.response.data.message
+          })
         })
     },
     confirmRegistration(userId, code) {
       const confirmCodeResource = new Resource('auth/confirm-registration')
       this.loading = true
-      confirmCodeResource
-        .list({ code, user_id: userId })
-        .then((response) => {
-          this.$message({
-            type: 'success',
-            message: response
-          })
-          this.loading = false
+      confirmCodeResource.list({ code, user_id: userId }).then((response) => {
+        this.$message({
+          type: 'success',
+          message: response
         })
-        .catch((error) => {
-          // console.log(error.response)
-          this.$message.error(error.response.data.error)
-          this.loading = false
-        })
+        this.loading = false
+      })``.catch((error) => {
+        // console.log(error.response)
+        this.$message.error(error.response.data.message || 'An error occured. Please try again')
+        this.loading = false
+      })
     },
     sendLoginCredentials(user) {
       this.$confirm(

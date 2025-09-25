@@ -6,7 +6,12 @@
           <h3> Registered Users </h3>
         </el-col>
         <el-col :md="3">
-          <el-button type="primary" @click="registerDialog = true">New Registration</el-button>
+          <el-button
+            v-if="checkPermission(['create-client-user'])"
+            type="primary"
+            @click="registerDialog = true"
+            >New Registration</el-button
+          >
         </el-col>
       </el-row>
       <hr />
@@ -27,7 +32,7 @@
           </div>
         </template>
         <template v-slot:assign="{ row }">
-          <el-button-group>
+          <el-button-group v-if="checkRole(['admin'])">
             <!-- <el-button @click="grantPermissionToUser(row)">
               <icon icon="tabler:user" /> Role
             </el-button> -->
@@ -40,7 +45,7 @@
           <div>
             <el-button-group>
               <el-tooltip
-                v-if="row.email_verified_at === null"
+                v-if="checkPermission(['create-client-user']) && row.email_verified_at === null"
                 content="Activate Account"
                 placement="top"
               >
@@ -48,22 +53,30 @@
                   <icon icon="tabler:check" color="green" />
                 </el-button>
               </el-tooltip>
-              <el-tooltip :content="`Edit ${row.name}'s info`" placement="top">
+              <el-tooltip
+                v-if="checkPermission(['update-client-user']) && row.is_client_admin === 0"
+                :content="`Edit ${row.name}'s info`"
+                placement="top"
+              >
                 <el-button @click="editThisClientUser(row)">
                   <icon icon="tabler:edit" color="orange" />
                 </el-button>
               </el-tooltip>
               <el-tooltip
                 v-if="row.is_client_admin === 0"
-                content="Send login credentials"
+                content="Send new login credentials"
                 placement="top"
               >
                 <el-button @click="sendLoginCredentials(row)">
                   <icon icon="tabler:lock-password" />
                 </el-button>
               </el-tooltip>
-              <el-tooltip v-if="row.is_client_admin === 0" content="Delete User" placement="top">
-                <el-button @click="deleteClientUser(props.row.id, row.id)">
+              <el-tooltip
+                v-if="checkPermission(['delete-client-user']) && row.is_client_admin === 0"
+                :content="`Delete ${row.name}'s account`"
+                placement="top"
+              >
+                <el-button @click="deleteClientUser(row)">
                   <icon icon="tabler:trash" color="red" />
                 </el-button>
               </el-tooltip>
@@ -98,10 +111,10 @@
       </el-col>
     </el-row> -->
 
-    <el-dialog v-model="registerDialog" title="Register New User">
+    <el-dialog v-model="registerDialog" title="Register New User" @closed="updateTable">
       <RegisterUserClient @saved="fetchClientUsers" />
     </el-dialog>
-    <el-dialog v-model="editClientUser" title="Edit User">
+    <el-dialog v-model="editClientUser" title="Edit User" @closed="updateTable">
       <edit-client-user
         v-if="editClientUser"
         :selected-client-user="selectedClientUser"
@@ -328,10 +341,10 @@ export default {
           // })
         })
     },
-    deleteClientUser(clientId, userId) {
+    deleteClientUser(user) {
       this.$confirm(
-        'Are you sure you want to remove this user from this client?',
-        'Confirm Action',
+        `Are you sure you want to delete ${user.name} from the list of users? This cannot be undone.`,
+        'Confirm Delete Action',
         {
           confirmButtonText: 'Yes',
           cancelButtonText: 'No',
@@ -341,16 +354,26 @@ export default {
         .then(() => {
           this.loading = true
           const deleteStaffResource = new Resource('clients/delete-client-user')
-          deleteStaffResource.update(clientId, { user_id: userId }).then(() => {
-            this.fetchClientUsers()
-            this.$message({
-              type: 'success',
-              message: 'Action Successful'
+          deleteStaffResource
+            .destroy(user.id)
+            .then(() => {
+              this.fetchClientUsers()
+              this.$message({
+                type: 'success',
+                message: 'Action Successful'
+              })
+              this.loading = false
             })
-            this.loading = false
-          })
+            .catch((error) => {
+              this.loading = false
+              this.$message({
+                type: 'error',
+                message: error.response.data.error || error.response.data.message
+              })
+            })
         })
         .catch(() => {
+          this.loading = false
           // this.$message({
           //   type: 'info',
           //   message: 'Delete canceled',

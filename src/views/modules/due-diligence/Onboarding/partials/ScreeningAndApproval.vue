@@ -27,7 +27,7 @@
       </el-row>
       <hr />
       <div v-if="showVendorDetails">
-        <el-alert type="success" :closable="false">
+        <el-alert :closable="false">
           <h4>Details for {{ selectedVendor.name }}</h4>
         </el-alert>
         <el-row :gutter="10">
@@ -354,93 +354,161 @@
             </table>
           </el-col>
           <el-col :md="8">
-            <div>
+            <div :style="`background: ${setBgColor()}; padding: 10px`">
               <div>
-                <strong>Categorize {{ selectedVendor.name }} using the dropdown</strong>
-
-                <el-select
-                  v-model="selectedVendor.category"
-                  v-loading="loading"
-                  filterable
-                  style="width: 100%"
-                  value-key="id"
-                  placeholder="Select Category"
-                  @change="setVendorCategory"
-                >
-                  <el-option
-                    v-for="(category, index) in categories"
-                    :key="index"
-                    :label="category.name"
-                    :value="category"
+                <div>
+                  <strong>Inherent Risk Rating</strong>
+                  <div
+                    v-if="selectedVendor.inherent_risk_rating === 3"
+                    style="
+                      background: #fadfdf;
+                      padding: 10px;
+                      border: 2px dashed #cccccc;
+                      margin-bottom: 30px;
+                    "
                   >
-                    <span style="float: left">{{ category.name }}</span>
-                    <span
-                      style="float: right; color: #8492a6; font-size: 11px; margin-left: 10px"
-                      >{{ category.description }}</span
+                    <img src="/images/project-icons/high-impact-level.png" width="100" />
+                    <strong>HIGH</strong>
+                  </div>
+                  <div
+                    v-if="selectedVendor.inherent_risk_rating === 2"
+                    style="
+                      background: #faf4df;
+                      padding: 10px;
+                      border: 2px dashed #cccccc;
+                      margin-bottom: 30px;
+                    "
+                  >
+                    <img src="/images/project-icons/medium-impact-level.png" width="100" />
+                    <strong>MEDIUM</strong>
+                  </div>
+                  <div
+                    v-if="selectedVendor.inherent_risk_rating === 1"
+                    style="
+                      background: #e0fadf;
+                      padding: 10px;
+                      border: 2px dashed #cccccc;
+                      margin-bottom: 30px;
+                    "
+                  >
+                    <img src="/images/project-icons/low-impact-level.png" width="100" />
+                    <strong>LOW</strong>
+                  </div>
+                </div>
+                <div>
+                  <span>Categorize {{ selectedVendor.name }} using the dropdown</span>
+                  <el-select
+                    v-model="selectedVendor.category"
+                    v-loading="loading"
+                    filterable
+                    style="width: 100%"
+                    value-key="id"
+                    placeholder="Select Category"
+                    @change="setVendorCategory"
+                  >
+                    <el-option
+                      v-for="(category, index) in categories"
+                      :key="index"
+                      :label="category.name"
+                      :value="category"
                     >
-                  </el-option>
-                </el-select>
-                <hr />
-              </div>
-              <div>
-                <strong>Inherent Risk Rating</strong>
-                <div
-                  v-if="selectedVendor.inherent_risk_rating === 3"
-                  style="
-                    background: #fadfdf;
-                    padding: 10px;
-                    border: 2px dashed #cccccc;
-                    margin-bottom: 30px;
-                  "
-                >
-                  <img src="/images/project-icons/high-impact-level.png" width="100" />
-                  <strong>HIGH</strong>
+                      <span style="float: left">{{ category.name }}</span>
+                      <!-- <span
+                        style="float: right; color: #8492a6; font-size: 11px; margin-left: 10px"
+                        >{{ category.description }}</span
+                      > -->
+                    </el-option>
+                  </el-select>
+                  <span>
+                    <el-button type="text" @click="isCreateCategorySidebarActive = true">
+                      <icon icon="tabler:plus" /> Click to create more categories
+                    </el-button>
+                  </span>
+                  <hr />
                 </div>
-                <div
-                  v-if="selectedVendor.inherent_risk_rating === 2"
-                  style="
-                    background: #faf4df;
-                    padding: 10px;
-                    border: 2px dashed #cccccc;
-                    margin-bottom: 30px;
-                  "
-                >
-                  <img src="/images/project-icons/medium-impact-level.png" width="100" />
-                  <strong>MEDIUM</strong>
-                </div>
-                <div
-                  v-if="selectedVendor.inherent_risk_rating === 1"
-                  style="
-                    background: #e0fadf;
-                    padding: 10px;
-                    border: 2px dashed #cccccc;
-                    margin-bottom: 30px;
-                  "
-                >
-                  <img src="/images/project-icons/low-impact-level.png" width="100" />
-                  <strong>LOW</strong>
-                </div>
-              </div>
-              <div v-if="selectedVendor.category_id !== null">
-                <div
-                  style="
-                    background: #fffefb;
-                    padding: 10px;
-                    border: 2px dashed #cccccc;
-                    margin-bottom: 30px;
-                  "
-                >
-                  <strong>First Review</strong>
-                  <div v-if="selectedVendor.first_approval !== null">
-                    <div v-if="selectedVendor.first_approval.action === 'Pending'">
+                <div v-if="selectedVendor.category_id !== null">
+                  <div style="padding: 10px; border: 2px dashed #cccccc; margin-bottom: 30px">
+                    <strong>First Review</strong>
+                    <div v-if="selectedVendor.first_approval !== null">
+                      <div v-if="selectedVendor.first_approval.action === 'Pending'">
+                        <el-button
+                          v-if="checkPermission(['approve-vendor-onboarding'])"
+                          :loading="approvalLoading"
+                          type="success"
+                          @click="approveApplication('Approve', 'first_approval')"
+                        >
+                          Approve
+                        </el-button>
+                        <el-popover
+                          v-if="checkPermission(['approve-vendor-onboarding'])"
+                          placement="right"
+                          width="500"
+                          trigger="click"
+                        >
+                          <div
+                            style="
+                              background: #000000;
+                              color: #ffffff;
+                              padding: 10px;
+                              text-align: left;
+                              border-radius: 5px;
+                            "
+                          >
+                            <strong>Give reasons for rejection</strong>
+                            <el-input
+                              v-model="approvalForm.details"
+                              placeholder="Type reason here..."
+                              type="textarea"
+                            />
+                            <br /><br />
+                            <el-button
+                              :loading="approvalLoading"
+                              size="mini"
+                              type="primary"
+                              :disabled="approvalForm.details === ''"
+                              @click="approveApplication('Reject', 'first_approval')"
+                            >
+                              OK
+                            </el-button>
+                          </div>
+                          <template v-slot:reference>
+                            <el-button type="danger" style="margin-left: 10px"> Reject </el-button>
+                          </template>
+                        </el-popover>
+                      </div>
+                      <div v-if="selectedVendor.first_approval.action === 'Reject'">
+                        <img src="/images/rejected.png" width="100" />
+                        <p>
+                          <strong>Reason:</strong> {{ selectedVendor.first_approval.details }}
+                        </p>
+                        <el-button
+                          v-if="checkPermission(['approve-vendor-onboarding'])"
+                          :loading="approvalLoading"
+                          type="success"
+                          @click="approveApplication('Approve', 'first_approval')"
+                        >
+                          Approve
+                        </el-button>
+                      </div>
+                      <div v-if="selectedVendor.first_approval.action === 'Approve'">
+                        <img src="/images/approved.png" width="100" />
+                      </div>
+                    </div>
+                    <div v-else>
                       <el-button
+                        v-if="checkPermission(['approve-vendor-onboarding'])"
                         :loading="approvalLoading"
                         type="success"
                         @click="approveApplication('Approve', 'first_approval')"
                       >
                         Approve
                       </el-button>
-                      <el-popover placement="right" width="500" trigger="click">
+                      <el-popover
+                        v-if="checkPermission(['approve-vendor-onboarding'])"
+                        placement="right"
+                        width="500"
+                        trigger="click"
+                      >
                         <div
                           style="
                             background: #000000;
@@ -473,83 +541,131 @@
                         </template>
                       </el-popover>
                     </div>
-                    <div v-if="selectedVendor.first_approval.action === 'Reject'">
-                      <img src="/images/rejected.png" width="100" />
-                      <p> <strong>Reason:</strong> {{ selectedVendor.first_approval.details }} </p>
-                      <el-button
-                        :loading="approvalLoading"
-                        type="success"
-                        @click="approveApplication('Approve', 'first_approval')"
-                      >
-                        Approve
-                      </el-button>
-                    </div>
-                    <div v-if="selectedVendor.first_approval.action === 'Approve'">
-                      <img src="/images/approved.png" width="100" />
-                    </div>
                   </div>
-                  <div v-else>
-                    <el-button
-                      :loading="approvalLoading"
-                      type="success"
-                      @click="approveApplication('Approve', 'first_approval')"
-                    >
-                      Approve
-                    </el-button>
-                    <el-popover placement="right" width="500" trigger="click">
-                      <div
-                        style="
-                          background: #000000;
-                          color: #ffffff;
-                          padding: 10px;
-                          text-align: left;
-                          border-radius: 5px;
-                        "
-                      >
-                        <strong>Give reasons for rejection</strong>
-                        <el-input
-                          v-model="approvalForm.details"
-                          placeholder="Type reason here..."
-                          type="textarea"
-                        />
-                        <br /><br />
+                  <div
+                    v-if="selectedVendor.first_approval !== null"
+                    style="padding: 10px; border: 2px dashed #cccccc; margin-bottom: 30px"
+                  >
+                    <strong>Final Review/Approval</strong>
+                    <div v-if="selectedVendor.second_approval !== null">
+                      <div v-if="selectedVendor.second_approval.action === 'Pending'">
                         <el-button
+                          v-if="checkPermission(['confirm-vendor-onboarding'])"
                           :loading="approvalLoading"
-                          size="mini"
-                          type="primary"
-                          plain
-                          :disabled="approvalForm.details === ''"
-                          @click="approveApplication('Reject', 'first_approval')"
+                          type="success"
+                          @click="approveApplication('Approve', 'second_approval')"
                         >
-                          OK
+                          Approve
+                        </el-button>
+                        <el-popover
+                          v-if="checkPermission(['confirm-vendor-onboarding'])"
+                          placement="right"
+                          width="500"
+                          trigger="click"
+                        >
+                          <div
+                            style="
+                              background: #000000;
+                              color: #ffffff;
+                              padding: 10px;
+                              text-align: left;
+                              border-radius: 5px;
+                            "
+                          >
+                            <strong>Give reasons for rejection</strong>
+                            <el-input
+                              v-model="approvalForm.details"
+                              placeholder="Type reason here..."
+                              type="textarea"
+                            />
+                            <br /><br />
+                            <el-button
+                              :loading="approvalLoading"
+                              size="mini"
+                              type="primary"
+                              plain
+                              :disabled="approvalForm.details === ''"
+                              @click="approveApplication('Reject', 'second_approval')"
+                            >
+                              OK
+                            </el-button>
+                          </div>
+                          <template v-slot:reference>
+                            <el-button type="danger" style="margin-left: 10px"> Reject </el-button>
+                          </template>
+                        </el-popover>
+                      </div>
+                      <div v-if="selectedVendor.second_approval.action === 'Reject'">
+                        <img src="/images/rejected.png" width="100" />
+                        <p>
+                          <strong>Reason:</strong> {{ selectedVendor.second_approval.details }}
+                        </p>
+                        <el-button
+                          v-if="checkPermission(['confirm-vendor-onboarding'])"
+                          :loading="approvalLoading"
+                          type="success"
+                          @click="approveApplication('Approve', 'second_approval')"
+                        >
+                          Approve
                         </el-button>
                       </div>
-                      <template v-slot:reference>
-                        <el-button type="danger" style="margin-left: 10px"> Reject </el-button>
-                      </template>
-                    </el-popover>
-                  </div>
-                </div>
-                <div
-                  v-if="selectedVendor.first_approval !== null"
-                  style="
-                    background: #fffefb;
-                    padding: 10px;
-                    border: 2px dashed #cccccc;
-                    margin-bottom: 30px;
-                  "
-                >
-                  <strong>Final Review</strong>
-                  <div v-if="selectedVendor.second_approval !== null">
-                    <div v-if="selectedVendor.second_approval.action === 'Pending'">
+                      <div v-if="selectedVendor.second_approval.action === 'Approve'">
+                        <img src="/images/approved.png" width="100" />
+                        <p></p>
+                        <el-popover
+                          v-if="checkPermission(['confirm-vendor-onboarding'])"
+                          placement="right"
+                          width="500"
+                          trigger="click"
+                        >
+                          <div
+                            style="
+                              background: #000000;
+                              color: #ffffff;
+                              padding: 10px;
+                              text-align: left;
+                              border-radius: 5px;
+                            "
+                          >
+                            <strong>Give reasons for rejection</strong>
+                            <el-input
+                              v-model="approvalForm.details"
+                              placeholder="Type reason here..."
+                              type="textarea"
+                            />
+                            <br /><br />
+                            <el-button
+                              :loading="approvalLoading"
+                              size="mini"
+                              type="primary"
+                              plain
+                              :disabled="approvalForm.details === ''"
+                              @click="approveApplication('Reject', 'second_approval')"
+                            >
+                              OK
+                            </el-button>
+                          </div>
+                          <template v-slot:reference>
+                            <el-button type="danger" style="margin-left: 10px"> Reject </el-button>
+                          </template>
+                        </el-popover>
+                      </div>
+                    </div>
+                    <div v-else>
                       <el-button
+                        v-if="checkPermission(['confirm-vendor-onboarding'])"
                         :loading="approvalLoading"
                         type="success"
                         @click="approveApplication('Approve', 'second_approval')"
                       >
                         Approve
                       </el-button>
-                      <el-popover placement="right" width="500" trigger="click">
+                      <el-popover
+                        v-if="checkPermission(['confirm-vendor-onboarding'])"
+                        placement="right"
+                        width="500"
+                        trigger="click"
+                      >
                         <div
                           style="
                             background: #000000;
@@ -582,135 +698,41 @@
                         </template>
                       </el-popover>
                     </div>
-                    <div v-if="selectedVendor.second_approval.action === 'Reject'">
-                      <img src="/images/rejected.png" width="100" />
-                      <p> <strong>Reason:</strong> {{ selectedVendor.second_approval.details }} </p>
-                      <el-button
-                        :loading="approvalLoading"
-                        type="success"
-                        @click="approveApplication('Approve', 'second_approval')"
-                      >
-                        Approve
-                      </el-button>
-                    </div>
-                    <div v-if="selectedVendor.second_approval.action === 'Approve'">
-                      <img src="/images/approved.png" width="100" />
-                      <p></p>
-                      <el-popover placement="right" width="500" trigger="click">
-                        <div
-                          style="
-                            background: #000000;
-                            color: #ffffff;
-                            padding: 10px;
-                            text-align: left;
-                            border-radius: 5px;
-                          "
-                        >
-                          <strong>Give reasons for rejection</strong>
-                          <el-input
-                            v-model="approvalForm.details"
-                            placeholder="Type reason here..."
-                            type="textarea"
-                          />
-                          <br /><br />
-                          <el-button
-                            :loading="approvalLoading"
-                            size="mini"
-                            type="primary"
-                            plain
-                            :disabled="approvalForm.details === ''"
-                            @click="approveApplication('Reject', 'second_approval')"
-                          >
-                            OK
-                          </el-button>
-                        </div>
-                        <template v-slot:reference>
-                          <el-button type="danger" style="margin-left: 10px"> Reject </el-button>
-                        </template>
-                      </el-popover>
-                    </div>
-                  </div>
-                  <div v-else>
-                    <el-button
-                      :loading="approvalLoading"
-                      type="success"
-                      @click="approveApplication('Approve', 'second_approval')"
-                    >
-                      Approve
-                    </el-button>
-                    <el-popover placement="right" width="500" trigger="click">
-                      <div
-                        style="
-                          background: #000000;
-                          color: #ffffff;
-                          padding: 10px;
-                          text-align: left;
-                          border-radius: 5px;
-                        "
-                      >
-                        <strong>Give reasons for rejection</strong>
-                        <el-input
-                          v-model="approvalForm.details"
-                          placeholder="Type reason here..."
-                          type="textarea"
-                        />
-                        <br /><br />
-                        <el-button
-                          :loading="approvalLoading"
-                          size="mini"
-                          type="primary"
-                          plain
-                          :disabled="approvalForm.details === ''"
-                          @click="approveApplication('Reject', 'second_approval')"
-                        >
-                          OK
-                        </el-button>
-                      </div>
-                      <template v-slot:reference>
-                        <el-button type="danger" style="margin-left: 10px"> Reject </el-button>
-                      </template>
-                    </el-popover>
                   </div>
                 </div>
               </div>
-            </div>
-            <div
-              v-if="selectedVendor.document_uploads.length > 0"
-              style="
-                height: 750px;
-                overflow: auto;
-                background: #fffefb;
-                padding: 10px;
-                margin-bottom: 30px;
-              "
-            >
-              <h4>Uploaded Documents</h4>
-              <el-row>
-                <el-col
-                  v-for="(document, document_index) in selectedVendor.document_uploads"
-                  :key="document_index"
-                  :md="24"
-                >
-                  <div style="cursor: pointer; border: solid 1px #cccccc; padding: 10px">
-                    <span @click="viewDocument(baseServerUrl + 'storage/' + document.link)">
-                      <img
-                        :src="`/images/${document.link.split('.')[1]}.png`"
-                        alt="Image"
-                        width="20"
-                      />
+              <div
+                v-if="selectedVendor.document_uploads.length > 0"
+                style="height: 750px; overflow: auto; padding: 10px; margin-bottom: 30px"
+              >
+                <h4>Uploaded Documents</h4>
+                <el-row>
+                  <el-col
+                    v-for="(document, document_index) in selectedVendor.document_uploads"
+                    :key="document_index"
+                    :md="24"
+                  >
+                    <div style="cursor: pointer; border: solid 1px #cccccc; padding: 10px">
+                      <span @click="viewDocument(baseServerUrl + 'storage/' + document.link)">
+                        <img
+                          :src="`/images/${document.link.split('.')[1]}.png`"
+                          alt="Image"
+                          width="20"
+                        />
 
-                      <small style="font-weight: 900; padding: 10px">{{ document.title }}</small>
-                    </span>
-                    <span class="pull-right">
-                      <el-tooltip content="Download">
-                        <a :href="baseServerUrl + 'storage/' + document.link" target="_blank"
-                          ><feather-icon size="20" icon="DownloadIcon" />
-                        </a>
-                      </el-tooltip>
-                    </span>
-                  </div>
-                </el-col>
-              </el-row>
+                        <small style="font-weight: 900; padding: 10px">{{ document.title }}</small>
+                      </span>
+                      <span class="pull-right">
+                        <el-tooltip content="Download">
+                          <a :href="baseServerUrl + 'storage/' + document.link" target="_blank"
+                            ><feather-icon size="20" icon="DownloadIcon" />
+                          </a>
+                        </el-tooltip>
+                      </span>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
             </div>
           </el-col>
         </el-row>
@@ -741,8 +763,15 @@
       </div>
     </div>
     <el-dialog
+      title="Create Category"
+      v-if="isCreateCategorySidebarActive"
+      v-model="isCreateCategorySidebarActive"
+    >
+      <AddCategory @save="fetchVendorCategories" />
+    </el-dialog>
+    <el-dialog
       v-model="showModal"
-      title="Create New Invoice"
+      title="View Uploaded Document"
       size="lg"
       destroy-on-close
       hide-footer
@@ -755,13 +784,17 @@
 <script>
 import checkPermission from '@/utils/permission'
 import checkRole from '@/utils/role'
+import AddCategory from './AddCategory.vue'
 // import OnboardingForm from '@/views/modules/DUE-DILIGENCE/vendor/partials/Onboarding.vue'
 // import EditVendorUser from './EditVendorUser.vue'
 import Resource from '@/api/resource'
+import { changeOpacityOfHexaColorCode } from '@/utils/tsxHelper'
 
 export default {
+  components: { AddCategory },
   data() {
     return {
+      isCreateCategorySidebarActive: false,
       downloadLoading: false,
       showVendorDetails: false,
       vendors: [],
@@ -797,6 +830,12 @@ export default {
   methods: {
     checkPermission,
     checkRole,
+    setBgColor() {
+      const root = document.documentElement // Get the root element (<html>)
+      // root.style.setProperty('--el-color-primary', '#ff0000')
+      const primaryBgColor = root.style.getPropertyValue('--el-color-primary')
+      return `${changeOpacityOfHexaColorCode(primaryBgColor, 0.05)}`
+    },
     viewDocument(document) {
       this.selectedDocument = document
       this.showModal = true

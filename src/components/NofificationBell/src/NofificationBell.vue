@@ -1,14 +1,17 @@
 <template>
   <div>
-    <button id="close_notification_pane" style="display: none"></button>
     <audio id="myAudio">
       <source src="/alert.mp3" type="audio/mpeg" />
     </audio>
+    <button id="play_audio" @click="playAudio()"></button>
     <el-dropdown class="custom-hover" trigger="click">
-      <span class="el-dropdown-link">
+      <span v-if="unreadNotificationCount > 0" class="el-dropdown-link">
         <el-badge :value="unreadNotificationCount" :max="10" class="item">
-          <icon icon="tabler:bell" :size="30" />
+          <icon icon="tabler:bell" :size="25" />
         </el-badge>
+      </span>
+      <span v-else class="el-dropdown-link">
+        <icon icon="tabler:bell" :size="25" />
       </span>
       <template #dropdown>
         <el-dropdown-menu v-if="notifications.length > 0">
@@ -132,8 +135,8 @@ export default {
       audio.play()
     },
     loadNotifications() {
-      document.getElementById('close_notification_pane').click()
-      this.show_notification = false
+      // document.getElementById('close_notification_pane').click()
+      // this.show_notification = false
       // then update notifications as read
       this.$router.push('/notifications/all')
     }

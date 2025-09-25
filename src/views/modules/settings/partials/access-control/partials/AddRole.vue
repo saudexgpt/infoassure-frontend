@@ -51,13 +51,11 @@ export default {
     return {
       form: {
         name: '',
-        description: '',
-        level_groups: []
+        description: ''
       },
       loading: false,
       error: false,
-      error_message: '',
-      curriculum_level_groups: []
+      error_message: ''
     }
   },
   methods: {

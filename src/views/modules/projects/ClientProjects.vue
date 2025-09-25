@@ -118,16 +118,18 @@
             <h2>{{ item.title }}</h2>
             <hr />
             <el-button-group>
-              <el-button type="primary" @click="manageProject(item)">
-                <icon size="20" icon="tabler:eye" /> View
-              </el-button>
-              <el-button
-                v-if="checkPermission(['assign-project-to-user']) || checkRole(['admin'])"
-                type="info"
-                @click="assignProject(item)"
-              >
-                <icon size="20" icon="tabler:user-plus" /> Assign
-              </el-button>
+              <el-tooltip content="View Project Details">
+                <el-button @click="manageProject(item)">
+                  <icon size="20" icon="tabler:eye" color="orange" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip v-if="checkPermission(['assign-project-to-user']) || checkRole(['admin'])" content="Assign project to users">
+                <el-button
+                  @click="assignProject(item)"
+                >
+                  <icon size="20" icon="tabler:user-plus" />
+                </el-button>
+              </el-tooltip>
             </el-button-group>
           </el-card>
         </el-col>

@@ -1,7 +1,6 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div v-loading="loading">
-    {{ selectedRiskRegister }}
     <el-row :gutter="20">
       <el-col :md="20">
         <div v-if="form.asset_id !== 0 && form.asset_id !== null">

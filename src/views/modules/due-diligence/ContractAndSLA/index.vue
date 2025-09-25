@@ -236,9 +236,13 @@
         :title="`Create New Contract Document for ${selectedVendor.name}`"
         v-model:visible="dialogFormVisible"
       >
-        <el-form :model="contractForm">
+        <el-form :model="contractForm" label-position="top">
           <el-form-item label="Unique Title of the Contract Document">
-            <el-input v-model="contractForm.title" autocomplete="off" />
+            <el-input
+              v-model="contractForm.title"
+              placeholder="Type the title of the document"
+              autocomplete="off"
+            />
           </el-form-item>
           <el-form-item label="Start Date">
             <el-date-picker

@@ -106,12 +106,10 @@
             <el-button
               v-if="invoices.length > 0"
               :loading="downloadLoading"
-              style="margin: 0 0 20px 20px"
               type="primary"
               plain
-              icon="el-icon-download"
               @click="handleDownload('List of invoices', invoices)"
-              >Export Excel</el-button
+              ><icon icon="tabler:download" /> Export Excel</el-button
             >
           </span>
         </el-col>

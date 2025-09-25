@@ -46,14 +46,28 @@
             </aside>
           </el-col>
           <el-col :md="8">
-            <div v-if="multipleSelection.length > 0" style="margin-bottom: 40px">
-              <el-button type="primary" class="pull-right" @click="submit"> Save </el-button>
+            <div style="margin-bottom: 40px">
+              <el-button
+                :disabled="multipleSelection.length < 1"
+                type="primary"
+                class="pull-right"
+                @click="submit"
+              >
+                Save
+              </el-button>
               <h4>Selected Requirements</h4>
             </div>
             <div v-if="multipleSelection.length > 0" v-loading="saving">
               <div v-for="(selection, select_index) in multipleSelection" :key="select_index">
-                <div style="background: #f0f0f0; padding: 10px; margin-bottom: 10px">
-                  <small style="font-weight: 900">{{ selection.question }}</small>
+                <div
+                  style="
+                    background: #f0f0f0;
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    border-radius: 5px;
+                  "
+                >
+                  <span>{{ selection.question }}</span>
                 </div>
               </div>
             </div>

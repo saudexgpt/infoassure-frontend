@@ -5,7 +5,7 @@
       <!-- <el-tab-pane :key="keyValue" label="Overview" name="#dashboard" lazy>
         <dashboard />
       </el-tab-pane> -->
-      <el-tab-pane :key="keyValue" label="The BCMS Journey" name="#bcms-journey" lazy>
+      <el-tab-pane label="The BCMS Journey" name="#bcms-journey" lazy>
         <BCMSJourney v-if="activeName === '#bcms-journey'" />
       </el-tab-pane>
       <el-tab-pane label="Business Units Setup" name="#business-unit" lazy>

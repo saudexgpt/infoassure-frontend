@@ -7,16 +7,16 @@
       tab-position="left"
       @tab-click="handleClick"
     > -->
-      <el-tab-pane :key="keyValue" label="Overview" name="#dashboard" lazy>
+      <el-tab-pane label="Overview" name="#dashboard" lazy>
         <dashboard v-if="activeName === '#dashboard'" />
       </el-tab-pane>
-      <el-tab-pane :key="keyValue" label="The ISMS Journey" name="#isms-journey" lazy>
+      <el-tab-pane label="The ISMS Journey" name="#isms-journey" lazy>
         <ISMSJourney v-if="activeName === '#isms-journey'" />
       </el-tab-pane>
       <!-- <el-tab-pane :key="keyValue" label="Compliance Assessment" name="#compliance-assessment" lazy>
         <ComplianceAssessment v-if="activeName === '#compliance-assessment'" />
       </el-tab-pane> -->
-      <el-tab-pane :key="keyValue" label="Asset Management" name="#asset-inventory" lazy>
+      <el-tab-pane label="Asset Management" name="#asset-inventory" lazy>
         <AssetManagement v-if="activeName === '#asset-inventory'" />
         <!-- <el-tabs type="border-card">
           <el-tab-pane label="Manage Asset Types" lazy>
